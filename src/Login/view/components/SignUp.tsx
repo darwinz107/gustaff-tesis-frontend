@@ -17,7 +17,8 @@ export const SignUp = () => {
     e.preventDefault();
     const user:user = {name:newUser[0],identification:newUser[1],cellphone:newUser[2],email:newUser[3],password:newUser[4]}
     const registrarApi = await createUser(user);
-    alert(registrarApi);
+    
+    alert(registrarApi.msj);
   }
 
   return (
