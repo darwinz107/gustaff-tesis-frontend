@@ -1,11 +1,11 @@
 import type { login } from "../../models/login";
 import type { user } from "../../models/user";
 
-const route:string = "http://localhost:3000/users/"
+const route:string = "http://localhost:3000/"
 
 export const createUser =async(user:user):Promise<{msj:string}>=>{
 
-    const response:Response = await fetch(`${route}create`,{
+    const response:Response = await fetch(`${route}users/create`,{
      method:"POST",
      headers:{
         "Content-Type":"application/json"
@@ -19,7 +19,7 @@ return data;
 
 export const generateToken=async(login:login):Promise<{msj:string,access:boolean}>=>{
 
-    const response:Response = await fetch(`${route}login`,{
+          const response:Response = await fetch(`${route}auth/login`,{
      method:"POST",
      headers:{
          "Content-Type":"application/json"

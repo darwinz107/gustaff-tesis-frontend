@@ -1,5 +1,5 @@
 
-const route:string = "http://localhost:3000/users/"
+const route:string = "http://localhost:3000/auth/"
 
 export const controlByRol= async():Promise<{isRol:boolean}> =>{
 

@@ -11,13 +11,14 @@ export const SignIn = () => {
 
     const navigate = useNavigate();
 
-    const validateLogin = async ()=>{
+    const validateLogin = async (e)=>{
+        e.preventDefault();
        const login:login = {email:user,password:password}; 
         const resLogin = await generateToken(login);
 
         if(resLogin.access){
           alert(resLogin.msj);
-          navigate("/");
+          navigate("/principal");
         }else{
             alert("Datos incorrectos");
         }
@@ -28,12 +29,12 @@ export const SignIn = () => {
     
         <div className='flex py-10 w-200 h-100 border border-gray-200 rounded-md'>
             <div className='p-2 flex items-center justify-center w-1/2'>
-                <form className='flex flex-col items-center'  action="">
+                <form className='flex flex-col items-center'  onSubmit={(e)=>validateLogin(e)}>
                     <div className='flex flex-col'>
                         <input className="input mb-2 w-70" type="text" name="" id="" placeholder='user' onChange={(e)=>setuser(e.target.value)}/>
                         <input placeholder='password' className="input mb-2 w-70" type="password"  onChange={(e)=>setpassword(e.target.value)}/>
                     </div>  
-                    <button className="btn w-30" onClick={validateLogin}>Sign In</button>
+                    <button className="btn w-30" type="submit" >Sign In</button>
                 </form>
             </div>
             <div className='h-full border-l border-gray-200'></div>
