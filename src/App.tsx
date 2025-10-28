@@ -11,7 +11,7 @@ function App() {
     try {
        const res = await controlByRol();
     if(res.isRol){
-       navigate('/orden-de-trabajo');
+       alert("Acceso permitido");
     }else{
       alert("Acceso no permitido");
     }
@@ -23,9 +23,10 @@ function App() {
 
    const logout = async () =>{
     try {
-       const res = await logoutSession();
+      const res = await logoutSession();
     
       alert(res.msj);
+      navigate('/');
     
     } catch (error) {
       console.error("Error al cargar la api: ",error);
@@ -38,6 +39,7 @@ function App() {
       
       <div className='text-lg font-sans font-bold'>Hello world</div>
       <button className="btn" onClick={soloAdmin}>Solo admin</button>
+      <button className="btn" onClick={()=>navigate('/orden-de-trabajo')}>Orden de trabajo</button>
       <button className="btn" onClick={logout}>Cerrar sesion</button>
 
     </>
