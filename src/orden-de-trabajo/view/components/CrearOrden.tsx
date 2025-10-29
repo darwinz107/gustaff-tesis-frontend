@@ -10,6 +10,7 @@ export const CrearOrden = () => {
   const categorias = ["VARIOS", "GASFITERIA", "MECANICA", "SOLDADURA"];
   const tiposTrabajos = ["MODIFICACION", "HABILITACION", "VARIOS", "ADECUACION"];
 
+  const [tiempos, settiempos] = useState(Array(4));
   const [ubicacion, setubicacion] = useState(Array(3));
   const [especificacion, setespecificacion] = useState(Array(2));
   const callyPpopover1 = useRef(null);
@@ -20,38 +21,31 @@ export const CrearOrden = () => {
   return (
     <>
       <div className='flex items-center justify-center mt-8'>
-        <form className='min-w-170 border border-black-700' action="" onSubmit={(e) => { e.preventDefault(); console.log(ubicacion) }}>
+        <form className='min-w-170 border border-black-700' action="" onSubmit={(e) => { e.preventDefault(); console.log(tiempos) }}>
           <div className=' mb-4'>
-            <p className='border-4 border-black-800'>Tiempos de trabajo</p>
+            <p className='border-4 border-black-800 text-center'>Tiempos de trabajo</p>
             <div>
               <div className='flex flex-row mb-3 my-4'>
                 <p>Fecha y hora planificada</p> <button onClick={() => { callyPpopover1.current?.showPopover() }} className="input input-border" id="cally1" style={{ anchorName: "--cally1" }}>
                   Pick a date
                 </button>
                 <div popover="auto" ref={callyPpopover1} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally1" }}>
-                  <calendar-date className="cally" onchange={(e) => document.getElementById("cally1").innerText = e.target.value}>
+                  <calendar-date className="cally" onchange={(e) =>{document.getElementById("cally1").innerText = e.target.value; const arr = tiempos; arr[0] = e.target.value; settiempos(arr);}}>
                     <svg aria-label="Previous" className="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
                     <svg aria-label="Next" className="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
                     <calendar-month></calendar-month>
                   </calendar-date>
                 </div>
-                <input type="time" className="input" />
-                <p>Tiempo estimado</p> <button onClick={() => { callyPpopover2.current?.showPopover() }} className="input input-border" id="cally2" style={{ anchorName: "--cally2" }}>
-                  Pick a date
-                </button>
-                <div popover="auto" ref={callyPpopover2} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally2" }}>
-                  <calendar-date className="cally" onchange={(e) => document.getElementById("cally2").innerText = e.target.value}>
-                    <svg aria-label="Previous" className="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
-                    <svg aria-label="Next" className="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
-                    <calendar-month></calendar-month>
-                  </calendar-date>
-                </div>
+                <div className="mx-2"></div>
+                <input onChange={(e)=>{const arr = tiempos; arr[1] = e.target.value; settiempos(arr);}} type="time" className="input" />
+                <div className="mx-2"></div>
+                <p>Tiempo estimado</p> <div className="mx-2"></div> <input onChange={(e)=>{const arr = tiempos; arr[2] = e.target.value; settiempos(arr);}} type="time" className="input" />
               </div>
-              <div className='flex flex-row'><p>Fecha estimada de finalizacion</p> <button onClick={() => { callyPpopover3.current?.showPopover() }} className="input input-border" id="cally3" style={{ anchorName: "--cally3" }}>
+              <div className='flex flex-row'><p className="mr-2">Fecha estimada de finalizacion</p> <button type="button" onClick={() => { callyPpopover3.current?.showPopover() }} className="input input-border" id="cally3" style={{ anchorName: "--cally3" }}>
                   Pick a date
                 </button>
                 <div popover="auto" ref={callyPpopover3} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally3" }}>
-                  <calendar-date className="cally" onchange={(e) => document.getElementById("cally3").innerText = e.target.value}>
+                  <calendar-date className="cally" onchange={(e) =>{document.getElementById("cally3").innerText = e.target.value; const arr = tiempos; arr[3] = e.target.value; settiempos(arr);}}>
                     <svg aria-label="Previous" className="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
                     <svg aria-label="Next" className="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
                     <calendar-month></calendar-month>
@@ -61,15 +55,15 @@ export const CrearOrden = () => {
           </div>
 
           <div >
-            <p className='border-4 border-black-800 mb-4'>Ubicacion</p>
+            <p className='border-4 border-black-800 mb-4 text-center'>Ubicacion</p>
             <div className="flex flex-row mb-4">
-              <p>Area</p>
-              <select name="" id="" onChange={(e) => {
+              <p className="mr-2">Area</p>
+              <select defaultValue={'...'} className="select" id="" onChange={(e) => {
                 const nueva = [...ubicacion];
                 nueva[0] = e.target.value;
                 setubicacion(nueva);
               }}>
-                <option value="">...</option>
+                <option disabled={true}>...</option>
                 {areas.map((a) =>
                   <>
                     <option value={a}>{a}</option>
@@ -77,65 +71,65 @@ export const CrearOrden = () => {
                 )}
               </select>
 
-              <p>Codigo</p>
-              <select name="" id="" onChange={(e) => {
+              <p className="mx-2">Codigo</p>
+              <select defaultValue={'...'} className="select" id="" onChange={(e) => {
                 const nueva = [...ubicacion];
                 nueva[1] = e.target.value;
                 setubicacion(nueva)
               }}>
-                <option value="">...</option>
+                <option disabled={true}>...</option>
                 {codigos.map((c) => <>
                   <option value={c}>{c}</option>
                 </>)}
               </select>
 
-              <p>Maquina</p>
-              <select name="" id="" onChange={(e) => {
+              <p className="mx-2">Maquina</p>
+              <select defaultValue={'...'} className="select" id="" onChange={(e) => {
                 const nueva = [...ubicacion];
                 nueva[2] = e.target.value;
                 setubicacion(nueva)
               }}>
-                <option value="">...</option>
+                <option disabled={true}>...</option>
                 {maquinas.map((m) => <>
                   <option value={m}>{m}</option>
                 </>)}
               </select>
             </div>
             <div className="flex flex-row">
-              <p>Equipos/Piezas</p>
-              <textarea name="" id=""></textarea>
+              <p className="mr-2">Equipos/Piezas</p>
+              <textarea className="textarea" id=""></textarea>
             </div>
           </div>
 
           <div>
-            <p className="border-4 border-black-800 mb-4">Especificacion de trabajo</p>
+            <p className="border-4 border-black-800 my-4 text-center">Especificacion de trabajo</p>
             <div>
-              <p>Categoria</p>
-              <select name="" id="" onChange={(e) => {
+              <p className="mr-2">Categoria</p>
+              <select defaultValue={'...'} className="select" id="" onChange={(e) => {
 
               }}>
-                <option value="">...</option>
+                <option disabled={true}>...</option>
                 {categorias.map((c) => <>
                   <option value={c}>{c}</option>
                 </>)}
               </select>
             </div>
             <div>
-              <p>Tipo de trabajo</p>
-              <select name="" id="">
-                <option value="">...</option>
+              <p className="mr-2">Tipo de trabajo</p>
+              <select defaultValue={'...'} className="select" id="">
+                <option disabled={true}>...</option>
                 {tiposTrabajos.map((t) => <>
                   <option value={t}>{t}</option>
                 </>)}
               </select>
             </div>
             <div>
-              <p>Descripcion del trabajo</p>
-              <textarea name="" id=""></textarea>
+              <p className="mr-2">Descripcion del trabajo</p>
+              <textarea className="textarea" id=""></textarea>
             </div>
           </div>
-
-          <button className="p-4 bg-blue-500 cursor-pointer" type="submit">Send</button>
+  <div className="my-2 flex items-center justify-center"><button className="btn p-4" type="submit">Send</button></div>
+          
         </form>
       </div>
 
