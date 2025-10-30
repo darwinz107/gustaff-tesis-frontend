@@ -1,27 +1,64 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CalendarDate, CalendarMonth } from "cally";
 import "cally";
+import { areas, getAllCodByArea } from "../../controller/api/orden-api";
+import type { Area } from "../../models/areas";
+import type { Codigo } from "../../models/codigos";
 
 export const CrearOrden = () => {
 
-  const areas = ["TUNELES DE ENFRIAMINETO", "REFINACION DE CHOCOLATE", "PULVERIZACION", "TALLER2"];
-  const codigos = ["GU-BTT-01", "GU-BTT-02", "GU-BTT-03", "GU-BTT-04"];
+  const [area, setarea] = useState<Area[]>([]);
+  const [codigos, setcodigos] = useState<Codigo[]>([])
+  const [tiempos, settiempos] = useState(Array(4));
+  const [ubicacion, setubicacion] = useState(Array(3));
+  const [especificacion, setespecificacion] = useState(Array(2));
+  const [isEmptyArea, setisEmptyArea] = useState(false);
+  const [isEmptyCod, setisEmptyCod] = useState(false);
+  const callyPpopover1 = useRef(null);
+  const callyPpopover2 = useRef(null);
+  const callyPpopover3 = useRef(null);
+
+  
   const maquinas = ["DESKTOP-01", "DESKTOP-02", "DESKTOP-03", "DESKTOP-04"];
   const categorias = ["VARIOS", "GASFITERIA", "MECANICA", "SOLDADURA"];
   const tiposTrabajos = ["MODIFICACION", "HABILITACION", "VARIOS", "ADECUACION"];
 
-  const [tiempos, settiempos] = useState(Array(4));
-  const [ubicacion, setubicacion] = useState(Array(3));
-  const [especificacion, setespecificacion] = useState(Array(2));
-  const callyPpopover1 = useRef(null);
-  const callyPpopover2 = useRef(null);
-  const callyPpopover3 = useRef(null);
+  useEffect(() => {
+    
+    const getAreas = async () => {
+      
+      const data = await areas();
+      setarea(data);
+    }
+    getAreas();
+  }, []);
+
+  useEffect(() => {
+    if(ubicacion[0] != undefined && isEmptyArea ==false){
+      setisEmptyArea(true);
+      const getCodigos = async () => {
+        
+        const data = await getAllCodByArea(ubicacion[0]);
+        console.log(data);
+        setcodigos(data);
+      }
+      getCodigos();
+    }
+
+    if(ubicacion[1] != undefined && isEmptyCod ==false){
+      setisEmptyCod(true);
+    }
+  }, [ubicacion])
+  
+  
+
+
 
 
   return (
     <>
       <div className='flex items-center justify-center mt-8'>
-        <form className='min-w-170 border border-black-700' action="" onSubmit={(e) => { e.preventDefault(); console.log(tiempos) }}>
+        <form className='min-w-170 border border-black-700' action="" onSubmit={(e) => { e.preventDefault(); console.log(ubicacion) }}>
           <div className=' mb-4'>
             <p className='border-4 border-black-800 text-center'>Tiempos de trabajo</p>
             <div>
@@ -64,27 +101,27 @@ export const CrearOrden = () => {
                 setubicacion(nueva);
               }}>
                 <option disabled={true}>...</option>
-                {areas.map((a) =>
+                {area.map((a) =>
                   <>
-                    <option value={a}>{a}</option>
+                    <option value={a.nombre}>{a.nombre}</option>
                   </>
                 )}
               </select>
 
               <p className="mx-2">Codigo</p>
-              <select defaultValue={'...'} className="select" id="" onChange={(e) => {
+              <select disabled={!isEmptyArea} defaultValue={'...'} className="select" id="" onChange={(e) => {
                 const nueva = [...ubicacion];
                 nueva[1] = e.target.value;
                 setubicacion(nueva)
               }}>
                 <option disabled={true}>...</option>
                 {codigos.map((c) => <>
-                  <option value={c}>{c}</option>
+                  <option value={c.cod}>{c.cod}</option>
                 </>)}
               </select>
 
               <p className="mx-2">Maquina</p>
-              <select defaultValue={'...'} className="select" id="" onChange={(e) => {
+              <select disabled={!isEmptyCod} defaultValue={'...'} className="select" id="" onChange={(e) => {
                 const nueva = [...ubicacion];
                 nueva[2] = e.target.value;
                 setubicacion(nueva)
