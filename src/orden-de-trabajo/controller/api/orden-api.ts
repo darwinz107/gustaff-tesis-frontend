@@ -22,3 +22,15 @@ export const getAllCodByArea = async (area:string):Promise<{cod:string}> => {
     const data = await res.json();
     return data;
 }
+
+export const getAllMaquinasByCod = async (cod:string):Promise<{maquina:string}> =>{
+    const res = await fetch(`${route}/all/maquinas`,{
+        method: 'POST',
+        headers:{
+            "Content-Type":"application/json"
+},
+        body:JSON.stringify({codigo:cod})            
+});
+    const data = await res.json();
+    return data;
+}

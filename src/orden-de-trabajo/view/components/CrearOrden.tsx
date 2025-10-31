@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { CalendarDate, CalendarMonth } from "cally";
 import "cally";
-import { areas, getAllCodByArea } from "../../controller/api/orden-api";
+import { areas, getAllCodByArea, getAllMaquinasByCod } from "../../controller/api/orden-api";
 import type { Area } from "../../models/areas";
 import type { Codigo } from "../../models/codigos";
+import type { Maquina } from "../../models/maquinas";
 
 export const CrearOrden = () => {
 
   const [area, setarea] = useState<Area[]>([]);
-  const [codigos, setcodigos] = useState<Codigo[]>([])
+  const [codigos, setcodigos] = useState<Codigo[]>([]);
+  const [maquinas, setmaquinas] = useState<Maquina[]>([]);
   const [tiempos, settiempos] = useState(Array(4));
   const [ubicacion, setubicacion] = useState(Array(3));
   const [especificacion, setespecificacion] = useState(Array(2));
@@ -18,9 +20,8 @@ export const CrearOrden = () => {
   const callyPpopover2 = useRef(null);
   const callyPpopover3 = useRef(null);
   const select1 = useRef(null);
-
   
-  const maquinas = ["DESKTOP-01", "DESKTOP-02", "DESKTOP-03", "DESKTOP-04"];
+
   const categorias = ["VARIOS", "GASFITERIA", "MECANICA", "SOLDADURA"];
   const tiposTrabajos = ["MODIFICACION", "HABILITACION", "VARIOS", "ADECUACION"];
 
@@ -48,9 +49,26 @@ export const CrearOrden = () => {
       console.log(codigos);
     }
 
-    if(ubicacion[1] != undefined && isEmptyCod){
-      
+    if(ubicacion[1] != undefined){
+      setisEmptyCod(true);
+     select1.current.selectedIndex;
+      const getMaquinas = async () => {
+        
+        const data = await getAllMaquinasByCod(ubicacion[1]);
+        
+        setmaquinas(data);
+        console.log("current: ",select1.current.value);
+        console.log("ubicacion[1]: ",ubicacion[1]);
+
+        if(select1.current.value != ubicacion[1]){
+           const newArr = [...ubicacion];
+           newArr[1] = select1.current.value;
+           setubicacion(newArr);        }
+      }
+      getMaquinas();
+      console.log("maquinas: ",maquinas);
     }
+    
   }, [ubicacion])
  
   return (
@@ -107,7 +125,7 @@ export const CrearOrden = () => {
               </select>
 
               <p className="mx-2">Codigo</p>
-              <select ref={select1} disabled={!isEmptyArea} defaultValue={'...'} className="select" id="" onChange={(e) => {
+              <select ref={select1}  disabled={!isEmptyArea} defaultValue={'...'} className="select" id="" onChange={(e) => {
                 const nueva = [...ubicacion];
                 nueva[1] = e.target.value;
                 setubicacion(nueva)
@@ -126,7 +144,7 @@ export const CrearOrden = () => {
               }}>
                 <option disabled={true}>...</option>
                 {maquinas.map((m) => <>
-                  <option value={m}>{m}</option>
+                  <option value={m.nombre}>{m.nombre}</option>
                 </>)}
               </select>
             </div>
