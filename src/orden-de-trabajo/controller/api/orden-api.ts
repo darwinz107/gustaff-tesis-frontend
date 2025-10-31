@@ -10,12 +10,14 @@ export const areas = async ():Promise<{nombre:string}> => {
 }
 
 export const getAllCodByArea = async (area:string):Promise<{cod:string}> => {
+
+    console.log("getAllCodByArea in front",area);
     const res = await fetch(`${route}/all/codigos`,{
         method: 'POST',
         headers:{
             "Content-Type":"application/json"
         },
-        body:JSON.stringify({area:area})
+        body:JSON.stringify({area})
     });
     const data = await res.json();
     return data;

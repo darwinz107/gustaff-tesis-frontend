@@ -17,6 +17,7 @@ export const CrearOrden = () => {
   const callyPpopover1 = useRef(null);
   const callyPpopover2 = useRef(null);
   const callyPpopover3 = useRef(null);
+  const select1 = useRef(null);
 
   
   const maquinas = ["DESKTOP-01", "DESKTOP-02", "DESKTOP-03", "DESKTOP-04"];
@@ -34,27 +35,24 @@ export const CrearOrden = () => {
   }, []);
 
   useEffect(() => {
-    if(ubicacion[0] != undefined && isEmptyArea ==false){
-      setisEmptyArea(true);
-      const getCodigos = async () => {
+    if(ubicacion[0] != undefined){
+     setisEmptyArea(true);
+     
+     const getCodigos = async () => {
         
         const data = await getAllCodByArea(ubicacion[0]);
         console.log(data);
         setcodigos(data);
       }
       getCodigos();
+      console.log(codigos);
     }
 
-    if(ubicacion[1] != undefined && isEmptyCod ==false){
-      setisEmptyCod(true);
+    if(ubicacion[1] != undefined && isEmptyCod){
+      
     }
   }, [ubicacion])
-  
-  
-
-
-
-
+ 
   return (
     <>
       <div className='flex items-center justify-center mt-8'>
@@ -109,7 +107,7 @@ export const CrearOrden = () => {
               </select>
 
               <p className="mx-2">Codigo</p>
-              <select disabled={!isEmptyArea} defaultValue={'...'} className="select" id="" onChange={(e) => {
+              <select ref={select1} disabled={!isEmptyArea} defaultValue={'...'} className="select" id="" onChange={(e) => {
                 const nueva = [...ubicacion];
                 nueva[1] = e.target.value;
                 setubicacion(nueva)
