@@ -7,6 +7,7 @@ import { OrdenTrabjoMain } from './orden-de-trabajo/view/OrdenTrabjoMain.tsx'
 import { CrearOrden } from './orden-de-trabajo/view/components/CrearOrden.tsx'
 import { LoginMain } from './Login/view/LoginMain.tsx'
 import { SignUp } from './Login/view/components/SignUp.tsx'
+import { NuevosRegistros } from './admin/view/NuevosRegistros.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -18,6 +19,7 @@ createRoot(document.getElementById('root')!).render(
      <Route path='/crear-orden' element={<CrearOrden></CrearOrden>}></Route>
      <Route path='/login' element={<LoginMain></LoginMain>}></Route>
      <Route path='/registrar' element={<SignUp></SignUp>}></Route>
+     <Route path='/admin' element={<NuevosRegistros></NuevosRegistros>}></Route>
     </Routes>
     
     </BrowserRouter>
