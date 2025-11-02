@@ -1,13 +1,14 @@
 
 import './App.css'
-import { controlByRol, logoutSession } from './Principal/controller/api/auth-api'
+
 import { useNavigate } from 'react-router-dom'
+import { logoutSession } from './Principal/controller/api/auth-api';
 
 function App() {
   
   const navigate = useNavigate();
 
-  const soloAdmin = async () =>{
+  /*const soloAdmin = async () =>{
     try {
        const res = await controlByRol();
     if(res.isRol){
@@ -19,7 +20,7 @@ function App() {
       console.error("Error al cargar la api: ",error);
     }
    
-  }
+  }*/
 
    const logout = async () =>{
     try {
@@ -42,7 +43,7 @@ function App() {
         <div className='absolute inset-y-0 left-0 h-full w-1/5 z-20 bg-white border-r border-gray-300 flex flex-col'>
         <img src="public\gustaff_logo.jpg" className='cursor-pointer mb-7' alt="Gustaff S.A" />
         <div className='flex flex-col h-full'> 
-           <button className="btn w-full" onClick={soloAdmin}>Solo admin</button>
+          
       <button className="btn w-full" onClick={()=>navigate('/orden-de-trabajo')}>Orden de trabajo</button>
       <button className="btn w-full" onClick={logout}>Cerrar sesion</button>
       </div>
