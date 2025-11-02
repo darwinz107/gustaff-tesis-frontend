@@ -1,27 +1,80 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CalendarDate, CalendarMonth } from "cally";
 import "cally";
+import { areas, getAllCodByArea, getAllMaquinasByCod } from "../../controller/api/orden-api";
+import type { Area } from "../../models/areas";
+import type { Codigo } from "../../models/codigos";
+import type { Maquina } from "../../models/maquinas";
 
 export const CrearOrden = () => {
 
-  const areas = ["TUNELES DE ENFRIAMINETO", "REFINACION DE CHOCOLATE", "PULVERIZACION", "TALLER2"];
-  const codigos = ["GU-BTT-01", "GU-BTT-02", "GU-BTT-03", "GU-BTT-04"];
-  const maquinas = ["DESKTOP-01", "DESKTOP-02", "DESKTOP-03", "DESKTOP-04"];
-  const categorias = ["VARIOS", "GASFITERIA", "MECANICA", "SOLDADURA"];
-  const tiposTrabajos = ["MODIFICACION", "HABILITACION", "VARIOS", "ADECUACION"];
-
+  const [area, setarea] = useState<Area[]>([]);
+  const [codigos, setcodigos] = useState<Codigo[]>([]);
+  const [maquinas, setmaquinas] = useState<Maquina[]>([]);
   const [tiempos, settiempos] = useState(Array(4));
   const [ubicacion, setubicacion] = useState(Array(3));
   const [especificacion, setespecificacion] = useState(Array(2));
+  const [isEmptyArea, setisEmptyArea] = useState(false);
+  const [isEmptyCod, setisEmptyCod] = useState(false);
   const callyPpopover1 = useRef(null);
   const callyPpopover2 = useRef(null);
   const callyPpopover3 = useRef(null);
+  const select1 = useRef(null);
+  
 
+  const categorias = ["VARIOS", "GASFITERIA", "MECANICA", "SOLDADURA"];
+  const tiposTrabajos = ["MODIFICACION", "HABILITACION", "VARIOS", "ADECUACION"];
 
+  useEffect(() => {
+    
+    const getAreas = async () => {
+      
+      const data = await areas();
+      setarea(data);
+    }
+    getAreas();
+  }, []);
+
+  useEffect(() => {
+    if(ubicacion[0] != undefined){
+     setisEmptyArea(true);
+     
+     const getCodigos = async () => {
+        
+        const data = await getAllCodByArea(ubicacion[0]);
+        console.log(data);
+        setcodigos(data);
+      }
+      getCodigos();
+      console.log(codigos);
+    }
+
+    if(ubicacion[1] != undefined){
+      setisEmptyCod(true);
+     select1.current.selectedIndex;
+      const getMaquinas = async () => {
+        
+        const data = await getAllMaquinasByCod(ubicacion[1]);
+        
+        setmaquinas(data);
+        console.log("current: ",select1.current.value);
+        console.log("ubicacion[1]: ",ubicacion[1]);
+
+        if(select1.current.value != ubicacion[1]){
+           const newArr = [...ubicacion];
+           newArr[1] = select1.current.value;
+           setubicacion(newArr);        }
+      }
+      getMaquinas();
+      console.log("maquinas: ",maquinas);
+    }
+    
+  }, [ubicacion])
+ 
   return (
     <>
       <div className='flex items-center justify-center mt-8'>
-        <form className='min-w-170 border border-black-700' action="" onSubmit={(e) => { e.preventDefault(); console.log(tiempos) }}>
+        <form className='min-w-170 border border-black-700' action="" onSubmit={(e) => { e.preventDefault(); console.log(ubicacion) }}>
           <div className=' mb-4'>
             <p className='border-4 border-black-800 text-center'>Tiempos de trabajo</p>
             <div>
@@ -64,34 +117,34 @@ export const CrearOrden = () => {
                 setubicacion(nueva);
               }}>
                 <option disabled={true}>...</option>
-                {areas.map((a) =>
+                {area.map((a) =>
                   <>
-                    <option value={a}>{a}</option>
+                    <option value={a.nombre}>{a.nombre}</option>
                   </>
                 )}
               </select>
 
               <p className="mx-2">Codigo</p>
-              <select defaultValue={'...'} className="select" id="" onChange={(e) => {
+              <select ref={select1}  disabled={!isEmptyArea} defaultValue={'...'} className="select" id="" onChange={(e) => {
                 const nueva = [...ubicacion];
                 nueva[1] = e.target.value;
                 setubicacion(nueva)
               }}>
                 <option disabled={true}>...</option>
                 {codigos.map((c) => <>
-                  <option value={c}>{c}</option>
+                  <option value={c.cod}>{c.cod}</option>
                 </>)}
               </select>
 
               <p className="mx-2">Maquina</p>
-              <select defaultValue={'...'} className="select" id="" onChange={(e) => {
+              <select disabled={!isEmptyCod} defaultValue={'...'} className="select" id="" onChange={(e) => {
                 const nueva = [...ubicacion];
                 nueva[2] = e.target.value;
                 setubicacion(nueva)
               }}>
                 <option disabled={true}>...</option>
                 {maquinas.map((m) => <>
-                  <option value={m}>{m}</option>
+                  <option value={m.nombre}>{m.nombre}</option>
                 </>)}
               </select>
             </div>

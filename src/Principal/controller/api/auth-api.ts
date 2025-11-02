@@ -22,3 +22,4 @@ export const logoutSession = async():Promise<{msj:string}> =>{
    const data = await response.json();
    return data;
 }
+
