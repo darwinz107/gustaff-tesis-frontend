@@ -34,3 +34,23 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{maquina:string}> 
     const data = await res.json();
     return data;
 }
+
+
+  export const getUsers = async():Promise<{name:string}[]>=>{
+      const response:Response = await fetch(`${route}/users/all`,{
+      method:"GET"
+      });
+      const data = await response.json();
+      return data;
+  }
+
+   export const getAllCategorias = async():Promise<{nombre:string}[]>=>{
+      const response:Response = await fetch(`${route}/categorias/all`,{
+        method:"GET"
+      });
+      const data = await response.json();
+      return data;
+    }
+
+
+    

@@ -5,7 +5,7 @@ import { crearCategoria, crearNuevaArea, crearNuevaMaquina, getAllAreas, getAllC
 export const NuevosRegistros = () => {
 
   const [areas, setareas] = useState<{ nombre: string }[]>([]);
-  const [categorias, setcategorias] = useState<{nombre:string}[]>([])
+  const [categorias, setcategorias] = useState<{nombre:string}[]>([]);
   const [newArea, setnewArea] = useState(null);
   const [newCod, setnewCod] = useState(null);
   const [maquina, setmaquina] = useState(null);
@@ -38,6 +38,7 @@ export const NuevosRegistros = () => {
     
     getAreas();
     getCategorias();
+
     
   }, []);
 

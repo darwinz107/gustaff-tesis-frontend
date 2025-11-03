@@ -59,3 +59,16 @@ export const crearCategoria = async(crearCategoria:CrearCategoria):Promise<{msj:
     const data = await response.json();
     return data;
   }
+
+  export const logoutSession = async():Promise<{msj:string}> =>{
+   
+     const response:Response = await fetch(`${route}logout/token`,{
+       method:"GET",
+       credentials:'include'
+     });
+  
+     const data = await response.json();
+     return data;
+  }
+
+

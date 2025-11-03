@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { CalendarDate, CalendarMonth } from "cally";
 import "cally";
-import { areas, getAllCodByArea, getAllMaquinasByCod } from "../../controller/api/orden-api";
+import { areas, getAllCategorias, getAllCodByArea, getAllMaquinasByCod, getUsers } from "../../controller/api/orden-api";
 import type { Area } from "../../models/areas";
 import type { Codigo } from "../../models/codigos";
 import type { Maquina } from "../../models/maquinas";
@@ -11,18 +11,20 @@ export const CrearOrden = () => {
   const [area, setarea] = useState<Area[]>([]);
   const [codigos, setcodigos] = useState<Codigo[]>([]);
   const [maquinas, setmaquinas] = useState<Maquina[]>([]);
+  const [categorias, setcategorias] = useState<{nombre:string}[]>([]);
+  const [users, setusers] = useState<{name:string}[]>([])
   const [tiempos, settiempos] = useState(Array(4));
   const [ubicacion, setubicacion] = useState(Array(3));
-  const [especificacion, setespecificacion] = useState(Array(2));
+  const [especificacion, setespecificacion] = useState(Array(3));
   const [isEmptyArea, setisEmptyArea] = useState(false);
   const [isEmptyCod, setisEmptyCod] = useState(false);
   const callyPpopover1 = useRef(null);
   const callyPpopover2 = useRef(null);
   const callyPpopover3 = useRef(null);
   const select1 = useRef(null);
-  
+  const [descripcion, setdescripcion] = useState(null);
 
-  const categorias = ["VARIOS", "GASFITERIA", "MECANICA", "SOLDADURA"];
+
   const tiposTrabajos = ["MODIFICACION", "HABILITACION", "VARIOS", "ADECUACION"];
 
   useEffect(() => {
@@ -32,7 +34,21 @@ export const CrearOrden = () => {
       const data = await areas();
       setarea(data);
     }
+
+    const  getCategorias = async () => {
+      const res = await getAllCategorias();
+      console.log(res);
+      setcategorias(res);
+      };
+
+    const getAllUsers = async () => {
+      const res = await getUsers();
+      setusers(res);
+    }  
+    
     getAreas();
+    getCategorias();
+    getAllUsers();
   }, []);
 
   useEffect(() => {
@@ -69,7 +85,9 @@ export const CrearOrden = () => {
       console.log("maquinas: ",maquinas);
     }
     
-  }, [ubicacion])
+  }, [ubicacion]);
+
+  
  
   return (
     <>
@@ -159,17 +177,24 @@ export const CrearOrden = () => {
             <div>
               <p className="mr-2">Categoria</p>
               <select defaultValue={'...'} className="select" id="" onChange={(e) => {
-
+                const nueva = [...especificacion];
+                nueva[0] = e.target.value;
+                setespecificacion(nueva);
               }}>
                 <option disabled={true}>...</option>
                 {categorias.map((c) => <>
-                  <option value={c}>{c}</option>
+                  <option value={c.nombre}>{c.nombre}</option>
                 </>)}
               </select>
             </div>
             <div>
               <p className="mr-2">Tipo de trabajo</p>
-              <select defaultValue={'...'} className="select" id="">
+              <select defaultValue={'...'} className="select" id="" onChange={(e)=>{
+                const nueva = [...especificacion];
+                nueva[1] = e.target.value;
+                setespecificacion(nueva);
+              }      
+              }>
                 <option disabled={true}>...</option>
                 {tiposTrabajos.map((t) => <>
                   <option value={t}>{t}</option>
@@ -178,9 +203,34 @@ export const CrearOrden = () => {
             </div>
             <div>
               <p className="mr-2">Descripcion del trabajo</p>
-              <textarea className="textarea" id=""></textarea>
+              <textarea className="textarea" id="" onChange={(e)=>setdescripcion(e.target.value)}></textarea>
             </div>
           </div>
+         <div className="border-t border-black-200 mt-10">
+          <div className="mt-4"><div className="flex"><label htmlFor="">Solicitante</label> 
+          <select className="select" defaultValue={"..."}>
+            <option defaultChecked={true}>...</option>
+            {users.map((u)=><>
+             <option value={u.name}>{u.name}</option>
+            </>)}
+            </select> <label htmlFor="">Receptor</label> <select className="select" defaultValue={"..."}>
+            <option defaultChecked={true}>...</option>
+            {users.map((u)=><>
+             <option value={u.name}>{u.name}</option>
+            </>)}
+            </select></div>
+            <div className="mt-5">
+              <label htmlFor="">Tecnico 2</label>
+              <select className="select" defaultValue={"..."}>
+            <option defaultChecked={true}>...</option>
+            {users.map((u)=><>
+             <option value={u.name}>{u.name}</option>
+            </>)}
+            </select>
+              </div></div>
+          <div></div>
+         </div>
+
   <div className="my-2 flex items-center justify-center"><button className="btn p-4" type="submit">Send</button></div>
           
         </form>
