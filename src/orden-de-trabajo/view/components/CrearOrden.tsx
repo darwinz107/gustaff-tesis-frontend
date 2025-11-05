@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { CalendarDate, CalendarMonth } from "cally";
 import "cally";
-import { areas, getAllCategorias, getAllCodByArea, getAllMaquinasByCod, getUsers } from "../../controller/api/orden-api";
+import { areas, getAllCategorias, getAllCodByArea, getAllMaquinasByCod, getAllTipoTrabajoByCategoria, getUsers } from "../../controller/api/orden-api";
 import type { Area } from "../../models/areas";
 import type { Codigo } from "../../models/codigos";
 import type { Maquina } from "../../models/maquinas";
@@ -23,9 +23,11 @@ export const CrearOrden = () => {
   const callyPpopover3 = useRef(null);
   const select1 = useRef(null);
   const [descripcion, setdescripcion] = useState(null);
+  const [tipoTrabajoShow, settipoTrabajoShow] = useState(false);
+  const [tipoTrabajos, settipoTrabajos] = useState<{tipo:string}[]>([])
 
 
-  const tiposTrabajos = ["MODIFICACION", "HABILITACION", "VARIOS", "ADECUACION"];
+
 
   useEffect(() => {
     
@@ -86,6 +88,23 @@ export const CrearOrden = () => {
     }
     
   }, [ubicacion]);
+
+  useEffect(() => {
+    
+    if(especificacion[0] != undefined){
+       settipoTrabajoShow(true);
+
+       const setTiposTrabajos = async() => {
+
+        const AlltiposTrabajos = await getAllTipoTrabajoByCategoria(especificacion[0]);
+        settipoTrabajos(AlltiposTrabajos);
+       }
+
+       setTiposTrabajos();
+    }
+
+  }, [especificacion])
+  
 
   
  
@@ -180,6 +199,7 @@ export const CrearOrden = () => {
                 const nueva = [...especificacion];
                 nueva[0] = e.target.value;
                 setespecificacion(nueva);
+
               }}>
                 <option disabled={true}>...</option>
                 {categorias.map((c) => <>
@@ -189,15 +209,15 @@ export const CrearOrden = () => {
             </div>
             <div>
               <p className="mr-2">Tipo de trabajo</p>
-              <select defaultValue={'...'} className="select" id="" onChange={(e)=>{
+              <select defaultValue={'...'} className="select" disabled={!tipoTrabajoShow} onChange={(e)=>{
                 const nueva = [...especificacion];
                 nueva[1] = e.target.value;
                 setespecificacion(nueva);
               }      
               }>
                 <option disabled={true}>...</option>
-                {tiposTrabajos.map((t) => <>
-                  <option value={t}>{t}</option>
+                {tipoTrabajos.map((t) => <>
+                  <option value={t.tipo}>{t.tipo}</option>
                 </>)}
               </select>
             </div>

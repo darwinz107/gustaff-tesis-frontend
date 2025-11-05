@@ -1,5 +1,6 @@
 import { use, useEffect, useState } from "react";
-import { crearCategoria, crearNuevaArea, crearNuevaMaquina, getAllAreas, getAllCategorias } from "../../controller/api/admin-api";
+import { crearCategoria, crearNuevaArea, crearNuevaMaquina, getAllAreas, getAllCategorias, newTipoTrabajo } from "../../controller/api/admin-api";
+import type { CreateTipoTrabajo } from "../../models/create-tipo-trabajo";
 
 
 export const NuevosRegistros = () => {
@@ -11,6 +12,8 @@ export const NuevosRegistros = () => {
   const [maquina, setmaquina] = useState(null);
   const [categoria, setcategoria] = useState(null);
   const [selectArea, setselectArea] = useState(null);
+  const [tipoTrabajo, settipoTrabajo] = useState(null);
+  const [selectTipoCategoria, setselectTipoCategoria] = useState(null);
 
   const getAreas = async () => {
       try {
@@ -77,7 +80,18 @@ export const NuevosRegistros = () => {
     }
   }
 
- 
+  const crearNuevoTipoCategoria = async () => {
+
+    try {
+      const tipoTrabajoValues:CreateTipoTrabajo = {tipo:tipoTrabajo,categoria:selectTipoCategoria} 
+      const res = await newTipoTrabajo(tipoTrabajoValues);
+      alert(res.msj);
+    } catch (error) {
+      console.error("Error al crear nuevo tipo de trabajo: ",error);
+    }
+  }
+
+  
 
 
 
@@ -106,17 +120,18 @@ export const NuevosRegistros = () => {
               </div>
             </div>
             <div className="flex flex-col items-center justify-center border-b border-gray-200">
-              <label htmlFor="">Nuevo tipo de categoria</label><input type="text" className="input mb-4" />
+              <label htmlFor="">Nuevo tipo de trabajo</label><input type="text" className="input mb-4" onChange={(e)=>settipoTrabajo(e.target.value)}/>
               <label htmlFor="">Categoria</label>
               <select className="select"
               defaultValue={"..."}
+              onChange={(e)=>setselectTipoCategoria(e.target.value)}
               >
               <option disabled={true} defaultChecked={true}>...</option>
               {categorias.map((c)=><>
               <option value={c.nombre}>{c.nombre}</option>
               </>)}
               </select>
-              <button className="btn my-4">Crear</button>
+              <button className="btn my-4" onClick={crearNuevoTipoCategoria}>Crear</button>
             </div>
 
           </div>
