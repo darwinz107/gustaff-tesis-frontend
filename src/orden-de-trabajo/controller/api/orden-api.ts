@@ -1,3 +1,5 @@
+import type { SolicitudOrden } from "../../models/solicitudOrden";
+
 const route = "http://localhost:3000/";
 
 
@@ -59,6 +61,19 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{maquina:string}> 
         });
 
         const data = await response.json();
+        return data;
+    }
+
+    export const registerSolicitudOrden = async(solicitudOrden:SolicitudOrden):Promise<{msj:string}>=>{
+        const response:Response = await fetch(`${route}orden-de-trabajo/create/solicitud-orden`,{
+         method:"POST",
+         headers:{
+         "Content-Type":"application/json"
+         },
+         body:JSON.stringify(solicitudOrden)
+        });
+
+        const data = response.json();
         return data;
     }
 

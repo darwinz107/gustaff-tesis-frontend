@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { CalendarDate, CalendarMonth } from "cally";
 import "cally";
-import { areas, getAllCategorias, getAllCodByArea, getAllMaquinasByCod, getAllTipoTrabajoByCategoria, getUsers } from "../../controller/api/orden-api";
+import { areas, getAllCategorias, getAllCodByArea, getAllMaquinasByCod, getAllTipoTrabajoByCategoria, getUsers, registerSolicitudOrden } from "../../controller/api/orden-api";
 import type { Area } from "../../models/areas";
 import type { Codigo } from "../../models/codigos";
 import type { Maquina } from "../../models/maquinas";
+import type { SolicitudOrden } from "../../models/solicitudOrden";
 
 export const CrearOrden = () => {
 
@@ -24,10 +25,10 @@ export const CrearOrden = () => {
   const select1 = useRef(null);
   const [descripcion, setdescripcion] = useState(null);
   const [tipoTrabajoShow, settipoTrabajoShow] = useState(false);
-  const [tipoTrabajos, settipoTrabajos] = useState<{tipo:string}[]>([])
-
-
-
+  const [tipoTrabajos, settipoTrabajos] = useState<{tipo:string}[]>([]);
+  const [solicitante, setsolicitante] = useState("");
+  const [receptor, setreceptor] = useState("");
+  const [tecnico, settecnico] = useState(null);
 
   useEffect(() => {
     
@@ -105,18 +106,43 @@ export const CrearOrden = () => {
 
   }, [especificacion])
   
+  const addSolicitudOrden = async(e:Event) =>{
+       e.preventDefault();
+    try {
+       const infoSolicitud:SolicitudOrden ={
+      fechaInicio:tiempos[0],
+      fechaFinal:tiempos[3],
+      HoraInicio:tiempos[1],
+      HoraFinal:tiempos[2],
+      Area:ubicacion[0],
+      Codigo:ubicacion[1],
+      Maquina:ubicacion[2],
+      EspecificacionMaquina:ubicacion[3],
+      Categoria:especificacion[0],
+      TipoTrabajo:especificacion[1],
+      DescripcionTrabajo:especificacion[2],
+      userSolicitante:solicitante,
+      userReceptor:receptor,
+      userTecnico:tecnico
+    } 
+    const res = await registerSolicitudOrden(infoSolicitud);
+    alert(res.msj);
+    } catch (error) {
+      console.log("Error al generar la solicitud: ",error);
+    }
 
+  }
   
  
   return (
     <>
       <div className='flex items-center justify-center mt-8'>
-        <form className='min-w-170 border border-black-700' action="" onSubmit={(e) => { e.preventDefault(); console.log(ubicacion) }}>
+        <form className='min-w-170 border border-black-700'  onSubmit={(e) => { addSolicitudOrden(e); }}>
           <div className=' mb-4'>
             <p className='border-4 border-black-800 text-center'>Tiempos de trabajo</p>
             <div>
               <div className='flex flex-row mb-3 my-4'>
-                <p>Fecha y hora planificada</p> <button onClick={() => { callyPpopover1.current?.showPopover() }} className="input input-border" id="cally1" style={{ anchorName: "--cally1" }}>
+                <p>Fecha y hora planificada</p> <button type="button" onClick={() => { callyPpopover1.current?.showPopover() }} className="input input-border" id="cally1" style={{ anchorName: "--cally1" }}>
                   Pick a date
                 </button>
                 <div popover="auto" ref={callyPpopover1} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally1" }}>
@@ -228,21 +254,23 @@ export const CrearOrden = () => {
           </div>
          <div className="border-t border-black-200 mt-10">
           <div className="mt-4"><div className="flex"><label htmlFor="">Solicitante</label> 
-          <select className="select" defaultValue={"..."}>
+          <select className="select" defaultValue={"..."} onChange={(e)=>setsolicitante(e.target.value)}>
             <option defaultChecked={true}>...</option>
             {users.map((u)=><>
              <option value={u.name}>{u.name}</option>
             </>)}
-            </select> <label htmlFor="">Receptor</label> <select className="select" defaultValue={"..."}>
-            <option defaultChecked={true}>...</option>
+            </select>
+             <label htmlFor="">Receptor</label> 
+            <select className="select" defaultValue={"..."} onChange={(e)=>setreceptor(e.target.value)}>
+            <option defaultChecked={true} disabled={true}>...</option>
             {users.map((u)=><>
              <option value={u.name}>{u.name}</option>
             </>)}
             </select></div>
             <div className="mt-5">
               <label htmlFor="">Tecnico 2</label>
-              <select className="select" defaultValue={"..."}>
-            <option defaultChecked={true}>...</option>
+              <select className="select" defaultValue={"..."} onChange={(e)=>settecnico(e.target.value)}>
+            <option defaultChecked={true} disabled={true}>...</option>
             {users.map((u)=><>
              <option value={u.name}>{u.name}</option>
             </>)}
@@ -255,8 +283,6 @@ export const CrearOrden = () => {
           
         </form>
       </div>
-
-
     </>
   )
 }
