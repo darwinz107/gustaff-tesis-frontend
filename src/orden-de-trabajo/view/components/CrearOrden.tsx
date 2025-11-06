@@ -6,6 +6,7 @@ import type { Area } from "../../models/areas";
 import type { Codigo } from "../../models/codigos";
 import type { Maquina } from "../../models/maquinas";
 import type { SolicitudOrden } from "../../models/solicitudOrden";
+import { useNavigate } from "react-router-dom";
 
 export const CrearOrden = () => {
 
@@ -29,6 +30,7 @@ export const CrearOrden = () => {
   const [solicitante, setsolicitante] = useState("");
   const [receptor, setreceptor] = useState("");
   const [tecnico, settecnico] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     
@@ -127,6 +129,8 @@ export const CrearOrden = () => {
     } 
     const res = await registerSolicitudOrden(infoSolicitud);
     alert(res.msj);
+    navigate("/pdf");
+
     } catch (error) {
       console.log("Error al generar la solicitud: ",error);
     }
@@ -137,7 +141,7 @@ export const CrearOrden = () => {
   return (
     <>
       <div className='flex items-center justify-center mt-8'>
-        <form className='min-w-170 border border-black-700'  onSubmit={(e) => { addSolicitudOrden(e); }}>
+        <form className='min-w-170 border border-black-700'  onSubmit={(e) => { addSolicitudOrden(e); }} >
           <div className=' mb-4'>
             <p className='border-4 border-black-800 text-center'>Tiempos de trabajo</p>
             <div>

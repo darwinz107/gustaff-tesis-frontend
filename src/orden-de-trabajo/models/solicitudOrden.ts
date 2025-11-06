@@ -15,17 +15,17 @@ export interface SolicitudOrden{
     
     Maquina:string;
     
-    EspecificacionMaquina:string;
+    EspecificacionMaquina:string|null;
     
     Categoria:string;
     
     TipoTrabajo:string;
     
-    DescripcionTrabajo:string;
+    DescripcionTrabajo:string|null;
     
-    userSolicitante:string;
+    userSolicitante:string|object;
     
-    userReceptor:string;
+    userReceptor:string|object;
     
-    userTecnico:string; 
+    userTecnico:string|null; 
 }

@@ -2,10 +2,32 @@ import { Document, Image, Page, PDFViewer, Text, View } from "@react-pdf/rendere
 import {Table, TR, TH, TD} from '@ag-media/react-pdf-table';
 import { styles } from "../../../styles"
 import logo from "../../../../public/logo_alternativo.png"
+import { useEffect, useState } from "react";
+import { getLastSolicitud } from "../../controller/api/orden-api";
+import type { SolicitudOrden } from "../../models/solicitudOrden";
 
 
 
 export const GenerarPdf = () => {
+
+  const [newSolicitud, setnewSolicitud] = useState<SolicitudOrden>();
+
+  useEffect(() => {
+   
+    try {
+        const cargarSolicitud = async() =>{
+       const res = await getLastSolicitud();
+       setnewSolicitud(res);
+       console.log(res);
+    }
+    cargarSolicitud();
+    } catch (error) {
+      console.log(error);
+    }
+  
+
+  }, []);
+  
   return (
     <>
       <PDFViewer width={"100%"} height={"1000vh"}>
@@ -27,25 +49,25 @@ export const GenerarPdf = () => {
             <View style={styles.container}>
               <View style={styles.child}>
                 <Text style={styles.childTitulo}>FECHA DE REQUERIMIENTO:</Text>
-                <Text style={styles.childContenido}>01/10/2025</Text>
+                <Text style={styles.childContenido}>{newSolicitud?.fechaInicio}</Text>
                 </View>
                 <View style={styles.child}>
                 <Text style={styles.childTitulo}>HORA DE REQUERIMIENTO:</Text>
-                <Text style={styles.childContenido}>01/10/2025</Text>
+                <Text style={styles.childContenido}>{newSolicitud?.HoraInicio}</Text>
                 </View>
                 <View style={styles.child}>
                 <Text style={styles.childTitulo}>ÁREA DE TRABAJO</Text>
-                <Text style={styles.childContenido}></Text>
+                <Text style={styles.childContenido}>{newSolicitud?.Area}</Text>
                 </View>
             </View>
              <View style={styles.container}>
               <View style={styles.child}>
                 <Text style={styles.childTitulo}>FECHA DE INICIO PLANIFICADA:</Text>
-                <Text style={styles.childContenido}>10:51:34</Text>
+                <Text style={styles.childContenido}>{newSolicitud?.fechaFinal}</Text>
                 </View>
                 <View style={styles.child}>
                 <Text style={styles.childTitulo}>HORA DE REQUERIMIENTO:</Text>
-                <Text style={styles.childContenido}>10:51:34</Text>
+                <Text style={styles.childContenido}>{newSolicitud?.HoraFinal}</Text>
                 </View>
                 <View style={styles.child}>
                 <View style={styles.orden}>
@@ -63,8 +85,8 @@ export const GenerarPdf = () => {
                 <TD style={styles.td}>TIPO DE TRABAJO</TD>
               </TH>
               <TR style={styles.tr}>
-                <TD style={styles.td}>MECÁNICA</TD>
-                <TD style={styles.td}>FABRICACION</TD>
+                <TD style={styles.td}>{newSolicitud?.Categoria}</TD>
+                <TD style={styles.td}>{newSolicitud?.TipoTrabajo}</TD>
               </TR>
              </Table>
             </View>
@@ -75,8 +97,8 @@ export const GenerarPdf = () => {
                 <TD style={styles.td}>NOMBRE DE MÁQUINA, EQUIPO O PIEZA</TD>
               </TH>
               <TR style={styles.tr}>
-                <TD style={styles.td}>N/A</TD>
-                <TD style={styles.td}>TEMPERADORA NUEVA</TD>
+                <TD style={styles.td}>{newSolicitud?.Codigo}</TD>
+                <TD style={styles.td}>{newSolicitud?.Maquina}</TD>
               </TR>
              </Table>
             </View>
@@ -87,23 +109,23 @@ export const GenerarPdf = () => {
                 
               </TH>
               <TR style={styles.tr}>
-                <TD style={styles.textArea}>FABRICACION Y HABILITACION DE SISTEMAS DE AGUA PARA LA TEMPERADORA 
+                <TD style={styles.textArea}>{newSolicitud?.DescripcionTrabajo} 
 </TD>                
               </TR>
              </Table>
             </View>
              <View style={styles.containerFirmas}>
               <View style={styles.childFirma}>  
-                <Text style={styles.childContenido}>Darwin Zambrano</Text>
+                <Text style={styles.childContenido}>{newSolicitud?.userSolicitante.name}</Text>
                 <Text >SOLICITA</Text>              
                 </View> 
                 <View style={styles.childFirma}>  
-                <Text style={styles.childContenido}>   </Text>
+                <Text style={styles.childContenido}>             </Text>
                 <Text >COOR. DE MANTENIMIENTO</Text> 
                 <Text>VERIFICACIÓN</Text>             
                 </View>
                 <View style={styles.childFirma}>  
-                <Text style={styles.childContenido}>Jhonson Cando</Text>
+                <Text style={styles.childContenido}>{newSolicitud?.userReceptor.name}</Text>
                 <Text >RECIBE</Text>              
                 </View>              
             </View>

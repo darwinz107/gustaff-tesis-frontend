@@ -73,9 +73,18 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{maquina:string}> 
          body:JSON.stringify(solicitudOrden)
         });
 
-        const data = response.json();
+        const data = await response.json();
         return data;
     }
 
+    
+    export const getLastSolicitud = async():Promise<{solicitudOrden:SolicitudOrden}> => {
 
+        const response:Response = await fetch(`${route}orden-de-trabajo/last/solicitud`,{
+       method:"GET"
+        });
+
+        const data = await response.json();
+        return data;
+    }
     
