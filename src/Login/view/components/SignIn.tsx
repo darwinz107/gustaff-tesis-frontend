@@ -27,8 +27,8 @@ export const SignIn = () => {
   return (
     <>
     
-        <div className='flex py-10 w-200 h-100 border border-gray-200 rounded-md'>
-            <div className='p-2 flex items-center justify-center w-1/2'>
+        <div className='flex  w-200 h-100 border border-gray-200 rounded-md'>
+            <div className='p-2 flex items-center justify-center w-1/2 flex flex-col'>
                 <form className='flex flex-col items-center'  onSubmit={(e)=>validateLogin(e)}>
                     <div className='flex flex-col'>
                         <input className="input mb-2 w-70" type="text" name="" id="" placeholder='user' onChange={(e)=>setuser(e.target.value)}/>
@@ -36,11 +36,12 @@ export const SignIn = () => {
                     </div>  
                     <button className="btn w-30" type="submit" >Sign In</button>
                 </form>
+                <div> <a href="#" className='hover:underline'>Restaurar la contraseña</a></div>
             </div>
             <div className='h-full border-l border-gray-200'></div>
-            <div className='p-2 w-1/2 flex items-center justify-center'>
+            <div className=' w-1/2 flex items-center justify-center'>
                 
-                <button className="btn" onClick={()=>navigate("/registrar")}>SignUp</button>
+              <img className='h-full w-full' src="public\red-and-blue-pillars-wallpaper-abstract-background-picjumbo-com.jpeg" alt="" />
             </div>
         </div>
     

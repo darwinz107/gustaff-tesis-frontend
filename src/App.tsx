@@ -39,13 +39,22 @@ function App() {
     <>
       
       
-      <div className='flex relative h-screen w-auto bg-pink-200'>
+      <div className='flex  h-screen w-auto bg-pink-200'>
         <div className='absolute inset-y-0 left-0 h-full w-1/5 z-20 bg-white border-r border-gray-300 flex flex-col'>
-        <img src="public\gustaff_logo.jpg" className='cursor-pointer mb-7' alt="Gustaff S.A" />
+        <img src="public\logo_alternativo.png" className='cursor-pointer my-7' alt="Gustaff S.A" />
         <div className='flex flex-col h-full'> 
-          
-      <button className="btn w-full" onClick={()=>navigate('/orden-de-trabajo')}>Orden de trabajo</button>
-      <button className="btn w-full" onClick={logout}>Cerrar sesion</button>
+   <div className='min-w-min border-y border-gray-300 mx-4'>
+     <div className="w-full dropdown dropdown-hover" >
+  <div tabIndex={0} role="button" className="btn w-full border-none">Orden de trabajo </div>
+  <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
+    <li><a onClick={()=>navigate('/crear-orden')}>Generar</a></li>
+    <li><a>Historial</a></li>
+  </ul>
+</div>
+      <button className="btn w-full border-none" onClick={logout}>Cerrar sesion</button>
+   </div>
+     
+
       </div>
         </div>
         <div className='h-full w-1/5 bg-white'>

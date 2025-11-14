@@ -17,7 +17,7 @@ createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
     <Routes>
      <Route path='/' element={<LoginMain></LoginMain>}></Route> 
-     <Route path='/principal' element={<ProtectRoute route={<App></App>}></ProtectRoute>}></Route>
+     <Route path='/principal' element={<ProtectRoute route={<OrdenTrabjoMain></OrdenTrabjoMain>}></ProtectRoute>}></Route>
      <Route path='/orden-de-trabajo' element={<OrdenTrabjoMain></OrdenTrabjoMain>}></Route>
      <Route path='/crear-orden' element={<CrearOrden></CrearOrden>}></Route>
      <Route path='/login' element={<LoginMain></LoginMain>}></Route>
