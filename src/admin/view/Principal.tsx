@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { CrearOrden } from "../../orden-de-trabajo/view/components/CrearOrden";
 import { HistorialOrdenes } from "../../orden-de-trabajo/view/components/HistorialOrdenes";
 import { VerDetalles } from "../../orden-de-trabajo/view/components/VerDetalles";
+import { AdministrarUsuarios } from "./components/administrarUsuarios";
 
 
 
@@ -29,7 +30,8 @@ try {
         0:<></>,
         1:<CrearOrden></CrearOrden>,
         2:<HistorialOrdenes setValidate={setventanaEmergente}></HistorialOrdenes>,
-        3:<NuevosRegistros></NuevosRegistros>
+        3:<NuevosRegistros></NuevosRegistros>,
+        4:<AdministrarUsuarios></AdministrarUsuarios>
       }
     
       const [cargarComponente, setcargarComponente] = useState(0);
@@ -47,7 +49,7 @@ try {
   <div tabIndex={0} role="button" className="btn w-full border-none" >Usuarios</div>
   <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
     <li><a >Registrar</a></li>
-    <li><a>Administrar</a></li>
+    <li><a onClick={()=>setcargarComponente(4)}>Administrar</a></li>
   </ul>
 </div>
   <div className="w-full dropdown dropdown-hover" >
