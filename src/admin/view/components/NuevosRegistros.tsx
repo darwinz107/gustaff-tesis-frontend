@@ -101,16 +101,19 @@ export const NuevosRegistros = () => {
         <div className='flex items-center justify-center w-4/5 bg-white h-full'>
           <div className="min-w-150 min-h-150 border border-gray-200 bg-gray-50 flex flex-col justify-center" action="" method="post">
 
-            <div className="flex flex-col items-center justify-center border-b border-gray-200"><label htmlFor="">Nueva area </label><input type="text" className="input mb-2" onChange={(e)=>setnewArea(e.target.value)}/>
+            <div className="flex flex-col items-center justify-center border-b border-gray-200">
+              <div className="bg-gray-200 w-full h-9 flex items-center justify-center mb-2"><p className="">Area</p></div>
+              <label htmlFor="">Nueva area </label><input type="text" className="input mb-2" onChange={(e)=>setnewArea(e.target.value)}/>
             
             <button className="btn my-4" onClick={crearArea}>Crear</button>
             </div>
-            <div className="flex flex-col items-center justify-center border-b border-gray-200"><div><label htmlFor="">Nueva maquina </label><input type="text" className="input" onChange={(e)=>setmaquina(e.target.value)}/></div>
+            <div className="flex flex-col items-center justify-center border-b border-gray-200">
+              <div className="flex "><div className="mr-6"><label htmlFor="">Nueva maquina </label><input type="text" className="input" onChange={(e)=>setmaquina(e.target.value)}/></div>
               <div><label htmlFor="">Area </label> <select className="select" id="" defaultValue={"..."} onChange={(e)=>setselectArea(e.target.value)}><option  disabled={true} defaultChecked={true}>...</option>
               {areas.map((a)=><>
               <option value={a.nombre}>{a.nombre}</option>
               </>)}
-              </select></div>
+              </select></div></div>
               <button className="btn my-4" onClick={crearMaquina}>Crear</button>
             </div>
             <div>
@@ -119,9 +122,10 @@ export const NuevosRegistros = () => {
                 <button className="btn my-4" onClick={crearNuevaCategoria}>Crear</button>
               </div>
             </div>
-            <div className="flex flex-col items-center justify-center border-b border-gray-200">
-              <label htmlFor="">Nuevo tipo de trabajo</label><input type="text" className="input mb-4" onChange={(e)=>settipoTrabajo(e.target.value)}/>
-              <label htmlFor="">Categoria</label>
+            <div className="flex flex-col items-center justify-center border-b border-gray-200 mx-2">
+             <div className="flex w-full"> 
+             <div className="w-3/1 mr-4"> <label htmlFor="">Nuevo tipo de trabajo</label><input type="text" className="input mb-4" onChange={(e)=>settipoTrabajo(e.target.value)}/></div>
+            <div className="w-3/1">  <label htmlFor="">Categoria</label>
               <select className="select"
               defaultValue={"..."}
               onChange={(e)=>setselectTipoCategoria(e.target.value)}
@@ -130,10 +134,26 @@ export const NuevosRegistros = () => {
               {categorias.map((c)=><>
               <option value={c.nombre}>{c.nombre}</option>
               </>)}
-              </select>
+              </select></div>
+              </div>
               <button className="btn my-4" onClick={crearNuevoTipoCategoria}>Crear</button>
             </div>
-
+ <div className="flex flex-col items-center justify-center border-b border-gray-200 mx-2">
+             <div className="flex w-full"> 
+             <div className="w-3/1 mr-4"> <label htmlFor="">Nuevo cargo</label><input type="text" className="input mb-4" onChange={(e)=>settipoTrabajo(e.target.value)}/></div>
+            <div className="w-3/1">  <label htmlFor="">Rol</label>
+              <select className="select"
+              defaultValue={"..."}
+              onChange={(e)=>setselectTipoCategoria(e.target.value)}
+              >
+              <option disabled={true} defaultChecked={true}>...</option>
+              {categorias.map((c)=><>
+              <option value={c.nombre}>{c.nombre}</option>
+              </>)}
+              </select></div>
+              </div>
+              <button className="btn my-4" onClick={crearNuevoTipoCategoria}>Crear</button>
+            </div>
           </div>
         </div>
      

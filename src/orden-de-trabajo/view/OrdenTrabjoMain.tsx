@@ -5,10 +5,12 @@ import { logoutSession } from '../../Principal/controller/api/auth-api'
 import { CrearOrden } from './components/CrearOrden'
 import { HistorialOrdenes } from './components/HistorialOrdenes'
 import { VerDetalles } from './components/VerDetalles'
+import { useNavigate } from 'react-router-dom'
 
 
 export const OrdenTrabjoMain = () => {
 
+   const navigate = useNavigate();
    const [ventanaEmergente, setventanaEmergente] = useState(false);
 
    const logout = async () =>{
@@ -25,13 +27,13 @@ export const OrdenTrabjoMain = () => {
   }
 
   const componentes = 
-  {
-    0:<></>,
-    1:<CrearOrden></CrearOrden>,
-    2:<HistorialOrdenes setValidate={setventanaEmergente}></HistorialOrdenes>
-  }
+  [
+    <></>,
+    <CrearOrden></CrearOrden>,
+    <HistorialOrdenes setValidate={setventanaEmergente}></HistorialOrdenes>
+  ]
 
-  const [cargarComponente, setcargarComponente] = useState(0);
+  const [cargarComponente, setcargarComponente] = useState<number>(0);
 
   return (
       <>
