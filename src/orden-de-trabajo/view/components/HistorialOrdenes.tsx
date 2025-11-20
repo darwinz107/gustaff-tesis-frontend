@@ -1,9 +1,9 @@
 
 import React, { useState } from 'react'
 
-export const HistorialOrdenes = () => {
+export const HistorialOrdenes = ({setValidate}) => {
 
-    const [ventanaEmergente, setventanaEmergente] = useState(false);
+   
 
     return (
         <>
@@ -28,7 +28,7 @@ export const HistorialOrdenes = () => {
                                 <td>Cy Ganderton</td>
                                 <td>Quality Control Specialist</td>
                                 <td>Blue</td>
-                                <td onClick={() => setventanaEmergente(true)} className='cursor-pointer'>🔎</td>
+                                <td onClick={() => {setValidate(true);}} className='cursor-pointer'>🔎</td>
                             </tr>
                             {/* row 2 */}
                             <tr className="hover:bg-base-300">
@@ -54,7 +54,7 @@ export const HistorialOrdenes = () => {
                 </div>
             </div>
 
-            <div className={`border border-gray-300 w-4/5 h-4/5 rounded-sm fixed  bg-white top-[50%] left-[50%] transform-[translate(-50%,-200%)] ${ventanaEmergente ? "" : "transform-[translate(-50%,-50%)]"} `}><div className='w-full h-1/2 flex justify-between p-5'><div>Listado de ordenes</div><div onClick={() => setventanaEmergente(!ventanaEmergente)} className='cursor-pointer'>❌</div></div></div>
+            
         </>
     )
 }

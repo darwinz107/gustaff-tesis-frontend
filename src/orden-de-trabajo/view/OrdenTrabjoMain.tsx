@@ -4,9 +4,12 @@ import {NavBar} from './components/NavBar'
 import { logoutSession } from '../../Principal/controller/api/auth-api'
 import { CrearOrden } from './components/CrearOrden'
 import { HistorialOrdenes } from './components/HistorialOrdenes'
+import { VerDetalles } from './components/VerDetalles'
 
 
 export const OrdenTrabjoMain = () => {
+
+   const [ventanaEmergente, setventanaEmergente] = useState(false);
 
    const logout = async () =>{
     try {
@@ -25,7 +28,7 @@ export const OrdenTrabjoMain = () => {
   {
     0:<></>,
     1:<CrearOrden></CrearOrden>,
-    2:<HistorialOrdenes></HistorialOrdenes>
+    2:<HistorialOrdenes setValidate={setventanaEmergente}></HistorialOrdenes>
   }
 
   const [cargarComponente, setcargarComponente] = useState(0);
@@ -35,7 +38,7 @@ export const OrdenTrabjoMain = () => {
       
       
       <div className='flex  h-screen w-auto bg-pink-200'>
-        <div className='absolute inset-y-0 left-0 h-full w-1/5 z-20 bg-white border-r border-gray-300 flex flex-col'>
+        <div className='absolute inset-y-0 left-0 h-full w-1/5 z-0 bg-white border-r border-gray-300 flex flex-col'>
         <img src="public\logo_alternativo.png" className='cursor-pointer my-7' alt="Gustaff S.A" onClick={()=>setcargarComponente(0)}/>
         <div className='flex flex-col h-full'> 
    <div className='min-w-min border-y border-gray-300 mx-4'>
@@ -62,6 +65,7 @@ export const OrdenTrabjoMain = () => {
         
      </div>
 </div>
+<VerDetalles setventanaEmergente={setventanaEmergente} ventanaEmergente={ventanaEmergente}></VerDetalles>
     </>
   )
 }

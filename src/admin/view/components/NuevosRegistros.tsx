@@ -8,7 +8,7 @@ export const NuevosRegistros = () => {
   const [areas, setareas] = useState<{ nombre: string }[]>([]);
   const [categorias, setcategorias] = useState<{nombre:string}[]>([]);
   const [newArea, setnewArea] = useState(null);
-  const [newCod, setnewCod] = useState(null);
+  
   const [maquina, setmaquina] = useState(null);
   const [categoria, setcategoria] = useState(null);
   const [selectArea, setselectArea] = useState(null);
@@ -50,7 +50,7 @@ export const NuevosRegistros = () => {
     try {
       console.log(newArea);
       
-      const res = await crearNuevaArea({area:newArea,cod:newCod});
+      const res = await crearNuevaArea({area:newArea});
       alert(res.msj);
        console.log(res);
       getAreas();
@@ -102,7 +102,7 @@ export const NuevosRegistros = () => {
           <div className="min-w-150 min-h-150 border border-gray-200 bg-gray-50 flex flex-col justify-center" action="" method="post">
 
             <div className="flex flex-col items-center justify-center border-b border-gray-200"><label htmlFor="">Nueva area </label><input type="text" className="input mb-2" onChange={(e)=>setnewArea(e.target.value)}/>
-            <label htmlFor="">Codigo</label> <input type="text" className="input" onChange={(e)=>setnewCod(e.target.value)}/>
+            
             <button className="btn my-4" onClick={crearArea}>Crear</button>
             </div>
             <div className="flex flex-col items-center justify-center border-b border-gray-200"><div><label htmlFor="">Nueva maquina </label><input type="text" className="input" onChange={(e)=>setmaquina(e.target.value)}/></div>
