@@ -6,14 +6,16 @@ import type { CreateTipoTrabajo } from "../../models/create-tipo-trabajo";
 export const NuevosRegistros = () => {
 
   const [areas, setareas] = useState<{ nombre: string }[]>([]);
-  const [categorias, setcategorias] = useState<{nombre:string}[]>([]);
+  const [rol, setrol] = useState<{ nombre: string }[]>([])
   const [newArea, setnewArea] = useState(null);
   
   const [maquina, setmaquina] = useState(null);
   const [categoria, setcategoria] = useState(null);
   const [selectArea, setselectArea] = useState(null);
   const [tipoTrabajo, settipoTrabajo] = useState(null);
-  const [selectTipoCategoria, setselectTipoCategoria] = useState(null);
+  const [selectRol, setselectRol] = useState();
+  const [cargo, setcargo] = useState();
+
 
   const getAreas = async () => {
       try {
@@ -80,20 +82,16 @@ export const NuevosRegistros = () => {
     }
   }
 
-  const crearNuevoTipoCategoria = async () => {
+  const crearNuevoTipoTrabajo = async () => {
 
     try {
-      const tipoTrabajoValues:CreateTipoTrabajo = {tipo:tipoTrabajo,categoria:selectTipoCategoria} 
-      const res = await newTipoTrabajo(tipoTrabajoValues);
+    
+      const res = await newTipoTrabajo({tipo:tipoTrabajo});
       alert(res.msj);
     } catch (error) {
       console.error("Error al crear nuevo tipo de trabajo: ",error);
     }
   }
-
-  
-
-
 
   return (
     <>
@@ -123,20 +121,11 @@ export const NuevosRegistros = () => {
               </div>
             </div>
             <div className="flex flex-col items-center justify-center border-b border-gray-200 mx-2">
-             <div className="flex w-full"> 
-             <div className="w-3/1 mr-4"> <label htmlFor="">Nuevo tipo de trabajo</label><input type="text" className="input mb-4" onChange={(e)=>settipoTrabajo(e.target.value)}/></div>
-            <div className="w-3/1">  <label htmlFor="">Categoria</label>
-              <select className="select"
-              defaultValue={"..."}
-              onChange={(e)=>setselectTipoCategoria(e.target.value)}
-              >
-              <option disabled={true} defaultChecked={true}>...</option>
-              {categorias.map((c)=><>
-              <option value={c.nombre}>{c.nombre}</option>
-              </>)}
-              </select></div>
+             <div className="flex  w-full flex-col items-center justify-center"> 
+              <label htmlFor="">Nuevo tipo de trabajo</label><input type="text" className="input" onChange={(e)=>settipoTrabajo(e.target.value)}/>
+           
               </div>
-              <button className="btn my-4" onClick={crearNuevoTipoCategoria}>Crear</button>
+              <button className="btn my-4" onClick={crearNuevoTipoTrabajo}>Crear</button>
             </div>
  <div className="flex flex-col items-center justify-center border-b border-gray-200 mx-2">
              <div className="flex w-full"> 
@@ -147,8 +136,8 @@ export const NuevosRegistros = () => {
               onChange={(e)=>setselectTipoCategoria(e.target.value)}
               >
               <option disabled={true} defaultChecked={true}>...</option>
-              {categorias.map((c)=><>
-              <option value={c.nombre}>{c.nombre}</option>
+              {rol.map((r)=><>
+              <option value={r.nombre}>{r.nombre}</option>
               </>)}
               </select></div>
               </div>
