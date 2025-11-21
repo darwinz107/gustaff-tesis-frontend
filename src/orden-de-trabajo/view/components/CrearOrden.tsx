@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { CalendarDate, CalendarMonth } from "cally";
 import "cally";
-import { areas, getAllCategorias, getAllCodByArea, getAllMaquinasByCod, getAllTipoTrabajoByCategoria, getUsers, registerSolicitudOrden } from "../../controller/api/orden-api";
+import { areas, getAllCategorias, getAllCodByArea, getAllMaquinasByCod, getAllTipoTrabajoByCategoria, registerSolicitudOrden } from "../../controller/api/orden-api";
 import type { Area } from "../../models/areas";
 import type { Codigo } from "../../models/codigos";
 import type { Maquina } from "../../models/maquinas";
 import type { SolicitudOrden } from "../../models/solicitudOrden";
 import { useNavigate } from "react-router-dom";
+import { getUsers } from "../../../user/controller/api/user-api";
 
 export const CrearOrden = () => {
 

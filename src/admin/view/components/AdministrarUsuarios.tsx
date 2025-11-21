@@ -1,12 +1,25 @@
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { NuevoUsuario } from './NuevoUsuario';
+import { getUsers } from '../../../user/controller/api/user-api';
+import type { Users } from '../../models/users';
 
 export const AdministrarUsuarios = () => {
+
   const [ventanaEmergente, setventanaEmergente] = useState(false);
-  const [users, setusers] = useState<{ nombre: string, cargo: string, fechaNac: string }[]>([{ nombre: "darwin", cargo: "programador", fechaNac: "12/05/2000" }])
+  const [users, setusers] = useState<Users[]>([])
   const [habilitarEdicion, sethabilitarEdicion] = useState(false);
-  const [ventanaCrearUsuario, setventanaCrearUsuario] = useState(false)
+  const [ventanaCrearUsuario, setventanaCrearUsuario] = useState(false);
+  const [validarCambio, setvalidarCambio] = useState(false);
+
+   useEffect(() => {
+   const obtenerUsers = async () =>{
+     const getUsersbyApi = await getUsers();
+     setusers(getUsersbyApi);
+   };
+   obtenerUsers();
+  }, [validarCambio]);
+
   return (
     <>
       <div className='min-w-[70%] min-h-[60%] rounded-xl border border-gray-200'>
@@ -34,9 +47,10 @@ export const AdministrarUsuarios = () => {
             <thead >
               <tr>
 
-                <th>Name</th>
-                <th>Job</th>
-                <th>Favorite Color</th>
+                <th>Nombre</th>
+                <th>Telefono</th>
+                <th>Email</th>
+                <th>Cargo</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -46,17 +60,18 @@ export const AdministrarUsuarios = () => {
                   <tr>
 
                     <td>
-                      {u.nombre}
+                      {u.name}
                     </td>
                     <td>
-                      {u.cargo}
+                      {u.cellphone}
 
                     </td>
-                    <td>{u.fechaNac}</td>
-                    <th>
+                    <td>{u.email}</td>
+                    <td>{u.cargoId.name}</td>
+                    <td>
                       <button className="btn btn-ghost btn-xs" onClick={() => setventanaEmergente(!ventanaEmergente)}>Detalles</button>
                       <button className="btn btn-ghost btn-xs">Eliminar</button>
-                    </th>
+                    </td>
                   </tr>
                 </>)}
 
@@ -99,9 +114,12 @@ export const AdministrarUsuarios = () => {
             <button className='btn' onClick={() => { setventanaEmergente(!ventanaEmergente); console.log(ventanaEmergente) }}>Cerrar</button></>}
         </div>
       </div>
-      <div className={`z-10 border border-gray-300 w-4/5 h-4/5 rounded-sm fixed  bg-white top-[50%] left-[50%]  ${ventanaCrearUsuario ? "-translate-x-1/2 -translate-y-[50%]" : "-translate-x-1/2 -translate-y-[200%]"} `}>
-      <NuevoUsuario showCrearUsuario={ventanaCrearUsuario} setshowCrearUsuario={setventanaCrearUsuario}></NuevoUsuario>
+      <div className={`z-10 fixed  bg-transparent inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaCrearUsuario ? "opacity-100" : "opacity-0 pointer-events-none"} `}>
+      <div className={`border border-gray-300 w-4/5 h-4/5 rounded-sm fixed  bg-white`}>
+      <NuevoUsuario setconfirmarCambio={setvalidarCambio}  showCrearUsuario={ventanaCrearUsuario} setshowCrearUsuario={setventanaCrearUsuario}></NuevoUsuario>
       </div>
+      </div>
+      
     </>
   )
 }

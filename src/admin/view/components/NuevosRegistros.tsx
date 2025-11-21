@@ -1,21 +1,31 @@
 import { use, useEffect, useState } from "react";
-import { crearCategoria, crearNuevaArea, crearNuevaMaquina, getAllAreas, getAllCategorias, newTipoTrabajo } from "../../controller/api/admin-api";
+import { crearCargo, crearCategoria, crearNuevaArea, crearNuevaMaquina, crearUsuario, getAllAreas, getAllCategorias, getAllRoles, newTipoTrabajo } from "../../controller/api/admin-api";
 import type { CreateTipoTrabajo } from "../../models/create-tipo-trabajo";
 
 
 export const NuevosRegistros = () => {
-
-  const [areas, setareas] = useState<{ nombre: string }[]>([]);
-  const [rol, setrol] = useState<{ nombre: string }[]>([])
-  const [newArea, setnewArea] = useState(null);
   
-  const [maquina, setmaquina] = useState(null);
-  const [categoria, setcategoria] = useState(null);
-  const [selectArea, setselectArea] = useState(null);
-  const [tipoTrabajo, settipoTrabajo] = useState(null);
-  const [selectRol, setselectRol] = useState();
-  const [cargo, setcargo] = useState();
+  //const [user, setuser] = useState("");
+  const [areas, setareas] = useState<{ nombre: string }[]>([]);
+  const [rol, setrol] = useState<{ id:number,role: string }[]>([])
+  const [newArea, setnewArea] = useState("");
+  const [cambioRealizado, setcambioRealizado] = useState(false);
+  const [maquina, setmaquina] = useState("");
+  const [categoria, setcategoria] = useState("");
+  const [selectArea, setselectArea] = useState("");
+  const [tipoTrabajo, settipoTrabajo] = useState("");
+  const [selectRol, setselectRol] = useState(0);
+  const [cargo, setcargo] = useState("");
 
+
+ /* const crearNuevoUsuario = async () => {
+  try {
+   
+  } catch (error) {
+   
+  }
+    
+  }*/
 
   const getAreas = async () => {
       try {
@@ -24,27 +34,25 @@ export const NuevosRegistros = () => {
         setareas(res);
       } catch (error) {
         console.error("Error al cargar las areas: ", error);
-        
       }
     }
 
-     const getCategorias = async () => {
-    try {
-      const res = await getAllCategorias();
-      setcategorias(res);
+     const getRoles = async () => {
+      try {
+        const res = await getAllRoles();
+        
+        setrol(res);
+      } catch (error) {
+        console.error("Error al cargar los roles: ", error);
 
-    } catch (error) {
-      console.error("Error al cargar las categorias: ", error);
+      }
     }
-  }
 
 
   useEffect(() => {
     
     getAreas();
-    getCategorias();
-
-    
+    getRoles();
   }, []);
 
 
@@ -76,7 +84,7 @@ export const NuevosRegistros = () => {
     try {
      const res = await crearCategoria({nombre:categoria});
       alert(res.msj);
-      getCategorias();
+      
     } catch (error) {
       console.error("Error al crear nueva categoria: ",error);
     }
@@ -87,6 +95,17 @@ export const NuevosRegistros = () => {
     try {
     
       const res = await newTipoTrabajo({tipo:tipoTrabajo});
+      alert(res.msj);
+    } catch (error) {
+      console.error("Error al crear nuevo tipo de trabajo: ",error);
+    }
+  }
+
+  const crearNuevoCargo = async () => {
+
+    try {
+    
+      const res = await crearCargo({rol:selectRol,cargo:cargo});
       alert(res.msj);
     } catch (error) {
       console.error("Error al crear nuevo tipo de trabajo: ",error);
@@ -107,7 +126,10 @@ export const NuevosRegistros = () => {
             </div>
             <div className="flex flex-col items-center justify-center border-b border-gray-200">
               <div className="flex "><div className="mr-6"><label htmlFor="">Nueva maquina </label><input type="text" className="input" onChange={(e)=>setmaquina(e.target.value)}/></div>
-              <div><label htmlFor="">Area </label> <select className="select" id="" defaultValue={"..."} onChange={(e)=>setselectArea(e.target.value)}><option  disabled={true} defaultChecked={true}>...</option>
+              <div>
+                <label htmlFor="">Area </label> 
+              <select className="select" id="" defaultValue={"..."} onChange={(e)=>setselectArea(e.target.value)}>
+                <option  disabled={true} defaultChecked={true}>...</option>
               {areas.map((a)=><>
               <option value={a.nombre}>{a.nombre}</option>
               </>)}
@@ -129,19 +151,19 @@ export const NuevosRegistros = () => {
             </div>
  <div className="flex flex-col items-center justify-center border-b border-gray-200 mx-2">
              <div className="flex w-full"> 
-             <div className="w-3/1 mr-4"> <label htmlFor="">Nuevo cargo</label><input type="text" className="input mb-4" onChange={(e)=>settipoTrabajo(e.target.value)}/></div>
+             <div className="w-3/1 mr-4"> <label htmlFor="">Nuevo cargo</label><input type="text" className="input mb-4" onChange={(e)=>setcargo(e.target.value)}/></div>
             <div className="w-3/1">  <label htmlFor="">Rol</label>
               <select className="select"
               defaultValue={"..."}
-              onChange={(e)=>setselectTipoCategoria(e.target.value)}
+              onChange={(e)=>setselectRol(e.target.value)}
               >
               <option disabled={true} defaultChecked={true}>...</option>
               {rol.map((r)=><>
-              <option value={r.nombre}>{r.nombre}</option>
+              <option value={r.id}>{r.role}</option>
               </>)}
               </select></div>
               </div>
-              <button className="btn my-4" onClick={crearNuevoTipoCategoria}>Crear</button>
+              <button className="btn my-4" onClick={crearNuevoCargo}>Crear</button>
             </div>
           </div>
         </div>
