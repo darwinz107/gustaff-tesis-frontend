@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { crearUsuario, getAllCargos } from '../../controller/api/admin-api';
 
-export const NuevoUsuario = ({showCrearUsuario,setshowCrearUsuario,setconfirmarCambio}) => {
+export const NuevoUsuario = ({showCrearUsuario,setshowCrearUsuario,setconfirmarCambio,cargos}) => {
 
   const [selectFechaNac, setselectFechaNac] = useState("");
   const [nombre, setnombre] = useState("");
@@ -10,18 +10,11 @@ export const NuevoUsuario = ({showCrearUsuario,setshowCrearUsuario,setconfirmarC
   const [celular, setcelular] = useState(0);
   const [email, setemail] = useState("");
   const [contrasenia, setcontrasenia] = useState("");
-  const [cargos, setcargos] = useState<{ id:number,name: string}[]>([]);
+  
   const [selectCargo, setselectCargo] = useState(0);
   const callyPpopover3 = useRef(null);
 
-  useEffect(() => {
-   const asignarCargos = async () =>{
-    const traerCargos = await getAllCargos();
-    console.log(traerCargos);
-    setcargos(traerCargos);
-   };
-   asignarCargos();
-  }, []);
+ 
   
   const crearNuevoUsuario = async() =>{
 try {
@@ -40,7 +33,7 @@ try {
     <>
     
         <div className='w-full h-[12%] flex justify-between p-5 '>
-          <div>Listado de ordenes</div>
+          <div>Crear Usuario</div>
           <div onClick={() =>  setshowCrearUsuario(!showCrearUsuario)} className='cursor-pointer'>❌</div>
         </div>
         <div className='w-full h-[76%] border-y border-gray-300 px-4 flex'>

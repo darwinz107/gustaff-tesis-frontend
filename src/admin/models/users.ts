@@ -2,6 +2,8 @@ export interface Users {
 
     name: string;
 
+    fechaNacimiento:string;
+
     cellphone: number;
 
 
