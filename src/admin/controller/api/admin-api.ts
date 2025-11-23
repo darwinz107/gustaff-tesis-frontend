@@ -137,4 +137,16 @@ export const getAllCargos = async (): Promise<{ id:number,name: string}[]> => {
 }
 
 
+export const actualizarUsuario = async (id:number,infoActualizada: object): Promise<{ msj: string }> => {
+  
+  const response: Response = await fetch(`${route}admin/user/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(infoActualizada)
+  });
 
+  const data = await response.json();
+  return data;
+}

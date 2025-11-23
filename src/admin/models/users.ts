@@ -1,9 +1,11 @@
 export interface Users {
 
+    id: number;
     name: string;
 
     fechaNac:string;
 
+    identification: number;
     cellphone: number;
 
 

@@ -1,9 +1,9 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import { NuevoUsuario } from './NuevoUsuario';
-import { getUsers } from '../../../user/controller/api/user-api';
+import { getOneUser, getUsers } from '../../../user/controller/api/user-api';
 import type { Users } from '../../models/users';
-import { getAllCargos } from '../../controller/api/admin-api';
+import { actualizarUsuario, getAllCargos } from '../../controller/api/admin-api';
 
 export const AdministrarUsuarios = () => {
 
@@ -41,6 +41,47 @@ export const AdministrarUsuarios = () => {
    };
    obtenerUsers();
   }, [validarCambio]);
+
+  const detalleUsuario = async (id:number) =>{
+      const infoUsuario = await getOneUser(id);
+      setasignarDetalle(infoUsuario);
+      console.log(infoUsuario);
+     };
+
+      const actualizarInfoUsuario = async () =>{
+      
+        if(contrasenia===""){
+           const newInfoUsuario = {
+        name: asignarDetalle.name,
+        fechaNac: asignarDetalle.fechaNac,
+        identification: asignarDetalle.identification,
+        cellphone: asignarDetalle.cellphone,
+        email: asignarDetalle.email,
+       
+        cargoId: selectCargo
+
+        
+      }
+
+      const res = await actualizarUsuario(asignarDetalle.id, newInfoUsuario);
+      alert(res.msj);
+        }else{
+ const newInfoUsuario = {
+        name: asignarDetalle.name,
+        fechaNac: asignarDetalle.fechaNac,
+        identification: asignarDetalle.identification,
+        cellphone: asignarDetalle.cellphone,
+        email: asignarDetalle.email,
+        password: asignarDetalle.password,
+        cargoId: selectCargo
+      }
+        const res = await actualizarUsuario(asignarDetalle.id, newInfoUsuario);
+      alert(res.msj);
+        }
+
+     
+      
+     };
 
   return (
     <>
@@ -91,7 +132,7 @@ export const AdministrarUsuarios = () => {
                     <td>{u.fechaNac}</td>
                     <td>{u.cargoId.name}</td>
                     <td>
-                      <button className="btn btn-ghost btn-xs" onClick={() =>{ setasignarDetalle(u); setventanaEmergente(!ventanaEmergente); }}>Detalles</button>
+                      <button className="btn btn-ghost btn-xs" onClick={() =>{ detalleUsuario(u.id);console.log(u.id); setventanaEmergente(!ventanaEmergente); }}>Detalles</button>
                       <button className="btn btn-ghost btn-xs" onClick={()=>console.log(cargos)}>Eliminar</button>
                     </td>
                   </tr>
@@ -111,26 +152,26 @@ export const AdministrarUsuarios = () => {
         </div>
         <div className='w-full h-[76%] border-y border-gray-300 px-4 flex'>
           <div className='w-[33.33%] h-[100%]'>
-            <div className='w-[100%] h-[33.33%]'><p>Nombre</p><input type="text" disabled={!habilitarEdicion} className='input' value={asignarDetalle.name} onChange={(e)=>setasignarDetalle((prev)=>prev.name == e.target.value)}/></div>
+            <div className='w-[100%] h-[33.33%]'><p>Nombre</p><input type="text" disabled={!habilitarEdicion} className='input' value={asignarDetalle.name} onChange={(e)=>setasignarDetalle(prev=>({...prev, name: e.target.value}))}/></div>
             <div className='w-[100%] h-[33.33%]'><p>Fecha de nacimiento</p><button disabled={!habilitarEdicion} type="button" onClick={() => { callyPpopover3.current?.showPopover() }} className="input input-border" id="cally3" style={{ anchorName: "--cally3" }}>
                  {asignarDetalle.fechaNac}
                 </button>
                 <div popover="auto" ref={callyPpopover3} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally3" }}>
-                  <calendar-date className="cally" onchange={(e) =>{document.getElementById("cally3").innerText = e.target.value; setasignarDetalle((prev)=>prev.fechaNacimiento == e.target.value)}}>
+                  <calendar-date className="cally" onchange={(e) =>{document.getElementById("cally3").innerText = e.target.value; setasignarDetalle((prev)=>({...prev,fechaNac:e.target.value}))}}>
                     <svg aria-label="Previous" className="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
                     <svg aria-label="Next" className="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
                     <calendar-month></calendar-month>
                   </calendar-date>
                 </div></div>
-            <div className='w-[100%] h-[33.34%]'><p>Cedula</p><input type="text" disabled={!habilitarEdicion} className='input' /></div>
+            <div className='w-[100%] h-[33.34%]'><p>Cedula</p><input value={asignarDetalle.identification ?? ""} onChange={(e)=>setasignarDetalle((prev)=>({...prev,identification : e.target.value}))} type="text" disabled={!habilitarEdicion} className='input' /></div>
           </div>
           <div className='w-[33.33%] h-[100%]'>
-            <div className='w-[100%] h-[33.33%]'><p>Celular</p><input type="text" disabled={!habilitarEdicion} className='input' /></div>
-            <div className='w-[100%] h-[33.33%]'><p>Email</p><input type="text" disabled={!habilitarEdicion} className='input' /></div>
-            <div className='w-[100%] h-[33.34%]'><p>Contraseña</p><input type="text" disabled={!habilitarEdicion} className='input' /></div>
+            <div className='w-[100%] h-[33.33%]'><p>Celular</p><input value={asignarDetalle.cellphone} onChange={(e)=>setasignarDetalle((prev)=>({...prev, cellphone: e.target.value}))} type="text" disabled={!habilitarEdicion} className='input' /></div>
+            <div className='w-[100%] h-[33.33%]'><p>Email</p><input value={asignarDetalle.email} onChange={(e)=>setasignarDetalle((prev)=>({...prev, email: e.target.value}))} type="text" disabled={!habilitarEdicion} className='input' /></div>
+            <div className='w-[100%] h-[33.34%]'><p>Nueva contraseña</p><input  onChange={(e)=>setcontrasenia(e.target.value)} type="text" disabled={!habilitarEdicion} className='input' /></div>
           </div>
           <div className='w-[33.34%] h-[100%]'>
-            <div className='w-[100%] h-[33.33%]'><p>Cargo</p>  <select className="select" id="" defaultValue={"..."} onChange={(e)=>setselectCargo(e.target.value)}>
+            <div className='w-[100%] h-[33.33%]'><p>Cargo</p>  <select disabled={!habilitarEdicion} className="select" id="" defaultValue={asignarDetalle.cargoId?.id} onChange={(e)=>setselectCargo(e.target.value)}>
                 <option  disabled={true} defaultChecked={true}>...</option>
               {cargos.map((a)=><>
               <option value={a.id}>{a.name}</option>
@@ -144,11 +185,11 @@ export const AdministrarUsuarios = () => {
 
           {habilitarEdicion 
           ? <>
-          <button className='btn'>Hecho</button>
-            <button className='btn' onClick={() => { sethabilitarEdicion(!habilitarEdicion); }}>Cancelar</button></> 
+          <button className='btn' onClick={actualizarInfoUsuario}>Hecho</button>
+            <button className='btn' onClick={() => {detalleUsuario(asignarDetalle.id);setcontrasenia("") ;sethabilitarEdicion(!habilitarEdicion); }}>Cancelar</button></> 
           : <>
           <button className='btn' onClick={() => { sethabilitarEdicion(!habilitarEdicion); }}>Editar</button>
-            <button className='btn' onClick={() => { setventanaEmergente(!ventanaEmergente); console.log(ventanaEmergente) }}>Cerrar</button></>}
+            <button className='btn' onClick={() => { setventanaEmergente(!ventanaEmergente); }}>Cerrar</button></>}
         </div>
       </div>
       </div>
