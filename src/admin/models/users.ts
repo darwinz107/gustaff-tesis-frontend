@@ -2,7 +2,7 @@ export interface Users {
 
     name: string;
 
-    fechaNacimiento:string;
+    fechaNac:string;
 
     cellphone: number;
 

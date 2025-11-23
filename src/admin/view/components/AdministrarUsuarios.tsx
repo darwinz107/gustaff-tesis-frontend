@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { NuevoUsuario } from './NuevoUsuario';
 import { getUsers } from '../../../user/controller/api/user-api';
 import type { Users } from '../../models/users';
+import { getAllCargos } from '../../controller/api/admin-api';
 
 export const AdministrarUsuarios = () => {
 
@@ -36,6 +37,7 @@ export const AdministrarUsuarios = () => {
    const obtenerUsers = async () =>{
      const getUsersbyApi = await getUsers();
      setusers(getUsersbyApi);
+     console.log(getUsersbyApi);
    };
    obtenerUsers();
   }, [validarCambio]);
@@ -86,11 +88,11 @@ export const AdministrarUsuarios = () => {
                       {u.cellphone}
 
                     </td>
-                    <td>{u.fechaNacimiento}</td>
+                    <td>{u.fechaNac}</td>
                     <td>{u.cargoId.name}</td>
                     <td>
                       <button className="btn btn-ghost btn-xs" onClick={() =>{ setasignarDetalle(u); setventanaEmergente(!ventanaEmergente); }}>Detalles</button>
-                      <button className="btn btn-ghost btn-xs">Eliminar</button>
+                      <button className="btn btn-ghost btn-xs" onClick={()=>console.log(cargos)}>Eliminar</button>
                     </td>
                   </tr>
                 </>)}
@@ -111,7 +113,7 @@ export const AdministrarUsuarios = () => {
           <div className='w-[33.33%] h-[100%]'>
             <div className='w-[100%] h-[33.33%]'><p>Nombre</p><input type="text" disabled={!habilitarEdicion} className='input' value={asignarDetalle.name} onChange={(e)=>setasignarDetalle((prev)=>prev.name == e.target.value)}/></div>
             <div className='w-[100%] h-[33.33%]'><p>Fecha de nacimiento</p><button disabled={!habilitarEdicion} type="button" onClick={() => { callyPpopover3.current?.showPopover() }} className="input input-border" id="cally3" style={{ anchorName: "--cally3" }}>
-                 {asignarDetalle.fechaNacimiento}
+                 {asignarDetalle.fechaNac}
                 </button>
                 <div popover="auto" ref={callyPpopover3} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally3" }}>
                   <calendar-date className="cally" onchange={(e) =>{document.getElementById("cally3").innerText = e.target.value; setasignarDetalle((prev)=>prev.fechaNacimiento == e.target.value)}}>

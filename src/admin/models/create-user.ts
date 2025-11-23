@@ -2,7 +2,7 @@ export interface CrearUser {
 
     name: string;
 
-    fechaNacimiento:string;
+    fechaNac:string;
     
     identification?: number;
 

@@ -12,13 +12,13 @@ export const NuevoUsuario = ({showCrearUsuario,setshowCrearUsuario,setconfirmarC
   const [contrasenia, setcontrasenia] = useState("");
   
   const [selectCargo, setselectCargo] = useState(0);
-  const callyPpopover3 = useRef(null);
+  const callyPpopover2 = useRef(null);
 
  
   
   const crearNuevoUsuario = async() =>{
 try {
-  const res = await crearUsuario({name:nombre,fechaNacimiento:selectFechaNac,identification:cedula,cellphone:celular,email:email,password:contrasenia,cargo:selectCargo});
+  const res = await crearUsuario({name:nombre,fechaNac:selectFechaNac,identification:cedula,cellphone:celular,email:email,password:contrasenia,cargo:selectCargo});
 
     alert(res.msj);
     setconfirmarCambio((prev)=>!prev);
@@ -43,11 +43,11 @@ try {
             <div className='w-[100%] h-[33.34%]'><p>Celular</p><input onChange={(e)=>setcelular(e.target.value)} type="text"  className='input' /></div>
           </div>
           <div className='w-[33.33%] h-[100%]'>
-            <div className='w-[100%] h-[33.33%]'><p>Fecha de nacimiento</p><button type="button" onClick={() => { callyPpopover3.current?.showPopover() }} className="input input-border" id="cally3" style={{ anchorName: "--cally3" }}>
+            <div className='w-[100%] h-[33.33%]'><p>Fecha de nacimiento</p><button type="button" onClick={() => { callyPpopover2.current?.showPopover() }} className="input input-border" id="cally2" style={{ anchorName: "--cally2" }}>
                   Pick a date
                 </button>
-                <div popover="auto" ref={callyPpopover3} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally3" }}>
-                  <calendar-date className="cally" onchange={(e) =>{document.getElementById("cally3").innerText = e.target.value; setselectFechaNac(e.target.value);}}>
+                <div popover="auto" ref={callyPpopover2} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally2" }}>
+                  <calendar-date className="cally" onchange={(e) =>{document.getElementById("cally2").innerText = e.target.value; setselectFechaNac(e.target.value);console.log(e.target.value);}}>
                     <svg aria-label="Previous" className="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
                     <svg aria-label="Next" className="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
                     <calendar-month></calendar-month>
