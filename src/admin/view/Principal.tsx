@@ -6,6 +6,7 @@ import { CrearOrden } from "../../orden-de-trabajo/view/components/CrearOrden";
 import { HistorialOrdenes } from "../../orden-de-trabajo/view/components/HistorialOrdenes";
 import { VerDetalles } from "../../orden-de-trabajo/view/components/VerDetalles";
 import { AdministrarUsuarios } from "./components/administrarUsuarios";
+import { OrdenCompra } from "../../orden-de-compra/view/ordenCompra";
 
 
 
@@ -31,7 +32,8 @@ try {
         1:<CrearOrden></CrearOrden>,
         2:<HistorialOrdenes setValidate={setventanaEmergente}></HistorialOrdenes>,
         3:<NuevosRegistros></NuevosRegistros>,
-        4:<AdministrarUsuarios></AdministrarUsuarios>
+        4:<AdministrarUsuarios></AdministrarUsuarios>,
+        5:<OrdenCompra></OrdenCompra>
       }
     
       const [cargarComponente, setcargarComponente] = useState(0);
@@ -64,6 +66,13 @@ try {
   <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
     <li><a onClick={()=>setcargarComponente(1)}>Generar</a></li>
     <li><a onClick={()=>setcargarComponente(2)}>Historial</a></li>
+  </ul>
+</div>
+<div className="w-full dropdown dropdown-hover" >
+  <div tabIndex={0} role="button" className="btn w-full border-none" >Orden de compra</div>
+  <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
+    <li><a onClick={()=>setcargarComponente(5)}>Generar</a></li>
+    <li><a >Historial</a></li>
   </ul>
 </div>
       <button className="btn w-full border-none" onClick={terminarSesion}>Cerrar sesion</button>
