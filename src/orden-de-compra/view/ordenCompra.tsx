@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
 import type { ItemsPorGuardar } from '../models/itemsPorGuardar';
 import { BuscarOrdenTrabajo } from './buscarOrdenTrabajo';
+import type { LllenarDestino } from '../models/llenarDestino';
 
 
 
 export const OrdenCompra = () => {
   const [comprasPorGenerar, setcomprasPorGenerar] = useState<ItemsPorGuardar[]>([]);
   const [ventanaBuscarOrdenTrabajo, setventanaBuscarOrdenTrabajo] = useState(false);
+  const [infoDestino, setinfoDestino] = useState<LllenarDestino>({userSolicitante:{name:""},NumOrden:"",Area:"",Codigo:"",Maquina:""});
   return (
      <>
      <div className='w-full h-[85%] '>
@@ -20,18 +22,18 @@ export const OrdenCompra = () => {
         </div>
         <div className='w-full h-[85%] flex flex-row'>
          <div className='w-[33.33%] h-[80%] pl-2'>
-            <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>Solicitante</p><input type="text"  className='input ml-1'  /></div>
-            <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Area</p><input   type="text"  className='input ml-1' /></div>
+            <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>Solicitante</p><input type="text"  className='input ml-1' value={infoDestino.userSolicitante.name}  disabled={true}/></div>
+            <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Area</p><input   type="text"  className='input ml-1' value={infoDestino.Area} disabled={true}/></div>
             <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Destino</p><input  type="text"  className='input ml-1' /></div>
           </div>
             <div className='w-[33.33%] h-[80%] '>
-            <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>Solicitante</p><input type="text"  className='input ml-1'  /></div>
-            <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Area</p><input   type="text"  className='input ml-1' /></div>
+            <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>Autoriza</p><input type="text"  className='input ml-1' /></div>
+            <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Codigo</p><input   type="text"  className='input ml-1' value={infoDestino.Codigo} disabled={true}/></div>
             
           </div>
           <div className='w-[33.34%] h-[80%] pr-2'>
-            <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>Solicitante</p><input type="text"  className='input ml-1'  /></div>
-            <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Area</p><input   type="text"  className='input ml-1' /></div>
+            <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>N.Orden</p><input type="text"  className='input ml-1'  value={infoDestino.NumOrden} disabled={true}/></div>
+            <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Maquina</p><input   type="text"  className='input ml-1' value={infoDestino.Maquina} disabled={true}/></div>
            
           </div>
          </div>
@@ -43,7 +45,10 @@ export const OrdenCompra = () => {
         <div className='w-full h-[80%] mt-4 text-center'>
          <div className='w-full h-[80%] pl-2 flex flex-row mb-4'>
             <div className='w-[100%]  flex flex-col'><p className='min-w-[17%]'>Cantidad</p><input  type="text"  className='input' /></div>
-            <div className='w-[100%]  flex flex-col'><p className='min-w-[17%]'>Solicitante</p><input type="text"  className='input'  /></div>
+            <div className='w-[100%]  flex flex-col'><p className='min-w-[17%]'>Item</p><input type="text" className="input" list="browsers" />
+<datalist id="browsers">
+  
+</datalist></div>
             <div className='w-[100%]  flex flex-col'><p className='min-w-[17%]'>Area</p><input   type="text"  className='input' /></div>
             <div className='w-[100%]  flex flex-col'><p className='min-w-[17%]'>Destino</p><input  type="text"  className='input' /></div>
           </div>
@@ -104,7 +109,7 @@ export const OrdenCompra = () => {
 
        <div className={`z-10 fixed  bg-transparent inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaBuscarOrdenTrabajo ? "opacity-100" : "opacity-0 pointer-events-none"} `}>
            <div className={`border border-gray-300 w-4/5 h-4/5 rounded-sm fixed  bg-white`}>
-           <BuscarOrdenTrabajo ventanaBuscarOrdenTrabajo={ventanaBuscarOrdenTrabajo} setventanaBuscarOrdenTrabajo={setventanaBuscarOrdenTrabajo}></BuscarOrdenTrabajo>
+           <BuscarOrdenTrabajo setinfoDestino={setinfoDestino} ventanaBuscarOrdenTrabajo={ventanaBuscarOrdenTrabajo} setventanaBuscarOrdenTrabajo={setventanaBuscarOrdenTrabajo}></BuscarOrdenTrabajo>
            </div>
            </div>
      </>

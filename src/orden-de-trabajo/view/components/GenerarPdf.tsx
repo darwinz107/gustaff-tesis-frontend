@@ -72,7 +72,7 @@ export const GenerarPdf = () => {
                 <View style={styles.child}>
                 <View style={styles.orden}>
                   <Text >Orden:    </Text>
-                <Text >OTM00634</Text>
+                <Text >{newSolicitud?.NumOrden}</Text>
                 </View>
                 </View>
             </View>

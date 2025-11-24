@@ -24,7 +24,7 @@ try {
     setconfirmarCambio((prev)=>!prev);
 
 } catch (error) {
-  
+  console.log(error); 
 }
     
   }

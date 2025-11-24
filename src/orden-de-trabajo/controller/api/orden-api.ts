@@ -46,9 +46,9 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{maquina:string}> 
       return data;
     }
 
-    export const getAllTipoTrabajoByCategoria = async (categoria:string):Promise<{tipo:string}[]> => {
+    export const getAllTipoTrabajo = async ():Promise<{tipo:string}[]> => {
          
-        const response:Response = await fetch(`${route}admin/all/tipo-trabajo/${categoria}`,{
+        const response:Response = await fetch(`${route}admin/all/tipo-trabajo`,{
            method:"GET"
         });
 

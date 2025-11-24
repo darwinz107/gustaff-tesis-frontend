@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { CalendarDate, CalendarMonth } from "cally";
 import "cally";
-import { areas, getAllCategorias, getAllCodByArea, getAllMaquinasByCod, getAllTipoTrabajoByCategoria, registerSolicitudOrden } from "../../controller/api/orden-api";
+import { areas, getAllCategorias, getAllCodByArea, getAllMaquinasByCod, getAllTipoTrabajo, getAllTipoTrabajoByCategoria, registerSolicitudOrden } from "../../controller/api/orden-api";
 import type { Area } from "../../models/areas";
 import type { Codigo } from "../../models/codigos";
 import type { Maquina } from "../../models/maquinas";
@@ -46,6 +46,8 @@ export const CrearOrden = () => {
       console.log(res);
       setcategorias(res);
       };
+
+
 
     const getAllUsers = async () => {
       const res = await getUsers();
@@ -94,20 +96,16 @@ export const CrearOrden = () => {
   }, [ubicacion]);
 
   useEffect(() => {
-    
-    if(especificacion[0] != undefined){
-       settipoTrabajoShow(true);
-
+ 
        const setTiposTrabajos = async() => {
 
-        const AlltiposTrabajos = await getAllTipoTrabajoByCategoria(especificacion[0]);
+        const AlltiposTrabajos = await getAllTipoTrabajo(especificacion[0]);
         settipoTrabajos(AlltiposTrabajos);
        }
+        setTiposTrabajos();
 
-       setTiposTrabajos();
-    }
 
-  }, [especificacion])
+  }, []);
   
   const addSolicitudOrden = async(e:Event) =>{
        e.preventDefault();
@@ -240,7 +238,7 @@ export const CrearOrden = () => {
             </div>
             <div>
               <p className="mr-2">Tipo de trabajo</p>
-              <select defaultValue={'...'} className="select" disabled={!tipoTrabajoShow} onChange={(e)=>{
+              <select defaultValue={'...'} className="select" onChange={(e)=>{
                 const nueva = [...especificacion];
                 nueva[1] = e.target.value;
                 setespecificacion(nueva);
