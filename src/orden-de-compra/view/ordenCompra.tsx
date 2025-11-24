@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import type { ItemsPorGuardar } from '../models/itemsPorGuardar';
 import { BuscarOrdenTrabajo } from './buscarOrdenTrabajo';
 import type { LllenarDestino } from '../models/llenarDestino';
+import { filtrarInventario } from '../../inventario/controller/inventario-api';
 
 
 
@@ -9,6 +10,29 @@ export const OrdenCompra = () => {
   const [comprasPorGenerar, setcomprasPorGenerar] = useState<ItemsPorGuardar[]>([]);
   const [ventanaBuscarOrdenTrabajo, setventanaBuscarOrdenTrabajo] = useState(false);
   const [infoDestino, setinfoDestino] = useState<LllenarDestino>({userSolicitante:{name:""},NumOrden:"",Area:"",Codigo:"",Maquina:""});
+  const [item, setitem] = useState("");
+  const [buscarItem, setbuscarItem] = useState<{nombre:string}[]>([]);
+  const [cantidad, setcantidad] = useState(0);
+  const [area, setarea] = useState("");
+  const [destino, setdestino] = useState("");
+  
+
+  useEffect(() => {
+    if(item != ""){
+    const funcionBuscarItem = async()=>{
+        const res = await filtrarInventario(item);
+        console.log(res);
+        setbuscarItem(res);
+    }
+    funcionBuscarItem();}else{
+      setbuscarItem([]);
+    }
+  }, [item]);
+
+  const funcionAgregarItems = () =>{
+    setcomprasPorGenerar((prev)=>[...prev,{cantidad:cantidad,item:item,caracteristica:area,observacion:destino}]);
+  }
+  
   return (
      <>
      <div className='w-full h-[85%] '>
@@ -44,15 +68,20 @@ export const OrdenCompra = () => {
         </div>
         <div className='w-full h-[80%] mt-4 text-center'>
          <div className='w-full h-[80%] pl-2 flex flex-row mb-4'>
-            <div className='w-[100%]  flex flex-col'><p className='min-w-[17%]'>Cantidad</p><input  type="text"  className='input' /></div>
-            <div className='w-[100%]  flex flex-col'><p className='min-w-[17%]'>Item</p><input type="text" className="input" list="browsers" />
+            <div className='w-[100%]  flex flex-col'><p className='min-w-[17%]'>Cantidad</p><input  type="text"  className='input'  onChange={(e)=>setcantidad(e.target.value)}/></div>
+            <div className='w-[100%]  flex flex-col'><p className='min-w-[17%]'>Item</p><input type="text" className="input" list="browsers" onChange={(e)=>setitem(e.target.value)}/>
 <datalist id="browsers">
+  {
+    buscarItem.map((i)=><>
+    <option value={i.nombre}>{i.nombre}</option>
+    </>)
+  }
   
 </datalist></div>
-            <div className='w-[100%]  flex flex-col'><p className='min-w-[17%]'>Area</p><input   type="text"  className='input' /></div>
-            <div className='w-[100%]  flex flex-col'><p className='min-w-[17%]'>Destino</p><input  type="text"  className='input' /></div>
+            <div className='w-[100%]  flex flex-col'><p className='min-w-[17%]'>Area</p><input   type="text"  className='input'  onChange={(e)=>setarea(e.target.value)}/></div>
+            <div className='w-[100%]  flex flex-col'><p className='min-w-[17%]'>Destino</p><input  type="text"  className='input' onChange={(e)=>setdestino(e.target.value)} /></div>
           </div>
-          <button className='btn'>Agregar a compras</button>
+          <button className='btn' onClick={funcionAgregarItems}>Agregar a compras</button>
          </div>
         
         </div>
