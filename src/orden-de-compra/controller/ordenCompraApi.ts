@@ -1,4 +1,5 @@
 import type { FiltrarOrdenTrabajo } from "../models/filtrarOrdenTrabajo";
+import type { GuardarSolicitudCompra } from "../models/guardarSolicitudCompra";
 import type { LllenarDestino } from "../models/llenarDestino";
 
 const route: string = "http://localhost:3000/"
@@ -12,6 +13,19 @@ export const filtrarOrdenTrabajo = async (filtrarOrdenTrabajo: FiltrarOrdenTraba
     },
     body: JSON.stringify(filtrarOrdenTrabajo)
   })
+    const data = await response.json();
+    return data;
+};
+
+export const crearOrdenCompra = async (guardarSolicitudCompra: GuardarSolicitudCompra):Promise<{msj:string}> => {
+  
+  const response: Response = await fetch(`${route}solicitud-de-compra`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(guardarSolicitudCompra)
+  });
     const data = await response.json();
     return data;
 };
