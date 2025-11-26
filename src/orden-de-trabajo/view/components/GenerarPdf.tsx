@@ -5,18 +5,20 @@ import logo from "../../../../public/logo_alternativo.png"
 import { useEffect, useState } from "react";
 import { getLastSolicitud } from "../../controller/api/orden-api";
 import type { SolicitudOrden } from "../../models/solicitudOrden";
+import { useParams } from "react-router-dom";
 
 
 
 export const GenerarPdf = () => {
 
   const [newSolicitud, setnewSolicitud] = useState<SolicitudOrden>();
-
+const id = useParams();
   useEffect(() => {
    
     try {
+      console.log(id.id);
         const cargarSolicitud = async() =>{
-       const res = await getLastSolicitud();
+       const res = await getLastSolicitud(id.id);
        setnewSolicitud(res);
        console.log(res);
     }

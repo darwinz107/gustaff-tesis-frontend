@@ -23,7 +23,7 @@ createRoot(document.getElementById('root')!).render(
      <Route path='/login' element={<LoginMain></LoginMain>}></Route>
      <Route path='/registrar' element={<SignUp></SignUp>}></Route>
      <Route path='/admin' element={<Principal></Principal>}></Route>
-     <Route path='/pdf' element={<GenerarPdf></GenerarPdf>}></Route>
+     <Route path='/pdf/:id' element={<GenerarPdf></GenerarPdf>}></Route>
     </Routes>
     
     </BrowserRouter>

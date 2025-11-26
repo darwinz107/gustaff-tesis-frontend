@@ -20,6 +20,11 @@ export const HistorialOrdenes = () => {
       }
       ordenesTrabajoApi();
      }, []);
+
+
+     const cargarPdf = (id:number) => {
+      window.open(`/pdf/${id}`,"_blank");
+     }
      
     return (
         <>
@@ -48,9 +53,9 @@ export const HistorialOrdenes = () => {
             
                             <th>N.Orden</th>
                             <th>Fecha final</th>
-                            <th>Descripcion</th>
+                            <th>Solicitante</th>
                             <th>Estado</th>
-                            <th>Acciones</th>
+                            <th className='text-center'>Acciones</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -65,11 +70,12 @@ export const HistorialOrdenes = () => {
                                   {u.fechaFinal}
             
                                 </td>
-                                <td>{u.DescripcionTrabajo}</td>
+                                <td>{u.userSolicitante.name}</td>
                                 <td>{u.estadoTrabajo.estado}</td>
                                 <td>
-                                  <button className="btn btn-ghost btn-xs" >Detalles</button>
+                                  <button className="btn btn-ghost btn-xs" onClick={() => { setventanaEmergente(!ventanaEmergente)}}>Detalles</button>
                                   <button className="btn btn-ghost btn-xs" >Eliminar</button>
+                                  <button className="btn btn-ghost btn-xs" onClick={()=>cargarPdf(u.id)}>Ver pdf</button>
                                 </td>
                               </tr>
                             </>)}

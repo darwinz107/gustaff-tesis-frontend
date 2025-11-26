@@ -71,9 +71,9 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{maquina:string}> 
     }
 
     
-    export const getLastSolicitud = async():Promise<{solicitudOrden:SolicitudOrden}> => {
+    export const getLastSolicitud = async(id:number):Promise<{solicitudOrden:SolicitudOrden}> => {
 
-        const response:Response = await fetch(`${route}orden-de-trabajo/last/solicitud`,{
+        const response:Response = await fetch(`${route}orden-de-trabajo/last/solicitud/${id}`,{
        method:"GET"
         });
 

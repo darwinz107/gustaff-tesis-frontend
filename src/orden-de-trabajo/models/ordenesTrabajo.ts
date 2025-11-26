@@ -1,4 +1,5 @@
 export interface OrdenesTrabajo {
+  id:number;
   NumOrden: string;
   fechaInicio: string;
   fechaFinal: string;
