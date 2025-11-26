@@ -1,3 +1,4 @@
+import type { OrdenesTrabajo } from "../../models/ordenesTrabajo";
 import type { SolicitudOrden } from "../../models/solicitudOrden";
 
 const route = "http://localhost:3000/";
@@ -80,3 +81,12 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{maquina:string}> 
         return data;
     }
     
+    export const getAllOrdenesTrabajo = async():Promise<OrdenesTrabajo[]> => {
+
+        const response:Response = await fetch(`${route}orden-de-trabajo/all-ordenes`,{
+       method:"GET"
+        });
+
+        const data = await response.json();
+        return data;
+    }

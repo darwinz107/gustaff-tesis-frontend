@@ -30,7 +30,7 @@ try {
       {
         0:<></>,
         1:<CrearOrden></CrearOrden>,
-        2:<HistorialOrdenes setValidate={setventanaEmergente}></HistorialOrdenes>,
+        2:<HistorialOrdenes></HistorialOrdenes>,
         3:<NuevosRegistros></NuevosRegistros>,
         4:<AdministrarUsuarios></AdministrarUsuarios>,
         5:<OrdenCompra></OrdenCompra>

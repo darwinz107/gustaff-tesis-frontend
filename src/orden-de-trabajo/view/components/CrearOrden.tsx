@@ -216,7 +216,11 @@ export const CrearOrden = () => {
             </div>
             <div className="flex flex-row">
               <p className="mr-2">Equipos/Piezas</p>
-              <textarea className="textarea" id=""></textarea>
+              <textarea className="textarea" onChange={(e) => {
+                const nueva = [...ubicacion];
+                nueva[3] = e.target.value;
+                setubicacion(nueva)
+              }}></textarea>
             </div>
           </div>
 
@@ -252,7 +256,11 @@ export const CrearOrden = () => {
             </div>
             <div>
               <p className="mr-2">Descripcion del trabajo</p>
-              <textarea className="textarea" id="" onChange={(e)=>setdescripcion(e.target.value)}></textarea>
+              <textarea className="textarea" id="" onChange={(e) => {
+                const nueva = [...especificacion];
+                nueva[2] = e.target.value;
+                setespecificacion(nueva)
+              }}></textarea>
             </div>
           </div>
          <div className="border-t border-black-200 mt-10">
