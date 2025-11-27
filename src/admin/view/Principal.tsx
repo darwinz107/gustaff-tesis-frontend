@@ -7,6 +7,7 @@ import { HistorialOrdenes } from "../../orden-de-trabajo/view/components/Histori
 import { VerDetalles } from "../../orden-de-trabajo/view/components/VerDetalles";
 import { AdministrarUsuarios } from "./components/administrarUsuarios";
 import { OrdenCompra } from "../../orden-de-compra/view/ordenCompra";
+import { GestionCompra } from "../../orden-de-compra/view/GestionCompra";
 
 
 
@@ -33,7 +34,8 @@ try {
         2:<HistorialOrdenes></HistorialOrdenes>,
         3:<NuevosRegistros></NuevosRegistros>,
         4:<AdministrarUsuarios></AdministrarUsuarios>,
-        5:<OrdenCompra></OrdenCompra>
+        5:<OrdenCompra></OrdenCompra>,
+        6:<GestionCompra></GestionCompra>
       }
     
       const [cargarComponente, setcargarComponente] = useState(0);
@@ -71,7 +73,7 @@ try {
   <div tabIndex={0} role="button" className="btn w-full border-none" >Solicitud de compra</div>
   <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
     <li><a onClick={()=>setcargarComponente(5)}>Nueva solicitud</a></li>
-    <li><a >Gestion de solicitud</a></li>
+    <li><a onClick={()=>setcargarComponente(6)}>Gestion de solicitud</a></li>
   </ul>
 </div>
       <button className="btn w-full border-none" onClick={terminarSesion}>Cerrar sesion</button>

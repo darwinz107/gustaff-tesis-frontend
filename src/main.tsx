@@ -11,6 +11,7 @@ import { NuevosRegistros } from './admin/view/components/NuevosRegistros.tsx'
 import { Principal } from './admin/view/Principal.tsx'
 import { ProtectRoute } from './Principal/auth/ProtectRoute.tsx'
 import { GenerarPdf } from './orden-de-trabajo/view/components/GenerarPdf.tsx'
+import { GenerarPdfOrdenCompra } from './orden-de-compra/view/GenerarPdfOrdenCompra.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -24,6 +25,7 @@ createRoot(document.getElementById('root')!).render(
      <Route path='/registrar' element={<SignUp></SignUp>}></Route>
      <Route path='/admin' element={<Principal></Principal>}></Route>
      <Route path='/pdf/:id' element={<GenerarPdf></GenerarPdf>}></Route>
+     <Route path='/pdf-compra/:id' element={<GenerarPdfOrdenCompra></GenerarPdfOrdenCompra>}></Route>
     </Routes>
     
     </BrowserRouter>

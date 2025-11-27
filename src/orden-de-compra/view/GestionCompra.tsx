@@ -1,10 +1,12 @@
 
 import React, { useEffect, useRef, useState } from 'react'
+import type { DetallesPrevioCompra } from '../models/DetallesPrevioCompra';
+import { findAllSolicitudesCompra } from '../controller/ordenCompraApi';
 
 
 export const GestionCompra = () => {
 
-   const [ordenesTrabajo, setordenesTrabajo] = useState<OrdenesTrabajo[]>([]);
+   const [ordenesCompra, setordenesCompra] = useState<DetallesPrevioCompra[]>([]);
    const [validarCambio, setvalidarCambio] = useState(false);
    const [habilitarEdicion, sethabilitarEdicion] = useState(false);
    const callyPpopover4 = useRef(null);
@@ -14,8 +16,8 @@ export const GestionCompra = () => {
 
      useEffect(() => {
       const ordenesTrabajoApi  = async() =>{
-       const res = await getAllOrdenesTrabajo();
-       setordenesTrabajo(res);
+       const res = await findAllSolicitudesCompra();
+       setordenesCompra(res);
       }
       ordenesTrabajoApi();
      }, []);
@@ -51,26 +53,28 @@ export const GestionCompra = () => {
                           <tr>
             
                             <th>N.Orden</th>
-                            <th>Fecha final</th>
+                            <th>Fecha de remision</th>
                             <th>Solicitante</th>
+                            <th>Descripcion</th>
                             <th>Estado</th>
                             <th className='text-center'>Acciones</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {ordenesTrabajo.map((u) =>
+                          {ordenesCompra.map((u) =>
                             <>
                               <tr>
             
                                 <td>
-                                  {u.NumOrden}
+                                  {u.numOrden}
                                 </td>
                                 <td>
-                                  {u.fechaFinal}
+                                  {u.fechaRemision.split("T")[0]}
             
                                 </td>
-                                <td>{u.userSolicitante.name}</td>
-                                <td>{u.estadoTrabajo.estado}</td>
+                                <td>{u.numOrdenTrabajo.userSolicitante.name}</td>
+                                <td>{u.numOrdenTrabajo.DescripcionTrabajo}</td>
+                                <td>{u.estadoCompra.estado}</td>
                                 <td>
                                   <button className="btn btn-ghost btn-xs" onClick={() => { setventanaEmergente(!ventanaEmergente)}}>Detalles</button>
                                   <button className="btn btn-ghost btn-xs" >Eliminar</button>

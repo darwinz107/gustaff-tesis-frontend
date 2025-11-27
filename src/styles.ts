@@ -44,6 +44,7 @@ export const styles = StyleSheet.create({
      borderRight:"1px black solid",
      justifyContent:"center"
     },
+  
     tercero:{
      width:"20%",
      textAlign:"center",
@@ -114,6 +115,24 @@ export const styles = StyleSheet.create({
       display:"flex",
       flexDirection:"column",
       alignItems:"center"
+    },
+
+      ocSegundo:{
+     width:"100%",
+     height:"100%",
+     display:"flex",
+     flexDirection:"column",
+     textAlign:"center",
+     borderLeft:"1px black solid",
+     justifyContent:"center"
+    },
+
+    ocTercero:{
+      marginHorizontal:"10px",
+        width:"85%"
+      
     }
+
+    
     
 })
