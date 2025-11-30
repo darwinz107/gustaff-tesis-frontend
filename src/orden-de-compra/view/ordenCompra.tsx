@@ -92,18 +92,19 @@ console.log(resOrdenCompra.msj);
             <button className='btn' onClick={()=>setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo)}>Asignar orden de trabajo</button>
             
         </div>
-        <div className='w-full h-[30%]'>
-        <div className='border border-gray-500 text-center bg-gray-400 h-[15%] mb-4'>
-            <p>Destino de orden</p>   
+        
+        <div className='w-full h-[30%] bg-gray-100 rounded-xl shadow-md p-4 mb-6'>
+        <div className=' h-[15%] mb-4'>
+           <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Destino de orden</h2> 
         </div>
         <div className='w-full h-[85%] flex flex-row'>
          <div className='w-[33.33%] h-[80%] pl-2'>
-            <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>Solicitante</p><input type="text"  className='input ml-1' value={infoDestino.userSolicitante.name}  disabled={true}/></div>
+            <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>Solicitante</p><input type="text"  className='input ml-10 mr-3' value={infoDestino.userSolicitante.name}  disabled={true}/></div>
             <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Area</p><input   type="text"  className='input ml-1' value={infoDestino.Area} disabled={true}/></div>
-            <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Destino</p><input  type="text"  className='input ml-1' onChange={(e)=>setdestino(e.target.value)}/></div>
+            <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Destino</p><input  type="text"  className='input ml-5' onChange={(e)=>setdestino(e.target.value)}/></div>
           </div>
             <div className='w-[33.33%] h-[80%] '>
-            <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>Autoriza</p>  <select defaultValue={'...'} className="select" id="" onChange={(e)=>setautoriza(e.target.value)}>
+            <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>Autoriza</p>  <select defaultValue={'...'} className="select mr-2 ml-3" id="" onChange={(e)=>setautoriza(e.target.value)}>
                 <option disabled={true}>...</option>
                 {users.map((m) => <>
                   <option value={m.name}>{m.name}</option>
@@ -113,15 +114,15 @@ console.log(resOrdenCompra.msj);
             
           </div>
           <div className='w-[33.34%] h-[80%] pr-2'>
-            <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>N.Orden</p><input type="text"  className='input ml-1'  value={infoDestino.NumOrden} disabled={true}/></div>
-            <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Maquina</p><input   type="text"  className='input ml-1' value={infoDestino.Maquina} disabled={true}/></div>
+            <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>N.Orden</p><input type="text"  className='input ml-5'  value={infoDestino.NumOrden} disabled={true}/></div>
+            <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Maquina</p><input   type="text"  className='input ml-4' value={infoDestino.Maquina} disabled={true}/></div>
            
           </div>
          </div>
         </div>
-             <div className='w-full min-h-[25%]'>
-        <div className='border border-gray-500 text-center bg-gray-400 min-h-[20%]'>
-            <p >Agregar items</p>   
+             <div className='w-full min-h-[25%] bg-gray-100 rounded-xl shadow-md p-4 mb-6'>
+        <div className=' min-h-[20%]'>
+            <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Agregar items</h2>    
         </div>
         <div className='w-full h-[80%] mt-4 text-center'>
          <div className='w-full h-[80%] pl-2 flex flex-row mb-4'>
@@ -143,9 +144,9 @@ console.log(resOrdenCompra.msj);
         
         </div>
         
-        <div className='w-full h-[40%] '>
-          <div className='border border-gray-500 text-center bg-gray-400 min-h-[10%]'>
-            <p >Compras</p>   
+        <div className='w-full h-[40%] bg-gray-100 rounded-xl shadow-md p-4 mb-6'>
+          <div className=' min-h-[10%]'>
+            <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Compras</h2>  
         </div>
         <div className='w-full h-[70%] mt-4 text-center'>
          <div className='w-full h-[90%] pl-2 flex flex-row mb-4'>

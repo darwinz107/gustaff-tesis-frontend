@@ -23,7 +23,7 @@ createRoot(document.getElementById('root')!).render(
      <Route path='/crear-orden' element={<CrearOrden></CrearOrden>}></Route>
      <Route path='/login' element={<LoginMain></LoginMain>}></Route>
      <Route path='/registrar' element={<SignUp></SignUp>}></Route>
-     <Route path='/admin' element={<Principal></Principal>}></Route>
+     <Route path='/admin' element={<ProtectRoute route={<Principal></Principal>}></ProtectRoute>}></Route>
      <Route path='/pdf/:id' element={<GenerarPdf></GenerarPdf>}></Route>
      <Route path='/pdf-compra/:id' element={<GenerarPdfOrdenCompra></GenerarPdfOrdenCompra>}></Route>
     </Routes>
