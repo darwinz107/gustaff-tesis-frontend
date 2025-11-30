@@ -3,7 +3,7 @@ import { controlByRol, controlByUser1, controlByUser2 } from "../controller/api/
 import { Navigate, useNavigate } from "react-router-dom";
 
 
-export const ProtectRoute = ({route}) => {
+export const ProtectRouteAdmin = ({route}) => {
 
   const [validate, setvalidate] = useState(null);
   const [validate1, setvalidate1] = useState(null);
@@ -38,8 +38,8 @@ export const ProtectRoute = ({route}) => {
   
 //if(validate === null)  return (route);
 
-if(validate) return <Navigate to='/admin'></Navigate>  
-if(validate1) return (route); 
+if(validate) return (route);
+if(validate1) return <Navigate to='/principal1'></Navigate>; 
 if(validate2) return <Navigate to='/principal2'></Navigate>  
 //if(!validate && !validate1 && !validate2) return <Navigate to='/'></Navigate>  ;
 }

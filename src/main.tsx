@@ -12,18 +12,23 @@ import { Principal } from './admin/view/Principal.tsx'
 import { ProtectRoute } from './Principal/auth/ProtectRoute.tsx'
 import { GenerarPdf } from './orden-de-trabajo/view/components/GenerarPdf.tsx'
 import { GenerarPdfOrdenCompra } from './orden-de-compra/view/GenerarPdfOrdenCompra.tsx'
+import { Rol1Main } from './rol1/view/rol1Main.tsx'
+import { Rol2Main } from './rol2/view/Rol2Main.tsx'
+import { ProtectRouteAdmin } from './Principal/auth/ProtectRouteAdmin.tsx'
+import { ProtectRoute2 } from './Principal/auth/ProtectRoute2.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
     <Routes>
      <Route path='/' element={<LoginMain></LoginMain>}></Route> 
-     <Route path='/principal' element={<ProtectRoute route={<OrdenTrabjoMain></OrdenTrabjoMain>}></ProtectRoute>}></Route>
+     <Route path='/principal1' element={<ProtectRoute route={<Rol1Main></Rol1Main>}></ProtectRoute>}></Route>
+     <Route path='/principal2' element={<ProtectRoute2 route={<Rol2Main></Rol2Main>}></ProtectRoute2>}></Route>
      <Route path='/orden-de-trabajo' element={<OrdenTrabjoMain></OrdenTrabjoMain>}></Route>
      <Route path='/crear-orden' element={<CrearOrden></CrearOrden>}></Route>
      <Route path='/login' element={<LoginMain></LoginMain>}></Route>
      <Route path='/registrar' element={<SignUp></SignUp>}></Route>
-     <Route path='/admin' element={<ProtectRoute route={<Principal></Principal>}></ProtectRoute>}></Route>
+     <Route path='/admin' element={<ProtectRouteAdmin route={<Principal></Principal>}></ProtectRouteAdmin>}></Route>
      <Route path='/pdf/:id' element={<GenerarPdf></GenerarPdf>}></Route>
      <Route path='/pdf-compra/:id' element={<GenerarPdfOrdenCompra></GenerarPdfOrdenCompra>}></Route>
     </Routes>

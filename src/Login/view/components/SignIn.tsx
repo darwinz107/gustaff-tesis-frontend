@@ -18,7 +18,7 @@ export const SignIn = () => {
 
         if(resLogin.access){
           alert(resLogin.msj);
-          navigate("/principal");
+          navigate("/principal1");
         }else{
             alert("Datos incorrectos");
         }
