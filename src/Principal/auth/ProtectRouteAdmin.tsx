@@ -12,7 +12,7 @@ export const ProtectRouteAdmin = ({route}) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-   
+    console.log("ProtectRouteAdmin mounted");
     const validateRoute = async () => {
         try {
           const res = await controlByRol();
@@ -36,10 +36,11 @@ export const ProtectRouteAdmin = ({route}) => {
 
   }, [route])
   
-//if(validate === null)  return (route);
 
+if(validate === null || validate1 === null || validate2 === null) { return <p>Cargando...</p>}
 if(validate) return (route);
 if(validate1) return <Navigate to='/principal1'></Navigate>; 
-if(validate2) return <Navigate to='/principal2'></Navigate>  
-//if(!validate && !validate1 && !validate2) return <Navigate to='/'></Navigate>  ;
+if(validate2) return <Navigate to='/principal2'></Navigate>;
+return <Navigate to='/'></Navigate>  ;  
+
 }

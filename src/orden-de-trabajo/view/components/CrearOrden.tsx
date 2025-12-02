@@ -273,14 +273,14 @@ export const CrearOrden = () => {
   <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
     Personal
   </h2>
-          <div className="mt-4"><div className="flex"><label htmlFor="">Solicitante</label> 
+          <div className="mt-4"><div className="flex"><label htmlFor="" className="mr-2">Solicitante</label> 
           <select className="select mr-2" defaultValue={"..."} onChange={(e)=>setsolicitante(e.target.value)}>
             <option defaultChecked={true}>...</option>
             {users.map((u)=><>
              <option value={u.name}>{u.name}</option>
             </>)}
             </select>
-             <label htmlFor="">Receptor</label> 
+             <label htmlFor="" className="mr-2">Receptor</label> 
             <select className="select" defaultValue={"..."} onChange={(e)=>setreceptor(e.target.value)}>
             <option defaultChecked={true} disabled={true}>...</option>
             {users.map((u)=><>
@@ -288,7 +288,7 @@ export const CrearOrden = () => {
             </>)}
             </select></div>
             <div className="mt-5">
-              <label htmlFor="">Tecnico 2</label>
+              <label htmlFor="" className="mr-2">Tecnico 2</label>
               <select className="select" defaultValue={"..."} onChange={(e)=>settecnico(e.target.value)}>
             <option defaultChecked={true} disabled={true}>...</option>
             {users.map((u)=><>

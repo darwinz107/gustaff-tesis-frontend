@@ -26,7 +26,7 @@ export const getAllCodByArea = async (area:string):Promise<{cod:string}> => {
     return data;
 }
 
-export const getAllMaquinasByCod = async (cod:string):Promise<{maquina:string}> =>{
+export const getAllMaquinasByCod = async (cod:string):Promise<{nombre:string}> =>{
     const res = await fetch(`${route}admin/all/maquinas`,{
         method: 'POST',
         headers:{
@@ -87,6 +87,28 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{maquina:string}> 
        method:"GET"
         });
 
+        const data = await response.json();
+        return data;
+    }
+
+    export const getOrdenTrabajoBySolicitante = async(solicitante:string):Promise<OrdenesTrabajo[]> => {
+
+        const response:Response = await fetch(`${route}orden-de-trabajo/orden-by-solicitante`,{
+         method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({solicitante})
+        });
+        const data = await response.json();
+        return data;
+    }
+
+    export const getOrdenTrabajoById = async(id:number):Promise<OrdenesTrabajo> => {
+
+        const response:Response = await fetch(`${route}orden-de-trabajo/orden-by-id/${id}`,{
+       method:"GET"
+        });
         const data = await response.json();
         return data;
     }

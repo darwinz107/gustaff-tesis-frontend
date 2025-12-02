@@ -61,8 +61,9 @@ export const Rol1Main = () => {
     <li><a onClick={()=>setcargarComponente(4)}>Gestion de solicitud</a></li>
   </ul>
 </div>
+<button className="btn w-full border-none" onClick={logout}>Cerrar sesion</button>
 </div>
-      <button className="btn w-full border-none" onClick={logout}>Cerrar sesion</button>
+      
    </div>
      
 

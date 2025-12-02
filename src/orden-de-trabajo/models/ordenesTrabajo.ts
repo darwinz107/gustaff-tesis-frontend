@@ -8,6 +8,7 @@ export interface OrdenesTrabajo {
   Area: string;
   Codigo: string;
   Maquina: string;
+  EspecificacionMaquina:string | null;
   Categoria: string;
   TipoTrabajo: string;
   DescripcionTrabajo: string | null;

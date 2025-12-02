@@ -36,10 +36,11 @@ export const ProtectRoute2 = ({route}) => {
 
   }, [route])
   
-//if(validate === null)  return (route);
 
+if(validate === null || validate1 === null || validate2 === null) { return <p>Cargando...</p>}
 if(validate) return <Navigate to='/admin'></Navigate>
 if(validate1) return <Navigate to='/principal1'></Navigate>; 
 if(validate2) return (route);
-//if(!validate && !validate1 && !validate2) return <Navigate to='/'></Navigate>  ;
+return <Navigate to='/'></Navigate>  ;
+
 }

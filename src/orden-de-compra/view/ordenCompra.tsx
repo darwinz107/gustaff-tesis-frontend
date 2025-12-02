@@ -126,8 +126,8 @@ console.log(resOrdenCompra.msj);
         </div>
         <div className='w-full h-[80%] mt-4 text-center'>
          <div className='w-full h-[80%] pl-2 flex flex-row mb-4'>
-            <div className='w-[100%]  flex flex-col'><p className='min-w-[17%]'>Cantidad</p><input  type="text"  className='input'  onChange={(e)=>setcantidad(e.target.value)}/></div>
-            <div className='w-[100%]  flex flex-col'><p className='min-w-[17%]'>Item</p><input type="text" className="input" list="browsers" onChange={(e)=>setitem(e.target.value)}/>
+            <div className='w-[100%]  flex flex-col mr-2'><p className='min-w-[17%]'>Cantidad</p><input  type="text"  className='input'  onChange={(e)=>setcantidad(e.target.value)}/></div>
+            <div className='w-[100%]  flex flex-col mr-2'><p className='min-w-[17%]'>Item</p><input type="text" className="input" list="browsers" onChange={(e)=>setitem(e.target.value)}/>
 <datalist id="browsers">
   {
     buscarItem.map((i)=><>
@@ -136,8 +136,8 @@ console.log(resOrdenCompra.msj);
   }
   
 </datalist></div>
-            <div className='w-[100%]  flex flex-col'><p className='min-w-[17%]'>Caracteristica</p><input   type="text"  className='input'  onChange={(e)=>setcaracteristica(e.target.value)}/></div>
-            <div className='w-[100%]  flex flex-col'><p className='min-w-[17%]'>Observacion</p><input  type="text"  className='input' onChange={(e)=>setobservacion(e.target.value)} /></div>
+            <div className='w-[100%]  flex flex-col mr-2'><p className='min-w-[17%]'>Caracteristica</p><input   type="text"  className='input'  onChange={(e)=>setcaracteristica(e.target.value)}/></div>
+            <div className='w-[100%]  flex flex-col mr-2'><p className='min-w-[17%]'>Observacion</p><input  type="text"  className='input' onChange={(e)=>setobservacion(e.target.value)} /></div>
           </div>
           <button className='btn' onClick={funcionAgregarItems}>Agregar a compras</button>
          </div>
