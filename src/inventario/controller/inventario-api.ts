@@ -1,5 +1,7 @@
 import type { CreateItemsSolicitados } from "../models/createItemsSolocitados";
 import type { Inventarios } from "../models/inventarios";
+import type { ItemsXagregar } from "../models/ItemsXagregar";
+import type { Stock } from "../models/Stock";
 
 const route = "http://localhost:3000/";
 
@@ -36,4 +38,17 @@ const route = "http://localhost:3000/";
             const data = await response.json();
             return data;
         }
+
+        export const evaluarStock = async (stock: Stock): Promise<ItemsXagregar[]> => {
+  
+  const response: Response = await fetch(`${route}inventario/evaluar-stock`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(stock)
+  })
+    const data = await response.json();
+    return data;
+};
 

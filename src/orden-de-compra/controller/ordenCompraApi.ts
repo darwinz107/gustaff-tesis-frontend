@@ -1,3 +1,5 @@
+import type { ItemsXagregar } from "../../inventario/models/ItemsXagregar";
+import type { Stock } from "../../inventario/models/Stock";
 import type { DetallesPrevioCompra } from "../models/DetallesPrevioCompra";
 import type { FiltrarOrdenTrabajo } from "../models/filtrarOrdenTrabajo";
 import type { GuardarSolicitudCompra } from "../models/guardarSolicitudCompra";
@@ -48,3 +50,4 @@ export const ordenCompraById = async (id:number): Promise<InfoOrdenTrabajo> => {
   const data = await response.json();
   return data;
 }
+

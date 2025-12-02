@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import type { ItemsPorGuardar } from '../models/itemsPorGuardar';
 import { BuscarOrdenTrabajo } from './buscarOrdenTrabajo';
 import type { LllenarDestino } from '../models/llenarDestino';
-import { createItemsSolicitados, filtrarInventario, getInventario } from '../../inventario/controller/inventario-api';
+import { createItemsSolicitados, evaluarStock, filtrarInventario, getInventario } from '../../inventario/controller/inventario-api';
 import { getUsers } from '../../user/controller/api/user-api';
 import { crearOrdenCompra } from '../controller/ordenCompraApi';
 import type { Inventarios } from '../../inventario/models/inventarios';
@@ -58,9 +58,14 @@ export const OrdenCompra = () => {
   }
   }, [buscarItem]);
 
-  const funcionAgregarItems = () =>{
+  const funcionAgregarItems = async() =>{
     
-    setcomprasPorGenerar((prev)=>[...prev,{cantidad:cantidad,item:item,caracteristica:caracteristica,observacion:observacion}]);
+    const res = await evaluarStock({item:item,cantidad:cantidad});
+   console.log(res);
+    res.map((r)=>{
+setcomprasPorGenerar((prev)=>[...prev,{cantidad:r.cantidad,item:item,caracteristica:caracteristica,observacion:observacion,estadoStock:r.estado,validate:r.validate}]);
+    })
+ 
   }
 
   
@@ -86,6 +91,7 @@ console.log(resOrdenCompra.msj);
         cantidad: item.cantidad,
         caracteristica: item.caracteristica,
         Observacion: item.observacion,
+        existencia:item.validate,
         ordenTrabajoId: infoDestino.id}
       );
       console.log(resCreateItem.msj);
@@ -185,6 +191,7 @@ console.log(resOrdenCompra.msj);
                 <th>Item</th>
                 <th>Caracteristica</th>
                 <th>Observacion</th>
+                <th>Estado</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -202,6 +209,7 @@ console.log(resOrdenCompra.msj);
                     </td>
                     <td>{u.caracteristica}</td>
                     <td>{u.observacion}</td>
+                    <td>{u.estadoStock}</td>
                     <td>
                       
                       <button className="btn btn-ghost btn-xs" onClick={()=>funcionEliminarItems(i)}>Eliminar</button>
