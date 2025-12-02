@@ -1,10 +1,12 @@
 
 import React, { useEffect, useRef, useState } from 'react'
-import { areas, getAllCategorias, getAllCodByArea, getAllMaquinasByCod, getAllOrdenesTrabajo, getAllTipoTrabajo, getOrdenTrabajoById, getOrdenTrabajoBySolicitante } from '../../controller/api/orden-api';
+import { areas, editarOrdenTrabajoApi, eliminarOrdenTrabajo, getAllCategorias, getAllCodByArea, getAllMaquinasByCod, getAllOrdenesTrabajo, getAllTipoTrabajo, getEstados, getOrdenTrabajoById, getOrdenTrabajoBySolicitante } from '../../controller/api/orden-api';
 import type { OrdenesTrabajo } from '../../models/ordenesTrabajo';
 import type { Maquina } from '../../models/maquinas';
 import { getUsers } from '../../../user/controller/api/user-api';
 import type { Users } from '../../../admin/models/users';
+import type { SolicitudOrden } from '../../models/solicitudOrden';
+import type { Estado } from '../../../orden-de-compra/models/Estados';
 
 export const HistorialOrdenes = () => {
 
@@ -32,17 +34,19 @@ export const HistorialOrdenes = () => {
     const [users, setusers] = useState<Users[]>([])
     const [confirmarCambio, setconfirmarCambio] = useState(false);
     const [salto, setsalto] = useState(false);
+    const [estados, setestados] = useState<Estado[]>([]);
 
 
-
-    
-    
-     useEffect(() => {
-      const ordenesTrabajoApi  = async() =>{
+const ordenesTrabajoApi  = async() =>{
        const res = await getAllOrdenesTrabajo();
        console.log("res ordenes trabajo: ",res);
        setordenesTrabajo(res);
       }
+
+    
+    
+     useEffect(() => {
+      
       ordenesTrabajoApi();
 
       const areasApi = async() =>{
@@ -60,6 +64,9 @@ export const HistorialOrdenes = () => {
 
         const res3 = await getUsers();
         setusers(res3);
+
+        const res4 = await getEstados();
+        setestados(res4);
       }
       parametrosApi();
       
@@ -115,6 +122,43 @@ export const HistorialOrdenes = () => {
       console.log("res orden trabajo by id: ",res); 
       setordenTrabajoxUser(res);
      }
+
+     const editarOrdenTrabajo = async() =>{
+      
+      
+      const ordenEditada:SolicitudOrden = {
+        
+        NumOrden:ordenTrabajoxUser.NumOrden,
+        fechaInicio:ordenTrabajoxUser.fechaInicio,
+        fechaFinal:ordenTrabajoxUser.fechaFinal,
+        HoraInicio:ordenTrabajoxUser.HoraInicio,  
+        HoraFinal:ordenTrabajoxUser.HoraFinal,
+        Area:ordenTrabajoxUser.Area,
+        Codigo:ordenTrabajoxUser.Codigo,
+        Maquina:ordenTrabajoxUser.Maquina,
+        EspecificacionMaquina:ordenTrabajoxUser.EspecificacionMaquina,
+        Categoria:ordenTrabajoxUser.Categoria,
+        TipoTrabajo:ordenTrabajoxUser.TipoTrabajo,
+        DescripcionTrabajo:ordenTrabajoxUser.DescripcionTrabajo,
+        userSolicitante:ordenTrabajoxUser.userSolicitante.name,
+        userReceptor:ordenTrabajoxUser.userReceptor.name,
+        userTecnico:ordenTrabajoxUser.userTecnico?.name
+      };
+
+      const res = await editarOrdenTrabajoApi(ordenTrabajoxUser.id,ordenEditada);
+    
+      alert(res.msj);
+      setconfirmarCambio(false);
+      sethabilitarEdicion(!habilitarEdicion);
+      ordenesTrabajoApi();
+     }
+
+     const metodoEliminarOrdenTrabajo = async(id:number)=>{
+      
+      const res = await eliminarOrdenTrabajo(id);
+      ordenesTrabajoApi();
+      alert(res.msj);
+     }
      
 
      const cargarPdf = (id:number) => {
@@ -169,7 +213,7 @@ export const HistorialOrdenes = () => {
                                 <td>{u.estadoTrabajo.estado}</td>
                                 <td>
                                   <button className="btn btn-ghost btn-xs" onClick={() => { asignarSolicitantexOrden(u.id); setventanaEmergente(!ventanaEmergente); setselectArea(u.Area); setselectCodigo(u.Codigo);}}>Detalles</button>
-                                  <button className="btn btn-ghost btn-xs" >Eliminar</button>
+                                  <button className="btn btn-ghost btn-xs" onClick={()=>metodoEliminarOrdenTrabajo(u.id)}>Eliminar</button>
                                   <button className="btn btn-ghost btn-xs" onClick={()=>cargarPdf(u.id)}>Ver pdf</button>
                                 </td>
                               </tr>
@@ -184,11 +228,11 @@ export const HistorialOrdenes = () => {
                   <div className={`z-10 fixed  bg-transparent inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaEmergente ? "opacity-100" : "opacity-0 pointer-events-none"} `}>
                   <div className={`border border-gray-300 w-4/5 h-4/5 rounded-sm fixed  bg-white`}>
                     <div className='w-full h-[12%] flex justify-between p-5'>
-                      <div>Listado de ordenes</div>
-                      <div onClick={() => { setventanaEmergente(!ventanaEmergente); setordenTrabajoxUser({}); console.log(ventanaEmergente) }} className='cursor-pointer'>❌</div>
+                      <div>Detalle de ordenes</div>
+                      <div onClick={() => { setventanaEmergente(!ventanaEmergente); setordenTrabajoxUser({}); console.log(ventanaEmergente); sethabilitarEdicion(false);}} className='cursor-pointer'>❌</div>
                     </div>
                     <div className='w-full h-[76%] border-y border-gray-300 px-4 flex'>
-                      <div className='w-[33.33%] h-[100%]'>
+                      <div className='w-[25%] h-[100%]'>
                         <div className='w-[100%] h-[20%]'><p>N.Orden</p><input type="text" disabled={true} className='input' value={ordenTrabajoxUser.NumOrden} onChange={(e)=>setordenTrabajoxUser((prev)=>({...prev,NumOrden:e.target.value}))}/></div>
                         <div className='w-[100%] h-[20%]'><p>Fecha de inicio</p><button disabled={!habilitarEdicion} type="button" onClick={() => { callyPpopover4.current?.showPopover() }} className="input input-border" id="cally4" style={{ anchorName: "--cally4" }}>
                            {ordenTrabajoxUser.fechaInicio}
@@ -200,7 +244,7 @@ export const HistorialOrdenes = () => {
                                 <calendar-month></calendar-month>
                               </calendar-date>
                             </div></div>
-                        <div className='w-[100%] h-[20%]'><p>Fecha de finalizacion</p><button disabled={!habilitarEdicion} type="button" onClick={() => { callyPpopover4.current?.showPopover() }} className="input input-border" id="cally5" style={{ anchorName: "--cally5" }}>
+                        <div className='w-[100%] h-[20%]'><p>Fecha de finalizacion</p><button disabled={!habilitarEdicion} type="button" onClick={() => { callyPpopover5.current?.showPopover() }} className="input input-border" id="cally5" style={{ anchorName: "--cally5" }}>
                            {ordenTrabajoxUser.fechaFinal}
                             </button>
                             <div popover="auto" ref={callyPpopover5} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally5" }}>
@@ -213,8 +257,8 @@ export const HistorialOrdenes = () => {
                         <div className='w-[100%] h-[20%]'><p>Hora de inicio</p><input  type="time" disabled={!habilitarEdicion} className='input' value={ordenTrabajoxUser.HoraInicio} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,HoraInicio:e.target.value}));setconfirmarCambio(true);}}/></div>
                         <div className='w-[100%] h-[20%]'><p>Hora de finalizacion</p><input  type="time" disabled={!habilitarEdicion} className='input' value={ordenTrabajoxUser.HoraFinal} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,HoraFinal:e.target.value}));setconfirmarCambio(true);}}/></div>
                       </div>
-                      <div className='w-[33.33%] h-[100%]'>
-                        <div className='w-[100%] h-[20%]'><p>Area</p><select   disabled={!habilitarEdicion} defaultValue={ordenTrabajoxUser.Area} className="select" id="" onChange={(e) => {
+                      <div className='w-[25%] h-[100%]'>
+                        <div className='w-[100%] h-[20%]'><p>Area</p><select   disabled={!habilitarEdicion} value={ordenTrabajoxUser.Area} className="select" id="" onChange={(e) => {
                           setordenTrabajoxUser((prev)=>({...prev,Area:e.target.value}));setconfirmarCambio(true);
               }}>
                 <option disabled={true}>...</option>
@@ -222,7 +266,7 @@ export const HistorialOrdenes = () => {
                   <option value={a.nombre}>{a.nombre}</option>
                 </>)}
               </select></div>
-                        <div className='w-[100%] h-[20%]'><p>Codigo</p><select   disabled={!habilitarEdicion} defaultValue={ordenTrabajoxUser.Codigo} className="select" id="" onChange={(e) => {
+                        <div className='w-[100%] h-[20%]'><p>Codigo</p><select   disabled={!habilitarEdicion} value={ordenTrabajoxUser.Codigo} className="select" id="" onChange={(e) => {
                          setordenTrabajoxUser((prev)=>({...prev,Codigo:e.target.value}));setconfirmarCambio(true);
               }}>
                 <option disabled={true}>...</option>
@@ -230,7 +274,7 @@ export const HistorialOrdenes = () => {
                   <option value={c.cod}>{c.cod}</option>
                 </>)}
               </select></div>
-                        <div className='w-[100%] h-[20%]'><p>Maquina</p><select   disabled={!habilitarEdicion} defaultValue={ordenTrabajoxUser.Maquina} className="select" id="" onChange={(e) => {
+                        <div className='w-[100%] h-[20%]'><p>Maquina</p><select   disabled={!habilitarEdicion} value={ordenTrabajoxUser.Maquina} className="select" id="" onChange={(e) => {
                setordenTrabajoxUser((prev)=>({...prev,Maquinaea:e.target.value})); setconfirmarCambio(true);
               }}>
                 <option disabled={true}>...</option>
@@ -239,7 +283,7 @@ export const HistorialOrdenes = () => {
                 </>)}
               </select></div>
                         <div className='w-[100%] h-[20%]'><p>Especificacion</p><input   type="text" disabled={!habilitarEdicion} className='input' value={ordenTrabajoxUser.EspecificacionMaquina} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,HoraFinal:e.target.value})); setconfirmarCambio(true);}}/></div>
-                       <div className='w-[100%] h-[20%]'><p>Categoria</p><select   disabled={!habilitarEdicion} defaultValue={ordenTrabajoxUser.Categoria} className="select" id="" onChange={(e) => {
+                       <div className='w-[100%] h-[20%]'><p>Categoria</p><select   disabled={!habilitarEdicion} value={ordenTrabajoxUser.Categoria} className="select" id="" onChange={(e) => {
                setordenTrabajoxUser((prev)=>({...prev,Categoria:e.target.value})); setconfirmarCambio(true);
               }}>
                 <option disabled={true}>...</option>
@@ -249,8 +293,8 @@ export const HistorialOrdenes = () => {
               </select></div>
                
                       </div>
-                      <div className='w-[33.34%] h-[100%]'>
-                       <div className='w-[100%] h-[20%]'><p>Tipo de trabajo</p><select   disabled={!habilitarEdicion} defaultValue={ordenTrabajoxUser.TipoTrabajo} className="select" id="" onChange={(e) => {
+                      <div className='w-[25%] h-[100%]'>
+                       <div className='w-[100%] h-[20%]'><p>Tipo de trabajo</p><select   disabled={!habilitarEdicion} value={ordenTrabajoxUser.TipoTrabajo} className="select" id="" onChange={(e) => {
                setordenTrabajoxUser((prev)=>({...prev,TipoTrabajo:e.target.value})); setconfirmarCambio(true);
               }}>
                 <option disabled={true}>...</option>
@@ -259,7 +303,7 @@ export const HistorialOrdenes = () => {
                 </>)}
               </select></div>
                         <div className='w-[100%] h-[20%]'><p>Descripcion</p><input   type="text" disabled={!habilitarEdicion} className='input' value={ordenTrabajoxUser.DescripcionTrabajo} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,DescripcionTrabajo:e.target.value})); setconfirmarCambio(true);}}/></div>
-                        <div className='w-[100%] h-[20%]'><p>Solicitante</p><select   disabled={!habilitarEdicion} defaultValue={ordenTrabajoxUser.userSolicitante?.name ?? ""} className="select" id="" onChange={(e) => {
+                        <div className='w-[100%] h-[20%]'><p>Solicitante</p><select   disabled={!habilitarEdicion} value={ordenTrabajoxUser.userSolicitante?.name ?? ""} className="select" id="" onChange={(e) => {
                setordenTrabajoxUser((prev)=>({...prev,userSolicitante:e.target.value})); setconfirmarCambio(true);
               }}>
                 <option disabled={true}>...</option>
@@ -267,7 +311,7 @@ export const HistorialOrdenes = () => {
                   <option value={u.name}>{u.name}</option>
                 </>)}
               </select></div>
-                        <div className='w-[100%] h-[20%]'><p>Receptor</p><select   disabled={!habilitarEdicion} defaultValue={ordenTrabajoxUser.userReceptor?.name ?? ""} className="select" id="" onChange={(e) => {
+                        <div className='w-[100%] h-[20%]'><p>Receptor</p><select   disabled={!habilitarEdicion} value={ordenTrabajoxUser.userReceptor?.name ?? ""} className="select" id="" onChange={(e) => {
                setordenTrabajoxUser((prev)=>({...prev,userReceptor:e.target.value})); setconfirmarCambio(true);
               }}>
                 <option disabled={true}>...</option>
@@ -275,7 +319,7 @@ export const HistorialOrdenes = () => {
                   <option value={u.name}>{u.name}</option>
                 </>)}
               </select></div>
-                        <div className='w-[100%] h-[20%]'><p>Tecnico</p><select   disabled={!habilitarEdicion} defaultValue={ordenTrabajoxUser.userTecnico?.name ?? ""} className="select" id="" onChange={(e) => {
+                        <div className='w-[100%] h-[20%]'><p>Tecnico</p><select   disabled={!habilitarEdicion} value={ordenTrabajoxUser.userTecnico?.name ?? ""} className="select" id="" onChange={(e) => {
                setordenTrabajoxUser((prev)=>({...prev,userTecnico:e.target.value})); setconfirmarCambio(true);
               }}>
                 <option disabled={true}>...</option>
@@ -284,12 +328,24 @@ export const HistorialOrdenes = () => {
                 </>)}
               </select></div>
                       </div>
+                      <div className='w-[25%] h-[100%]'>
+                       <div className='w-[100%] h-[20%]'><p>Estado</p><select   disabled={!habilitarEdicion} value={ordenTrabajoxUser.estadoTrabajo?.estado} className="select" id="" onChange={(e) => {
+               setordenTrabajoxUser((prev)=>({...prev,estadoTrabajo:e.target.value})); setconfirmarCambio(true);
+              }}>
+                <option disabled={true}>...</option>
+                {estados.map((e) =>(e.id === 2 || e.id ===3?
+                  <option disabled={true} value={e.estado}>{e.estado}</option>
+                :<option value={e.estado}>{e.estado}</option>))}
+              </select></div>
+                        
+                        
+                      </div>
                     </div>
                     <div className='w-full h-[12%] flex justify-between p-5'>
             
                       {habilitarEdicion 
                       ? <>
-                      <button className='btn' disabled={!confirmarCambio}>Hecho</button>
+                      <button className='btn' disabled={!confirmarCambio} onClick={editarOrdenTrabajo}>Hecho</button>
                         <button className='btn' onClick={()=>{asignarSolicitantexOrden(ordenTrabajoxUser.id);  sethabilitarEdicion(!habilitarEdicion); setconfirmarCambio(false);}}>Cancelar</button></> 
                       : <>
                       <button className='btn' onClick={() => { sethabilitarEdicion(!habilitarEdicion); }}>Editar</button>

@@ -1,3 +1,4 @@
+import type { Estado } from "../../../orden-de-compra/models/Estados";
 import type { OrdenesTrabajo } from "../../models/ordenesTrabajo";
 import type { SolicitudOrden } from "../../models/solicitudOrden";
 
@@ -107,6 +108,51 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{nombre:string}> =
     export const getOrdenTrabajoById = async(id:number):Promise<OrdenesTrabajo> => {
 
         const response:Response = await fetch(`${route}orden-de-trabajo/orden-by-id/${id}`,{
+       method:"GET"
+        });
+        const data = await response.json();
+        return data;
+    }
+
+    export const editarOrdenTrabajoApi = async(id:number,ordenTrabajo:SolicitudOrden):Promise<{msj:string}>=>{
+       try {
+        const response:Response = await fetch(`${route}orden-de-trabajo/${id}`,{
+         method:"PATCH",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify(ordenTrabajo)
+        });
+
+        const data = await response.json();
+       return data;
+        
+
+    } catch (error) {
+        console.log("Error en editarOrdenTrabajoApi:", error);
+        return { error: true, msj: "Error en la conexión con el servidor" };
+    }
+    }
+
+    export const eliminarOrdenTrabajo = async(id:number):Promise<{msj:string}>=>{
+   try {
+        const response:Response = await fetch(`${route}orden-de-trabajo/${id}`,{
+         method:"DELETE"
+        });
+
+        const data = await response.json();
+       return data;
+        
+
+    } catch (error) {
+        console.log("Error en eliminarOrdenTrabajo:", error);
+        return { error: true, msj: "Error en la conexión con el servidor" };
+    }
+    }
+
+     export const getEstados = async():Promise<Estado[]> => {
+
+        const response:Response = await fetch(`${route}orden-de-trabajo/estados`,{
        method:"GET"
         });
         const data = await response.json();

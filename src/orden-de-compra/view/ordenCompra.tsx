@@ -20,6 +20,7 @@ export const OrdenCompra = () => {
   const [users, setusers] = useState<{name:string}[]>([]);
   const [autoriza, setautoriza] = useState("");
   const [destino, setdestino] = useState("");
+  const [ventanaEmergente, setventanaEmergente] = useState(false); 
 
   useEffect(() => {
     const getAllUsers = async () => {
@@ -127,15 +128,24 @@ console.log(resOrdenCompra.msj);
         <div className='w-full h-[80%] mt-4 text-center'>
          <div className='w-full h-[80%] pl-2 flex flex-row mb-4'>
             <div className='w-[100%]  flex flex-col mr-2'><p className='min-w-[17%]'>Cantidad</p><input  type="text"  className='input'  onChange={(e)=>setcantidad(e.target.value)}/></div>
-            <div className='w-[100%]  flex flex-col mr-2'><p className='min-w-[17%]'>Item</p><input type="text" className="input" list="browsers" onChange={(e)=>setitem(e.target.value)}/>
-<datalist id="browsers">
-  {
-    buscarItem.map((i)=><>
-    <option value={i.nombre}>{i.nombre}</option>
-    </>)
-  }
-  
-</datalist></div>
+            <div className='w-[100%]  flex flex-col mr-2'>
+              <p className='min-w-[17%]'>Item</p>
+              <div className="relative w-full">
+  <input
+    type="text"
+    className="input input-bordered w-full pr-10"
+    onChange={(e) => setitem(e.target.value)}
+  />
+
+  <button
+    type="button"
+    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer"
+    onClick={()=>setventanaEmergente(!ventanaEmergente)}
+  >
+    🔎
+  </button>
+</div>
+</div>
             <div className='w-[100%]  flex flex-col mr-2'><p className='min-w-[17%]'>Caracteristica</p><input   type="text"  className='input'  onChange={(e)=>setcaracteristica(e.target.value)}/></div>
             <div className='w-[100%]  flex flex-col mr-2'><p className='min-w-[17%]'>Observacion</p><input  type="text"  className='input' onChange={(e)=>setobservacion(e.target.value)} /></div>
           </div>
@@ -199,6 +209,60 @@ console.log(resOrdenCompra.msj);
            <BuscarOrdenTrabajo setinfoDestino={setinfoDestino} ventanaBuscarOrdenTrabajo={ventanaBuscarOrdenTrabajo} setventanaBuscarOrdenTrabajo={setventanaBuscarOrdenTrabajo}></BuscarOrdenTrabajo>
            </div>
            </div>
+             <div className={`z-10 fixed  bg-transparent inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaEmergente ? "opacity-100" : "opacity-0 pointer-events-none"} `}>
+                  <div className={`border border-gray-300 w-2/5 h-2/5 rounded-sm fixed  bg-white`}>
+                    <div className='w-full h-[12%] flex justify-between p-5 mb-2'>
+                      <div>Listado de items</div>
+                      <div onClick={() => { setventanaEmergente(!ventanaEmergente); console.log(ventanaEmergente) }} className='cursor-pointer'>❌</div>
+                    </div>
+                    <div className='w-full h-[76%] border-y border-gray-300 px-4 flex flex-col'>
+                      <div className='flex justify-end h-[15%] w-full mt-2'>
+                        <div className='flex'> <p>Buscar: </p> <input className='input ml-2' type="text" onChange={(e)=>setfiltrarxSolicitante(e.target.value)}/></div>
+                      </div>
+                     <div className="overflow-x-auto w-full h-[85%] m-2">
+          <table className="table">
+
+            <thead >
+              <tr>
+
+                
+                <th>Item</th>
+                <th>Stock</th>
+  
+                <th>Accion</th>
+              </tr>
+            </thead>
+            <tbody>
+              {comprasPorGenerar.map((u,i) =>
+                <>
+                  <tr>
+
+                    <td>
+                      {u.cantidad}
+                    </td>
+                    <td>
+                      {u.item}
+
+                    </td>
+                    
+                    <td>
+                      
+                      <button className="btn btn-ghost btn-xs" >Seleccionar</button>
+                    </td>
+                  </tr>
+                </>)}
+
+            </tbody>
+
+          </table>
+        </div>
+                    </div>
+                    <div className='w-full h-[12%] flex justify-between p-5'>
+            
+              
+                    </div>
+                  </div>
+                  </div>
      </>
   )
 }
