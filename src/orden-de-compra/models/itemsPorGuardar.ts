@@ -5,4 +5,5 @@ export interface ItemsPorGuardar {
    item:string;
    caracteristica:string;
    observacion:string;
+   estadoStock:number;
 }

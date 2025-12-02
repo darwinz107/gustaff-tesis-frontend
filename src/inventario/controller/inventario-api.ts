@@ -1,8 +1,9 @@
 import type { CreateItemsSolicitados } from "../models/createItemsSolocitados";
+import type { Inventarios } from "../models/inventarios";
 
 const route = "http://localhost:3000/";
 
-  export const filtrarInventario = async(item:string):Promise<{nombre:string}[]>=>{
+  export const filtrarInventario = async(item:string):Promise<Inventarios[]>=>{
         const response:Response = await fetch(`${route}inventario/filtrar`,{
          method:"POST",
          headers:{
@@ -26,3 +27,13 @@ const route = "http://localhost:3000/";
         const data = await response.json();
         return data;
     }  
+
+    export const getInventario = async():Promise<Inventarios[]> => {
+    
+            const response:Response = await fetch(`${route}inventario`,{
+           method:"GET"
+            });
+            const data = await response.json();
+            return data;
+        }
+

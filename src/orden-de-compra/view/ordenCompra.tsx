@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react'
 import type { ItemsPorGuardar } from '../models/itemsPorGuardar';
 import { BuscarOrdenTrabajo } from './buscarOrdenTrabajo';
 import type { LllenarDestino } from '../models/llenarDestino';
-import { createItemsSolicitados, filtrarInventario } from '../../inventario/controller/inventario-api';
+import { createItemsSolicitados, filtrarInventario, getInventario } from '../../inventario/controller/inventario-api';
 import { getUsers } from '../../user/controller/api/user-api';
 import { crearOrdenCompra } from '../controller/ordenCompraApi';
+import type { Inventarios } from '../../inventario/models/inventarios';
 
 
 
@@ -13,7 +14,7 @@ export const OrdenCompra = () => {
   const [ventanaBuscarOrdenTrabajo, setventanaBuscarOrdenTrabajo] = useState(false);
   const [infoDestino, setinfoDestino] = useState<LllenarDestino>({userSolicitante:{name:""},id:0,NumOrden:"",Area:"",Codigo:"",Maquina:""});
   const [item, setitem] = useState("");
-  const [buscarItem, setbuscarItem] = useState<{nombre:string}[]>([]);
+  const [buscarItem, setbuscarItem] = useState("");
   const [cantidad, setcantidad] = useState(0);
   const [caracteristica, setcaracteristica] = useState("");
   const [observacion, setobservacion] = useState("");
@@ -21,6 +22,12 @@ export const OrdenCompra = () => {
   const [autoriza, setautoriza] = useState("");
   const [destino, setdestino] = useState("");
   const [ventanaEmergente, setventanaEmergente] = useState(false); 
+  const [inventarios, setinventarios] = useState<Inventarios[]>([])
+
+   const metodoInventarios = async() =>{
+      const resInv = await getInventario();
+      setinventarios(resInv);
+    }
 
   useEffect(() => {
     const getAllUsers = async () => {
@@ -28,24 +35,31 @@ export const OrdenCompra = () => {
         setusers(res);
       } ;
     getAllUsers(); 
+
+   
+    metodoInventarios();
   }, []);
   
 
 
 
   useEffect(() => {
-    if(item != ""){
+    if(buscarItem != ""){
     const funcionBuscarItem = async()=>{
-        const res = await filtrarInventario(item);
-        console.log(res);
-        setbuscarItem(res);
+        const res = await filtrarInventario(buscarItem);
+       
+        setinventarios(res);
     }
     funcionBuscarItem();}else{
-      setbuscarItem([]);
+      const funcionRegresarInventario = async()=>{
+       await metodoInventarios();
     }
-  }, [item]);
+  funcionRegresarInventario();
+  }
+  }, [buscarItem]);
 
   const funcionAgregarItems = () =>{
+    
     setcomprasPorGenerar((prev)=>[...prev,{cantidad:cantidad,item:item,caracteristica:caracteristica,observacion:observacion}]);
   }
 
@@ -134,6 +148,7 @@ console.log(resOrdenCompra.msj);
   <input
     type="text"
     className="input input-bordered w-full pr-10"
+    value={item}
     onChange={(e) => setitem(e.target.value)}
   />
 
@@ -217,7 +232,7 @@ console.log(resOrdenCompra.msj);
                     </div>
                     <div className='w-full h-[76%] border-y border-gray-300 px-4 flex flex-col'>
                       <div className='flex justify-end h-[15%] w-full mt-2'>
-                        <div className='flex'> <p>Buscar: </p> <input className='input ml-2' type="text" onChange={(e)=>setfiltrarxSolicitante(e.target.value)}/></div>
+                        <div className='flex'> <p>Buscar: </p> <input className='input ml-2' type="text" onChange={(e)=>setbuscarItem(e.target.value)}/></div>
                       </div>
                      <div className="overflow-x-auto w-full h-[85%] m-2">
           <table className="table">
@@ -233,21 +248,21 @@ console.log(resOrdenCompra.msj);
               </tr>
             </thead>
             <tbody>
-              {comprasPorGenerar.map((u,i) =>
+              {inventarios.map((i) =>
                 <>
                   <tr>
 
                     <td>
-                      {u.cantidad}
+                      {i.nombre}
                     </td>
                     <td>
-                      {u.item}
+                      {i.stock}
 
                     </td>
                     
                     <td>
                       
-                      <button className="btn btn-ghost btn-xs" >Seleccionar</button>
+                      <button className="btn btn-ghost btn-xs" onClick={()=>{setitem(i.nombre); setventanaEmergente(false);}}>Seleccionar</button>
                     </td>
                   </tr>
                 </>)}
