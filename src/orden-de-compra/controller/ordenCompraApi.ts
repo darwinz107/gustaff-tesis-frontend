@@ -52,3 +52,39 @@ export const ordenCompraById = async (id:number): Promise<InfoPdfCompra> => {
   return data;
 }
 
+ export const editarSolicitudMaterial = async(id:number,actualizarSolMaterial:GuardarSolicitudCompra):Promise<{msj:string}>=>{
+       try {
+        const response:Response = await fetch(`${route}solicitud-de-compra/${id}`,{
+         method:"PATCH",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify(actualizarSolMaterial)
+        });
+
+        const data = await response.json();
+       return data;
+        
+
+    } catch (error) {
+        console.log("Error en editarOrdenTrabajoApi:", error);
+        return { error: true, msj: "Error en la conexión con el servidor" };
+    }
+    }
+
+  export const eliminarSolMaterial = async(id:number):Promise<{msj:string}>=>{
+    try {
+         const response:Response = await fetch(`${route}solicitud-de-compra/${id}`,{
+          method:"DELETE"
+         });
+ 
+         const data = await response.json();
+        return data;
+         
+ 
+     } catch (error) {
+         console.log("Error en eliminarSolMaterial:", error);
+         
+     }
+     }   
+

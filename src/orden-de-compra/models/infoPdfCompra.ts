@@ -2,6 +2,7 @@ export interface InfoPdfCompra {
     id: number;
     numOrden: string;
     numOrdenTrabajo: {
+        id:number;
         NumOrden: string;
         Area: string;
         Codigo: string;

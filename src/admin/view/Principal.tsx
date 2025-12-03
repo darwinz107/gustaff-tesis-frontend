@@ -70,7 +70,7 @@ try {
   </ul>
 </div>
 <div className="w-full dropdown dropdown-hover" >
-  <div tabIndex={0} role="button" className="btn w-full border-none" >Solicitud de compra</div>
+  <div tabIndex={0} role="button" className="btn w-full border-none" >Solicitud de materiales</div>
   <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
     <li><a onClick={()=>setcargarComponente(5)}>Nueva solicitud</a></li>
     <li><a onClick={()=>setcargarComponente(6)}>Gestion de solicitud</a></li>
