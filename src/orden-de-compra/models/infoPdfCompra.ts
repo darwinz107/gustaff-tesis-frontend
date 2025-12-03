@@ -20,6 +20,7 @@ export interface InfoPdfCompra {
         cantidad: number;
         caracteristica: string;
         Observacion: string;
+        existencia:boolean
     }[];
     estadoCompra: {
         id: number;

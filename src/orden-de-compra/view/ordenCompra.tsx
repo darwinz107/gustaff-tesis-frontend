@@ -83,6 +83,7 @@ setcomprasPorGenerar((prev)=>[...prev,{cantidad:r.cantidad,item:item,caracterist
       Destino: destino
     });
 console.log(resOrdenCompra.msj);
+alert(resOrdenCompra.msj);
 
     for(const item of comprasPorGenerar){
         const resCreateItem =  await createItemsSolicitados({
@@ -95,11 +96,11 @@ console.log(resOrdenCompra.msj);
         ordenTrabajoId: infoDestino.id}
       );
       console.log(resCreateItem.msj);
-    }
 
-    
-    
-    
+      window.open('/pdf-compra/',"_blank");
+      
+    }
+  
     } catch (error) {
       console.error("Error creating order and items:", error);
     }

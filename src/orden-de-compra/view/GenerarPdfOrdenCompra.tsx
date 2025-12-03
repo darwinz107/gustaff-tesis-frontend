@@ -10,10 +10,11 @@ import type { DetallesPrevioCompra } from "../models/DetallesPrevioCompra";
 import { styles } from "../../styles";
 import logo from '../../../public/gustaff_logo.jpg';
 import { useParams } from "react-router-dom";
+import type { InfoPdfCompra } from "../models/infoPdfCompra";
 
 export const GenerarPdfOrdenCompra = () => {
 
-  const [newSolicitud, setnewSolicitud] = useState<DetallesPrevioCompra>();
+  const [newSolicitud, setnewSolicitud] = useState<InfoPdfCompra>();
 const id = useParams();
   useEffect(() => {
    
@@ -62,7 +63,57 @@ const id = useParams();
                 <TD style={styles.td}><Text style={{fontWeight:"bold"}}>CODIGO:</Text>{newSolicitud?.numOrdenTrabajo.Codigo}</TD>
               </TR>
              </Table>
+             
             </View>
+            
+<View style={{ margin: 10, width: "97%", marginTop: 6 }}>
+ 
+   
+  <View
+    style={{
+      flexDirection: "row",
+      borderWidth: 1,
+      borderColor: "#000",
+      backgroundColor: "#bdbdbd"
+    }}
+  >
+    <Text style={{ width: "10%", fontWeight:"bold", textAlign: "center", borderRightWidth: 1 }}>CANT.</Text>
+    <Text style={{ width: "50%", fontWeight:"bold", paddingLeft: 4, borderRightWidth: 1 }}>NOMBRE REPUESTO O MATERIAL</Text>
+    <Text style={{ width: "25%", fontWeight:"bold", paddingLeft: 4, borderRightWidth: 1 }}>CARACTERISTICA TECNICA</Text>
+    <Text style={{ width: "15%", fontWeight:"bold", paddingLeft: 4 }}>OBSERVACION</Text>
+    <Text style={{ width: "15%", fontWeight:"bold", paddingLeft: 4, borderLeftWidth: 1 }}>ESTADO</Text>
+  </View>
+
+ 
+ {newSolicitud?.itemSolicitados.map((i)=> <View
+    style={{
+      flexDirection: "row",
+      paddingVertical: 4
+    }}
+  >
+    <Text style={{ width: "10%", fontSize: 9, textAlign: "center" }}>{i.cantidad} UNDS</Text>
+    <Text style={{ width: "50%", fontSize: 9, paddingLeft: 4 }}>{i.item}</Text>
+    <Text style={{ width: "25%", fontSize: 9, paddingLeft: 4 }}>{i.caracteristica}</Text>
+    <Text style={{ width: "15%", fontSize: 9, paddingLeft: 4 }}>{i.Observacion}</Text>
+    <Text style={{ width: "15%", fontSize: 9, paddingLeft: 4 }}>{i.existencia ? "EN STOCK":"POR COMPRAR"}</Text>
+  </View>)}
+</View>
+
+
+<View style={{ marginHorizontal: 10, marginTop: 18, width: "97%", flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" }}>
+  <View style={{ width: "48%" }}>
+    <Text style={{ fontSize: 10, fontWeight: "bold" }}>SOLICITA: <Text style={{ fontWeight: "normal" }}>{newSolicitud?.numOrdenTrabajo.userSolicitante.name }</Text></Text>
+    <View style={{ height: 24 }} />
+    <Text style={{ borderTopWidth: 0.7, borderTopColor: "#000", width: "80%", paddingTop: 6 }}>FIRMA</Text>
+  </View>
+
+  <View style={{ width: "48%", alignItems: "flex-end" }}>
+    <Text style={{ fontSize: 10, fontWeight: "bold" }}>AUTORIZA: <Text style={{ fontWeight: "normal" }}>{newSolicitud?.Autoriza}</Text></Text>
+    <View style={{ height: 24 }} />
+    <Text style={{ borderTopWidth: 0.7, borderTopColor: "#000", width: "80%", paddingTop: 6, textAlign: "right" }}>FIRMA</Text>
+  </View>
+</View>
+
           </Page>
         </Document>
       </PDFViewer>

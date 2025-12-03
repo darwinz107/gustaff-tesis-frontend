@@ -4,6 +4,7 @@ import type { DetallesPrevioCompra } from "../models/DetallesPrevioCompra";
 import type { FiltrarOrdenTrabajo } from "../models/filtrarOrdenTrabajo";
 import type { GuardarSolicitudCompra } from "../models/guardarSolicitudCompra";
 import type { InfoOrdenTrabajo } from "../models/infoOrdenTrabajo";
+import type { InfoPdfCompra } from "../models/infoPdfCompra";
 import type { LllenarDestino } from "../models/llenarDestino";
 
 const route: string = "http://localhost:3000/"
@@ -43,7 +44,7 @@ export const findAllSolicitudesCompra = async (): Promise<DetallesPrevioCompra[]
   return data;
 }
 
-export const ordenCompraById = async (id:number): Promise<InfoOrdenTrabajo> => {
+export const ordenCompraById = async (id:number): Promise<InfoPdfCompra> => {
   const response: Response = await fetch(`${route}solicitud-de-compra/solicitud-compra/${id}`, {
     method: "GET"
   });
