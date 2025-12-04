@@ -95,7 +95,7 @@ const id = useParams();
     <Text style={{ width: "50%", fontSize: 9, paddingLeft: 4 }}>{i.item}</Text>
     <Text style={{ width: "25%", fontSize: 9, paddingLeft: 4 }}>{i.caracteristica}</Text>
     <Text style={{ width: "15%", fontSize: 9, paddingLeft: 4 }}>{i.Observacion}</Text>
-    <Text style={{ width: "15%", fontSize: 9, paddingLeft: 4 }}>{i.existencia ? "EN STOCK":"POR COMPRAR"}</Text>
+    <Text style={{ width: "15%", fontSize: 9, paddingLeft: 4 }}>{i.existencia ? "EN STOCK":"NO DISPONIBLE"}</Text>
   </View>)}
 </View>
 

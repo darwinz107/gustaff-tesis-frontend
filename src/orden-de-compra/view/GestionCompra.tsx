@@ -189,7 +189,7 @@ export const GestionCompra = () => {
                                 </td>
                                 <td>{is.caracteristica}</td>
                                 <td>{is.Observacion}</td>
-                                <td>{is.existencia? "EN STOCK":"POR COMPRAR"}</td>
+                                <td>{is.existencia? "EN STOCK":"NO DISPONIBLE"}</td>
                                 
                               </tr>
                                        )}
