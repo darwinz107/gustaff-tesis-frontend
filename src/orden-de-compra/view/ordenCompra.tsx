@@ -6,11 +6,13 @@ import { createItemsSolicitados, evaluarStock, filtrarInventario, getInventario 
 import { getUsers } from '../../user/controller/api/user-api';
 import { crearOrdenCompra } from '../controller/ordenCompraApi';
 import type { Inventarios } from '../../inventario/models/inventarios';
+import type { CreateItemsSolicitados } from '../../inventario/models/createItemsSolocitados';
 
 
 
 export const OrdenCompra = () => {
   const [comprasPorGenerar, setcomprasPorGenerar] = useState<ItemsPorGuardar[]>([]);
+  const [items, setitems] = useState<CreateItemsSolicitados[]>([]);
   const [ventanaBuscarOrdenTrabajo, setventanaBuscarOrdenTrabajo] = useState(false);
   const [infoDestino, setinfoDestino] = useState<LllenarDestino>({userSolicitante:{name:""},id:0,NumOrden:"",Area:"",Codigo:"",Maquina:""});
   const [item, setitem] = useState("");
@@ -59,6 +61,8 @@ export const OrdenCompra = () => {
   }, [buscarItem]);
 
   const funcionAgregarItems = async() =>{
+
+    setitems((prev)=>[...prev,{item:item,cantidad:cantidad,caracteristica:caracteristica,Observacion:observacion}]);
     
     const res = await evaluarStock({item:item,cantidad:cantidad});
    console.log(res);
@@ -72,6 +76,8 @@ setcomprasPorGenerar((prev)=>[...prev,{cantidad:r.cantidad,item:item,caracterist
   const funcionEliminarItems = (id:number) =>{
     const newArray = comprasPorGenerar.filter((item, index) => index !== id);
     setcomprasPorGenerar(newArray);
+     const newArrayItems = items.filter((item, index) => index !== id);
+     setitems(newArrayItems);
   }
 
   const crearYGenerarOrdenCompra = async() => {
@@ -80,27 +86,17 @@ setcomprasPorGenerar((prev)=>[...prev,{cantidad:r.cantidad,item:item,caracterist
        const resOrdenCompra = await crearOrdenCompra({
       Autoriza: autoriza,
       ordenTrabajoId: infoDestino.id,
-      Destino: destino
+      Destino: destino,
+      items:items
     });
 console.log(resOrdenCompra.msj);
 alert(resOrdenCompra.msj);
 
-    for(const item of comprasPorGenerar){
-        const resCreateItem =  await createItemsSolicitados({
-     
-        item: item.item,
-        cantidad: item.cantidad,
-        caracteristica: item.caracteristica,
-        Observacion: item.observacion,
-        existencia:item.validate,
-        ordenTrabajoId: infoDestino.id}
-      );
-      console.log(resCreateItem.msj);
-
-      window.open('/pdf-compra/',"_blank");
-      
+    if(resOrdenCompra.validate){
+window.open(`/pdf-compra/${undefined}`,"_blank");
+preCargar
     }
-  
+
     } catch (error) {
       console.error("Error creating order and items:", error);
     }

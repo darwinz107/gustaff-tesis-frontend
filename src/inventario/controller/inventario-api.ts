@@ -18,7 +18,7 @@ const route = "http://localhost:3000/";
         return data;
     }
 
-   export const createItemsSolicitados = async(createItems:CreateItemsSolicitados):Promise<{msj:string}>=>{
+   /*export const createItemsSolicitados = async(createItems:CreateItemsSolicitados):Promise<{msj:string}>=>{
         const response:Response = await fetch(`${route}inventario/items-solicitados`,{
          method:"POST",
          headers:{
@@ -28,7 +28,7 @@ const route = "http://localhost:3000/";
         });
         const data = await response.json();
         return data;
-    }  
+    }  */
 
     export const getInventario = async():Promise<Inventarios[]> => {
     

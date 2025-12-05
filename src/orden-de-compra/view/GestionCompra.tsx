@@ -5,6 +5,7 @@ import { editarSolicitudMaterial, eliminarSolMaterial, findAllSolicitudesCompra,
 import type { InfoPdfCompra } from '../models/infoPdfCompra';
 import { getUsers } from '../../user/controller/api/user-api';
 import type { Users } from '../../admin/models/users';
+import { allOrdenTrabajoNumOrden } from '../../orden-de-trabajo/controller/api/orden-api';
 
 
 export const GestionCompra = () => {
@@ -18,10 +19,15 @@ export const GestionCompra = () => {
    const [detalleSol, setdetalleSol] = useState<InfoPdfCompra>({itemSolicitados:[]});
    const [confirmarCambio, setconfirmarCambio] = useState(true);
    const [users, setusers] = useState<Users[]>([]);
+   const [ordenesTrabajo, setordenesTrabajo] = useState<{numOrden:string}[]>([]);
 
     const ordenesTrabajoApi  = async() =>{
        const res = await findAllSolicitudesCompra();
        setordenesCompra(res);
+
+       const res2 = await allOrdenTrabajoNumOrden();
+       setordenesTrabajo(res2);
+       console.log(res2);
       }
 
      useEffect(() => {
@@ -147,7 +153,7 @@ export const GestionCompra = () => {
                         
                       </div>
                       <div className='w-[33.33%] h-[100%]'>
-                        <div className='w-[100%] h-[33.33%]'><p>N.Orden de trabajo</p><input   type="text" disabled={true} className='input' value={detalleSol.numOrdenTrabajo?.NumOrden}/></div>
+                        <div className='w-[100%] h-[33.33%]'><p>N.Orden de trabajo</p><input type="text" /> </div>
                         <div className='w-[100%] h-[33.33%] mt-5'><p>Destino</p><input type="text" disabled={!habilitarEdicion} className='input' value={detalleSol?.Destino} onChange={(e)=>{setdetalleSol((prev)=>({...prev,Destino:e.target.value})); setconfirmarCambio(false);}}/></div>
                        
                       </div>

@@ -32,7 +32,7 @@ export const getAllOrdenesTrabajoSinUso = async (): Promise<LllenarDestino[]> =>
     return data;
 };
 
-export const crearOrdenCompra = async (guardarSolicitudCompra: GuardarSolicitudCompra):Promise<{msj:string}> => {
+export const crearOrdenCompra = async (guardarSolicitudCompra: GuardarSolicitudCompra):Promise<{msj:string,validate:boolean}> => {
   
   const response: Response = await fetch(`${route}solicitud-de-compra`, {
     method: "POST",
@@ -95,7 +95,7 @@ export const ordenCompraById = async (id:number): Promise<InfoPdfCompra> => {
  
      } catch (error) {
          console.log("Error en eliminarSolMaterial:", error);
-         
+        
      }
      }   
 

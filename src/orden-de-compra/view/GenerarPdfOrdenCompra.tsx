@@ -1,7 +1,5 @@
 import { Document, Image, Page, PDFViewer, Text, View } from "@react-pdf/renderer"
 import {Table, TR, TH, TD} from '@ag-media/react-pdf-table';
-
-
 import { useEffect, useState } from "react";
 import { getLastSolicitud } from "../../controller/api/orden-api";
 import type { SolicitudOrden } from "../../models/solicitudOrden";
@@ -14,13 +12,13 @@ import type { InfoPdfCompra } from "../models/infoPdfCompra";
 
 export const GenerarPdfOrdenCompra = () => {
 
-  const [newSolicitud, setnewSolicitud] = useState<InfoPdfCompra>();
+const [newSolicitud, setnewSolicitud] = useState<InfoPdfCompra>();
 const id = useParams();
   useEffect(() => {
    
     try {
         const cargarSolicitud = async() =>{
-       const res = await ordenCompraById(id);
+       const res = await ordenCompraById(id.id);
        setnewSolicitud(res);
        console.log(res);
     }

@@ -24,7 +24,7 @@ const preCargarOrdenes = async() =>{
       preCargarOrdenes();
       
 
-    }, [])
+    }, [ventanaBuscarOrdenTrabajo])
     
 
     useEffect(() => {

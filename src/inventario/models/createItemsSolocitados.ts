@@ -7,7 +7,5 @@ export interface CreateItemsSolicitados {
     caracteristica:string;
     
     Observacion:string; 
-    existencia:boolean;
-    
-    ordenTrabajoId:number;
+   
 }
