@@ -22,6 +22,16 @@ export const filtrarOrdenTrabajo = async (filtrarOrdenTrabajo: FiltrarOrdenTraba
     return data;
 };
 
+export const getAllOrdenesTrabajoSinUso = async (): Promise<LllenarDestino[]> => {
+  
+  const response: Response = await fetch(`${route}orden-de-trabajo/all-ordenes-sin-uso`, {
+    method: "GET",
+   
+  });
+    const data = await response.json();
+    return data;
+};
+
 export const crearOrdenCompra = async (guardarSolicitudCompra: GuardarSolicitudCompra):Promise<{msj:string}> => {
   
   const response: Response = await fetch(`${route}solicitud-de-compra`, {
@@ -43,6 +53,7 @@ export const findAllSolicitudesCompra = async (): Promise<DetallesPrevioCompra[]
   const data = await response.json();
   return data;
 }
+
 
 export const ordenCompraById = async (id:number): Promise<InfoPdfCompra> => {
   const response: Response = await fetch(`${route}solicitud-de-compra/solicitud-compra/${id}`, {

@@ -128,7 +128,8 @@ export const CrearOrden = () => {
     } 
     const res = await registerSolicitudOrden(infoSolicitud);
     alert(res.msj);
-    window.open("/pdf/","_blank");
+    if(res.validate){
+    window.open("/pdf/undefined","_blank");}
 
     } catch (error) {
       console.log("Error al generar la solicitud: ",error);

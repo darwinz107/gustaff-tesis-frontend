@@ -58,7 +58,7 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{nombre:string}> =
         return data;
     }
 
-    export const registerSolicitudOrden = async(solicitudOrden:SolicitudOrden):Promise<{msj:string}>=>{
+    export const registerSolicitudOrden = async(solicitudOrden:SolicitudOrden):Promise<{msj:string,validate:boolean}>=>{
         const response:Response = await fetch(`${route}orden-de-trabajo/create/solicitud-orden`,{
          method:"POST",
          headers:{

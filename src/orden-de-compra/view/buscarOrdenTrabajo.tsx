@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import type { InfoOrdenTrabajo } from '../models/infoOrdenTrabajo';
-import { filtrarOrdenTrabajo } from '../controller/ordenCompraApi';
+import { filtrarOrdenTrabajo, getAllOrdenesTrabajoSinUso } from '../controller/ordenCompraApi';
 import type { LllenarDestino } from '../models/llenarDestino';
 
 export const BuscarOrdenTrabajo = ({ventanaBuscarOrdenTrabajo,setventanaBuscarOrdenTrabajo,setinfoDestino}) => {
@@ -10,15 +10,34 @@ export const BuscarOrdenTrabajo = ({ventanaBuscarOrdenTrabajo,setventanaBuscarOr
     const [selectFechaNac, setselectFechaNac] = useState<string>('');
     const [selectUserSolicitante, setselectUserSolicitante] = useState<string>('');
 
+const preCargarOrdenes = async() =>{
+        const ordenesApi = await getAllOrdenesTrabajoSinUso();
+        setordenes(ordenesApi);
+        console.log("ordenesApi");
+        console.log(ordenesApi);
+      }
+
+
+    useEffect(() => {
+     
+      
+      preCargarOrdenes();
+      
+
+    }, [])
     
 
     useEffect(() => {
      const ordenTrabajoFiltrar = async() => {
       
-      const res = await filtrarOrdenTrabajo({userSolicitante:selectUserSolicitante,fechaInicio:selectFechaNac});
+      if(selectUserSolicitante != "" || selectFechaNac != ""){
+ const res = await filtrarOrdenTrabajo({userSolicitante:selectUserSolicitante,fechaInicio:selectFechaNac});
       setordenes(res);
       console.log(res);
-    
+      }else{
+preCargarOrdenes();
+      }
+
     };
     ordenTrabajoFiltrar();
     }, [selectFechaNac,selectUserSolicitante]);
@@ -27,7 +46,7 @@ export const BuscarOrdenTrabajo = ({ventanaBuscarOrdenTrabajo,setventanaBuscarOr
     <>
      <div className='w-full h-[10%] flex justify-between p-5 '>
           <div>Filtros</div>
-          <div onClick={() => { setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo); }} className='cursor-pointer'>❌</div>
+          <div onClick={() => { setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo);preCargarOrdenes(); }} className='cursor-pointer'>❌</div>
         </div>
         <div className='w-full h-[20%] border-y border-gray-300 px-4 flex flex-row'>
          <div className='h-full w-[33.33%]'><p>Solicitante</p><input type="text" className='input' onChange={(e)=>{setselectUserSolicitante(e.target.value);}}/></div>
