@@ -1,5 +1,6 @@
 import type { ItemsXagregar } from "../../inventario/models/ItemsXagregar";
 import type { Stock } from "../../inventario/models/Stock";
+import type { ActualizarOrdenMaterial } from "../models/actualizarOrdenMaterial";
 import type { DetallesPrevioCompra } from "../models/DetallesPrevioCompra";
 import type { FiltrarOrdenTrabajo } from "../models/filtrarOrdenTrabajo";
 import type { GuardarSolicitudCompra } from "../models/guardarSolicitudCompra";
@@ -72,7 +73,7 @@ export const ordenCompraById = async (id:number): Promise<InfoPdfCompra> => {
   return data;
 }
 
- export const editarSolicitudMaterial = async(id:number,actualizarSolMaterial:GuardarSolicitudCompra):Promise<{msj:string,validate:boolean}>=>{
+ export const editarSolicitudMaterial = async(id:number,actualizarSolMaterial:ActualizarOrdenMaterial):Promise<{msj:string,validate:boolean}>=>{
        try {
         const response:Response = await fetch(`${route}solicitud-de-compra/${id}`,{
          method:"PATCH",
@@ -106,5 +107,7 @@ export const ordenCompraById = async (id:number): Promise<InfoPdfCompra> => {
          console.log("Error en eliminarSolMaterial:", error);
         
      }
-     }   
+     }  
+     
+     
 

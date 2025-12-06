@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { logoutSession } from '../../Principal/controller/api/auth-api';
 import { useNavigate } from 'react-router-dom';
+import { CrearActaSalida } from '../../acta-de-salida/view/CrearActaSalida';
 
 
 
@@ -23,12 +24,11 @@ export const Rol2Main = () => {
    
   }
 
- /* const componentes = 
+  const componentes = 
   [
     <></>,
-    <CrearOrden></CrearOrden>,
-    <HistorialOrdenes setValidate={setventanaEmergente}></HistorialOrdenes>
-  ]*/
+    <CrearActaSalida></CrearActaSalida>
+  ]
 
   const [cargarComponente, setcargarComponente] = useState<number>(0);
 
@@ -51,7 +51,7 @@ export const Rol2Main = () => {
 <div className="w-full dropdown dropdown-hover" >
   <div tabIndex={0} role="button" className="btn w-full border-none" >Salida de inventario</div>
   <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
-    <li><a /*onClick={()=>setcargarComponente(3)}*/>Nueva salida</a></li>
+    <li><a onClick={()=>setcargarComponente(1)}>Nueva salida</a></li>
     <li><a /*onClick={()=>setcargarComponente(4)}*/>Gestion de actas de salidas</a></li>
   </ul>
 </div>
@@ -66,7 +66,7 @@ export const Rol2Main = () => {
         </div>
         <div className=' w-4/5 bg-white h-full flex items-center justify-center'>
         {
-        // componentes[cargarComponente]
+         componentes[cargarComponente]
         }
         
      </div>

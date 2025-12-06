@@ -62,7 +62,7 @@ export const GestionCompra = () => {
 
       const actSolicitudMaterial = async() =>{
             
-            const res = await editarSolicitudMaterial(detalleSol.id,{Autoriza:detalleSol.Autoriza,Destino:detalleSol.Destino,ordenTrabajoId:nOrdenTrabajo});
+            const res = await editarSolicitudMaterial(detalleSol.id,{Autoriza:detalleSol.Autoriza,Destino:detalleSol.Destino,ordenTrabajoId:nOrdenTrabajo,estadoCompra:detalleSol.estadoCompra.estado});
             
             alert(res.msj);
             if(res.validate){
