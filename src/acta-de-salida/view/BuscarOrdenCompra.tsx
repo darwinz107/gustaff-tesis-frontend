@@ -1,7 +1,24 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+
+import { getAllSolicitudes } from '../../orden-de-compra/controller/ordenCompraApi';
+import type { BuscarSolMaterial } from '../../orden-de-compra/models/buscarSolMaterial';
 
 export const BuscarOrdenCompra = ({setventanaBuscarOrdenTrabajo,ventanaBuscarOrdenTrabajo}) => {
     const callyPpopover = useRef(null);
+
+    const [ordenes, setordenes] = useState<BuscarSolMaterial[]>([]);
+
+   const metodoSolicitudesMateriales = async() =>{
+    
+    const res = await getAllSolicitudes();
+    setordenes(res);
+   }
+
+    useEffect(() => {
+      metodoSolicitudesMateriales();
+    }, [])
+    
+
   return (
     <>
      <div className='w-full h-[10%] flex justify-between p-5 '>
@@ -31,33 +48,33 @@ export const BuscarOrdenCompra = ({setventanaBuscarOrdenTrabajo,ventanaBuscarOrd
             <thead >
               <tr>
 
-                <th>Area</th>
-                <th>Codigo</th>
-                <th>N.Orden de trabajo</th>
-                <th>Solicitante</th>
+                <th>N.Orden</th>
+                <th>Fecha de remision</th>
+                <th>Autoriza</th>
+                <th>Destino</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {/*ordenes.map((u,i) =>
+              {ordenes.map((u,i) =>
                 <>
                   <tr>
 
                     <td>
-                      {u.Area}
+                      {u.numOrden}
                     </td>
                     <td>
-                      {u.Codigo}
+                      {u.fechaRemision.split("T")[0]}
 
                     </td>
-                    <td>{u.NumOrden}</td>
-                    <td>{u.userSolicitante.name}</td>
+                    <td>{u.Autoriza}</td>
+                    <td>{u.Destino}</td>
                     <td>
                       
-                      <button className="btn btn-ghost btn-xs" onClick={()=>{setinfoDestino(u);setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo);}}>Seleccionar</button>
+                      <button className="btn btn-ghost btn-xs" /*onClick={()=>{setinfoDestino(u);setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo);}}*/>Seleccionar</button>
                     </td>
                   </tr>
-                </>)*/}
+                </>)}
 
             </tbody>
 

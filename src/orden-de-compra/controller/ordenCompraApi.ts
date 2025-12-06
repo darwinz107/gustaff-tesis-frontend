@@ -1,6 +1,7 @@
 import type { ItemsXagregar } from "../../inventario/models/ItemsXagregar";
 import type { Stock } from "../../inventario/models/Stock";
 import type { ActualizarOrdenMaterial } from "../models/actualizarOrdenMaterial";
+import type { BuscarSolMaterial } from "../models/buscarSolMaterial";
 import type { DetallesPrevioCompra } from "../models/DetallesPrevioCompra";
 import type { FiltrarOrdenTrabajo } from "../models/filtrarOrdenTrabajo";
 import type { GuardarSolicitudCompra } from "../models/guardarSolicitudCompra";
@@ -108,6 +109,15 @@ export const ordenCompraById = async (id:number): Promise<InfoPdfCompra> => {
         
      }
      }  
+
+     export const getAllSolicitudes = async (): Promise<BuscarSolMaterial[]> => {
+  const response: Response = await fetch(`${route}solicitud-de-compra/buscar-solicitudes`, {
+  method: "GET"
+  });
+
+  const data = await response.json();
+  return data;
+}
      
      
 

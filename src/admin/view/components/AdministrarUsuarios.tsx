@@ -58,13 +58,15 @@ export const AdministrarUsuarios = () => {
         cellphone: asignarDetalle.cellphone,
         email: asignarDetalle.email,
        
-        cargoId: selectCargo
+        cargo: selectCargo
 
         
       }
 
       const res = await actualizarUsuario(asignarDetalle.id, newInfoUsuario);
       alert(res.msj);
+      detalleUsuario(asignarDetalle.id);
+      sethabilitarEdicion(!habilitarEdicion);
         }else{
  const newInfoUsuario = {
         name: asignarDetalle.name,
@@ -77,6 +79,8 @@ export const AdministrarUsuarios = () => {
       }
         const res = await actualizarUsuario(asignarDetalle.id, newInfoUsuario);
       alert(res.msj);
+      detalleUsuario(asignarDetalle.id);
+      sethabilitarEdicion(!habilitarEdicion);
         }
 
      
