@@ -92,7 +92,7 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{nombre:string}> =
         return data;
     }
 
-    export const allOrdenTrabajoNumOrden = async():Promise<{numOrden:string}[]> => {
+    export const allOrdenTrabajoNumOrden = async():Promise<{NumOrden:string}[]> => {
 
         const response:Response = await fetch(`${route}orden-de-trabajo/all-ordenes-numOrden`,{
        method:"GET"

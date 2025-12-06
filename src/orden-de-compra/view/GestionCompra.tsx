@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import type { DetallesPrevioCompra } from '../models/DetallesPrevioCompra';
-import { editarSolicitudMaterial, eliminarSolMaterial, findAllSolicitudesCompra, ordenCompraById } from '../controller/ordenCompraApi';
+import { editarSolicitudMaterial, eliminarSolMaterial, findAllSolicitudesCompra, getAllEstadosCompra, ordenCompraById } from '../controller/ordenCompraApi';
 import type { InfoPdfCompra } from '../models/infoPdfCompra';
 import { getUsers } from '../../user/controller/api/user-api';
 import type { Users } from '../../admin/models/users';
@@ -19,7 +19,9 @@ export const GestionCompra = () => {
    const [detalleSol, setdetalleSol] = useState<InfoPdfCompra>({itemSolicitados:[]});
    const [confirmarCambio, setconfirmarCambio] = useState(true);
    const [users, setusers] = useState<Users[]>([]);
-   const [ordenesTrabajo, setordenesTrabajo] = useState<{numOrden:string}[]>([]);
+   const [ordenesTrabajo, setordenesTrabajo] = useState<{NumOrden:string}[]>([]);
+   const [nOrdenTrabajo, setnOrdenTrabajo] = useState("");
+   const [estados, setestados] = useState<{id:number,estado:string}[]>([])
 
     const ordenesTrabajoApi  = async() =>{
        const res = await findAllSolicitudesCompra();
@@ -31,6 +33,8 @@ export const GestionCompra = () => {
       }
 
      useEffect(() => {
+
+
      
       ordenesTrabajoApi();
 
@@ -39,23 +43,35 @@ export const GestionCompra = () => {
            setusers(res);
          } ;
        getAllUsers(); 
+
+       const getAllEstados = async () => {
+           const res = await getAllEstadosCompra();
+           setestados(res);
+         } ;
+
+         getAllEstados();
      }, []);
 
 
       const cargarSolicitud = async(id:number) =>{
             const res = await ordenCompraById(id);
             setdetalleSol(res);
+            setnOrdenTrabajo(res.numOrdenTrabajo.NumOrden);
             
          }
 
       const actSolicitudMaterial = async() =>{
             
-            const res = await editarSolicitudMaterial(detalleSol.id,{Autoriza:detalleSol.Autoriza,Destino:detalleSol.Destino,ordenTrabajoId:detalleSol.numOrdenTrabajo.id});
+            const res = await editarSolicitudMaterial(detalleSol.id,{Autoriza:detalleSol.Autoriza,Destino:detalleSol.Destino,ordenTrabajoId:nOrdenTrabajo});
             
             alert(res.msj);
+            if(res.validate){
             ordenesTrabajoApi();
+            cargarSolicitud(detalleSol.id);
             sethabilitarEdicion(!habilitarEdicion);
             setconfirmarCambio(true);
+            }
+           
          }
          
       const metodoEliminarSolMateriales = async(id:number)=>{
@@ -150,10 +166,21 @@ export const GestionCompra = () => {
                                 <calendar-month></calendar-month>
                               </calendar-date>
                             </div></div>
-                        
+                      <div className='w-[100%] h-[33.34%]'>  <p>Estado</p><select   disabled={!habilitarEdicion} value={detalleSol?.estadoCompra?.estado} className="select" id="" 
+                       onChange={(e)=>{setdetalleSol((prev)=>({...prev,estadoCompra:{estado: e.target.value}})); setconfirmarCambio(false);}}                                                                                 >
+                <option disabled={true}>...</option>
+                {estados.map((e) =>(e.id === 6 ?
+                  <option  value={e.estado}>{e.estado}</option>
+                :<option disabled={true} value={e.estado}>{e.estado}</option>))}
+              </select></div>
                       </div>
                       <div className='w-[33.33%] h-[100%]'>
-                        <div className='w-[100%] h-[33.33%]'><p>N.Orden de trabajo</p><input type="text" /> </div>
+                        <div className='w-[100%] h-[33.33%]'><p>N.Orden de trabajo</p><select disabled={!habilitarEdicion} className="select" id="" value={nOrdenTrabajo} onChange={(e)=>{setnOrdenTrabajo(e.target.value); setconfirmarCambio(false);}}>
+                            <option  disabled={true} defaultChecked={true}>...</option>
+                          {ordenesTrabajo.map((u)=><>
+                          <option value={u.NumOrden}>{u.NumOrden}</option>
+                          </>)}
+                          </select> </div>
                         <div className='w-[100%] h-[33.33%] mt-5'><p>Destino</p><input type="text" disabled={!habilitarEdicion} className='input' value={detalleSol?.Destino} onChange={(e)=>{setdetalleSol((prev)=>({...prev,Destino:e.target.value})); setconfirmarCambio(false);}}/></div>
                        
                       </div>
@@ -168,7 +195,7 @@ export const GestionCompra = () => {
                       </div>
                      
                       </div>
-                            <div className="overflow-x-auto">
+                            <div className="overflow-x-auto mt-5">
                       <table className="table">
             
                         <thead >

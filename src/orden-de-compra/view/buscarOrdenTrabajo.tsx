@@ -71,10 +71,10 @@ preCargarOrdenes();
             <thead >
               <tr>
 
-                <th>userSolicitante</th>
-                <th>fechaInicio</th>
                 <th>Area</th>
-                <th>HoraFinal</th>
+                <th>Codigo</th>
+                <th>N.Orden de trabajo</th>
+                <th>Solicitante</th>
                 <th>Acciones</th>
               </tr>
             </thead>
