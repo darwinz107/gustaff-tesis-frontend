@@ -4,10 +4,11 @@ import type { InfoPdfCompra } from "../../orden-de-compra/models/infoPdfCompra";
 import { ordenCompraById } from "../../orden-de-compra/controller/ordenCompraApi";
 import { getUsers } from "../../user/controller/api/user-api";
 import type { Users } from "../../admin/models/users";
+import { createActaSalidaApi } from "../controller/actaSalida-api";
 
 
 export const CrearActaSalida = () => {
-  const [sinOrden, setsinOrden] = useState(false);
+  //const [sinOrden, setsinOrden] = useState(false);
   const [conOrden, setconOrden] = useState(true);
   const [ventanaBuscarOrdenTrabajo, setventanaBuscarOrdenTrabajo] = useState(false);
   const [ventanaEmergente, setventanaEmergente] = useState(false);
@@ -20,6 +21,19 @@ export const CrearActaSalida = () => {
  const cargarInfoSolMaterial = async(id:number) =>{
         const res = await ordenCompraById(id);
         setsolicitudMaterial(res);
+    }
+
+    const generarActaSalida = async() =>{
+     
+      if(solicitudMaterial.id != null ||solicitudMaterial.id != undefined){
+       const res = await createActaSalidaApi(solicitudMaterial.id);
+       if(res.validate){
+         alert(res.msj);
+       }
+      }else{
+        alert("Debe llenar la informacion necesaria antes de generar una acta de salida!")
+      }
+
     }
 
     useEffect(() => {
@@ -187,7 +201,7 @@ export const CrearActaSalida = () => {
               </table>
             </div>
               </div>
-              <div className=' text-center'><button className='btn' /*onClick={crearYGenerarOrdenCompra}*/>Generar acta de salida</button></div>
+              <div className=' text-center'><button className='btn' onClick={generarActaSalida}>Generar acta de salida</button></div>
              </div>
             </div>
          </div>
