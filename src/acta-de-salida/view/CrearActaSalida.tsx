@@ -1,5 +1,9 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { BuscarOrdenCompra } from "./BuscarOrdenCompra";
+import type { InfoPdfCompra } from "../../orden-de-compra/models/infoPdfCompra";
+import { ordenCompraById } from "../../orden-de-compra/controller/ordenCompraApi";
+import { getUsers } from "../../user/controller/api/user-api";
+import type { Users } from "../../admin/models/users";
 
 
 export const CrearActaSalida = () => {
@@ -7,6 +11,27 @@ export const CrearActaSalida = () => {
   const [conOrden, setconOrden] = useState(true);
   const [ventanaBuscarOrdenTrabajo, setventanaBuscarOrdenTrabajo] = useState(false);
   const [ventanaEmergente, setventanaEmergente] = useState(false);
+  const [solicitudMaterial, setsolicitudMaterial] = useState<InfoPdfCompra>({itemSolicitados:[]});
+  const [users, setusers] = useState<Users[]>([]);
+  const [entrega, setentrega] = useState(0);
+  const [observacion, setobservacion] = useState("");
+  //const [idSolMaterial, setidSolMaterial] = useState<number>(0);
+
+ const cargarInfoSolMaterial = async(id:number) =>{
+        const res = await ordenCompraById(id);
+        setsolicitudMaterial(res);
+    }
+
+    useEffect(() => {
+       const getAllUsers = async () => {
+             const res = await getUsers();
+             setusers(res);
+           } ;
+         getAllUsers(); 
+    }, []);
+    
+
+  
 
   return (
      <>
@@ -22,24 +47,24 @@ export const CrearActaSalida = () => {
             </div>
             <div className='w-full h-[85%] flex flex-row'>
              <div className='w-[33.33%] h-[80%] pl-2'>
-                <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>Solicitante</p><input type="text"  className='input ml-10 mr-3' /*value={infoDestino.userSolicitante.name} */ disabled={true}/></div>
-                <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Area</p><input   type="text"  className='input ml-1 mr-2' /*value={infoDestino.Area}*/ disabled={true}/></div>
-                <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Destino</p><input  type="text"  className='input ml-5 mr-2' disabled={true} /*onChange={(e)=>setdestino(e.target.value)}*//></div>
+                <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>Solicitante</p><input type="text"  className='input ml-10 mr-3' value={solicitudMaterial?.numOrdenTrabajo?.userSolicitante?.name}  disabled={true}/></div>
+                <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Area</p><input   type="text"  className='input ml-1 mr-2' value={solicitudMaterial?.numOrdenTrabajo?.Area} disabled={true}/></div>
+                <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Destino</p><input  type="text"  className='input ml-5 mr-2' disabled={true} value={solicitudMaterial?.Destino}/></div>
               </div>
                 <div className='w-[33.33%] h-[80%] '>
-                <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>Entrega</p>  <select defaultValue={'...'} className="select mr-2 ml-3" id="" disabled={!conOrden} /*onChange={(e)=>setautoriza(e.target.value)}*/>
-                    <option disabled={true}>...</option>
-                    {/*users.map((m) => <>
-                      <option value={m.name}>{m.name}</option>
-                    </>)*/}
+                <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>Entrega</p>  <select value={entrega} className="select mr-2 ml-3" id="" disabled={!conOrden} onChange={(e)=>setentrega(e.target.value)}>
+                    <option value={0} disabled={true}>...</option>
+                    {users.map((m) => <>
+                      <option value={m.id}>{m.name}</option>
+                    </>)}
                   </select></div>
-                <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Codigo</p><input   type="text"  className='input ml-1' /*value={infoDestino.Codigo}*/ disabled={true}/></div>
-                <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%] mr-5'>Observacion</p><input  type="text"  className='input ml-5' disabled={!conOrden} /*onChange={(e)=>setdestino(e.target.value)}*//></div>
+                <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Codigo</p><input   type="text"  className='input ml-1' value={solicitudMaterial?.numOrdenTrabajo?.Codigo} disabled={true}/></div>
+                <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%] mr-5'>Observacion</p><input  type="text"  className='input ml-5' disabled={!conOrden} onChange={(e)=>setobservacion(e.target.value)}/></div>
               </div>
               <div className='w-[33.34%] h-[80%] pr-2'>
-                <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>Recibe</p><input type="text"  className='input ml-5'  /*value={infoDestino.NumOrden}*/ disabled={true}/></div>
-                <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Maquina</p><input   type="text"  className='input ml-4' /*value={infoDestino.Maquina}*/ disabled={true}/></div>
-               <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%] mr-5'>N.Orden</p><input  type="text"  className='input ml-5' disabled={true} /*onChange={(e)=>setdestino(e.target.value)}*//></div>
+                <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>Recibe</p><input type="text"  className='input ml-5'  value={solicitudMaterial?.numOrdenTrabajo?.userSolicitante?.name} disabled={true}/></div>
+                <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Maquina</p><input   type="text"  className='input ml-4' value={solicitudMaterial?.numOrdenTrabajo?.Maquina} disabled={true}/></div>
+               <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%] mr-5'>N.Orden</p><input  type="text"  className='input ml-5' disabled={true} value={solicitudMaterial?.numOrden}/></div>
               </div>
              </div>
             </div>
@@ -75,7 +100,7 @@ export const CrearActaSalida = () => {
               </div>
             
              {
-                conOrden ? (<button className='btn' onClick={()=>setconOrden(!conOrden)}>Activar</button>):
+                conOrden ? (<button className='btn' onClick={()=>{setconOrden(!conOrden); setsolicitudMaterial({numOrden:"",numOrdenTrabajo:{Area:"",userSolicitante:{name:""},Maquina:"",Codigo:""},Destino:"",itemSolicitados:[]});setentrega(0);}}>Activar</button>):
                 <><button className='btn' /*onClick={funcionAgregarItems}*/>Agregar a compras</button>
                 <button className='btn' onClick={()=>setconOrden(!conOrden)}>Cancelar</button></>
              } 
@@ -85,26 +110,26 @@ export const CrearActaSalida = () => {
             
             <div className='w-full h-[40%] bg-gray-100 rounded-xl shadow-md p-4 mb-6'>
               <div className=' min-h-[10%]'>
-                <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Compras</h2>  
+                <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Salidas</h2>  
              </div>
             <div className='w-full h-[70%] mt-4 text-center'>
              <div className='w-full h-[90%] pl-2 flex flex-row mb-4'>
                 <div className="overflow-x-auo w-full h-[100%] m-2">
               <table className="table">
     
-                <thead >
+            {conOrden ?<><thead >
                   <tr>
     
                     <th>Cantidad</th>
                     <th>Item</th>
                     <th>Caracteristica</th>
                     <th>Observacion</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
+                    
+                    
                   </tr>
                 </thead>
                 <tbody>
-                  {/*comprasPorGenerar.map((u,i) =t>
+                  {solicitudMaterial?.itemSolicitados?.map((u,i) =>( u.existencia ? 
                     <>
                       <tr>
     
@@ -116,8 +141,39 @@ export const CrearActaSalida = () => {
     
                         </td>
                         <td>{u.caracteristica}</td>
-                        <td>{u.observacion}</td>
-                        <td>{u.estadoStock}</td>
+                        <td>{u.Observacion}</td>
+ 
+                      </tr>
+                    </>:<></>))}
+    
+                </tbody></>:
+                <>
+                                <thead >
+                  <tr>
+    
+                    <th>Cantidad</th>
+                    <th>Item</th>
+                    <th>Caracteristica</th>
+                    <th>Observacion</th>
+                    
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/*solicitudMaterial?.itemSolicitados.map((u,i) =>
+                    <>
+                      <tr>
+    
+                        <td>
+                          {u.cantidad}
+                        </td>
+                        <td>
+                          {u.item}
+    
+                        </td>
+                        <td>{u.caracteristica}</td>
+                        <td>{u.Observacion}</td>
+                        
                         <td>
                           
                           <button className="btn btn-ghost btn-xs" onClick={()=>funcionEliminarItems(i)}>Eliminar</button>
@@ -126,18 +182,19 @@ export const CrearActaSalida = () => {
                     </>)*/}
     
                 </tbody>
+                </>}
     
               </table>
             </div>
               </div>
-              <div className=' text-center'><button className='btn' /*onClick={crearYGenerarOrdenCompra}*/>Generar orden de compra</button></div>
+              <div className=' text-center'><button className='btn' /*onClick={crearYGenerarOrdenCompra}*/>Generar acta de salida</button></div>
              </div>
             </div>
          </div>
     
            <div className={`z-10 fixed  bg-transparent inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaBuscarOrdenTrabajo ? "opacity-100" : "opacity-0 pointer-events-none"} `}>
                <div className={`border border-gray-300 w-4/5 h-4/5 rounded-sm fixed  bg-white`}>
-              <BuscarOrdenCompra setventanaBuscarOrdenTrabajo={setventanaBuscarOrdenTrabajo} ventanaBuscarOrdenTrabajo={ventanaBuscarOrdenTrabajo}></BuscarOrdenCompra>
+              <BuscarOrdenCompra setidSolMaterial={cargarInfoSolMaterial} setventanaBuscarOrdenTrabajo={setventanaBuscarOrdenTrabajo} ventanaBuscarOrdenTrabajo={ventanaBuscarOrdenTrabajo}></BuscarOrdenCompra>
                </div>
                </div>
                  <div className={`z-10 fixed  bg-transparent inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaEmergente ? "opacity-100" : "opacity-0 pointer-events-none"} `}>

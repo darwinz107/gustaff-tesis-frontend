@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { getAllSolicitudes } from '../../orden-de-compra/controller/ordenCompraApi';
 import type { BuscarSolMaterial } from '../../orden-de-compra/models/buscarSolMaterial';
 
-export const BuscarOrdenCompra = ({setventanaBuscarOrdenTrabajo,ventanaBuscarOrdenTrabajo}) => {
+export const BuscarOrdenCompra = ({setventanaBuscarOrdenTrabajo,ventanaBuscarOrdenTrabajo,setidSolMaterial}) => {
     const callyPpopover = useRef(null);
 
     const [ordenes, setordenes] = useState<BuscarSolMaterial[]>([]);
@@ -71,7 +71,7 @@ export const BuscarOrdenCompra = ({setventanaBuscarOrdenTrabajo,ventanaBuscarOrd
                     <td>{u.Destino}</td>
                     <td>
                       
-                      <button className="btn btn-ghost btn-xs" /*onClick={()=>{setinfoDestino(u);setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo);}}*/>Seleccionar</button>
+                      <button className="btn btn-ghost btn-xs" onClick={()=>{setidSolMaterial(u.id);setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo);}}>Seleccionar</button>
                     </td>
                   </tr>
                 </>)}
