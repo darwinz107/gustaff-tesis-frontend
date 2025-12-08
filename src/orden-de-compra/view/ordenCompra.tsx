@@ -25,6 +25,7 @@ export const OrdenCompra = () => {
   const [destino, setdestino] = useState("");
   const [ventanaEmergente, setventanaEmergente] = useState(false); 
   const [inventarios, setinventarios] = useState<Inventarios[]>([])
+  
 
    const metodoInventarios = async() =>{
       const resInv = await getInventario();
@@ -39,7 +40,10 @@ export const OrdenCompra = () => {
     getAllUsers(); 
 
    
+
+   
     metodoInventarios();
+    
   }, []);
   
 
@@ -62,13 +66,18 @@ export const OrdenCompra = () => {
 
   const funcionAgregarItems = async() =>{
 
-    setitems((prev)=>[...prev,{item:item,cantidad:cantidad,caracteristica:caracteristica,Observacion:observacion}]);
+    if(cantidad !=0){
+ setitems((prev)=>[...prev,{item:item,cantidad:cantidad,caracteristica:caracteristica,Observacion:observacion}]);
     
     const res = await evaluarStock({item:item,cantidad:cantidad});
    console.log(res);
     res.map((r)=>{
 setcomprasPorGenerar((prev)=>[...prev,{cantidad:r.cantidad,item:item,caracteristica:caracteristica,observacion:observacion,estadoStock:r.estado,validate:r.validate}]);
     })
+    }else{
+    alert("Debe agregar una cantidad");
+    }
+
  
   }
 
@@ -94,7 +103,7 @@ alert(resOrdenCompra.msj);
 
     if(resOrdenCompra.validate){
 window.open(`/pdf-compra/${undefined}`,"_blank");
-preCargar
+
     }
 
     } catch (error) {

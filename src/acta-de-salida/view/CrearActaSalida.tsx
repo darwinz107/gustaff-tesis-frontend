@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react"
 import { BuscarOrdenCompra } from "./BuscarOrdenCompra";
 import type { InfoPdfCompra } from "../../orden-de-compra/models/infoPdfCompra";
-import { ordenCompraById } from "../../orden-de-compra/controller/ordenCompraApi";
+import { getAllSolicitudes, ordenCompraById } from "../../orden-de-compra/controller/ordenCompraApi";
 import { getUsers } from "../../user/controller/api/user-api";
 import type { Users } from "../../admin/models/users";
 import { createActaSalidaApi } from "../controller/actaSalida-api";
+import type { BuscarSolMaterial } from "../../orden-de-compra/models/buscarSolMaterial";
 
 
 export const CrearActaSalida = () => {
@@ -16,11 +17,14 @@ export const CrearActaSalida = () => {
   const [users, setusers] = useState<Users[]>([]);
   const [entrega, setentrega] = useState(0);
   const [observacion, setobservacion] = useState("");
+  const [actaSalida, setactaSalida] = useState(false);
   //const [idSolMaterial, setidSolMaterial] = useState<number>(0);
+  const [ordenes, setordenes] = useState<BuscarSolMaterial[]>([]);
 
  const cargarInfoSolMaterial = async(id:number) =>{
         const res = await ordenCompraById(id);
         setsolicitudMaterial(res);
+        
     }
 
     const generarActaSalida = async() =>{
@@ -29,6 +33,8 @@ export const CrearActaSalida = () => {
        const res = await createActaSalidaApi(solicitudMaterial.id);
        if(res.validate){
          alert(res.msj);
+         window.open(`/pdf-salida/${solicitudMaterial.id}`,"_blank");
+         setsolicitudMaterial({id:null,numOrden:"",numOrdenTrabajo:{Area:"",userSolicitante:{name:""},Maquina:"",Codigo:""},Destino:"",itemSolicitados:[]});
        }
       }else{
         alert("Debe llenar la informacion necesaria antes de generar una acta de salida!")
@@ -42,6 +48,13 @@ export const CrearActaSalida = () => {
              setusers(res);
            } ;
          getAllUsers(); 
+
+    const metodoSolicitudesMaterialesSalidas = async() =>{
+    
+    const res = await getAllSolicitudes();
+    setordenes(res);
+   }
+   metodoSolicitudesMaterialesSalidas();
     }, []);
     
 
@@ -51,7 +64,7 @@ export const CrearActaSalida = () => {
      <>
          <div className='w-full h-[85%] '>
             <div className='w-full h-[10%] flex items-center justify-center bg-white '>
-                <button className='btn' disabled={!conOrden}onClick={()=>setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo)}>Asignar orden de compra</button>
+                <button className='btn' disabled={!conOrden}onClick={()=>{setactaSalida(true); setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo);}}>Asignar solicitud de material</button>
                 
             </div>
             
@@ -208,7 +221,7 @@ export const CrearActaSalida = () => {
     
            <div className={`z-10 fixed  bg-transparent inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaBuscarOrdenTrabajo ? "opacity-100" : "opacity-0 pointer-events-none"} `}>
                <div className={`border border-gray-300 w-4/5 h-4/5 rounded-sm fixed  bg-white`}>
-              <BuscarOrdenCompra setidSolMaterial={cargarInfoSolMaterial} setventanaBuscarOrdenTrabajo={setventanaBuscarOrdenTrabajo} ventanaBuscarOrdenTrabajo={ventanaBuscarOrdenTrabajo}></BuscarOrdenCompra>
+              <BuscarOrdenCompra ordenes={ordenes} setidSolMaterial={cargarInfoSolMaterial} setventanaBuscarOrdenTrabajo={setventanaBuscarOrdenTrabajo} ventanaBuscarOrdenTrabajo={ventanaBuscarOrdenTrabajo}></BuscarOrdenCompra>
                </div>
                </div>
                  <div className={`z-10 fixed  bg-transparent inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaEmergente ? "opacity-100" : "opacity-0 pointer-events-none"} `}>

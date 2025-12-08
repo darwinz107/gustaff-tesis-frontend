@@ -118,6 +118,14 @@ export const ordenCompraById = async (id:number): Promise<InfoPdfCompra> => {
   const data = await response.json();
   return data;
 }
-     
+  
+ export const getAllSolicitudesParciales = async (): Promise<BuscarSolMaterial[]> => {
+  const response: Response = await fetch(`${route}solicitud-de-compra/buscar-solicitudes-parcial`, {
+  method: "GET"
+  });
+
+  const data = await response.json();
+  return data;
+}
      
 

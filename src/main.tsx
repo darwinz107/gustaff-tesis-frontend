@@ -16,6 +16,7 @@ import { Rol1Main } from './rol1/view/rol1Main.tsx'
 import { Rol2Main } from './rol2/view/Rol2Main.tsx'
 import { ProtectRouteAdmin } from './Principal/auth/ProtectRouteAdmin.tsx'
 import { ProtectRoute2 } from './Principal/auth/ProtectRoute2.tsx'
+import { GenerarPdfActaDeSalida } from './acta-de-salida/view/GenerarPdfActaDeSalida.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -31,6 +32,7 @@ createRoot(document.getElementById('root')!).render(
      <Route path='/admin' element={<ProtectRouteAdmin route={<Principal></Principal>}></ProtectRouteAdmin>}></Route>
      <Route path='/pdf/:id' element={<GenerarPdf></GenerarPdf>}></Route>
      <Route path='/pdf-compra/:id' element={<GenerarPdfOrdenCompra></GenerarPdfOrdenCompra>}></Route>
+     <Route path='/pdf-salida/:id' element={<GenerarPdfActaDeSalida></GenerarPdfActaDeSalida>}></Route>
     </Routes>
     
     </BrowserRouter>

@@ -1,29 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import { getAllSolicitudes } from '../../orden-de-compra/controller/ordenCompraApi';
+import { getAllSolicitudes, getAllSolicitudesParciales } from '../../orden-de-compra/controller/ordenCompraApi';
 import type { BuscarSolMaterial } from '../../orden-de-compra/models/buscarSolMaterial';
 
-export const BuscarOrdenCompra = ({setventanaBuscarOrdenTrabajo,ventanaBuscarOrdenTrabajo,setidSolMaterial}) => {
+export const BuscarOrdenCompra = ({ordenes,setventanaBuscarOrdenTrabajo,ventanaBuscarOrdenTrabajo,setidSolMaterial}) => {
     const callyPpopover = useRef(null);
 
-    const [ordenes, setordenes] = useState<BuscarSolMaterial[]>([]);
-
-   const metodoSolicitudesMateriales = async() =>{
-    
-    const res = await getAllSolicitudes();
-    setordenes(res);
-   }
-
-    useEffect(() => {
-      metodoSolicitudesMateriales();
-    }, [])
-    
+  
 
   return (
     <>
      <div className='w-full h-[10%] flex justify-between p-5 '>
           <div>Filtros</div>
-          <div onClick={() => { setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo);/*preCargarOrdenes(); */}} className='cursor-pointer'>❌</div>
+          <div onClick={() => { setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo);setactaSalida(false);setactaEntrada(false);}} className='cursor-pointer'>❌</div>
         </div>
         <div className='w-full h-[20%] border-y border-gray-300 px-4 flex flex-row'>
          <div className='h-full w-[33.33%]'><p>Solicitante</p><input type="text" className='input' /*onChange={(e)=>{setselectUserSolicitante(e.target.value);}}*//></div>
