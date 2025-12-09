@@ -12,7 +12,7 @@ export const BuscarOrdenCompra = ({ordenes,setventanaBuscarOrdenTrabajo,ventanaB
     <>
      <div className='w-full h-[10%] flex justify-between p-5 '>
           <div>Filtros</div>
-          <div onClick={() => { setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo);setactaSalida(false);setactaEntrada(false);}} className='cursor-pointer'>❌</div>
+          <div onClick={() => { setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo)}} className='cursor-pointer'>❌</div>
         </div>
         <div className='w-full h-[20%] border-y border-gray-300 px-4 flex flex-row'>
          <div className='h-full w-[33.33%]'><p>Solicitante</p><input type="text" className='input' /*onChange={(e)=>{setselectUserSolicitante(e.target.value);}}*//></div>
@@ -60,7 +60,7 @@ export const BuscarOrdenCompra = ({ordenes,setventanaBuscarOrdenTrabajo,ventanaB
                     <td>{u.Destino}</td>
                     <td>
                       
-                      <button className="btn btn-ghost btn-xs" onClick={()=>{setidSolMaterial(u.id);setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo);}}>Seleccionar</button>
+                      <button className="btn btn-ghost btn-xs" onClick={()=>{setidSolMaterial(u.id); console.log(u.id);setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo);}}>Seleccionar</button>
                     </td>
                   </tr>
                 </>)}

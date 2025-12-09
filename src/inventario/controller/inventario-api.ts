@@ -1,3 +1,4 @@
+import type { AsignarInfoEntrada } from "../models/AsignarInfoEntrada";
 import type { CreateItemsSolicitados } from "../models/createItemsSolocitados";
 import type { Inventarios } from "../models/inventarios";
 import type { ItemsXagregar } from "../models/ItemsXagregar";
@@ -52,3 +53,11 @@ const route = "http://localhost:3000/";
     return data;
 };
 
+  export const asignarInfoActaEntrada = async(id:number):Promise<AsignarInfoEntrada[]> => {
+    
+            const response:Response = await fetch(`${route}inventario/info-entrada/${id}`,{
+           method:"GET"
+            });
+            const data = await response.json();
+            return data;
+        }
