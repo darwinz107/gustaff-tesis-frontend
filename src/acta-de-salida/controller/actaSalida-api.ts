@@ -2,10 +2,14 @@ import type { InfoPdfSalida } from "../models/InfoPdfSalida";
 
 const route = "http://localhost:3000/";
 
-  export const createActaSalidaApi = async(id:number):Promise<{msj:string, validate:boolean}> => {
+  export const createActaSalidaApi = async(id:number,entregaId:number,observacion:string):Promise<{msj:string, validate:boolean}> => {
     
             const response:Response = await fetch(`${route}inventario/acta-salida/${id}`,{
-           method:"GET"
+           method:"POST",
+            headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({entregaId,observacion})
             });
             const data = await response.json();
             return data;

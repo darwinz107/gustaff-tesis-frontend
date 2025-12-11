@@ -30,11 +30,13 @@ export const CrearActaSalida = () => {
     const generarActaSalida = async() =>{
      
       if(solicitudMaterial.id != null ||solicitudMaterial.id != undefined){
-       const res = await createActaSalidaApi(solicitudMaterial.id);
+       const res = await createActaSalidaApi(solicitudMaterial.id,entrega,observacion);
        if(res.validate){
          alert(res.msj);
          window.open(`/pdf-salida/${solicitudMaterial.id}`,"_blank");
          setsolicitudMaterial({id:null,numOrden:"",numOrdenTrabajo:{Area:"",userSolicitante:{name:""},Maquina:"",Codigo:""},Destino:"",itemSolicitados:[]});
+         setentrega(0);
+         setobservacion("");
        }
       }else{
         alert("Debe llenar la informacion necesaria antes de generar una acta de salida!")

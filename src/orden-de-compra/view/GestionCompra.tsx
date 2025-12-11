@@ -169,7 +169,7 @@ export const GestionCompra = () => {
                       <div className='w-[100%] h-[33.34%]'>  <p>Estado</p><select   disabled={!habilitarEdicion} value={detalleSol?.estadoCompra?.estado} className="select" id="" 
                        onChange={(e)=>{setdetalleSol((prev)=>({...prev,estadoCompra:{estado: e.target.value}})); setconfirmarCambio(false);}}                                                                                 >
                 <option disabled={true}>...</option>
-                {estados.map((e) =>(e.id === 6 ?
+                {estados.map((e) =>(e.estado === "PAUSADO" ?
                   <option  value={e.estado}>{e.estado}</option>
                 :<option disabled={true} value={e.estado}>{e.estado}</option>))}
               </select></div>
