@@ -8,7 +8,7 @@ export interface AsignarInfoEntrada {
     };
    
     itemsSolicitados: {
-        
+        //id:number|null;
         nombre: string;
         cantidad:number;
         stockMin:number;

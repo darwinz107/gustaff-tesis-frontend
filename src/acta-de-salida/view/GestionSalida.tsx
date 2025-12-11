@@ -3,10 +3,7 @@ import type { InfoPdfSalida } from '../models/InfoPdfSalida';
 import { findAllRegistroSalida } from '../controller/actaSalida-api';
 
 export const GestionSalida = () => {
-  const filasMock = [
-{ id: 1, numOrden: 'OC-001', fecha: '2025-12-01', solicitante: 'Juan Pérez', descripcion: 'Reparación bomba', estado: 'Pendiente' },
-{ id: 2, numOrden: 'OC-002', fecha: '2025-12-05', solicitante: 'María López', descripcion: 'Material oficina', estado: 'Aprobado' },
-];
+
 
 const [actas, setactas] = useState<InfoPdfSalida[]>([]);
 

@@ -5,6 +5,7 @@ import { getAllSolicitudesParciales, ordenCompraById } from "../../orden-de-comp
 import type { BuscarSolMaterial } from "../../orden-de-compra/models/buscarSolMaterial";
 import { asignarInfoActaEntrada } from "../../inventario/controller/inventario-api";
 import type { AsignarInfoEntrada } from "../../inventario/models/AsignarInfoEntrada";
+import { createActaEntrada } from "../controller/actaEntrada-api";
 
 
 
@@ -89,8 +90,11 @@ const cargarInfoSolMaterial = async() =>{
      }
 
      useEffect(() => {
-      metodoSolicitudesMaterialesEntradas();
-     }, []);
+      if(ventanaBuscarSolicitudMaterial){
+        metodoSolicitudesMaterialesEntradas();
+      }
+      
+     }, [ventanaBuscarSolicitudMaterial]);
      
      useEffect(() => {
       console.log("solCompraId",solCompraId);
@@ -148,14 +152,27 @@ const cargarInfoSolMaterial = async() =>{
 
 
  const enviarygenerarActaDeEntrada = async() =>{
+ console.log("hice clic en");
+ 
+ if (!solCompraId || solicitudMaterial.itemsSolicitados.length === 0) {
+  alert("Debe llenar la informacion antes de generar la acta de entrada");
+  return;
+}
+
    const registroEntradaFinal = {
-    id:solCompraId,
-    proovedor:proovedor,
+    proovedor:1,
     numFactura: factura,
+    total:total,
     itemsSolicitados:solicitudMaterial.itemsSolicitados
    }
 
-   console.log(registroEntradaFinal);
+   const res = await createActaEntrada(solCompraId,registroEntradaFinal);
+
+   if(res.validate){
+    setsolicitudMaterial({numOrden:"",numOrdenTrabajo:"",itemsSolicitados:[],id:0});
+   }
+   console.log(res);
+   alert(res.msj);
  }
 
 
