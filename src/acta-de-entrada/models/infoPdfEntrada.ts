@@ -13,11 +13,14 @@ export interface InfoPdfEntrada {
     };
     Destino: string;
   };
-  itemSalida: {
+  itemEntrada: {
     item: string;
     cantidad: number;
-    Observacion: string | null;
+    costo:number;
+    descuento:number;
+    iva:boolean;
+    subtotal:number;
+    total:number;
   }[];
   fechaRemision: string;
-  entrega: string | null;
 }
