@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { CrearActaSalida } from '../../acta-de-salida/view/CrearActaSalida';
 import { GestionSalida } from '../../acta-de-salida/view/GestionSalida';
 import { CrearActaEntrada } from '../../acta-de-entrada/view/CrearActaEntrada';
+import { GestionEntrada } from '../../acta-de-entrada/view/GestionEntrada';
 
 
 
@@ -31,7 +32,8 @@ export const Rol2Main = () => {
     <></>,
     <CrearActaSalida></CrearActaSalida>,
     <GestionSalida></GestionSalida>,
-    <CrearActaEntrada></CrearActaEntrada>
+    <CrearActaEntrada></CrearActaEntrada>,
+    <GestionEntrada></GestionEntrada>
   ]
 
   const [cargarComponente, setcargarComponente] = useState<number>(0);
@@ -49,7 +51,7 @@ export const Rol2Main = () => {
   <div tabIndex={0} role="button" className="btn w-full border-none" >Entrada de inventario</div>
   <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
     <li><a onClick={()=>setcargarComponente(3)}>Nueva entrada</a></li>
-    <li><a /*onClick={()=>setcargarComponente(2)}*/>Gestion de actas de entradas</a></li>
+    <li><a onClick={()=>setcargarComponente(4)}>Gestion de actas de entradas</a></li>
   </ul>
 </div>
 <div className="w-full dropdown dropdown-hover" >

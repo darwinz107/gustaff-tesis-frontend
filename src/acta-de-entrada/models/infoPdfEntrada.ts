@@ -14,7 +14,9 @@ export interface InfoPdfEntrada {
     Destino: string;
   };
   itemEntrada: {
-    item: string;
+    item :{
+      nombre:string;
+    };
     cantidad: number;
     costo:number;
     descuento:number;
@@ -23,4 +25,5 @@ export interface InfoPdfEntrada {
     total:number;
   }[];
   fechaRemision: string;
+  total:number;
 }

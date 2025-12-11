@@ -18,9 +18,11 @@ const route = "http://localhost:3000/";
             });
             const data = await response.json();
             return data;
-        }      
+        } 
 
-    export const findAllRegistroSalida = async():Promise<InfoPdfSalida> => {
+        
+
+    export const findAllRegistroSalida = async():Promise<InfoPdfSalida[]> => {
     
             const response:Response = await fetch(`${route}inventario/actas-salidas`,{
            method:"GET"

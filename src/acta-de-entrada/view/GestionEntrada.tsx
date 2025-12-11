@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import type { InfoPdfEntrada } from '../models/infoPdfEntrada';
+import { findAllRegistroEntrada } from '../controller/actaEntrada-api';
 
 export const GestionEntrada = () => {
   
@@ -7,7 +8,7 @@ export const GestionEntrada = () => {
   
   useEffect(() => {
     const llenarActas = async()=>{
-     const res = await findAllRegistroSalida();
+     const res = await findAllRegistroEntrada();
      setactas(res);
      
     }
@@ -16,7 +17,7 @@ export const GestionEntrada = () => {
   
   const cargarPdf = async(id:number)=>{
   
-    window.open(`/pdf-salida/${id}`,"_blank");
+    window.open(`/pdf-entrada/${id}`,"_blank");
   }
   
   
@@ -24,7 +25,7 @@ export const GestionEntrada = () => {
       <>
   <div className="min-w-[70%] min-h-[60%] rounded-xl border border-gray-200 m-4">
   <div className="bg-gray-200 w-full h-9 flex items-center justify-center mb-2 rounded-t-lg">
-  <p>Listado de actas de salida</p>
+  <p>Listado de actas de entrada</p>
   </div>
   
   
@@ -51,10 +52,10 @@ export const GestionEntrada = () => {
   <table className="table w-full">
   <thead>
   <tr>
-  <th>N.Acta de salida</th>
+  <th>N.Acta de entrada</th>
   <th>Fecha de remisión</th>
+  <th>Factura</th>
   <th>Recibe</th>
-  <th>Entrega</th>
   <th>Destino</th>
   <th className='text-center'>Acciones</th>
   </tr>
@@ -64,8 +65,8 @@ export const GestionEntrada = () => {
   <tr key={i} className="hover:bg-gray-50">
   <td>{u.numActa}</td>
   <td>{u.fechaRemision.split("T")[0]}</td>
+  <td>{u.factura}</td>
   <td>{u.numSolicitudCompra.numOrdenTrabajo.userSolicitante.name}</td>
-  <td>{u.entrega}</td>
   <td>{u.numSolicitudCompra.Destino}</td>
   <td className="flex gap-2 justify-center">
   <button className="btn btn-ghost btn-xs" disabled={true}>Ver detalles</button>
