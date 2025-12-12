@@ -43,7 +43,7 @@ const id = useParams();
             
             </View>
            <View style={styles.ocTercero}>
-            <Text style={{textAlign:"right",fontWeight:"bold"}}>ORDEN DE TRABAJO N°: {newSolicitud?.numOrdenTrabajo.NumOrden}</Text>
+            <Text style={{textAlign:"right",fontWeight:"bold"}}>ORDEN DE TRABAJO N°: {newSolicitud?.numOrdenTrabajo?.NumOrden}</Text>
             <View><Text style={{textAlign:"left",fontWeight:"bold"}}>FECHA Y HORA DE RECEPCION: {newSolicitud?.fechaRemision.split("T")[0]}  {newSolicitud?.fechaRemision.split("T")[1].split(".")[0]}</Text> <Text style={{textAlign:"right",fontWeight:"bold"}}>SOLICITUD N°: {newSolicitud?.numOrden}</Text></View>
            </View>
             <View style={{ margin:"10px",   width:"97%"}}>
