@@ -86,10 +86,10 @@ const id = useParams();
       paddingVertical: 4
     }}
   >
-    <Text style={{ width: "10%", fontSize: 9, textAlign: "center" }}>{i.cantidad} UNDS</Text>
-    <Text style={{ width: "40%", fontSize: 9, paddingLeft: 4 }}>{i.item}</Text>
-    <Text style={{ width: "15%", fontSize: 9, paddingLeft: 4 }}></Text>
-    <Text style={{ width: "35%", fontSize: 9, paddingLeft: 4 }}>{i.Observacion}</Text>
+    <Text style={{ width: "10%", fontSize: 9, textAlign: "center" }}>{i?.cantidad} UNDS</Text>
+    <Text style={{ width: "40%", fontSize: 9, paddingLeft: 4 }}>{i?.inventario?.nombre}</Text>
+    <Text style={{ width: "15%", fontSize: 9, paddingLeft: 4 }}>{i?.inventario?.costo}</Text>
+    <Text style={{ width: "35%", fontSize: 9, paddingLeft: 4 }}>{i?.Observacion}</Text>
 
   </View>)}
 </View>
@@ -103,7 +103,7 @@ const id = useParams();
   </View>
 
   <View style={{ width: "48%", alignItems: "flex-end" }}>
-    <Text style={{ fontSize: 9, fontWeight: "bold" }}>ENTREGA: <Text style={{ fontWeight: "bold" }}>{newSolicitud?.entrega}</Text></Text>
+    <Text style={{ fontSize: 9, fontWeight: "bold" }}>ENTREGA: <Text style={{ fontWeight: "bold" }}>{newSolicitud?.entrega?.name}</Text></Text>
     <View style={{ height: 24 }} />
     <Text style={{ borderTopWidth: 0.7, borderTopColor: "#000", width: "80%", paddingTop: 6, textAlign: "right" }}>FIRMA</Text>
   </View>

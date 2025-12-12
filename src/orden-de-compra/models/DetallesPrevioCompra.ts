@@ -5,6 +5,7 @@ export interface DetallesPrevioCompra {
     Autoriza: string;
     Destino: string;
     numOrdenTrabajo: {
+        id:number;
            NumOrden: string;
         Area: string;
         Codigo: string;

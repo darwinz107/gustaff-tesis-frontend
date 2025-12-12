@@ -3,7 +3,7 @@ import {Table, TR, TH, TD} from '@ag-media/react-pdf-table';
 import { useEffect, useState } from "react";
 import { getLastSolicitud } from "../../controller/api/orden-api";
 import type { SolicitudOrden } from "../../models/solicitudOrden";
-import { ordenCompraById } from "../controller/ordenCompraApi";
+import { ordenCompraById, ordenCompraByOrdenTrabajoId } from "../controller/ordenCompraApi";
 import type { DetallesPrevioCompra } from "../models/DetallesPrevioCompra";
 import { styles } from "../../styles";
 import logo from '../../../public/gustaff_logo.jpg';
@@ -18,7 +18,7 @@ const id = useParams();
    
     try {
         const cargarSolicitud = async() =>{
-       const res = await ordenCompraById(id.id);
+       const res = await ordenCompraByOrdenTrabajoId(id.id);
        setnewSolicitud(res);
        console.log(res);
     }

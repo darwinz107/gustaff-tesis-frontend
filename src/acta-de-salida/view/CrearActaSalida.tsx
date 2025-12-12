@@ -37,6 +37,8 @@ export const CrearActaSalida = () => {
          setsolicitudMaterial({id:null,numOrden:"",numOrdenTrabajo:{Area:"",userSolicitante:{name:""},Maquina:"",Codigo:""},Destino:"",itemSolicitados:[]});
          setentrega(0);
          setobservacion("");
+       }else{
+        console.log(res.msj);
        }
       }else{
         alert("Debe llenar la informacion necesaria antes de generar una acta de salida!")
