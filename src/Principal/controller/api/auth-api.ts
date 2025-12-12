@@ -12,6 +12,28 @@ export const controlByRol= async():Promise<{isRol:boolean}> =>{
  return data;
 }
 
+export const controlByUser1= async():Promise<{isRol:boolean}> =>{
+
+ const response = await fetch(`${route}validate/user1`,{
+    method:"GET",
+    credentials:'include'
+ });
+
+ const data = await response.json();
+ return data;
+}
+
+export const controlByUser2= async():Promise<{isRol:boolean}> =>{
+
+ const response = await fetch(`${route}validate/user2`,{
+    method:"GET",
+    credentials:'include'
+ });
+
+ const data = await response.json();
+ return data;
+}
+
 export const logoutSession = async():Promise<{msj:string}> =>{
  
    const response = await fetch(`${route}logout/token`,{

@@ -1,12 +1,29 @@
 import type { CrearArea } from "../../models/create-area";
+import type { CreateCargo } from "../../models/create-cargo";
 import type { CrearCategoria } from "../../models/create-categoria";
 import type { CreateMaquina } from "../../models/create-maquina";
 import type { CreateTipoTrabajo } from "../../models/create-tipo-trabajo";
+import type { CrearUser } from "../../models/create-user";
 
 const route: string = "http://localhost:3000/"
 
+export const crearUsuario = async (crearUser: CrearUser): Promise<{ msj: string }> => {
+  
+  const response: Response = await fetch(`${route}admin/create/user`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(crearUser)
+  });
+
+  const data = await response.json();
+  return data;
+}
+
+
 export const getAllAreas = async (): Promise<{ area: string }[]> => {
-  const response: Response = await fetch(`${route}orden-de-trabajo`, {
+  const response: Response = await fetch(`${route}admin`, {
     method: "GET"
   });
 
@@ -16,7 +33,7 @@ export const getAllAreas = async (): Promise<{ area: string }[]> => {
 
 export const crearNuevaArea = async (crearArea: CrearArea): Promise<{ msj: string }> => {
   console.log("crearNuevaArea in front", crearArea);
-  const response: Response = await fetch(`${route}orden-de-trabajo/create/area`, {
+  const response: Response = await fetch(`${route}admin/create/area`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -29,7 +46,7 @@ export const crearNuevaArea = async (crearArea: CrearArea): Promise<{ msj: strin
 }
 
 export const crearNuevaMaquina = async (createMaquina: CreateMaquina): Promise<{ msj: string }> => {
-  const response: Response = await fetch(`${route}orden-de-trabajo/create/maquina`, {
+  const response: Response = await fetch(`${route}admin/create/maquina`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -44,7 +61,7 @@ export const crearNuevaMaquina = async (createMaquina: CreateMaquina): Promise<{
 
 export const crearCategoria = async (crearCategoria: CrearCategoria): Promise<{ msj: string }> => {
 
-  const response: Response = await fetch(`${route}orden-de-trabajo/create/categoria`, {
+  const response: Response = await fetch(`${route}admin/create/categoria`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -57,7 +74,15 @@ export const crearCategoria = async (crearCategoria: CrearCategoria): Promise<{ 
 }
 
 export const getAllCategorias = async (): Promise<{ nombre: string }[]> => {
-  const response: Response = await fetch(`${route}orden-de-trabajo/categorias/all`, {
+  const response: Response = await fetch(`${route}admin/categorias/all`, {
+    method: "GET"
+  });
+  const data = await response.json();
+  return data;
+}
+
+export const getAllRoles = async (): Promise<{ id:number,rol: string}[]> => {
+  const response: Response = await fetch(`${route}admin/roles/all`, {
     method: "GET"
   });
   const data = await response.json();
@@ -77,7 +102,7 @@ export const logoutSession = async (): Promise<{ msj: string }> => {
 
 export const newTipoTrabajo = async (createTipoTrabajo:CreateTipoTrabajo): Promise<{ msj: string }> => {
 
-  const response:Response = await fetch(`${route}orden-de-trabajo/create/tipo-trabajo`,{
+  const response:Response = await fetch(`${route}admin/create/tipoTrabajo`,{
    method:"POST",
    headers:{
     "Content-Type": "application/json"
@@ -89,4 +114,39 @@ export const newTipoTrabajo = async (createTipoTrabajo:CreateTipoTrabajo): Promi
   return data;
 }
 
+export const crearCargo = async (createCargo: CreateCargo): Promise<{ msj: string }> => {
+  
+  const response: Response = await fetch(`${route}admin/create/cargo`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(createCargo)
+  });
 
+  const data = await response.json();
+  return data;
+}
+
+export const getAllCargos = async (): Promise<{ id:number,name: string}[]> => {
+  const response: Response = await fetch(`${route}admin/cargos/all`, {
+    method: "GET"
+  });
+  const data = await response.json();
+  return data;
+}
+
+
+export const actualizarUsuario = async (id:number,infoActualizada: object): Promise<{ msj: string }> => {
+  
+  const response: Response = await fetch(`${route}admin/user/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(infoActualizada)
+  });
+
+  const data = await response.json();
+  return data;
+}

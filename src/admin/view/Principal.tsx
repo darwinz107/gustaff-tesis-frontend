@@ -5,6 +5,9 @@ import { useNavigate } from "react-router-dom";
 import { CrearOrden } from "../../orden-de-trabajo/view/components/CrearOrden";
 import { HistorialOrdenes } from "../../orden-de-trabajo/view/components/HistorialOrdenes";
 import { VerDetalles } from "../../orden-de-trabajo/view/components/VerDetalles";
+import { AdministrarUsuarios } from "./components/administrarUsuarios";
+import { OrdenCompra } from "../../orden-de-compra/view/ordenCompra";
+import { GestionCompra } from "../../orden-de-compra/view/GestionCompra";
 
 
 
@@ -28,8 +31,11 @@ try {
       {
         0:<></>,
         1:<CrearOrden></CrearOrden>,
-        2:<HistorialOrdenes setValidate={setventanaEmergente}></HistorialOrdenes>,
-        3:<NuevosRegistros></NuevosRegistros>
+        2:<HistorialOrdenes></HistorialOrdenes>,
+        3:<NuevosRegistros></NuevosRegistros>,
+        4:<AdministrarUsuarios></AdministrarUsuarios>,
+        5:<OrdenCompra></OrdenCompra>,
+        6:<GestionCompra></GestionCompra>
       }
     
       const [cargarComponente, setcargarComponente] = useState(0);
@@ -46,22 +52,28 @@ try {
      <div className="w-full dropdown dropdown-hover" >
   <div tabIndex={0} role="button" className="btn w-full border-none" >Usuarios</div>
   <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
-    <li><a >Registrar</a></li>
-    <li><a>Administrar</a></li>
+    <li><a onClick={()=>setcargarComponente(4)}>Gestion de usuarios</a></li>
   </ul>
 </div>
   <div className="w-full dropdown dropdown-hover" >
   <div tabIndex={0} role="button" className="btn w-full border-none" >Parametros del sistema</div>
   <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
-    <li><a onClick={()=>setcargarComponente(3)}>Registrar</a></li>
-    <li><a>Historial</a></li>
+    <li><a onClick={()=>setcargarComponente(3)}>Nuevo parametro</a></li>
+    <li><a>Gestion de parametros</a></li>
   </ul>
 </div>
 <div className="w-full dropdown dropdown-hover" >
   <div tabIndex={0} role="button" className="btn w-full border-none" >Orden de trabajo</div>
   <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
-    <li><a onClick={()=>setcargarComponente(1)}>Generar</a></li>
-    <li><a onClick={()=>setcargarComponente(2)}>Historial</a></li>
+    <li><a onClick={()=>setcargarComponente(1)}>Nueva orden</a></li>
+    <li><a onClick={()=>setcargarComponente(2)}>Gestion de orden</a></li>
+  </ul>
+</div>
+<div className="w-full dropdown dropdown-hover" >
+  <div tabIndex={0} role="button" className="btn w-full border-none" >Solicitud de materiales</div>
+  <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
+    <li><a onClick={()=>setcargarComponente(5)}>Nueva solicitud</a></li>
+    <li><a onClick={()=>setcargarComponente(6)}>Gestion de solicitud</a></li>
   </ul>
 </div>
       <button className="btn w-full border-none" onClick={terminarSesion}>Cerrar sesion</button>

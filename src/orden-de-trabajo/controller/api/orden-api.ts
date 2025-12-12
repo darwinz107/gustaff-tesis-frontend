@@ -1,10 +1,12 @@
+import type { Estado } from "../../../orden-de-compra/models/Estados";
+import type { OrdenesTrabajo } from "../../models/ordenesTrabajo";
 import type { SolicitudOrden } from "../../models/solicitudOrden";
 
 const route = "http://localhost:3000/";
 
 
 export const areas = async ():Promise<{nombre:string}> => {
-    const res = await fetch(`${route}orden-de-trabajo`,{
+    const res = await fetch(`${route}admin`,{
         method: 'GET',
     });
     const data = await res.json();
@@ -14,7 +16,7 @@ export const areas = async ():Promise<{nombre:string}> => {
 export const getAllCodByArea = async (area:string):Promise<{cod:string}> => {
 
     console.log("getAllCodByArea in front",area);
-    const res = await fetch(`${route}orden-de-trabajo/all/codigos`,{
+    const res = await fetch(`${route}admin/all/codigos`,{
         method: 'POST',
         headers:{
             "Content-Type":"application/json"
@@ -25,8 +27,8 @@ export const getAllCodByArea = async (area:string):Promise<{cod:string}> => {
     return data;
 }
 
-export const getAllMaquinasByCod = async (cod:string):Promise<{maquina:string}> =>{
-    const res = await fetch(`${route}orden-de-trabajo/all/maquinas`,{
+export const getAllMaquinasByCod = async (cod:string):Promise<{nombre:string}> =>{
+    const res = await fetch(`${route}admin/all/maquinas`,{
         method: 'POST',
         headers:{
             "Content-Type":"application/json"
@@ -38,25 +40,17 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{maquina:string}> 
 }
 
 
-  export const getUsers = async():Promise<{name:string}[]>=>{
-      const response:Response = await fetch(`${route}users/users/all`,{
-      method:"GET"
-      });
-      const data = await response.json();
-      return data;
-  }
-
    export const getAllCategorias = async():Promise<{nombre:string}[]>=>{
-      const response:Response = await fetch(`${route}orden-de-trabajo/categorias/all`,{
+      const response:Response = await fetch(`${route}admin/categorias/all`,{
         method:"GET"
       });
       const data = await response.json();
       return data;
     }
 
-    export const getAllTipoTrabajoByCategoria = async (categoria:string):Promise<{tipo:string}[]> => {
+    export const getAllTipoTrabajo = async ():Promise<{tipo:string}[]> => {
          
-        const response:Response = await fetch(`${route}orden-de-trabajo/all/tipo-trabajo/${categoria}`,{
+        const response:Response = await fetch(`${route}admin/all/tipo-trabajo`,{
            method:"GET"
         });
 
@@ -64,7 +58,7 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{maquina:string}> 
         return data;
     }
 
-    export const registerSolicitudOrden = async(solicitudOrden:SolicitudOrden):Promise<{msj:string}>=>{
+    export const registerSolicitudOrden = async(solicitudOrden:SolicitudOrden):Promise<{msj:string,validate:boolean}>=>{
         const response:Response = await fetch(`${route}orden-de-trabajo/create/solicitud-orden`,{
          method:"POST",
          headers:{
@@ -78,9 +72,9 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{maquina:string}> 
     }
 
     
-    export const getLastSolicitud = async():Promise<{solicitudOrden:SolicitudOrden}> => {
+    export const getLastSolicitud = async(id:number):Promise<{solicitudOrden:SolicitudOrden}> => {
 
-        const response:Response = await fetch(`${route}orden-de-trabajo/last/solicitud`,{
+        const response:Response = await fetch(`${route}orden-de-trabajo/last/solicitud/${id}`,{
        method:"GET"
         });
 
@@ -88,3 +82,89 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{maquina:string}> 
         return data;
     }
     
+    export const getAllOrdenesTrabajo = async():Promise<OrdenesTrabajo[]> => {
+
+        const response:Response = await fetch(`${route}orden-de-trabajo/all-ordenes`,{
+       method:"GET"
+        });
+
+        const data = await response.json();
+        return data;
+    }
+
+    export const allOrdenTrabajoNumOrden = async():Promise<{NumOrden:string}[]> => {
+
+        const response:Response = await fetch(`${route}orden-de-trabajo/all-ordenes-numOrden`,{
+       method:"GET"
+        });
+
+        const data = await response.json();
+        return data;
+    }
+
+    export const getOrdenTrabajoBySolicitante = async(solicitante:string):Promise<OrdenesTrabajo[]> => {
+
+        const response:Response = await fetch(`${route}orden-de-trabajo/orden-by-solicitante`,{
+         method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({solicitante})
+        });
+        const data = await response.json();
+        return data;
+    }
+
+    export const getOrdenTrabajoById = async(id:number):Promise<OrdenesTrabajo> => {
+
+        const response:Response = await fetch(`${route}orden-de-trabajo/orden-by-id/${id}`,{
+       method:"GET"
+        });
+        const data = await response.json();
+        return data;
+    }
+
+    export const editarOrdenTrabajoApi = async(id:number,ordenTrabajo:SolicitudOrden):Promise<{msj:string}>=>{
+       try {
+        const response:Response = await fetch(`${route}orden-de-trabajo/${id}`,{
+         method:"PATCH",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify(ordenTrabajo)
+        });
+
+        const data = await response.json();
+       return data;
+        
+
+    } catch (error) {
+        console.log("Error en editarOrdenTrabajoApi:", error);
+        return { error: true, msj: "Error en la conexión con el servidor" };
+    }
+    }
+
+    export const eliminarOrdenTrabajo = async(id:number):Promise<{msj:string}>=>{
+   try {
+        const response:Response = await fetch(`${route}orden-de-trabajo/${id}`,{
+         method:"DELETE"
+        });
+
+        const data = await response.json();
+       return data;
+        
+
+    } catch (error) {
+        console.log("Error en eliminarOrdenTrabajo:", error);
+        return { error: true, msj: "Error en la conexión con el servidor" };
+    }
+    }
+
+     export const getEstados = async():Promise<Estado[]> => {
+
+        const response:Response = await fetch(`${route}orden-de-trabajo/estados`,{
+       method:"GET"
+        });
+        const data = await response.json();
+        return data;
+    }

@@ -1,0 +1,46 @@
+import { useEffect, useState } from "react"
+import { controlByRol, controlByUser1, controlByUser2 } from "../controller/api/auth-api";
+import { Navigate, useNavigate } from "react-router-dom";
+
+
+export const ProtectRouteAdmin = ({route}) => {
+
+  const [validate, setvalidate] = useState(null);
+  const [validate1, setvalidate1] = useState(null);
+  const [validate2, setvalidate2] = useState(null);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log("ProtectRouteAdmin mounted");
+    const validateRoute = async () => {
+        try {
+          const res = await controlByRol();
+          console.log("res ProtectRoute: ",res);  
+            setvalidate(res.isRol);
+            console.log("validate ProtectRoute: ",res.isRol);
+
+          const res1 = await controlByUser1();
+          setvalidate1(res1.isRol);
+          console.log("validate1 ProtectRoute: ",res1.isRol);
+          
+          const res2 = await controlByUser2();
+          setvalidate2(res2.isRol);
+          console.log("validate2 ProtectRoute: ",res2.isRol);
+        } catch (error) {
+            console.error("Error al validar la ruta: ",error);
+        }
+    }
+
+    validateRoute();
+
+  }, [route])
+  
+
+if(validate === null || validate1 === null || validate2 === null) { return <p>Cargando...</p>}
+if(validate) return (route);
+if(validate1) return <Navigate to='/principal1'></Navigate>; 
+if(validate2) return <Navigate to='/principal2'></Navigate>;
+return <Navigate to='/'></Navigate>  ;  
+
+}

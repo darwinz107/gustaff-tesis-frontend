@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react"
-import { controlByRol } from "../controller/api/auth-api";
+import { controlByRol, controlByUser1, controlByUser2 } from "../controller/api/auth-api";
 import { Navigate, useNavigate } from "react-router-dom";
 
 
 export const ProtectRoute = ({route}) => {
 
   const [validate, setvalidate] = useState(null);
+  const [validate1, setvalidate1] = useState(null);
+  const [validate2, setvalidate2] = useState(null);
 
   const navigate = useNavigate();
 
@@ -16,6 +18,15 @@ export const ProtectRoute = ({route}) => {
           const res = await controlByRol();
           console.log("res ProtectRoute: ",res);  
             setvalidate(res.isRol);
+            console.log("validate ProtectRoute: ",res.isRol);
+
+          const res1 = await controlByUser1();
+          setvalidate1(res1.isRol);
+          console.log("validate1 ProtectRoute: ",res1.isRol);
+          
+          const res2 = await controlByUser2();
+          setvalidate2(res2.isRol);
+          console.log("validate2 ProtectRoute: ",res2.isRol);
         } catch (error) {
             console.error("Error al validar la ruta: ",error);
         }
@@ -25,9 +36,11 @@ export const ProtectRoute = ({route}) => {
 
   }, [route])
   
-if(validate === null)  return (route);
-
+//if(validate === null)  return (route);
+if(validate === null || validate1 === null || validate2 === null) { return <p>Cargando...</p>}
 if(validate) return <Navigate to='/admin'></Navigate>  
- 
-if(!validate) return (route);
+if(validate1) return (route); 
+if(validate2) return <Navigate to='/principal2'></Navigate>
+return <Navigate to='/'></Navigate>  ;  
+
 }
