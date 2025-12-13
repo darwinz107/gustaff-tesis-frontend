@@ -190,7 +190,7 @@ export const CrearOrden = () => {
                 <option disabled={true}>...</option>
                 {area.map((a) =>
                   <>
-                    <option value={a.nombre}>{a.nombre}</option>
+                    <option value={a?.nombre}>{a?.nombre}</option>
                   </>
                 )}
               </select>
@@ -203,7 +203,7 @@ export const CrearOrden = () => {
               }}>
                 <option disabled={true}>...</option>
                 {codigos.map((c) => <>
-                  <option value={c.cod}>{c.cod}</option>
+                  <option value={c?.cod}>{c?.cod}</option>
                 </>)}
               </select>
 
@@ -215,7 +215,7 @@ export const CrearOrden = () => {
               }}>
                 <option disabled={true}>...</option>
                 {maquinas.map((m) => <>
-                  <option value={m.nombre}>{m.nombre}</option>
+                  <option value={m?.nombre }>{m?.nombre}</option>
                 </>)}
               </select>
             </div>

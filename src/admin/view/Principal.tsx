@@ -12,6 +12,7 @@ import { CrearActaSalida } from "../../acta-de-salida/view/CrearActaSalida";
 import { GestionEntrada } from "../../acta-de-entrada/view/GestionEntrada";
 import { CrearActaEntrada } from "../../acta-de-entrada/view/CrearActaEntrada";
 import { GestionSalida } from "../../acta-de-salida/view/GestionSalida";
+import { GestionInventario } from "../../inventario/view/GestionInventario";
 
 
 
@@ -43,7 +44,8 @@ try {
         7:<CrearActaEntrada></CrearActaEntrada>,
         8:<GestionEntrada></GestionEntrada>,
         9:<CrearActaSalida></CrearActaSalida>,
-        10:<GestionSalida></GestionSalida>
+        10:<GestionSalida></GestionSalida>,
+        11:<GestionInventario></GestionInventario>
       }
     
       const [cargarComponente, setcargarComponente] = useState(0);
@@ -96,6 +98,13 @@ try {
   <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
     <li><a onClick={()=>setcargarComponente(9)}>Nueva salida</a></li>
     <li><a onClick={()=>setcargarComponente(10)}>Gestion de solicitudes de salida</a></li>
+  </ul>
+</div>
+<div className="w-full dropdown dropdown-hover" >
+  <div tabIndex={0} role="button" className="btn w-full border-none" >Inventario</div>
+  <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
+   
+    <li><a onClick={()=>setcargarComponente(11)}>Gestion de inventario</a></li>
   </ul>
 </div>
       <button className="btn w-full border-none" onClick={terminarSesion}>Cerrar sesion</button>
