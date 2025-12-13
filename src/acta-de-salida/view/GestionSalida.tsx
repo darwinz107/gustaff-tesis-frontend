@@ -67,7 +67,7 @@ return (
 <td>{u.numActa}</td>
 <td>{u.fechaRemision.split("T")[0]}</td>
 <td>{u.numSolicitudCompra.numOrdenTrabajo.userSolicitante.name}</td>
-<td>{u.entrega}</td>
+<td>{/*u.entrega*/}</td>
 <td>{u.numSolicitudCompra.Destino}</td>
 <td className="flex gap-2 justify-center">
 <button className="btn btn-ghost btn-xs" disabled={true}>Ver detalles</button>

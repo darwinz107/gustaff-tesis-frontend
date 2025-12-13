@@ -40,7 +40,7 @@ const route = "http://localhost:3000/";
             return data;
         }
 
-        export const evaluarStock = async (stock: Stock): Promise<ItemsXagregar[]> => {
+        export const evaluarStock = async (stock: Stock): Promise<{arr:ItemsXagregar[],validate:boolean}> => {
   
   const response: Response = await fetch(`${route}inventario/evaluar-stock`, {
     method: "POST",

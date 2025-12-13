@@ -74,6 +74,14 @@ export const ordenCompraById = async (id:number): Promise<InfoPdfCompra> => {
   return data;
 }
 
+export const ordenCompraByOrdenTrabajoId = async (id:number): Promise<InfoPdfCompra> => {
+  const response: Response = await fetch(`${route}solicitud-de-compra/solicitud-compra-pdf/${id}`, {
+    method: "GET"
+  });
+  const data = await response.json();
+  return data;
+}
+
  export const editarSolicitudMaterial = async(id:number,actualizarSolMaterial:ActualizarOrdenMaterial):Promise<{msj:string,validate:boolean}>=>{
        try {
         const response:Response = await fetch(`${route}solicitud-de-compra/${id}`,{

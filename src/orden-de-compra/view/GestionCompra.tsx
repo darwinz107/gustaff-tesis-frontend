@@ -25,11 +25,12 @@ export const GestionCompra = () => {
 
     const ordenesTrabajoApi  = async() =>{
        const res = await findAllSolicitudesCompra();
+       console.log(res);
        setordenesCompra(res);
 
        const res2 = await allOrdenTrabajoNumOrden();
        setordenesTrabajo(res2);
-       console.log(res2);
+     //  console.log(res2);
       }
 
      useEffect(() => {
@@ -81,6 +82,7 @@ export const GestionCompra = () => {
       }   
 
      const cargarPdf = (id:number) => {
+      console.log(id);
       window.open(`/pdf-compra/${id}`,"_blank");
      }
      
@@ -118,7 +120,7 @@ export const GestionCompra = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {ordenesCompra.map((u) =>
+                          {ordenesCompra.map((u) =>{ /*console.log("fila:", u);*/ return(
                             <>
                               <tr>
             
@@ -135,10 +137,10 @@ export const GestionCompra = () => {
                                 <td>
                                   <button className="btn btn-ghost btn-xs" onClick={() => { setventanaEmergente(!ventanaEmergente); cargarSolicitud(u.id);}}>Detalles</button>
                                   <button className="btn btn-ghost btn-xs" onClick={()=>metodoEliminarSolMateriales(u.id)}>Eliminar</button>
-                                  <button className="btn btn-ghost btn-xs" onClick={()=>cargarPdf(u.id)}>Ver pdf</button>
+                                  <button className="btn btn-ghost btn-xs" onClick={()=>{  cargarPdf(u.numOrdenTrabajo?.id);}}>Ver pdf</button>
                                 </td>
                               </tr>
-                            </>)}
+                            </>)})}
             
                         </tbody>
             
@@ -160,7 +162,7 @@ export const GestionCompra = () => {
                            {detalleSol.fechaRemision?.split("T")[0]}
                             </button>
                             <div popover="auto" ref={callyPpopover4} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally4" }}>
-                              <calendar-date className="cally" onchange={(e) =>{document.getElementById("cally3").innerText = e.target.value; }}>
+                              <calendar-date className="cally" onchange={(e) =>{document.getElementById("cally4").innerText = e.target.value; }}>
                                 <svg aria-label="Previous" className="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
                                 <svg aria-label="Next" className="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
                                 <calendar-month></calendar-month>

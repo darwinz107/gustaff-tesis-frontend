@@ -70,10 +70,16 @@ export const OrdenCompra = () => {
  setitems((prev)=>[...prev,{item:item,cantidad:cantidad,caracteristica:caracteristica,Observacion:observacion}]);
     
     const res = await evaluarStock({item:item,cantidad:cantidad});
-   console.log(res);
-    res.map((r)=>{
+   if(res.validate){res.arr.map((r)=>{
 setcomprasPorGenerar((prev)=>[...prev,{cantidad:r.cantidad,item:item,caracteristica:caracteristica,observacion:observacion,estadoStock:r.estado,validate:r.validate}]);
-    })
+    })}
+    else{
+    setcomprasPorGenerar((prev)=>[...prev,{cantidad:cantidad,item:item,caracteristica:caracteristica,observacion:observacion,estadoStock:"Por comprar",validate:res.validate}]);
+    }
+    setcantidad(0);
+    setitem("");
+    setcaracteristica("");
+    setobservacion("");
     }else{
     alert("Debe agregar una cantidad");
     }
@@ -102,7 +108,7 @@ console.log(resOrdenCompra.msj);
 alert(resOrdenCompra.msj);
 
     if(resOrdenCompra.validate){
-window.open(`/pdf-compra/${undefined}`,"_blank");
+window.open(`/pdf-compra/${infoDestino.id}`,"_blank");
 
     }
 
@@ -114,7 +120,7 @@ window.open(`/pdf-compra/${undefined}`,"_blank");
   
   return (
      <>
-     <div className='w-full h-[85%] '>
+     <div className='w-full min-h-screen overflow-auto'>
         <div className='w-full h-[10%] flex items-center justify-center bg-white '>
             <button className='btn' onClick={()=>setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo)}>Asignar orden de trabajo</button>
             
@@ -153,7 +159,7 @@ window.open(`/pdf-compra/${undefined}`,"_blank");
         </div>
         <div className='w-full h-[80%] mt-4 text-center'>
          <div className='w-full h-[80%] pl-2 flex flex-row mb-4'>
-            <div className='w-[100%]  flex flex-col mr-2'><p className='min-w-[17%]'>Cantidad</p><input  type="text"  className='input'  onChange={(e)=>setcantidad(e.target.value)}/></div>
+            <div className='w-[100%]  flex flex-col mr-2'><p className='min-w-[17%]'>Cantidad</p><input  type="text"  className='input' value={cantidad}  onChange={(e)=>setcantidad(e.target.value)}/></div>
             <div className='w-[100%]  flex flex-col mr-2'>
               <p className='min-w-[17%]'>Item</p>
               <div className="relative w-full">
@@ -173,8 +179,8 @@ window.open(`/pdf-compra/${undefined}`,"_blank");
   </button>
 </div>
 </div>
-            <div className='w-[100%]  flex flex-col mr-2'><p className='min-w-[17%]'>Caracteristica</p><input   type="text"  className='input'  onChange={(e)=>setcaracteristica(e.target.value)}/></div>
-            <div className='w-[100%]  flex flex-col mr-2'><p className='min-w-[17%]'>Observacion</p><input  type="text"  className='input' onChange={(e)=>setobservacion(e.target.value)} /></div>
+            <div className='w-[100%]  flex flex-col mr-2'><p className='min-w-[17%]'>Caracteristica</p><input   type="text"  className='input' value={caracteristica}  onChange={(e)=>setcaracteristica(e.target.value)}/></div>
+            <div className='w-[100%]  flex flex-col mr-2'><p className='min-w-[17%]'>Observacion</p><input  type="text"  className='input' value={observacion} onChange={(e)=>setobservacion(e.target.value)} /></div>
           </div>
           <button className='btn' onClick={funcionAgregarItems}>Agregar a compras</button>
          </div>

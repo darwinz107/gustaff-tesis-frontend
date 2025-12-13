@@ -15,7 +15,14 @@ export interface InfoPdfSalida {
     item: string;
     cantidad: number;
     Observacion: string | null;
+    inventario: {
+                id: number;
+                nombre:string ;
+                costo:number;
+            }
   }[];
   fechaRemision: string;
-  entrega: string | null;
+  entrega: {
+    name:string;
+  };
 }
