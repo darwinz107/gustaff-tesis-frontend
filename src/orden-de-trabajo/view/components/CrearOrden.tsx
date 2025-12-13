@@ -129,7 +129,7 @@ export const CrearOrden = () => {
     const res = await registerSolicitudOrden(infoSolicitud);
     alert(res.msj);
     if(res.validate){
-    window.open("/pdf/undefined","_blank");}
+    window.open(`/pdf/undefined`,"_blank");}
 
     } catch (error) {
       console.log("Error al generar la solicitud: ",error);
