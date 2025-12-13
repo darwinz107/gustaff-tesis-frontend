@@ -115,7 +115,7 @@ export const GestionCompra = () => {
                             <th>Fecha de remision</th>
                             <th>Solicitante</th>
                             <th>Descripcion</th>
-                            <th>Estado</th>
+                            <th>Estado de Entrega</th>
                             <th className='text-center'>Acciones</th>
                           </tr>
                         </thead>
