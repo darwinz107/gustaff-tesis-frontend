@@ -193,6 +193,7 @@ const ordenesTrabajoApi  = async() =>{
                             <th>N.Orden</th>
                             <th>Fecha final</th>
                             <th>Solicitante</th>
+                            <th>Descripcion</th>
                             <th>Estado</th>
                             <th className='text-center'>Acciones</th>
                           </tr>
@@ -210,6 +211,7 @@ const ordenesTrabajoApi  = async() =>{
             
                                 </td>
                                 <td>{u.userSolicitante.name}</td>
+                                <td>{u.DescripcionTrabajo}</td>
                                 <td>{u.estadoTrabajo.estado}</td>
                                 <td>
                                   <button className="btn btn-ghost btn-xs" onClick={() => { asignarSolicitantexOrden(u.id); setventanaEmergente(!ventanaEmergente); setselectArea(u.Area); setselectCodigo(u.Codigo);}}>Detalles</button>
