@@ -1,5 +1,6 @@
 import type { AsignarInfoEntrada } from "../../inventario/models/AsignarInfoEntrada";
 import type { CreateActaEntradaDto } from "../models/create-entrada";
+import type { CreateProovedor } from "../models/create-proovedor";
 import type { InfoPdfEntrada } from "../models/infoPdfEntrada";
 
 const route = "http://localhost:3000/";
@@ -44,6 +45,19 @@ const route = "http://localhost:3000/";
       "Content-Type": "application/json"
     },
     body: JSON.stringify({nombre})
+            });
+            const data = await response.json();
+            return data;
+        } 
+
+        export const createProovedor = async(createProovedor:CreateProovedor):Promise<{ok:boolean,message:string}> => {
+    
+            const response:Response = await fetch(`${route}inventario/crear-proovedor`,{
+           method:"POST",
+            headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(createProovedor)
             });
             const data = await response.json();
             return data;

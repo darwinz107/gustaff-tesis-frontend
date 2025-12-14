@@ -1,6 +1,41 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { createProovedor } from '../controller/actaEntrada-api';
 
 export const CrearProovedor = ({setventanaAgregarProovedor,ventanaAgregarProovedor}) => {
+
+  const [nombre, setnombre] = useState("");
+  const [nombreComercial, setnombreComercial] = useState("");
+  const [ruc, setruc] = useState("");
+  const [email, setemail] = useState("");
+  const [telefono, settelefono] = useState("");
+  const [direccion, setdireccion] = useState("");
+  const [ciudad, setciudad] = useState("");
+  const [notas, setnotas] = useState("");
+
+
+  const registrarProovedor = async() =>{
+
+    const res = await createProovedor({
+      nombre:nombre,
+      nombreComercial:nombreComercial,
+      ruc:ruc,
+      email:email,
+      telefono:telefono,
+      direccion:direccion,
+      ciudad:ciudad,
+      notas:notas
+    });
+
+    if(!res.ok){
+    alert(res.message);
+    return;
+    }
+
+    alert(res.message);
+
+    setventanaAgregarProovedor(!ventanaAgregarProovedor);
+  }
+
   return (
     <>
     <div className="bg-base-100 p-6">
@@ -19,47 +54,43 @@ export const CrearProovedor = ({setventanaAgregarProovedor,ventanaAgregarProoved
   <form className="grid grid-cols-1 md:grid-cols-2 gap-4" onSubmit={(e) => { e.preventDefault(); }}>
     <div className="form-control">
       <label className="label"><span className="label-text">Razón social / Nombre</span></label>
-      <input name="razonSocial" placeholder="Razón social" className="input input-bordered w-full" />
+      <input onChange={(e)=>setnombre(e.target.value)} value={nombre} name="razonSocial" placeholder="Razón social" className="input input-bordered w-full" />
     </div>
 
     <div className="form-control">
       <label className="label"><span className="label-text">Nombre comercial</span></label>
-      <input name="nombreComercial" placeholder="Nombre comercial" className="input input-bordered w-full" />
+      <input onChange={(e)=>setnombreComercial(e.target.value)} value={nombreComercial} name="nombreComercial" placeholder="Nombre comercial" className="input input-bordered w-full" />
     </div>
 
     <div className="form-control">
-      <label className="label"><span className="label-text">RUC / NIT</span></label>
-      <input name="ruc" placeholder="RUC / NIT" className="input input-bordered w-full" />
+      <label className="label"><span className="label-text">RUC</span></label>
+      <input onChange={(e)=>setruc(e.target.value)} value={ruc} name="ruc" placeholder="RUC / NIT" className="input input-bordered w-full" />
     </div>
 
-    <div className="form-control">
-      <label className="label"><span className="label-text">Contacto</span></label>
-      <input name="contacto" placeholder="Nombre de la persona de contacto" className="input input-bordered w-full" />
-    </div>
-
+   
     <div className="form-control">
       <label className="label"><span className="label-text">Email</span></label>
-      <input name="email" type="email" placeholder="correo@ejemplo.com" className="input input-bordered w-full" />
+      <input onChange={(e)=>setemail(e.target.value)} value={email} name="email" type="email" placeholder="correo@ejemplo.com" className="input input-bordered w-full" />
     </div>
 
     <div className="form-control">
       <label className="label"><span className="label-text">Teléfono</span></label>
-      <input name="telefono" placeholder="+593 9..." className="input input-bordered w-full" />
+      <input onChange={(e)=>settelefono(e.target.value)} value={telefono} name="telefono" placeholder="+593 9..." className="input input-bordered w-full" />
     </div>
 
     <div className="form-control md:col-span-2">
       <label className="label"><span className="label-text">Dirección</span></label>
-      <input name="direccion" placeholder="Av. Principal #123" className="input input-bordered w-full" />
+      <input onChange={(e)=>setdireccion(e.target.value)} value={direccion} name="direccion" placeholder="Av. Principal #123" className="input input-bordered w-full" />
     </div>
 
     <div className="form-control">
       <label className="label"><span className="label-text">Ciudad</span></label>
-      <input name="ciudad" placeholder="Guayaquil" className="input input-bordered w-full" />
+      <input onChange={(e)=>setciudad(e.target.value)} value={ciudad} name="ciudad" placeholder="Guayaquil" className="input input-bordered w-full" />
     </div>
 
     <div className="form-control md:col-span-2">
       <label className="label"><span className="label-text">Notas</span></label>
-      <textarea name="notas" placeholder="Notas internas, condiciones especiales..." className="textarea textarea-bordered w-full" rows={3} />
+      <textarea onChange={(e)=>setnotas(e.target.value)} value={notas} name="notas" placeholder="Notas internas, condiciones especiales..." className="textarea textarea-bordered w-full" rows={3} />
     </div>
 
    
@@ -68,7 +99,7 @@ export const CrearProovedor = ({setventanaAgregarProovedor,ventanaAgregarProoved
       <button type="button" className="btn btn-ghost" onClick={() => {setventanaAgregarProovedor(!ventanaAgregarProovedor)  }}>
         Cancelar
       </button>
-      <button type="submit" className="btn btn-primary">
+      <button type="submit" className="btn btn-primary" onClick={registrarProovedor}>
         Guardar proveedor
       </button>
     </div>
