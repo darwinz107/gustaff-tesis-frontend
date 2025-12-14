@@ -5,7 +5,7 @@ import { getAllSolicitudesParciales, ordenCompraById } from "../../orden-de-comp
 import type { BuscarSolMaterial } from "../../orden-de-compra/models/buscarSolMaterial";
 import { asignarInfoActaEntrada } from "../../inventario/controller/inventario-api";
 import type { AsignarInfoEntrada } from "../../inventario/models/AsignarInfoEntrada";
-import { createActaEntrada } from "../controller/actaEntrada-api";
+import { createActaEntrada, findProovedorByNombre } from "../controller/actaEntrada-api";
 import { CrearProovedor } from "./CrearProovedor";
 
 
@@ -16,6 +16,7 @@ export const CrearActaEntrada = () => {
     const [solicitudMaterial, setsolicitudMaterial] = useState<AsignarInfoEntrada>({itemsSolicitados:[]});
     const [solCompraId, setsolCompraId] = useState<number>(0);
     const [total, settotal] = useState<number>(0.00);
+    const [proovedores, setproovedores] = useState<{nombre:string}[]>([]);
     const [proovedor, setproovedor] = useState("");
     const [factura, setfactura] = useState("");
     const [item, setitem] = useState(null);
@@ -177,6 +178,20 @@ const cargarInfoSolMaterial = async() =>{
    alert(res.msj);
  }
 
+useEffect(() => {
+  if(proovedor != ""){
+      const metodoExecProovedores = async()=>{
+    const res = await findProovedorByNombre(proovedor);
+    setproovedores(res);
+  }
+metodoExecProovedores();
+  }else{
+    setproovedores([]);
+  }
+
+}, [proovedor]);
+
+
 
   return (
     <>
@@ -192,21 +207,28 @@ const cargarInfoSolMaterial = async() =>{
           <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Destino / Documento</h2>
 <div className="flex gap-4 flex-wrap">
 
-          <div className="flex-1 min-w-[180px]">
-               <label className="block text-sm">Proovedor</label>
-              <div className="relative w-full">
+          <div className="flex flex-row min-w-[180px]">
+             <div>  <label className="block text-sm">Proovedor</label>
+              <div className=" w-full">
                 
- <input className="input w-full"  value={proovedor} onChange={(e)=> setproovedor(e.target.value)}/>
+ <input className="input w-full" list="browsers" value={proovedor} onChange={(e)=> setproovedor(e.target.value)}/>
+<datalist id="browsers">
+ {proovedores.map((p)=>
+<option value={p.nombre} onChange={(e)=>setproovedor(e.target.value)}>{p.nombre}</option>
+) 
+}
+</datalist>
 
-  <button
+</div>
+</div>
+     <div className="flex items-center justify-center">    <button
     type="button"
-    //className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer"
+    className=" text-gray-500 cursor-pointer"
     onClick={()=>setventanaAgregarProovedor(!ventanaAgregarProovedor)}
   >
     <img className="w-5 h-5" src="https://img.icons8.com/ios-glyphs/30/add-user-male.png" alt="add-user-male"/>
-  </button>
-</div>
-             
+  </button>  
+  </div>    
             </div>
 
           
