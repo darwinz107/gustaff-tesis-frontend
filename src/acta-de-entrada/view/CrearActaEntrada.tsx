@@ -6,6 +6,7 @@ import type { BuscarSolMaterial } from "../../orden-de-compra/models/buscarSolMa
 import { asignarInfoActaEntrada } from "../../inventario/controller/inventario-api";
 import type { AsignarInfoEntrada } from "../../inventario/models/AsignarInfoEntrada";
 import { createActaEntrada } from "../controller/actaEntrada-api";
+import { CrearProovedor } from "./CrearProovedor";
 
 
 
@@ -27,6 +28,7 @@ export const CrearActaEntrada = () => {
     const [seccion, setseccion] = useState("");
     const [percha, setpercha] = useState("");
     const [observacion, setobservacion] = useState("");
+    const [ventanaAgregarProovedor, setventanaAgregarProovedor] = useState(false);
     
     const [ordenes, setordenes] = useState<BuscarSolMaterial[]>([]);
 
@@ -191,8 +193,20 @@ const cargarInfoSolMaterial = async() =>{
 <div className="flex gap-4 flex-wrap">
 
           <div className="flex-1 min-w-[180px]">
-              <label className="block text-sm">Proovedor</label>
-             <input className="input w-full"  value={proovedor} onChange={(e)=> setproovedor(e.target.value)}/>
+               <label className="block text-sm">Proovedor</label>
+              <div className="relative w-full">
+                
+ <input className="input w-full"  value={proovedor} onChange={(e)=> setproovedor(e.target.value)}/>
+
+  <button
+    type="button"
+    //className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer"
+    onClick={()=>setventanaAgregarProovedor(!ventanaAgregarProovedor)}
+  >
+    <img className="w-5 h-5" src="https://img.icons8.com/ios-glyphs/30/add-user-male.png" alt="add-user-male"/>
+  </button>
+</div>
+             
             </div>
 
           
@@ -380,6 +394,19 @@ const cargarInfoSolMaterial = async() =>{
                     <BuscarOrdenCompra ordenes={ordenes} setidSolMaterial={setsolCompraId} setventanaBuscarOrdenTrabajo={setventanaBuscarSolicitudMaterial} ventanaBuscarOrdenTrabajo={ventanaBuscarSolicitudMaterial}></BuscarOrdenCompra>
                      </div>
                      </div>
+
+           <div
+  className={`fixed inset-0 z-10 flex items-center justify-center bg-black/40 transition-opacity duration-300
+    ${ventanaAgregarProovedor ? "opacity-100" : "opacity-0 pointer-events-none"}
+  `}
+>
+<div className="bg-white w-4/5 max-w-5xl h-[78vh] rounded-lg shadow-xl overflow-y-auto">
+  <CrearProovedor
+    setventanaAgregarProovedor={setventanaAgregarProovedor}
+    ventanaAgregarProovedor={ventanaAgregarProovedor}
+  />
+</div>
+</div>           
     </>
   );
 };

@@ -335,7 +335,7 @@ const ordenesTrabajoApi  = async() =>{
                setordenTrabajoxUser((prev)=>({...prev,estadoTrabajo:e.target.value})); setconfirmarCambio(true);
               }}>
                 <option disabled={true}>...</option>
-                {estados.map((e) =>(e.id === 2 || e.id ===3?
+                {estados.map((e) =>(e.estado === "EN PROCESO" || e.estado ==="VENCIDO"?
                   <option disabled={true} value={e.estado}>{e.estado}</option>
                 :<option value={e.estado}>{e.estado}</option>))}
               </select></div>
