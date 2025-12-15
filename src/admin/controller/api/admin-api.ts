@@ -1,7 +1,10 @@
 import type { CrearArea } from "../../models/create-area";
+import type { CreateBodega } from "../../models/create-bodega";
 import type { CreateCargo } from "../../models/create-cargo";
 import type { CrearCategoria } from "../../models/create-categoria";
 import type { CreateMaquina } from "../../models/create-maquina";
+import type { CreatePercha } from "../../models/create-percha";
+import type { CreateSeccion } from "../../models/create-seccion";
 import type { CreateTipoTrabajo } from "../../models/create-tipo-trabajo";
 import type { CrearUser } from "../../models/create-user";
 
@@ -150,3 +153,71 @@ export const actualizarUsuario = async (id:number,infoActualizada: object): Prom
   const data = await response.json();
   return data;
 }
+
+export const crearBodega = async (
+  createBodega: CreateBodega
+): Promise<{ ok: boolean; message: string }> => {
+
+  const response: Response = await fetch(`${route}admin/bodega`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(createBodega)
+  });
+
+  const data = await response.json();
+  return data;
+};
+
+export const crearSeccion = async (
+  createSeccion: CreateSeccion
+): Promise<{ ok: boolean; message: string }> => {
+
+  const response: Response = await fetch(`${route}admin/seccion`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(createSeccion)
+  });
+
+  const data = await response.json();
+  return data;
+};
+
+export const crearPercha = async (
+  createPercha: CreatePercha
+): Promise<{ ok: boolean; message: string }> => {
+
+  const response: Response = await fetch(`${route}admin/percha`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(createPercha)
+  });
+
+  const data = await response.json();
+  return data;
+};
+
+export const getAllSecciones = async (): Promise<{ id: number; seccion: string }[]> => {
+  const response = await fetch(`${route}admin/secciones`, {
+    method: "GET",
+  });
+
+  const data = await response.json();
+  return data;
+};
+
+export const getAllBodegas = async (): Promise<{ id: number; bodega: string }[]> => {
+  const response = await fetch(`${route}admin/bodegas`, {
+    method: "GET",
+  });
+
+  const data = await response.json();
+  return data;
+};
+
+

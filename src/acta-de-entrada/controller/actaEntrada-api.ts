@@ -37,7 +37,7 @@ const route = "http://localhost:3000/";
               return data;
           }        
 
-           export const findProovedorByNombre = async(nombre:string):Promise<{nombre:string}[]> => {
+           export const findProovedorByNombre = async(nombre:string):Promise<{nombreComercial:string}[]> => {
     
             const response:Response = await fetch(`${route}inventario/proovedores`,{
            method:"POST",

@@ -16,7 +16,7 @@ export const CrearActaEntrada = () => {
     const [solicitudMaterial, setsolicitudMaterial] = useState<AsignarInfoEntrada>({itemsSolicitados:[]});
     const [solCompraId, setsolCompraId] = useState<number>(0);
     const [total, settotal] = useState<number>(0.00);
-    const [proovedores, setproovedores] = useState<{nombre:string}[]>([]);
+    const [proovedores, setproovedores] = useState<{nombreComercial:string}[]>([]);
     const [proovedor, setproovedor] = useState("");
     const [factura, setfactura] = useState("");
     const [item, setitem] = useState(null);
@@ -183,6 +183,7 @@ useEffect(() => {
       const metodoExecProovedores = async()=>{
     const res = await findProovedorByNombre(proovedor);
     setproovedores(res);
+    console.log(res);
   }
 metodoExecProovedores();
   }else{
@@ -214,7 +215,7 @@ metodoExecProovedores();
  <input className="input w-full" list="browsers" value={proovedor} onChange={(e)=> setproovedor(e.target.value)}/>
 <datalist id="browsers">
  {proovedores.map((p)=>
-<option value={p.nombre} onChange={(e)=>setproovedor(e.target.value)}>{p.nombre}</option>
+<option value={p.nombreComercial} onChange={(e)=>setproovedor(e.target.value)}>{p.nombreComercial}</option>
 ) 
 }
 </datalist>

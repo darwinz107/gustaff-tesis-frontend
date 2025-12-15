@@ -33,6 +33,14 @@ export const CrearProovedor = ({setventanaAgregarProovedor,ventanaAgregarProoved
 
     alert(res.message);
 
+    setnombre("");
+setnombreComercial("");
+setruc("");
+setemail("");
+settelefono("");
+setdireccion("");
+setciudad("");
+setnotas("");
     setventanaAgregarProovedor(!ventanaAgregarProovedor);
   }
 
@@ -64,7 +72,7 @@ export const CrearProovedor = ({setventanaAgregarProovedor,ventanaAgregarProoved
 
     <div className="form-control">
       <label className="label"><span className="label-text">RUC</span></label>
-      <input onChange={(e)=>setruc(e.target.value)} value={ruc} name="ruc" placeholder="RUC / NIT" className="input input-bordered w-full" />
+      <input onChange={(e)=>setruc(e.target.value)} value={ruc} name="ruc" placeholder="RUC" className="input input-bordered w-full" />
     </div>
 
    
@@ -75,7 +83,7 @@ export const CrearProovedor = ({setventanaAgregarProovedor,ventanaAgregarProoved
 
     <div className="form-control">
       <label className="label"><span className="label-text">Teléfono</span></label>
-      <input onChange={(e)=>settelefono(e.target.value)} value={telefono} name="telefono" placeholder="+593 9..." className="input input-bordered w-full" />
+      <input onChange={(e)=>settelefono(e.target.value)} value={telefono} name="telefono"  className="input input-bordered w-full" />
     </div>
 
     <div className="form-control md:col-span-2">
@@ -96,7 +104,14 @@ export const CrearProovedor = ({setventanaAgregarProovedor,ventanaAgregarProoved
    
 
     <div className="md:col-span-2 flex justify-end gap-2 mt-2">
-      <button type="button" className="btn btn-ghost" onClick={() => {setventanaAgregarProovedor(!ventanaAgregarProovedor)  }}>
+      <button type="button" className="btn btn-ghost" onClick={() => {setventanaAgregarProovedor(!ventanaAgregarProovedor);setnombre("");
+setnombreComercial("");
+setruc("");
+setemail("");
+settelefono("");
+setdireccion("");
+setciudad("");
+setnotas("");  }}>
         Cancelar
       </button>
       <button type="submit" className="btn btn-primary" onClick={registrarProovedor}>
