@@ -61,4 +61,22 @@ const route = "http://localhost:3000/";
             });
             const data = await response.json();
             return data;
-        }        
+        }    
+        
+          export const getSeccionesByBodega = async(bodegaId:number):Promise<{id:number,seccion:string}[]> => {
+    
+            const response:Response = await fetch(`${route}inventario/secciones/${bodegaId}`,{
+           method:"GET"
+            });
+            const data = await response.json();
+            return data;
+        } 
+
+           export const getPerchasBySeccion = async(seccionId:number):Promise<{id:number,percha:string}[]> => {
+    
+            const response:Response = await fetch(`${route}inventario/perchas/${seccionId}`,{
+           method:"GET"
+            });
+            const data = await response.json();
+            return data;
+        } 

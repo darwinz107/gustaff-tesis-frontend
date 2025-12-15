@@ -203,7 +203,7 @@ export const crearPercha = async (
 };
 
 export const getAllSecciones = async (): Promise<{ id: number; seccion: string }[]> => {
-  const response = await fetch(`${route}admin/secciones`, {
+  const response = await fetch(`${route}admin/secciones/all`, {
     method: "GET",
   });
 

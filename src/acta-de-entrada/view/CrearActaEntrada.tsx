@@ -5,8 +5,9 @@ import { getAllSolicitudesParciales, ordenCompraById } from "../../orden-de-comp
 import type { BuscarSolMaterial } from "../../orden-de-compra/models/buscarSolMaterial";
 import { asignarInfoActaEntrada } from "../../inventario/controller/inventario-api";
 import type { AsignarInfoEntrada } from "../../inventario/models/AsignarInfoEntrada";
-import { createActaEntrada, findProovedorByNombre } from "../controller/actaEntrada-api";
+import { createActaEntrada, findProovedorByNombre, getPerchasBySeccion, getSeccionesByBodega } from "../controller/actaEntrada-api";
 import { CrearProovedor } from "./CrearProovedor";
+import { getAllBodegas } from "../../admin/controller/api/admin-api";
 
 
 
@@ -25,9 +26,12 @@ export const CrearActaEntrada = () => {
     const [precioUni, setprecioUni] = useState(null);
     const [descuento, setdescuento] = useState(null);
     const [iva, setiva] = useState(false);
-    const [bodega, setbodega] = useState("");
-    const [seccion, setseccion] = useState("");
-    const [percha, setpercha] = useState("");
+    const [bodega, setbodega] = useState(0);
+    const [seccion, setseccion] = useState(0);
+    const [percha, setpercha] = useState(0);
+    const [bodegas, setbodegas] = useState<{id:number,bodega:string}[]>([]);
+    const [secciones, setsecciones] = useState<{id:number,seccion:string}[]>([]);
+    const [perchas, setperchas] = useState<{id:number,percha:string}[]>([]);
     const [observacion, setobservacion] = useState("");
     const [ventanaAgregarProovedor, setventanaAgregarProovedor] = useState(false);
     
@@ -193,6 +197,54 @@ metodoExecProovedores();
 }, [proovedor]);
 
 
+useEffect(() => {
+  try {
+    const asignarBodegas = async()=>{
+   const res = await getAllBodegas();
+   setbodegas(res);
+ }
+ asignarBodegas();
+  } catch (error) {
+    console.error(error);
+  }
+ 
+}, []);
+
+useEffect(() => {
+  try {
+    if(bodega !== 0){
+      const asignarSecciones = async()=>{
+   const res = await getSeccionesByBodega(bodega);
+   setsecciones(res);
+ }
+ asignarSecciones();
+    }else{
+      setsecciones([]);
+    }
+    
+  } catch (error) {
+    console.error(error);
+  }
+ 
+}, [bodega]);
+
+useEffect(() => {
+  try {
+    if(seccion !== 0){
+      const asignarPerchas = async()=>{
+   const res = await getPerchasBySeccion(seccion);
+   setperchas(res);
+ }
+ asignarPerchas();
+    }else{
+      setperchas([]);
+    }
+    
+  } catch (error) {
+    console.error(error);
+  }
+ 
+}, [seccion]);
 
   return (
     <>
@@ -318,18 +370,35 @@ metodoExecProovedores();
 
           <div className="flex gap-4 flex-wrap">
             <div className="w-full md:w-1/4">
-              <label className="block text-sm">Bodega</label>
-              <input className="input w-full" placeholder="Bodega" value={bodega} onChange={(e)=> setbodega(e.target.value)}/>
+              <label className="block text-sm">Bodega</label> 
+              <select className="select w-full" defaultValue={"..."} onChange={(e)=>setbodega(e.target.value)}>
+                <option value="..." disabled={true} defaultChecked={true}>Seleccione una bodega</option>
+      {bodegas?.map(bodega => (
+        <option key={bodega.id} value={bodega.id}>{bodega.bodega}</option>
+      ))}
+              </select>
             </div>
 
             <div className="w-full md:w-1/4">
               <label className="block text-sm">Sección</label>
-              <input className="input w-full" placeholder="Sección" value={seccion} onChange={(e)=> setseccion(e.target.value)}/>
+              <select className="select w-full" defaultValue={"..."} onChange={(e)=>setseccion(e.target.value)}>
+                      <option value="..." disabled={true} defaultChecked={true}>Seleccione una sección</option>
+      {secciones?.map(seccion => (
+        <option key={seccion.id} value={seccion.id}>{seccion.seccion}</option>
+      ))}
+
+              </select>
             </div>
 
             <div className="w-full md:w-1/4">
               <label className="block text-sm">Percha</label>
-              <input className="input w-full" placeholder="Percha" value={percha} onChange={(e)=> setpercha(e.target.value)}/>
+             <select className="select w-full" defaultValue={"..."} onChange={(e)=>setpercha(e.target.value)}>
+                      <option value="..." disabled={true} defaultChecked={true}>Seleccione una percha</option>
+      {perchas?.map(percha => (
+        <option key={percha.id} value={percha.id}>{percha.percha}</option>
+      ))}
+
+              </select>
             </div>
 
             <div className="w-full md:w-1/2">

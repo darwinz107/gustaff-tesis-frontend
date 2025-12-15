@@ -1,5 +1,5 @@
 import { use, useEffect, useState } from "react";
-import { crearBodega, crearCargo, crearCategoria, crearNuevaArea, crearNuevaMaquina, crearUsuario, getAllAreas, getAllBodegas, getAllCategorias, getAllRoles, getAllSecciones, newTipoTrabajo } from "../../controller/api/admin-api";
+import { crearBodega, crearCargo, crearCategoria, crearNuevaArea, crearNuevaMaquina, crearPercha, crearSeccion, crearUsuario, getAllAreas, getAllBodegas, getAllCategorias, getAllRoles, getAllSecciones, newTipoTrabajo } from "../../controller/api/admin-api";
 import type { CreateTipoTrabajo } from "../../models/create-tipo-trabajo";
 
 
@@ -131,15 +131,19 @@ export const NuevosRegistros = () => {
     }
 
     const cargarSecciones = async()=>{
-      const res = await getAllSecciones();
+      try {
+        const res = await getAllSecciones();
       setsecciones(res);
+      } catch (error) {
+        console.error("Error cargando secciones:", error);
+      }    
     }
 
   const nuevaBodega = async() =>{
      const res = await crearBodega({bodega:bodega});
      if(!res.ok){
-       throw new Error("Error al obtener bodegas");
-      alert(res.message);
+      alert(res.message); 
+      throw new Error("Error al crear bodega");
       
      }
 
@@ -147,6 +151,28 @@ export const NuevosRegistros = () => {
      cargarBodegas();
    }
 
+     const nuevaSeccion = async() =>{
+     const res = await crearSeccion({seccion:seccion,bodegaId:bodegaId});
+     
+     if(!res.ok){
+      alert(res.message);  
+       throw new Error("Error al crear seccion");   
+     }
+
+     alert(res.message);
+     cargarSecciones();
+   }
+
+        const nuevaPercha = async() =>{
+     const res = await crearPercha({percha:percha,seccionId:seccionId});
+     if(!res.ok){
+      alert(res.message);  
+       throw new Error("Error al crear percha");   
+     }
+
+     alert(res.message);
+    
+   }
 
   useEffect(() => {
     
@@ -267,13 +293,13 @@ export const NuevosRegistros = () => {
               <label className="block text-sm">Bodega</label>
               <select className="select w-full" defaultValue={"..."} onChange={(e)=>setbodegaId(e.target.value)}>
                 <option value="..." disabled={true} defaultChecked={true}>Seleccione una bodega</option>
-      {bodegas.map(bodega => (
+      {bodegas?.map(bodega => (
         <option key={bodega.id} value={bodega.id}>{bodega.bodega}</option>
       ))}
               </select>
             </div>
             <div className="flex justify-end">
-              <button type="button" className="btn">Crear</button>
+              <button type="button" className="btn" onClick={nuevaSeccion}>Crear</button>
             </div>
           </div>
         </div>
@@ -289,14 +315,14 @@ export const NuevosRegistros = () => {
               <label className="block text-sm">Sección</label>
               <select className="select w-full" defaultValue={"..."} onChange={(e)=>setseccionId(e.target.value)}>
                       <option value="..." disabled={true} defaultChecked={true}>Seleccione una sección</option>
-      {secciones.map(seccion => (
+      {secciones?.map(seccion => (
         <option key={seccion.id} value={seccion.id}>{seccion.seccion}</option>
       ))}
 
               </select>
             </div>
             <div className="flex justify-end">
-              <button type="button" className="btn">Crear</button>
+              <button type="button" className="btn" onClick={nuevaPercha}>Crear</button>
             </div>
           </div>
         </div>
