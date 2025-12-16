@@ -1,6 +1,7 @@
 
 export interface SolicitudOrden{
 
+    id:number;
     NumOrden:string;
     
     fechaInicio:string;

@@ -1,7 +1,7 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { NuevosRegistros } from "./components/NuevosRegistros"
 import { logoutSession } from "../controller/api/admin-api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { CrearOrden } from "../../orden-de-trabajo/view/components/CrearOrden";
 import { HistorialOrdenes } from "../../orden-de-trabajo/view/components/HistorialOrdenes";
 import { VerDetalles } from "../../orden-de-trabajo/view/components/VerDetalles";
@@ -13,6 +13,7 @@ import { GestionEntrada } from "../../acta-de-entrada/view/GestionEntrada";
 import { CrearActaEntrada } from "../../acta-de-entrada/view/CrearActaEntrada";
 import { GestionSalida } from "../../acta-de-salida/view/GestionSalida";
 import { GestionInventario } from "../../inventario/view/GestionInventario";
+import { getLastSolicitud } from "../../orden-de-trabajo/controller/api/orden-api";
 
 
 
@@ -20,7 +21,23 @@ export const Principal = () => {
      const [ventanaEmergente, setventanaEmergente] = useState(false);
     const [principal, setprincipal] = useState(false);
     const [nuevoRegistro, setnuevoRegistro] = useState(false);
+    const [cargarAuto, setcargarAuto] = useState(false);
     const navigate = useNavigate();
+    const [sendId, setsendId] = useState<Number|null>(null);
+
+useEffect(() => {
+
+  if(cargarAuto){
+    const asignarId = async()=>{
+      const res = await getLastSolicitud(undefined);
+      console.log(res.id);
+      setsendId(res.id);
+    }
+    asignarId();
+   setcargarComponente(5);
+  }
+  setcargarAuto(false);
+}, [cargarAuto]);
 
     const terminarSesion = async()=>{
 try {
@@ -35,11 +52,11 @@ try {
      const componentes = 
       {
         0:<></>,
-        1:<CrearOrden></CrearOrden>,
+        1:<CrearOrden setcargarAuto={setcargarAuto}></CrearOrden>,
         2:<HistorialOrdenes></HistorialOrdenes>,
         3:<NuevosRegistros></NuevosRegistros>,
         4:<AdministrarUsuarios></AdministrarUsuarios>,
-        5:<OrdenCompra></OrdenCompra>,
+        5:<OrdenCompra id={sendId}></OrdenCompra>,
         6:<GestionCompra></GestionCompra>,
         7:<CrearActaEntrada></CrearActaEntrada>,
         8:<GestionEntrada></GestionEntrada>,

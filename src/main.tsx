@@ -27,7 +27,7 @@ createRoot(document.getElementById('root')!).render(
      <Route path='/principal1' element={<ProtectRoute route={<Rol1Main></Rol1Main>}></ProtectRoute>}></Route>
      <Route path='/principal2' element={<ProtectRoute2 route={<Rol2Main></Rol2Main>}></ProtectRoute2>}></Route>
      <Route path='/orden-de-trabajo' element={<OrdenTrabjoMain></OrdenTrabjoMain>}></Route>
-     <Route path='/crear-orden' element={<CrearOrden></CrearOrden>}></Route>
+     
      <Route path='/login' element={<LoginMain></LoginMain>}></Route>
      <Route path='/registrar' element={<SignUp></SignUp>}></Route>
      <Route path='/admin' element={<ProtectRouteAdmin route={<Principal></Principal>}></ProtectRouteAdmin>}></Route>
@@ -35,6 +35,7 @@ createRoot(document.getElementById('root')!).render(
      <Route path='/pdf-compra/:id' element={<GenerarPdfOrdenCompra></GenerarPdfOrdenCompra>}></Route>
      <Route path='/pdf-salida/:id' element={<GenerarPdfActaDeSalida></GenerarPdfActaDeSalida>}></Route>
      <Route path='/pdf-entrada/:id' element={<GenerarPdfActaDeEntrada></GenerarPdfActaDeEntrada>}></Route>
+     
     </Routes>
     
     </BrowserRouter>

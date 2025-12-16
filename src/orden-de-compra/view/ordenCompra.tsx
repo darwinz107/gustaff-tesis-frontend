@@ -4,13 +4,13 @@ import { BuscarOrdenTrabajo } from './buscarOrdenTrabajo';
 import type { LllenarDestino } from '../models/llenarDestino';
 import { createItemsSolicitados, evaluarStock, filtrarInventario, getInventario } from '../../inventario/controller/inventario-api';
 import { getUsers } from '../../user/controller/api/user-api';
-import { crearOrdenCompra } from '../controller/ordenCompraApi';
+import { crearOrdenCompra, getAllOrdenesTrabajoSinUso } from '../controller/ordenCompraApi';
 import type { Inventarios } from '../../inventario/models/inventarios';
 import type { CreateItemsSolicitados } from '../../inventario/models/createItemsSolocitados';
 
 
 
-export const OrdenCompra = () => {
+export const OrdenCompra = ({id}) => {
   const [comprasPorGenerar, setcomprasPorGenerar] = useState<ItemsPorGuardar[]>([]);
   const [items, setitems] = useState<CreateItemsSolicitados[]>([]);
   const [ventanaBuscarOrdenTrabajo, setventanaBuscarOrdenTrabajo] = useState(false);
@@ -38,10 +38,17 @@ export const OrdenCompra = () => {
         setusers(res);
       } ;
     getAllUsers(); 
-
-   
-
-   
+    console.log(id);
+if(id !== null){
+   const preCargarOrdenes = async() =>{
+           const ordenesApi = await getAllOrdenesTrabajoSinUso();
+           const primerOT = ordenesApi.filter((o)=>o.id != id);
+           setinfoDestino(primerOT[0]);
+           console.log("ordenesApi");
+           console.log(ordenesApi);
+         }
+preCargarOrdenes();
+   }
     metodoInventarios();
     
   }, []);

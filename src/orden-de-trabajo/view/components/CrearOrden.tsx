@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { CalendarDate, CalendarMonth } from "cally";
 import "cally";
-import { areas, getAllCategorias, getAllCodByArea, getAllMaquinasByCod, getAllTipoTrabajo, getAllTipoTrabajoByCategoria, registerSolicitudOrden } from "../../controller/api/orden-api";
+import { areas, getAllCategorias, getAllCodByArea, getAllMaquinasByCod, getAllTipoTrabajo, getAllTipoTrabajoByCategoria, getLastSolicitud, registerSolicitudOrden } from "../../controller/api/orden-api";
 import type { Area } from "../../models/areas";
 import type { Codigo } from "../../models/codigos";
 import type { Maquina } from "../../models/maquinas";
@@ -9,7 +9,7 @@ import type { SolicitudOrden } from "../../models/solicitudOrden";
 import { useNavigate } from "react-router-dom";
 import { getUsers } from "../../../user/controller/api/user-api";
 
-export const CrearOrden = () => {
+export const CrearOrden = ({setcargarAuto}) => {
 
   const [area, setarea] = useState<Area[]>([]);
   const [codigos, setcodigos] = useState<Codigo[]>([]);
@@ -21,6 +21,7 @@ export const CrearOrden = () => {
   const [selectArea, setselectArea] = useState("");
   const [selectCodigo, setselectCodigo] = useState("");
   const [selectMaquina, setselectMaquina] = useState("");
+  const [especPiezas, setespecPiezas] = useState("");
   const [especificacion, setespecificacion] = useState(Array(3));
   const [isEmptyArea, setisEmptyArea] = useState(false);
   const [isEmptyCod, setisEmptyCod] = useState(false);
@@ -34,6 +35,7 @@ export const CrearOrden = () => {
   const [solicitante, setsolicitante] = useState("");
   const [receptor, setreceptor] = useState("");
   const [tecnico, settecnico] = useState(null);
+  const [showSuccess, setshowSuccess] = useState(false);
 
   const navigate = useNavigate();
 
@@ -105,6 +107,8 @@ const getCodigos = async () => {
 
 
   }, []);
+
+  const dialog = useRef<HTMLDialogElement|null>(null);
   
   const addSolicitudOrden = async(e:Event) =>{
        e.preventDefault();
@@ -117,7 +121,7 @@ const getCodigos = async () => {
       Area:selectArea,
       Codigo:selectCodigo,
       Maquina:selectMaquina,
-      EspecificacionMaquina:ubicacion[3],
+      EspecificacionMaquina:especPiezas,
       Categoria:especificacion[0],
       TipoTrabajo:especificacion[1],
       DescripcionTrabajo:especificacion[2],
@@ -125,20 +129,70 @@ const getCodigos = async () => {
       userReceptor:receptor,
       userTecnico:tecnico
     } 
+    console.log(infoSolicitud);
     const res = await registerSolicitudOrden(infoSolicitud);
-    alert(res.msj);
+    
     if(res.validate){
-    window.open(`/pdf/undefined`,"_blank");}
+     
+      setshowSuccess(true);
+
+      setTimeout(() => {
+setshowSuccess(false);
+        window.open(`/pdf/undefined`,"_blank");
+   if(dialog.current){
+  dialog.current.showModal();
+}     
+      }, 1000);
+
+    }
 
     } catch (error) {
       console.log("Error al generar la solicitud: ",error);
     }
 
   }
+
+  const redirigirSolMaterial = async() =>{
+    setcargarAuto(true);
+     
+  }
   
  
   return (
     <>
+    {showSuccess && (
+  <div className="fixed top-5 right-5 z-50">
+    <div role="alert" className="alert alert-success shadow-lg">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6 shrink-0 stroke-current"
+        fill="none"
+        viewBox="0 0 24 24">
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>¡Orden de trabajo creada!</span>
+    </div>
+  </div>
+)}
+
+
+
+<dialog ref={dialog} id="my_modal_1" className="modal">
+  <div className="modal-box">
+    <h3 className="font-bold text-lg">Solicitud de material!</h3>
+    <p className="py-4">¿Desea generar la solicitud de material?</p>
+    <div className="modal-action">
+      <form method="dialog">
+        <button className="btn mr-3" onClick={redirigirSolMaterial}>Crear</button>
+        <button className="btn">Cancelar</button>
+      </form>
+    </div>
+  </div>
+</dialog>
       <div className='flex items-center justify-center mt-[20%]'>
         <form className='min-w-170'  onSubmit={(e) => { addSolicitudOrden(e); }} >
           <div className=' bg-gray-100 rounded-xl shadow-md p-4 mb-6'>
@@ -216,9 +270,7 @@ const getCodigos = async () => {
             <div className="flex flex-row px-2">
               <p className="mr-2">Equipos/Piezas</p>
               <textarea className="textarea" onChange={(e) => {
-                const nueva = [...ubicacion];
-                nueva[3] = e.target.value;
-                setubicacion(nueva)
+              setespecPiezas(e.target.value);
               }}></textarea>
             </div>
           </div>
