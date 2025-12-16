@@ -7,7 +7,7 @@ const route = "http://localhost:3000/";
 
 
         export const createActaEntrada = async (id:number,createActaEntradaDto:CreateActaEntradaDto): Promise<{msj:string, validate:boolean}> => {
-  
+  console.log(createActaEntradaDto);
   const response: Response = await fetch(`${route}inventario/acta-entrada/${id}`, {
     method: "POST",
     headers: {
@@ -37,7 +37,7 @@ const route = "http://localhost:3000/";
               return data;
           }        
 
-           export const findProovedorByNombre = async(nombre:string):Promise<{nombreComercial:string}[]> => {
+           export const findProovedorByNombre = async(nombre:string):Promise<{id:number,nombreComercial:string}[]> => {
     
             const response:Response = await fetch(`${route}inventario/proovedores`,{
            method:"POST",

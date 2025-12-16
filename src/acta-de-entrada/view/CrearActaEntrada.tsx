@@ -17,7 +17,7 @@ export const CrearActaEntrada = () => {
     const [solicitudMaterial, setsolicitudMaterial] = useState<AsignarInfoEntrada>({itemsSolicitados:[]});
     const [solCompraId, setsolCompraId] = useState<number>(0);
     const [total, settotal] = useState<number>(0.00);
-    const [proovedores, setproovedores] = useState<{nombreComercial:string}[]>([]);
+    const [proovedores, setproovedores] = useState<{id:number,nombreComercial:string}[]>([]);
     const [proovedor, setproovedor] = useState("");
     const [factura, setfactura] = useState("");
     const [item, setitem] = useState(null);
@@ -26,9 +26,9 @@ export const CrearActaEntrada = () => {
     const [precioUni, setprecioUni] = useState(null);
     const [descuento, setdescuento] = useState(null);
     const [iva, setiva] = useState(false);
-    const [bodega, setbodega] = useState(0);
-    const [seccion, setseccion] = useState(0);
-    const [percha, setpercha] = useState(0);
+    const [bodega, setbodega] = useState("");
+    const [seccion, setseccion] = useState("");
+    const [percha, setpercha] = useState("");
     const [bodegas, setbodegas] = useState<{id:number,bodega:string}[]>([]);
     const [secciones, setsecciones] = useState<{id:number,seccion:string}[]>([]);
     const [perchas, setperchas] = useState<{id:number,percha:string}[]>([]);
@@ -122,6 +122,21 @@ const cargarInfoSolMaterial = async() =>{
   const iva1 = (subtotal1 - descuento1) * ivaFinal;
   const calcTotal = subtotal1 - descuento1 + iva1;
 
+  if(bodega === ""){
+   alert("Elija una bodega");
+   return;
+  }
+
+  if(seccion === ""){
+   alert("Elija una seccion");
+   return;
+  }
+
+   if(percha === ""){
+   alert("Elija una percha");
+   return;
+  }
+
   const newItem = {
     nombre: item ?? "",
     cantidad: c,
@@ -131,9 +146,9 @@ const cargarInfoSolMaterial = async() =>{
     iva: iva,
     subtotal: parseFloat(subtotal1),
     total: parseFloat(calcTotal),
-    bodega: bodega ?? "",
-    seccion: seccion ?? "",
-    percha: percha ?? "",
+    bodegaId: Number(bodega),
+    seccionId: Number(seccion),
+    perchaId: Number(percha),
     Observacion: observacion ?? ""
   };
 
@@ -151,9 +166,9 @@ const cargarInfoSolMaterial = async() =>{
   setprecioUni(null);
   setdescuento(null);
   setiva(false);
-  setbodega("");
-  setseccion("");
-  setpercha("");
+  //setbodega("");
+  //setseccion("");
+ // setpercha("");
   setobservacion("");
 };
 
@@ -167,16 +182,18 @@ const cargarInfoSolMaterial = async() =>{
 }
 
    const registroEntradaFinal = {
-    proovedor:1,
-    numFactura: factura,
+    proovedor:proovedor,
+    factura: factura,
     total:total,
     itemsSolicitados:solicitudMaterial.itemsSolicitados
    }
-
+  console.log("registroEntradaFinal");
+  console.log(registroEntradaFinal);
    const res = await createActaEntrada(solCompraId,registroEntradaFinal);
 
    if(res.validate){
     setsolicitudMaterial({numOrden:"",numOrdenTrabajo:"",itemsSolicitados:[],id:0});
+    window.open(`/pdf-entrada/${solicitudMaterial.id}`,"_blank");
    }
    console.log(res);
    alert(res.msj);
@@ -212,10 +229,11 @@ useEffect(() => {
 
 useEffect(() => {
   try {
-    if(bodega !== 0){
+    if(bodega !== ""){
       const asignarSecciones = async()=>{
    const res = await getSeccionesByBodega(bodega);
    setsecciones(res);
+   setperchas([]);
  }
  asignarSecciones();
     }else{
@@ -230,7 +248,7 @@ useEffect(() => {
 
 useEffect(() => {
   try {
-    if(seccion !== 0){
+    if(seccion !== ""){
       const asignarPerchas = async()=>{
    const res = await getPerchasBySeccion(seccion);
    setperchas(res);
@@ -264,10 +282,10 @@ useEffect(() => {
              <div>  <label className="block text-sm">Proovedor</label>
               <div className=" w-full">
                 
- <input className="input w-full" list="browsers" value={proovedor} onChange={(e)=> setproovedor(e.target.value)}/>
+ <input className="input w-full" list="browsers" value={proovedor}  onChange={(e)=> setproovedor(e.target.value)}/>
 <datalist id="browsers">
- {proovedores.map((p)=>
-<option value={p.nombreComercial} onChange={(e)=>setproovedor(e.target.value)}>{p.nombreComercial}</option>
+ {proovedores?.map((p)=>
+<option value={p.nombreComercial} onChange={(e)=>setproovedor(e.target.value)}></option>
 ) 
 }
 </datalist>
@@ -457,8 +475,7 @@ useEffect(() => {
         i,
         s.nombre,
         s.cantidad,
-        s.costo
-       
+        s.costo 
       )
     }
   >
