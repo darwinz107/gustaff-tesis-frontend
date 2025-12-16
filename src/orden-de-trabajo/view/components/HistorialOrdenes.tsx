@@ -8,7 +8,7 @@ import type { Users } from '../../../admin/models/users';
 import type { SolicitudOrden } from '../../models/solicitudOrden';
 import type { Estado } from '../../../orden-de-compra/models/Estados';
 
-export const HistorialOrdenes = () => {
+export const HistorialOrdenes = ({setcargaAuto,setsendId}) => {
 
    const [ordenesTrabajo, setordenesTrabajo] = useState<OrdenesTrabajo[]>([]);
    const [validarCambio, setvalidarCambio] = useState(false);
@@ -164,6 +164,11 @@ const ordenesTrabajoApi  = async() =>{
      const cargarPdf = (id:number) => {
       window.open(`/pdf/${id}`,"_blank");
      }
+
+       const redirigirSolMaterial = async(id:number) =>{
+    setsendId(id);
+    setcargaAuto(true);
+  }
      
     return (
         <>
@@ -217,6 +222,7 @@ const ordenesTrabajoApi  = async() =>{
                                   <button className="btn btn-ghost btn-xs" onClick={() => { asignarSolicitantexOrden(u.id); setventanaEmergente(!ventanaEmergente); setselectArea(u.Area); setselectCodigo(u.Codigo);}}>Detalles</button>
                                   <button className="btn btn-ghost btn-xs" onClick={()=>metodoEliminarOrdenTrabajo(u.id)}>Eliminar</button>
                                   <button className="btn btn-ghost btn-xs" onClick={()=>cargarPdf(u.id)}>Ver pdf</button>
+                                  <button className="btn btn-ghost btn-xs" disabled={u.estadoUso.uso} onClick={()=>redirigirSolMaterial(u.id)}>Crear Solicitud</button>
                                 </td>
                               </tr>
                             </>)}

@@ -23,21 +23,27 @@ export const Principal = () => {
     const [nuevoRegistro, setnuevoRegistro] = useState(false);
     const [cargarAuto, setcargarAuto] = useState(false);
     const navigate = useNavigate();
-    const [sendId, setsendId] = useState<Number|null>(null);
+    const [sendId, setsendId] = useState<Number|null|undefined>(null);
 
 useEffect(() => {
 
-  if(cargarAuto){
+  if(cargarAuto && sendId === undefined){
     const asignarId = async()=>{
       const res = await getLastSolicitud(undefined);
       console.log(res.id);
       setsendId(res.id);
     }
-    asignarId();
-   setcargarComponente(5);
+   asignarId();
+  setcargarComponente(5);
+  }else if(cargarAuto && sendId !==0){
+ setcargarComponente(5);
   }
+   
   setcargarAuto(false);
-}, [cargarAuto]);
+}, [cargarAuto,sendId]);
+
+
+
 
     const terminarSesion = async()=>{
 try {
@@ -52,8 +58,8 @@ try {
      const componentes = 
       {
         0:<></>,
-        1:<CrearOrden setcargarAuto={setcargarAuto}></CrearOrden>,
-        2:<HistorialOrdenes></HistorialOrdenes>,
+        1:<CrearOrden setcargarAuto={setcargarAuto} setsendId={setsendId}></CrearOrden>,
+        2:<HistorialOrdenes setcargaAuto={setcargarAuto} setsendId={setsendId}></HistorialOrdenes>,
         3:<NuevosRegistros></NuevosRegistros>,
         4:<AdministrarUsuarios></AdministrarUsuarios>,
         5:<OrdenCompra id={sendId}></OrdenCompra>,
@@ -67,7 +73,11 @@ try {
     
       const [cargarComponente, setcargarComponente] = useState(0);
 
-
+useEffect(() => {
+  if(cargarComponente !==5){
+   setsendId(0);
+  }
+}, [cargarComponente]);
 
   return (
     <>

@@ -11,10 +11,21 @@ import type { CreateItemsSolicitados } from '../../inventario/models/createItems
 
 
 export const OrdenCompra = ({id}) => {
+
+const infoDestinoInicial: LllenarDestino = {
+  userSolicitante: { name: "" },
+  id: 0,
+  NumOrden: "",
+  Area: "",
+  Codigo: "",
+  Maquina: ""
+};
+
+
   const [comprasPorGenerar, setcomprasPorGenerar] = useState<ItemsPorGuardar[]>([]);
   const [items, setitems] = useState<CreateItemsSolicitados[]>([]);
   const [ventanaBuscarOrdenTrabajo, setventanaBuscarOrdenTrabajo] = useState(false);
-  const [infoDestino, setinfoDestino] = useState<LllenarDestino>({userSolicitante:{name:""},id:0,NumOrden:"",Area:"",Codigo:"",Maquina:""});
+  const [infoDestino, setinfoDestino] = useState<LllenarDestino>(infoDestinoInicial);
   const [item, setitem] = useState("");
   const [buscarItem, setbuscarItem] = useState("");
   const [cantidad, setcantidad] = useState(0);
@@ -38,22 +49,31 @@ export const OrdenCompra = ({id}) => {
         setusers(res);
       } ;
     getAllUsers(); 
-    console.log(id);
-if(id !== null){
-   const preCargarOrdenes = async() =>{
-           const ordenesApi = await getAllOrdenesTrabajoSinUso();
-           const primerOT = ordenesApi.filter((o)=>o.id != id);
-           setinfoDestino(primerOT[0]);
-           console.log("ordenesApi");
-           console.log(ordenesApi);
-         }
-preCargarOrdenes();
-   }
+
     metodoInventarios();
+   
     
   }, []);
   
+useEffect(() => {
+  if (id !== undefined && id !== null && id !==0) {
+    const preCargarOrdenes = async () => {
+      const ordenesApi = await getAllOrdenesTrabajoSinUso();
+      const primerOT = ordenesApi.find((o) => o.id === id);
 
+      if (primerOT) {
+        setinfoDestino(primerOT);
+      }
+    };
+
+    preCargarOrdenes();
+  } else {
+    
+    setinfoDestino(infoDestinoInicial);
+  }
+}, [id]);
+
+ 
 
 
   useEffect(() => {
@@ -127,9 +147,9 @@ window.open(`/pdf-compra/${infoDestino.id}`,"_blank");
   
   return (
      <>
-     <div className='w-full min-h-screen overflow-auto'>
+     <div className='w-full h-screen overflow-auto'>
         <div className='w-full h-[10%] flex items-center justify-center bg-white '>
-            <button className='btn' onClick={()=>setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo)}>Asignar orden de trabajo</button>
+            <button className='btn hidden' onClick={()=>setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo)}>Asignar orden de trabajo</button>
             
         </div>
         

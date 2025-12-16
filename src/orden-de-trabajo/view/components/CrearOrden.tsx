@@ -9,7 +9,7 @@ import type { SolicitudOrden } from "../../models/solicitudOrden";
 import { useNavigate } from "react-router-dom";
 import { getUsers } from "../../../user/controller/api/user-api";
 
-export const CrearOrden = ({setcargarAuto}) => {
+export const CrearOrden = ({setcargarAuto,setsendId}) => {
 
   const [area, setarea] = useState<Area[]>([]);
   const [codigos, setcodigos] = useState<Codigo[]>([]);
@@ -154,7 +154,7 @@ setshowSuccess(false);
 
   const redirigirSolMaterial = async() =>{
     setcargarAuto(true);
-     
+    setsendId(undefined); 
   }
   
  
