@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BuscarOrdenCompra } from "../../acta-de-salida/view/BuscarOrdenCompra";
 import type { InfoPdfCompra } from "../../orden-de-compra/models/infoPdfCompra";
 import { getAllSolicitudesParciales, ordenCompraById } from "../../orden-de-compra/controller/ordenCompraApi";
@@ -227,6 +227,8 @@ useEffect(() => {
  
 }, []);
 
+const selSecc = useRef<HTMLSelectElement|null>(null);
+
 useEffect(() => {
   try {
     if(bodega !== ""){
@@ -234,6 +236,9 @@ useEffect(() => {
    const res = await getSeccionesByBodega(bodega);
    setsecciones(res);
    setperchas([]);
+   if (selSecc.current) {
+  selSecc.current.value = "...";
+}
  }
  asignarSecciones();
     }else{
@@ -250,7 +255,9 @@ useEffect(() => {
   try {
     if(seccion !== ""){
       const asignarPerchas = async()=>{
+        console.log(seccion);
    const res = await getPerchasBySeccion(seccion);
+   console.log(res);
    setperchas(res);
  }
  asignarPerchas();
@@ -399,7 +406,7 @@ useEffect(() => {
 
             <div className="w-full md:w-1/4">
               <label className="block text-sm">Sección</label>
-              <select className="select w-full" defaultValue={"..."} onChange={(e)=>setseccion(e.target.value)}>
+              <select className="select w-full" ref={selSecc} defaultValue={"..."} onChange={(e)=>setseccion(e.target.value)}>
                       <option value="..." disabled={true} defaultChecked={true}>Seleccione una sección</option>
       {secciones?.map(seccion => (
         <option key={seccion.id} value={seccion.id}>{seccion.seccion}</option>

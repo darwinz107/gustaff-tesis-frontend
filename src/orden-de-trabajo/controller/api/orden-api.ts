@@ -13,7 +13,7 @@ export const areas = async ():Promise<{nombre:string}> => {
     return data;
 }
 
-export const getAllCodByArea = async (area:string):Promise<{cod:string}> => {
+export const getAllCodByArea = async (area:string):Promise<{cod:string}[]> => {
 
     console.log("getAllCodByArea in front",area);
     const res = await fetch(`${route}admin/all/codigos`,{
@@ -27,7 +27,7 @@ export const getAllCodByArea = async (area:string):Promise<{cod:string}> => {
     return data;
 }
 
-export const getAllMaquinasByCod = async (cod:string):Promise<{nombre:string}> =>{
+export const getAllMaquinasByCod = async (cod:string):Promise<{nombre:string}[]> =>{
     const res = await fetch(`${route}admin/all/maquinas`,{
         method: 'POST',
         headers:{
