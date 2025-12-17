@@ -155,7 +155,7 @@ const cargarInfoSolMaterial = async() =>{
   setsolicitudMaterial(prev => ({
     ...prev,
     itemsSolicitados: [
-      ...(prev.itemsSolicitados ?? []),
+      ...(prev.itemsSolicitados),
       newItem
     ]
   }));
@@ -192,11 +192,12 @@ const cargarInfoSolMaterial = async() =>{
    const res = await createActaEntrada(solCompraId,registroEntradaFinal);
 
    if(res.validate){
-    setsolicitudMaterial({numOrden:"",numOrdenTrabajo:"",itemsSolicitados:[],id:0});
-    window.open(`/pdf-entrada/${solicitudMaterial.id}`,"_blank");
-   }
-   console.log(res);
    alert(res.msj);
+    setsolicitudMaterial({numOrden:"",numOrdenTrabajo:"",itemsSolicitados:[],id:0});
+    window.open(`/pdf-entrada/${solCompraId}`,"_blank");
+   }
+  
+
  }
 
 useEffect(() => {

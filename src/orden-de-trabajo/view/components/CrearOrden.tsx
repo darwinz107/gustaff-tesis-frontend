@@ -327,7 +327,7 @@ setshowSuccess(false);
              <option value={u.name}>{u.name}</option>
             </>)}
             </select>
-             <label htmlFor="" className="mr-2">Receptor</label> 
+             <label htmlFor="" className="mr-2">Tecnico 1</label> 
             <select className="select" defaultValue={"..."} onChange={(e)=>setreceptor(e.target.value)}>
             <option defaultChecked={true} disabled={true}>...</option>
             {users.map((u)=><>

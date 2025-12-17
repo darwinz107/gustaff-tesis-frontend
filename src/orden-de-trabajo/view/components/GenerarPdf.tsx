@@ -50,11 +50,11 @@ const id = useParams();
             <View style={styles.containerPrincipal}>
             <View style={styles.container}>
               <View style={styles.child}>
-                <Text style={styles.childTitulo}>FECHA DE REQUERIMIENTO:</Text>
+                <Text style={styles.childTitulo}>FECHA DE INICIO PLANIFICADA:</Text>
                 <Text style={styles.childContenido}>{newSolicitud?.fechaInicio}</Text>
                 </View>
                 <View style={styles.child}>
-                <Text style={styles.childTitulo}>HORA DE REQUERIMIENTO:</Text>
+                <Text style={styles.childTitulo}>HORA DE INICIO:</Text>
                 <Text style={styles.childContenido}>{newSolicitud?.HoraInicio}</Text>
                 </View>
                 <View style={styles.child}>
@@ -64,11 +64,11 @@ const id = useParams();
             </View>
              <View style={styles.container}>
               <View style={styles.child}>
-                <Text style={styles.childTitulo}>FECHA DE INICIO PLANIFICADA:</Text>
+                <Text style={styles.childTitulo}>FECHA DE FINALIZACION:</Text>
                 <Text style={styles.childContenido}>{newSolicitud?.fechaFinal}</Text>
                 </View>
                 <View style={styles.child}>
-                <Text style={styles.childTitulo}>HORA DE REQUERIMIENTO:</Text>
+                <Text style={styles.childTitulo}>HORA DE FINALIZACION:</Text>
                 <Text style={styles.childContenido}>{newSolicitud?.HoraFinal}</Text>
                 </View>
                 <View style={styles.child}>

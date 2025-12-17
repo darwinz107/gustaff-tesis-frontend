@@ -165,7 +165,9 @@ useEffect(() => {
   }
 
   const crearYGenerarOrdenCompra = async() => {
- 
+ if(infoDestino === [] || comprasPorGenerar.length === 0){
+   alert("Debe ingresar la informacion correspondiente!");
+ }
     try {
        const resOrdenCompra = await crearOrdenCompra({
       Autoriza: autoriza,

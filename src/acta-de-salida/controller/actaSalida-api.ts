@@ -3,8 +3,8 @@ import type { InfoPdfSalida } from "../models/InfoPdfSalida";
 const route = "http://localhost:3000/";
 
   export const createActaSalidaApi = async(id:number,entregaId:number,observacion:string):Promise<{msj:string, validate:boolean}> => {
-    
-            const response:Response = await fetch(`${route}inventario/acta-salida/${id}`,{
+    try {
+          const response:Response = await fetch(`${route}inventario/acta-salida/${id}`,{
            method:"POST",
             headers: {
       "Content-Type": "application/json"
@@ -15,6 +15,10 @@ const route = "http://localhost:3000/";
             return data;
         }
 
+     catch (error) {
+      console.error(error);
+    }
+  }  
   export const actaDeSalidaByIdCompra = async(id:number):Promise<InfoPdfSalida> => {
     
             const response:Response = await fetch(`${route}inventario/acta-salida-by/${id}`,{
