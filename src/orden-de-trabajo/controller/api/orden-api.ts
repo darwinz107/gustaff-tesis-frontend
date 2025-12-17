@@ -104,7 +104,8 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{nombre:string}[]>
 
     export const getOrdenTrabajoBySolicitante = async(solicitante:string):Promise<OrdenesTrabajo[]> => {
 
-        const response:Response = await fetch(`${route}orden-de-trabajo/orden-by-solicitante`,{
+        try {
+             const response:Response = await fetch(`${route}orden-de-trabajo/orden-by-solicitante`,{
          method:"POST",
             headers:{
                 "Content-Type":"application/json"
@@ -112,7 +113,11 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{nombre:string}[]>
             body:JSON.stringify({solicitante})
         });
         const data = await response.json();
-        return data;
+        return data; 
+        } catch (error) {
+            console.log('getOrdenTrabajoBySolicitante error: ',error);
+        }
+      
     }
 
     export const getOrdenTrabajoById = async(id:number):Promise<OrdenesTrabajo> => {

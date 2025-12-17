@@ -7,6 +7,7 @@ import { getUsers } from '../../user/controller/api/user-api';
 import { crearOrdenCompra, getAllOrdenesTrabajoSinUso } from '../controller/ordenCompraApi';
 import type { Inventarios } from '../../inventario/models/inventarios';
 import type { CreateItemsSolicitados } from '../../inventario/models/createItemsSolocitados';
+import { info } from 'console';
 
 
 
@@ -241,7 +242,7 @@ setinfoDestino(infoDestinoInicial);
          <div className='w-[33.33%] h-[80%] pl-2'>
             <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>Solicitante</p><input type="text"  className='input ml-10 mr-3' value={infoDestino.userSolicitante.name}  disabled={true}/></div>
             <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Area</p><input   type="text"  className='input ml-1' value={infoDestino.Area} disabled={true}/></div>
-            <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Destino</p><input  type="text"  className='input ml-5' onChange={(e)=>setdestino(e.target.value)}/></div>
+            <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Descripcion</p><input  type="text"  className='input ml-5' value={infoDestino.DescripcionTrabajo} disabled={true}/></div>
           </div>
             <div className='w-[33.33%] h-[80%] '>
             <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>Autoriza</p>  <select defaultValue={'...'} className="select mr-2 ml-3" id="" onChange={(e)=>setautoriza(e.target.value)}>

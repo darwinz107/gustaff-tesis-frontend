@@ -204,7 +204,7 @@ const ordenesTrabajoApi  = async() =>{
                           </tr>
                         </thead>
                         <tbody>
-                          {ordenesTrabajo.map((u) =>
+                          {ordenesTrabajo?.map((u) =>
                             <>
                               <tr>
             
@@ -222,7 +222,7 @@ const ordenesTrabajoApi  = async() =>{
                                   <button className="btn btn-ghost btn-xs" onClick={() => { asignarSolicitantexOrden(u.id); setventanaEmergente(!ventanaEmergente); setselectArea(u.Area); setselectCodigo(u.Codigo);}}>Detalles</button>
                                   <button className="btn btn-ghost btn-xs" onClick={()=>metodoEliminarOrdenTrabajo(u.id)}>Eliminar</button>
                                   <button className="btn btn-ghost btn-xs" onClick={()=>cargarPdf(u.id)}>Ver pdf</button>
-                                  <button className="btn btn-ghost btn-xs" disabled={u.estadoUso.uso} onClick={()=>redirigirSolMaterial(u.id)}>Crear Solicitud</button>
+                                  <button className="btn btn-ghost btn-xs" disabled={u?.estadoUso?.uso} onClick={()=>redirigirSolMaterial(u.id)}>Crear Solicitud</button>
                                 </td>
                               </tr>
                             </>)}

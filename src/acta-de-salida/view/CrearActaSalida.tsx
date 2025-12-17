@@ -27,28 +27,50 @@ export const CrearActaSalida = () => {
         
     }
 
-    const generarActaSalida = async() =>{
-     
-      if(solicitudMaterial.id != null ||solicitudMaterial.id != undefined){
-      try {
-        const res = await createActaSalidaApi(solicitudMaterial.id,entrega,observacion);
-       if(res.validate){
-         alert(res.msj);
-         window.open(`/pdf-salida/${solicitudMaterial.id}`,"_blank");
-         setsolicitudMaterial({id:null,numOrden:"",numOrdenTrabajo:{Area:"",userSolicitante:{name:""},Maquina:"",Codigo:""},Destino:"",itemSolicitados:[]});
-         setentrega(0);
-         setobservacion("");
-       }else{
-        console.log(res);
-       }
-      } catch (error) {
-        console.error(error);
-      } 
-      }else{
-        alert("Debe llenar la informacion necesaria antes de generar una acta de salida!")
-      }
+   const generarActaSalida = async () => {
 
+  if (solicitudMaterial.id == null) {
+    alert("Debe llenar la informacion necesaria antes de generar una acta de salida!");
+    return;
+  }
+
+  try {
+    const res = await createActaSalidaApi(
+      solicitudMaterial.id,
+      entrega,
+      observacion
+    );
+
+    console.log(res);
+
+    if (res?.validate) {
+      alert(res.msj);
+      window.open(`/pdf-salida/${solicitudMaterial.id}`, "_blank");
+
+      setsolicitudMaterial({
+        id: null,
+        numOrden: "",
+        numOrdenTrabajo: {
+          Area: "",
+          userSolicitante: { name: "" },
+          Maquina: "",
+          Codigo: ""
+        },
+        Destino: "",
+        itemSolicitados: []
+      });
+
+      setentrega(0);
+      setobservacion("");
+    } else {
+      console.warn("Respuesta inválida:", res);
     }
+
+  } catch (error) {
+    console.error("Error generando acta de salida:", error);
+  }
+};
+
 
     useEffect(() => {
        const getAllUsers = async () => {
