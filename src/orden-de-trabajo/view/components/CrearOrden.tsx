@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { CalendarDate, CalendarMonth } from "cally";
 import "cally";
-import { areas, getAllCategorias, getAllCodByArea, getAllMaquinasByCod, getAllTipoTrabajo, getAllTipoTrabajoByCategoria, registerSolicitudOrden } from "../../controller/api/orden-api";
+import { areas, getAllCategorias, getAllCodByArea, getAllMaquinasByCod, getAllTipoTrabajo, getAllTipoTrabajoByCategoria, getLastSolicitud, registerSolicitudOrden } from "../../controller/api/orden-api";
 import type { Area } from "../../models/areas";
 import type { Codigo } from "../../models/codigos";
 import type { Maquina } from "../../models/maquinas";
@@ -9,7 +9,7 @@ import type { SolicitudOrden } from "../../models/solicitudOrden";
 import { useNavigate } from "react-router-dom";
 import { getUsers } from "../../../user/controller/api/user-api";
 
-export const CrearOrden = () => {
+export const CrearOrden = ({setcargarAuto,setsendId}) => {
 
   const [area, setarea] = useState<Area[]>([]);
   const [codigos, setcodigos] = useState<Codigo[]>([]);
@@ -18,19 +18,25 @@ export const CrearOrden = () => {
   const [users, setusers] = useState<{name:string}[]>([])
   const [tiempos, settiempos] = useState(Array(4));
   const [ubicacion, setubicacion] = useState(Array(3));
+  const [selectArea, setselectArea] = useState("");
+  const [selectCodigo, setselectCodigo] = useState("");
+  const [selectMaquina, setselectMaquina] = useState("");
+  const [especPiezas, setespecPiezas] = useState("");
   const [especificacion, setespecificacion] = useState(Array(3));
   const [isEmptyArea, setisEmptyArea] = useState(false);
   const [isEmptyCod, setisEmptyCod] = useState(false);
   const callyPpopover1 = useRef(null);
   const callyPpopover2 = useRef(null);
   const callyPpopover3 = useRef(null);
-  const select1 = useRef(null);
+  const select1 = useRef<HTMLSelectElement|null>(null);
   const [descripcion, setdescripcion] = useState(null);
   const [tipoTrabajoShow, settipoTrabajoShow] = useState(false);
   const [tipoTrabajos, settipoTrabajos] = useState<{tipo:string}[]>([]);
   const [solicitante, setsolicitante] = useState("");
   const [receptor, setreceptor] = useState("");
   const [tecnico, settecnico] = useState(null);
+  const [showSuccess, setshowSuccess] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -60,40 +66,35 @@ export const CrearOrden = () => {
   }, []);
 
   useEffect(() => {
-    if(ubicacion[0] != undefined){
-     setisEmptyArea(true);
-     
-     const getCodigos = async () => {
+
+     if(selectArea != ""){
+const getCodigos = async () => {
         
-        const data = await getAllCodByArea(ubicacion[0]);
+        const data = await getAllCodByArea(selectArea);
         console.log(data);
         setcodigos(data);
+           if(select1.current){
+     select1.current.value = "...";
       }
-      getCodigos();
-      console.log(codigos);
+    setmaquinas([]);
     }
+      getCodigos();
+    
+     }
 
-    if(ubicacion[1] != undefined){
-      setisEmptyCod(true);
-     select1.current.selectedIndex;
-      const getMaquinas = async () => {
-        
-        const data = await getAllMaquinasByCod(ubicacion[1]);
-        
+    
+  }, [selectArea]);
+
+  useEffect(() => {
+  
+    const getMaquinas = async () => {
+      const data = await getAllMaquinasByCod(selectCodigo);
+       
         setmaquinas(data);
-        console.log("current: ",select1.current.value);
-        console.log("ubicacion[1]: ",ubicacion[1]);
-
-        if(select1.current.value != ubicacion[1]){
-           const newArr = [...ubicacion];
-           newArr[1] = select1.current.value;
-           setubicacion(newArr);        }
       }
       getMaquinas();
-      console.log("maquinas: ",maquinas);
-    }
-    
-  }, [ubicacion]);
+  }, [selectCodigo])
+  
 
   useEffect(() => {
  
@@ -106,6 +107,8 @@ export const CrearOrden = () => {
 
 
   }, []);
+
+  const dialog = useRef<HTMLDialogElement|null>(null);
   
   const addSolicitudOrden = async(e:Event) =>{
        e.preventDefault();
@@ -115,10 +118,10 @@ export const CrearOrden = () => {
       fechaFinal:tiempos[3],
       HoraInicio:tiempos[1],
       HoraFinal:tiempos[2],
-      Area:ubicacion[0],
-      Codigo:ubicacion[1],
-      Maquina:ubicacion[2],
-      EspecificacionMaquina:ubicacion[3],
+      Area:selectArea,
+      Codigo:selectCodigo,
+      Maquina:selectMaquina,
+      EspecificacionMaquina:especPiezas,
       Categoria:especificacion[0],
       TipoTrabajo:especificacion[1],
       DescripcionTrabajo:especificacion[2],
@@ -126,20 +129,70 @@ export const CrearOrden = () => {
       userReceptor:receptor,
       userTecnico:tecnico
     } 
+    console.log(infoSolicitud);
     const res = await registerSolicitudOrden(infoSolicitud);
-    alert(res.msj);
+    
     if(res.validate){
-    window.open(`/pdf/undefined`,"_blank");}
+     
+      setshowSuccess(true);
+
+      setTimeout(() => {
+setshowSuccess(false);
+        window.open(`/pdf/undefined`,"_blank");
+   if(dialog.current){
+  dialog.current.showModal();
+}     
+      }, 1000);
+
+    }
 
     } catch (error) {
       console.log("Error al generar la solicitud: ",error);
     }
 
   }
+
+  const redirigirSolMaterial = async() =>{
+    setcargarAuto(true);
+    setsendId(undefined); 
+  }
   
  
   return (
     <>
+    {showSuccess && (
+  <div className="fixed top-5 right-5 z-50">
+    <div role="alert" className="alert alert-success shadow-lg">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6 shrink-0 stroke-current"
+        fill="none"
+        viewBox="0 0 24 24">
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>¡Orden de trabajo creada!</span>
+    </div>
+  </div>
+)}
+
+
+
+<dialog ref={dialog} id="my_modal_1" className="modal">
+  <div className="modal-box">
+    <h3 className="font-bold text-lg">Solicitud de material!</h3>
+    <p className="py-4">¿Desea generar la solicitud de material?</p>
+    <div className="modal-action">
+      <form method="dialog">
+        <button className="btn mr-3" onClick={redirigirSolMaterial}>Crear</button>
+        <button className="btn">Cancelar</button>
+      </form>
+    </div>
+  </div>
+</dialog>
       <div className='flex items-center justify-center mt-[20%]'>
         <form className='min-w-170'  onSubmit={(e) => { addSolicitudOrden(e); }} >
           <div className=' bg-gray-100 rounded-xl shadow-md p-4 mb-6'>
@@ -183,48 +236,41 @@ export const CrearOrden = () => {
             <div className="flex flex-row mb-4 px-2">
               <p className="mr-2">Area</p>
               <select defaultValue={'...'} className="select" id="" onChange={(e) => {
-                const nueva = [...ubicacion];
-                nueva[0] = e.target.value;
-                setubicacion(nueva);
+              setselectArea(e.target.value);
               }}>
                 <option disabled={true}>...</option>
-                {area.map((a) =>
+                {area?.map((a) =>
                   <>
-                    <option value={a.nombre}>{a.nombre}</option>
+                    <option value={a?.nombre}>{a?.nombre}</option>
                   </>
                 )}
               </select>
 
               <p className="mx-2">Codigo</p>
-              <select ref={select1}  disabled={!isEmptyArea} defaultValue={'...'} className="select" id="" onChange={(e) => {
-                const nueva = [...ubicacion];
-                nueva[1] = e.target.value;
-                setubicacion(nueva)
+              <select ref={select1}  defaultValue={'...'} className="select" id="" onChange={(e) => {
+                setselectCodigo(e.target.value);
+               
               }}>
                 <option disabled={true}>...</option>
-                {codigos.map((c) => <>
-                  <option value={c.cod}>{c.cod}</option>
+                {codigos?.map((c) => <>
+                  <option value={c?.cod}>{c?.cod}</option>
                 </>)}
               </select>
 
               <p className="mx-2">Maquina</p>
-              <select disabled={!isEmptyCod} defaultValue={'...'} className="select" id="" onChange={(e) => {
-                const nueva = [...ubicacion];
-                nueva[2] = e.target.value;
-                setubicacion(nueva)
+              <select defaultValue={'...'} className="select" id="" onChange={(e) => {
+                setselectMaquina(e.target.value);
               }}>
                 <option disabled={true}>...</option>
-                {maquinas.map((m) => <>
-                  <option value={m.nombre}>{m.nombre}</option>
+                {maquinas?.map((m) => <>
+                  <option value={m?.nombre }>{m?.nombre}</option>
                 </>)}
               </select>
             </div>
             <div className="flex flex-row px-2">
               <p className="mr-2">Equipos/Piezas</p>
               <textarea className="textarea" onChange={(e) => {
-                const nueva = [...ubicacion];
-                nueva[3] = e.target.value;
-                setubicacion(nueva)
+              setespecPiezas(e.target.value);
               }}></textarea>
             </div>
           </div>

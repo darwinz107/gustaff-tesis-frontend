@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BuscarOrdenCompra } from "../../acta-de-salida/view/BuscarOrdenCompra";
 import type { InfoPdfCompra } from "../../orden-de-compra/models/infoPdfCompra";
 import { getAllSolicitudesParciales, ordenCompraById } from "../../orden-de-compra/controller/ordenCompraApi";
 import type { BuscarSolMaterial } from "../../orden-de-compra/models/buscarSolMaterial";
 import { asignarInfoActaEntrada } from "../../inventario/controller/inventario-api";
 import type { AsignarInfoEntrada } from "../../inventario/models/AsignarInfoEntrada";
-import { createActaEntrada } from "../controller/actaEntrada-api";
+import { createActaEntrada, findProovedorByNombre, getPerchasBySeccion, getSeccionesByBodega } from "../controller/actaEntrada-api";
+import { CrearProovedor } from "./CrearProovedor";
+import { getAllBodegas } from "../../admin/controller/api/admin-api";
 
 
 
@@ -15,6 +17,7 @@ export const CrearActaEntrada = () => {
     const [solicitudMaterial, setsolicitudMaterial] = useState<AsignarInfoEntrada>({itemsSolicitados:[]});
     const [solCompraId, setsolCompraId] = useState<number>(0);
     const [total, settotal] = useState<number>(0.00);
+    const [proovedores, setproovedores] = useState<{id:number,nombreComercial:string}[]>([]);
     const [proovedor, setproovedor] = useState("");
     const [factura, setfactura] = useState("");
     const [item, setitem] = useState(null);
@@ -26,7 +29,11 @@ export const CrearActaEntrada = () => {
     const [bodega, setbodega] = useState("");
     const [seccion, setseccion] = useState("");
     const [percha, setpercha] = useState("");
+    const [bodegas, setbodegas] = useState<{id:number,bodega:string}[]>([]);
+    const [secciones, setsecciones] = useState<{id:number,seccion:string}[]>([]);
+    const [perchas, setperchas] = useState<{id:number,percha:string}[]>([]);
     const [observacion, setobservacion] = useState("");
+    const [ventanaAgregarProovedor, setventanaAgregarProovedor] = useState(false);
     
     const [ordenes, setordenes] = useState<BuscarSolMaterial[]>([]);
 
@@ -115,6 +122,21 @@ const cargarInfoSolMaterial = async() =>{
   const iva1 = (subtotal1 - descuento1) * ivaFinal;
   const calcTotal = subtotal1 - descuento1 + iva1;
 
+  if(bodega === ""){
+   alert("Elija una bodega");
+   return;
+  }
+
+  if(seccion === ""){
+   alert("Elija una seccion");
+   return;
+  }
+
+   if(percha === ""){
+   alert("Elija una percha");
+   return;
+  }
+
   const newItem = {
     nombre: item ?? "",
     cantidad: c,
@@ -124,9 +146,9 @@ const cargarInfoSolMaterial = async() =>{
     iva: iva,
     subtotal: parseFloat(subtotal1),
     total: parseFloat(calcTotal),
-    bodega: bodega ?? "",
-    seccion: seccion ?? "",
-    percha: percha ?? "",
+    bodegaId: Number(bodega),
+    seccionId: Number(seccion),
+    perchaId: Number(percha),
     Observacion: observacion ?? ""
   };
 
@@ -144,9 +166,9 @@ const cargarInfoSolMaterial = async() =>{
   setprecioUni(null);
   setdescuento(null);
   setiva(false);
-  setbodega("");
-  setseccion("");
-  setpercha("");
+  //setbodega("");
+  //setseccion("");
+ // setpercha("");
   setobservacion("");
 };
 
@@ -160,21 +182,94 @@ const cargarInfoSolMaterial = async() =>{
 }
 
    const registroEntradaFinal = {
-    proovedor:1,
-    numFactura: factura,
+    proovedor:proovedor,
+    factura: factura,
     total:total,
     itemsSolicitados:solicitudMaterial.itemsSolicitados
    }
-
+  console.log("registroEntradaFinal");
+  console.log(registroEntradaFinal);
    const res = await createActaEntrada(solCompraId,registroEntradaFinal);
 
    if(res.validate){
     setsolicitudMaterial({numOrden:"",numOrdenTrabajo:"",itemsSolicitados:[],id:0});
+    window.open(`/pdf-entrada/${solicitudMaterial.id}`,"_blank");
    }
    console.log(res);
    alert(res.msj);
  }
 
+useEffect(() => {
+  if(proovedor != ""){
+      const metodoExecProovedores = async()=>{
+    const res = await findProovedorByNombre(proovedor);
+    setproovedores(res);
+    console.log(res);
+  }
+metodoExecProovedores();
+  }else{
+    setproovedores([]);
+  }
+
+}, [proovedor]);
+
+
+useEffect(() => {
+  try {
+    const asignarBodegas = async()=>{
+   const res = await getAllBodegas();
+   setbodegas(res);
+ }
+ asignarBodegas();
+  } catch (error) {
+    console.error(error);
+  }
+ 
+}, []);
+
+const selSecc = useRef<HTMLSelectElement|null>(null);
+
+useEffect(() => {
+  try {
+    if(bodega !== ""){
+      const asignarSecciones = async()=>{
+   const res = await getSeccionesByBodega(bodega);
+   setsecciones(res);
+   setperchas([]);
+   if (selSecc.current) {
+  selSecc.current.value = "...";
+}
+ }
+ asignarSecciones();
+    }else{
+      setsecciones([]);
+    }
+    
+  } catch (error) {
+    console.error(error);
+  }
+ 
+}, [bodega]);
+
+useEffect(() => {
+  try {
+    if(seccion !== ""){
+      const asignarPerchas = async()=>{
+        console.log(seccion);
+   const res = await getPerchasBySeccion(seccion);
+   console.log(res);
+   setperchas(res);
+ }
+ asignarPerchas();
+    }else{
+      setperchas([]);
+    }
+    
+  } catch (error) {
+    console.error(error);
+  }
+ 
+}, [seccion]);
 
   return (
     <>
@@ -190,9 +285,28 @@ const cargarInfoSolMaterial = async() =>{
           <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Destino / Documento</h2>
 <div className="flex gap-4 flex-wrap">
 
-          <div className="flex-1 min-w-[180px]">
-              <label className="block text-sm">Proovedor</label>
-             <input className="input w-full"  value={proovedor} onChange={(e)=> setproovedor(e.target.value)}/>
+          <div className="flex flex-row min-w-[180px]">
+             <div>  <label className="block text-sm">Proovedor</label>
+              <div className=" w-full">
+                
+ <input className="input w-full" list="browsers" value={proovedor}  onChange={(e)=> setproovedor(e.target.value)}/>
+<datalist id="browsers">
+ {proovedores?.map((p)=>
+<option value={p.nombreComercial} onChange={(e)=>setproovedor(e.target.value)}></option>
+) 
+}
+</datalist>
+
+</div>
+</div>
+     <div className="flex items-center justify-center">    <button
+    type="button"
+    className=" text-gray-500 cursor-pointer"
+    onClick={()=>setventanaAgregarProovedor(!ventanaAgregarProovedor)}
+  >
+    <img className="w-5 h-5" src="https://img.icons8.com/ios-glyphs/30/add-user-male.png" alt="add-user-male"/>
+  </button>  
+  </div>    
             </div>
 
           
@@ -281,18 +395,35 @@ const cargarInfoSolMaterial = async() =>{
 
           <div className="flex gap-4 flex-wrap">
             <div className="w-full md:w-1/4">
-              <label className="block text-sm">Bodega</label>
-              <input className="input w-full" placeholder="Bodega" value={bodega} onChange={(e)=> setbodega(e.target.value)}/>
+              <label className="block text-sm">Bodega</label> 
+              <select className="select w-full" defaultValue={"..."} onChange={(e)=>setbodega(e.target.value)}>
+                <option value="..." disabled={true} defaultChecked={true}>Seleccione una bodega</option>
+      {bodegas?.map(bodega => (
+        <option key={bodega.id} value={bodega.id}>{bodega.bodega}</option>
+      ))}
+              </select>
             </div>
 
             <div className="w-full md:w-1/4">
               <label className="block text-sm">Sección</label>
-              <input className="input w-full" placeholder="Sección" value={seccion} onChange={(e)=> setseccion(e.target.value)}/>
+              <select className="select w-full" ref={selSecc} defaultValue={"..."} onChange={(e)=>setseccion(e.target.value)}>
+                      <option value="..." disabled={true} defaultChecked={true}>Seleccione una sección</option>
+      {secciones?.map(seccion => (
+        <option key={seccion.id} value={seccion.id}>{seccion.seccion}</option>
+      ))}
+
+              </select>
             </div>
 
             <div className="w-full md:w-1/4">
               <label className="block text-sm">Percha</label>
-              <input className="input w-full" placeholder="Percha" value={percha} onChange={(e)=> setpercha(e.target.value)}/>
+             <select className="select w-full" defaultValue={"..."} onChange={(e)=>setpercha(e.target.value)}>
+                      <option value="..." disabled={true} defaultChecked={true}>Seleccione una percha</option>
+      {perchas?.map(percha => (
+        <option key={percha.id} value={percha.id}>{percha.percha}</option>
+      ))}
+
+              </select>
             </div>
 
             <div className="w-full md:w-1/2">
@@ -351,8 +482,7 @@ const cargarInfoSolMaterial = async() =>{
         i,
         s.nombre,
         s.cantidad,
-        s.costo
-       
+        s.costo 
       )
     }
   >
@@ -380,6 +510,19 @@ const cargarInfoSolMaterial = async() =>{
                     <BuscarOrdenCompra ordenes={ordenes} setidSolMaterial={setsolCompraId} setventanaBuscarOrdenTrabajo={setventanaBuscarSolicitudMaterial} ventanaBuscarOrdenTrabajo={ventanaBuscarSolicitudMaterial}></BuscarOrdenCompra>
                      </div>
                      </div>
+
+           <div
+  className={`fixed inset-0 z-10 flex items-center justify-center bg-black/40 transition-opacity duration-300
+    ${ventanaAgregarProovedor ? "opacity-100" : "opacity-0 pointer-events-none"}
+  `}
+>
+<div className="bg-white w-4/5 max-w-5xl h-[78vh] rounded-lg shadow-xl overflow-y-auto">
+  <CrearProovedor
+    setventanaAgregarProovedor={setventanaAgregarProovedor}
+    ventanaAgregarProovedor={ventanaAgregarProovedor}
+  />
+</div>
+</div>           
     </>
   );
 };

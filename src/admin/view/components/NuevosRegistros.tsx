@@ -1,5 +1,5 @@
 import { use, useEffect, useState } from "react";
-import { crearCargo, crearCategoria, crearNuevaArea, crearNuevaMaquina, crearUsuario, getAllAreas, getAllCategorias, getAllRoles, newTipoTrabajo } from "../../controller/api/admin-api";
+import { crearBodega, crearCargo, crearCategoria, crearNuevaArea, crearNuevaMaquina, crearPercha, crearSeccion, crearUsuario, getAllAreas, getAllBodegas, getAllCategorias, getAllRoles, getAllSecciones, newTipoTrabajo } from "../../controller/api/admin-api";
 import type { CreateTipoTrabajo } from "../../models/create-tipo-trabajo";
 
 
@@ -16,6 +16,13 @@ export const NuevosRegistros = () => {
   const [tipoTrabajo, settipoTrabajo] = useState("");
   const [selectRol, setselectRol] = useState(0);
   const [cargo, setcargo] = useState("");
+  const [bodega, setbodega] = useState("");
+  const [seccion, setseccion] = useState("");
+  const [bodegaId, setbodegaId] = useState(0);
+  const [percha, setpercha] = useState("");
+  const [seccionId, setseccionId] = useState(0);
+  const [bodegas, setbodegas] = useState<{id:number,bodega:string}[]>([]);
+  const [secciones, setsecciones] = useState<{id:number,seccion:string}[]>([]);
 
 
  /* const crearNuevoUsuario = async () => {
@@ -112,62 +119,216 @@ export const NuevosRegistros = () => {
     }
   }
 
+  const cargarBodegas = async()=>{
+    try {
+        const res = await getAllBodegas();
+      console.log(res);
+      setbodegas(res);
+    } catch (error) {
+      console.error("Error cargando bodegas:", error);
+    }
+    
+    }
+
+    const cargarSecciones = async()=>{
+      try {
+        const res = await getAllSecciones();
+      setsecciones(res);
+      } catch (error) {
+        console.error("Error cargando secciones:", error);
+      }    
+    }
+
+  const nuevaBodega = async() =>{
+     const res = await crearBodega({bodega:bodega});
+     if(!res.ok){
+      alert(res.message); 
+      throw new Error("Error al crear bodega");
+      
+     }
+
+     alert(res.message);
+     cargarBodegas();
+   }
+
+     const nuevaSeccion = async() =>{
+     const res = await crearSeccion({seccion:seccion,bodegaId:bodegaId});
+     
+     if(!res.ok){
+      alert(res.message);  
+       throw new Error("Error al crear seccion");   
+     }
+
+     alert(res.message);
+     cargarSecciones();
+   }
+
+        const nuevaPercha = async() =>{
+     const res = await crearPercha({percha:percha,seccionId:seccionId});
+     if(!res.ok){
+      alert(res.message);  
+       throw new Error("Error al crear percha");   
+     }
+
+     alert(res.message);
+    
+   }
+
+  useEffect(() => {
+    
+    cargarBodegas();
+    cargarSecciones();
+   
+  }, []);
+  
+
   return (
-    <>
-
-        <div className='flex items-center justify-center w-4/5 bg-white h-full'>
-          <div className="min-w-150 min-h-150 border border-gray-200 bg-gray-50 flex flex-col justify-center" action="" method="post">
-
-            <div className="flex flex-col items-center justify-center border-b border-gray-200">
-              <div className="bg-gray-200 w-full h-9 flex items-center justify-center mb-2"><p className="">Area</p></div>
-              <label htmlFor="">Nueva area </label><input type="text" className="input mb-2" onChange={(e)=>setnewArea(e.target.value)}/>
-            
-            <button className="btn my-4" onClick={crearArea}>Crear</button>
-            </div>
-            <div className="flex flex-col items-center justify-center border-b border-gray-200">
-              <div className="flex "><div className="mr-6"><label htmlFor="">Nueva maquina </label><input type="text" className="input" onChange={(e)=>setmaquina(e.target.value)}/></div>
-              <div>
-                <label htmlFor="">Area </label> 
-              <select className="select" id="" defaultValue={"..."} onChange={(e)=>setselectArea(e.target.value)}>
-                <option  disabled={true} defaultChecked={true}>...</option>
-              {areas.map((a)=><>
-              <option value={a.nombre}>{a.nombre}</option>
-              </>)}
-              </select></div></div>
-              <button className="btn my-4" onClick={crearMaquina}>Crear</button>
-            </div>
+  <>
+    <div className="w-full h-full p-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-gray-100 rounded-xl shadow-md p-4">
+          <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Área</h2>
+          <div className="flex flex-col gap-3">
             <div>
-              <div className="flex flex-col items-center justify-center border-b border-gray-200">
-                <label htmlFor="">Nueva categoria</label> <input type="text" className="input" onChange={(e)=>setcategoria(e.target.value)}/>
-                <button className="btn my-4" onClick={crearNuevaCategoria}>Crear</button>
-              </div>
+              <label className="block text-sm">Nueva área</label>
+              <input type="text" className="input w-full" onChange={(e) => setnewArea(e.target.value)} />
             </div>
-            <div className="flex flex-col items-center justify-center border-b border-gray-200 mx-2">
-             <div className="flex  w-full flex-col items-center justify-center"> 
-              <label htmlFor="">Nuevo tipo de trabajo</label><input type="text" className="input" onChange={(e)=>settipoTrabajo(e.target.value)}/>
-           
-              </div>
-              <button className="btn my-4" onClick={crearNuevoTipoTrabajo}>Crear</button>
-            </div>
- <div className="flex flex-col items-center justify-center border-b border-gray-200 mx-2">
-             <div className="flex w-full"> 
-             <div className="w-3/1 mr-4"> <label htmlFor="">Nuevo cargo</label><input type="text" className="input mb-4" onChange={(e)=>setcargo(e.target.value)}/></div>
-            <div className="w-3/1">  <label htmlFor="">Rol</label>
-              <select className="select"
-              defaultValue={"..."}
-              onChange={(e)=>setselectRol(e.target.value)}
-              >
-              <option disabled={true} defaultChecked={true}>...</option>
-              {rol.map((r)=><>
-              <option value={r.id}>{r.role}</option>
-              </>)}
-              </select></div>
-              </div>
-              <button className="btn my-4" onClick={crearNuevoCargo}>Crear</button>
+            <div className="flex justify-end">
+              <button className="btn" onClick={crearArea}>Crear</button>
             </div>
           </div>
         </div>
-     
-    </>
-  )
+
+        <div className="bg-gray-100 rounded-xl shadow-md p-4">
+          <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Máquina</h2>
+          <div className="flex flex-col gap-3">
+            <div>
+              <label className="block text-sm">Nueva máquina</label>
+              <input type="text" className="input w-full" onChange={(e) => setmaquina(e.target.value)} />
+            </div>
+            <div>
+              <label className="block text-sm">Área</label>
+              <select className="select w-full" defaultValue={"..."} onChange={(e) => setselectArea(e.target.value)}>
+                <option disabled={true} defaultChecked={true}>...</option>
+                {areas.map((a) => <option key={a.nombre} value={a.nombre}>{a.nombre}</option>)}
+              </select>
+            </div>
+            <div className="flex justify-end">
+              <button className="btn" onClick={crearMaquina}>Crear</button>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gray-100 rounded-xl shadow-md p-4">
+          <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Categoría</h2>
+          <div className="flex flex-col gap-3">
+            <div>
+              <label className="block text-sm">Nueva categoría</label>
+              <input type="text" className="input w-full" onChange={(e) => setcategoria(e.target.value)} />
+            </div>
+            <div className="flex justify-end">
+              <button className="btn" onClick={crearNuevaCategoria}>Crear</button>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gray-100 rounded-xl shadow-md p-4">
+          <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Tipo de trabajo</h2>
+          <div className="flex flex-col gap-3">
+            <div>
+              <label className="block text-sm">Nuevo tipo de trabajo</label>
+              <input type="text" className="input w-full" onChange={(e) => settipoTrabajo(e.target.value)} />
+            </div>
+            <div className="flex justify-end">
+              <button className="btn" onClick={crearNuevoTipoTrabajo}>Crear</button>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gray-100 rounded-xl shadow-md p-4">
+          <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Cargo</h2>
+          <div className="flex flex-col gap-3">
+            <div>
+              <label className="block text-sm">Nuevo cargo</label>
+              <input type="text" className="input w-full" onChange={(e) => setcargo(e.target.value)} />
+            </div>
+            <div>
+              <label className="block text-sm">Rol</label>
+              <select
+                className="select w-full"
+                defaultValue={"..."}
+                onChange={(e) => setselectRol(e.target.value)}
+              >
+                <option disabled={true} defaultChecked={true}>...</option>
+                {rol.map((r) => <option key={r.id} value={r.id}>{r.role}</option>)}
+              </select>
+            </div>
+            <div className="flex justify-end">
+              <button className="btn" onClick={crearNuevoCargo}>Crear</button>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gray-100 rounded-xl shadow-md p-4">
+          <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Bodega</h2>
+          <div className="flex flex-col gap-3">
+            <div>
+              <label className="block text-sm">Nueva bodega</label>
+              <input type="text" className="input w-full" placeholder="Nombre de bodega" value={bodega} onChange={(e)=>setbodega(e.target.value)}/>
+            </div>
+            <div className="flex justify-end">
+              <button type="button" className="btn" onClick={nuevaBodega}>Crear</button>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gray-100 rounded-xl shadow-md p-4">
+          <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Sección</h2>
+          <div className="flex flex-col gap-3">
+            <div>
+              <label className="block text-sm">Nueva sección</label>
+              <input type="text" className="input w-full" placeholder="Nombre de sección" value={seccion} onChange={(e)=>setseccion(e.target.value)}/>
+            </div>
+            <div>
+              <label className="block text-sm">Bodega</label>
+              <select className="select w-full" defaultValue={"..."} onChange={(e)=>setbodegaId(e.target.value)}>
+                <option value="..." disabled={true} defaultChecked={true}>Seleccione una bodega</option>
+      {bodegas?.map(bodega => (
+        <option key={bodega.id} value={bodega.id}>{bodega.bodega}</option>
+      ))}
+              </select>
+            </div>
+            <div className="flex justify-end">
+              <button type="button" className="btn" onClick={nuevaSeccion}>Crear</button>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gray-100 rounded-xl shadow-md p-4">
+          <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Percha</h2>
+          <div className="flex flex-col gap-3">
+            <div>
+              <label className="block text-sm">Nueva percha</label>
+              <input type="text" className="input w-full" placeholder="Nombre de percha" value={percha} onChange={(e)=>setpercha(e.target.value)}/>
+            </div>
+            <div>
+              <label className="block text-sm">Sección</label>
+              <select className="select w-full" defaultValue={"..."} onChange={(e)=>setseccionId(e.target.value)}>
+                      <option value="..." disabled={true} defaultChecked={true}>Seleccione una sección</option>
+      {secciones?.map(seccion => (
+        <option key={seccion.id} value={seccion.id}>{seccion.seccion}</option>
+      ))}
+
+              </select>
+            </div>
+            <div className="flex justify-end">
+              <button type="button" className="btn" onClick={nuevaPercha}>Crear</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </>
+);
+
 }

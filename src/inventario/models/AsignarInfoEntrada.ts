@@ -16,9 +16,9 @@ export interface AsignarInfoEntrada {
         descuento:number;
         subtotal:number;
         total:number;
-        bodega:string;
-        seccion:string;
-        percha:string
+        bodegaId:number;
+        seccionId:number;
+        perchaId:number
         Observacion: string;
         iva:boolean;
     }[];

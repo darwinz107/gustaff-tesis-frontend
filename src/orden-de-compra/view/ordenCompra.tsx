@@ -4,17 +4,28 @@ import { BuscarOrdenTrabajo } from './buscarOrdenTrabajo';
 import type { LllenarDestino } from '../models/llenarDestino';
 import { createItemsSolicitados, evaluarStock, filtrarInventario, getInventario } from '../../inventario/controller/inventario-api';
 import { getUsers } from '../../user/controller/api/user-api';
-import { crearOrdenCompra } from '../controller/ordenCompraApi';
+import { crearOrdenCompra, getAllOrdenesTrabajoSinUso } from '../controller/ordenCompraApi';
 import type { Inventarios } from '../../inventario/models/inventarios';
 import type { CreateItemsSolicitados } from '../../inventario/models/createItemsSolocitados';
 
 
 
-export const OrdenCompra = () => {
+export const OrdenCompra = ({id}) => {
+
+const infoDestinoInicial: LllenarDestino = {
+  userSolicitante: { name: "" },
+  id: 0,
+  NumOrden: "",
+  Area: "",
+  Codigo: "",
+  Maquina: ""
+};
+
+
   const [comprasPorGenerar, setcomprasPorGenerar] = useState<ItemsPorGuardar[]>([]);
   const [items, setitems] = useState<CreateItemsSolicitados[]>([]);
   const [ventanaBuscarOrdenTrabajo, setventanaBuscarOrdenTrabajo] = useState(false);
-  const [infoDestino, setinfoDestino] = useState<LllenarDestino>({userSolicitante:{name:""},id:0,NumOrden:"",Area:"",Codigo:"",Maquina:""});
+  const [infoDestino, setinfoDestino] = useState<LllenarDestino>(infoDestinoInicial);
   const [item, setitem] = useState("");
   const [buscarItem, setbuscarItem] = useState("");
   const [cantidad, setcantidad] = useState(0);
@@ -25,6 +36,7 @@ export const OrdenCompra = () => {
   const [destino, setdestino] = useState("");
   const [ventanaEmergente, setventanaEmergente] = useState(false); 
   const [inventarios, setinventarios] = useState<Inventarios[]>([])
+  const [showSuccess, setshowSuccess] = useState(false);
   
 
    const metodoInventarios = async() =>{
@@ -39,14 +51,30 @@ export const OrdenCompra = () => {
       } ;
     getAllUsers(); 
 
-   
-
-   
     metodoInventarios();
+   
     
   }, []);
   
+useEffect(() => {
+  if (id !== undefined && id !== null && id !==0) {
+    const preCargarOrdenes = async () => {
+      const ordenesApi = await getAllOrdenesTrabajoSinUso();
+      const primerOT = ordenesApi.find((o) => o.id === id);
 
+      if (primerOT) {
+        setinfoDestino(primerOT);
+      }
+    };
+
+    preCargarOrdenes();
+  } else {
+    
+    setinfoDestino(infoDestinoInicial);
+  }
+}, [id]);
+
+ 
 
 
   useEffect(() => {
@@ -66,26 +94,67 @@ export const OrdenCompra = () => {
 
   const funcionAgregarItems = async() =>{
 
-    if(cantidad !=0){
- setitems((prev)=>[...prev,{item:item,cantidad:cantidad,caracteristica:caracteristica,Observacion:observacion}]);
-    
-    const res = await evaluarStock({item:item,cantidad:cantidad});
-   if(res.validate){res.arr.map((r)=>{
-setcomprasPorGenerar((prev)=>[...prev,{cantidad:r.cantidad,item:item,caracteristica:caracteristica,observacion:observacion,estadoStock:r.estado,validate:r.validate}]);
-    })}
-    else{
-    setcomprasPorGenerar((prev)=>[...prev,{cantidad:cantidad,item:item,caracteristica:caracteristica,observacion:observacion,estadoStock:"Por comprar",validate:res.validate}]);
-    }
-    setcantidad(0);
-    setitem("");
-    setcaracteristica("");
-    setobservacion("");
-    }else{
+      if (cantidad === 0 || cantidad === "" || cantidad === null || isNaN(Number(cantidad))) {
     alert("Debe agregar una cantidad");
+    return;
+  }
+ 
+  setitems(prev => [
+    ...prev,
+    { item: item, cantidad: Number(cantidad), caracteristica: caracteristica, observacion: observacion }
+  ]);
+
+  try {
+    const res = await evaluarStock({ item: item, cantidad: Number(cantidad) });
+    console.log("respuesta evaluarStock:", res);
+
+    
+    if (res && res.validate) {
+      
+      res.compras.map((r: any) => {
+        setcomprasPorGenerar(prev => [
+          ...prev,
+          {
+            cantidad: r.cantidad,
+            item: item,
+            caracteristica: caracteristica,
+            observacion: observacion,
+            estadoStock: r.estado,
+            validate: r.validate
+          }
+        ]);
+      });
+      
+    } else {
+      
+      setcomprasPorGenerar(prev => [
+        ...prev,
+        {
+          cantidad: Number(cantidad),
+          item: item,
+          caracteristica: caracteristica,
+          observacion: observacion,
+          estadoStock: "Por comprar",
+          validate: res?.validate ?? false
+        }
+      ]);
+
     }
+  } catch (err) {
+    console.error("error al evaluar stock:", err);
+    alert("Ocurrió un error al evaluar el stock.");
+  }
 
  
-  }
+  setcantidad(0);
+  setitem("");
+  setcaracteristica("");
+  setobservacion("");
+};
+    
+
+ 
+  
 
   
   const funcionEliminarItems = (id:number) =>{
@@ -104,12 +173,30 @@ setcomprasPorGenerar((prev)=>[...prev,{cantidad:r.cantidad,item:item,caracterist
       Destino: destino,
       items:items
     });
-console.log(resOrdenCompra.msj);
-alert(resOrdenCompra.msj);
-
     if(resOrdenCompra.validate){
-window.open(`/pdf-compra/${infoDestino.id}`,"_blank");
 
+           
+      setshowSuccess(true);
+
+      setTimeout(() => {
+setshowSuccess(false);
+       window.open(`/pdf-compra/${infoDestino.id}`,"_blank");
+
+      }, 1000);
+
+setcomprasPorGenerar([]);
+setitems([]);
+setdestino("");
+setautoriza("");
+setbuscarItem("");
+setcantidad(0);
+setitem("");
+setcaracteristica("");
+setobservacion("");
+setventanaBuscarOrdenTrabajo(false);
+setventanaEmergente(false);
+setinfoDestino(infoDestinoInicial);
+      
     }
 
     } catch (error) {
@@ -120,9 +207,27 @@ window.open(`/pdf-compra/${infoDestino.id}`,"_blank");
   
   return (
      <>
-     <div className='w-full min-h-screen overflow-auto'>
+         {showSuccess && (
+  <div className="fixed top-5 right-5 z-50">
+    <div role="alert" className="alert alert-success shadow-lg">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6 shrink-0 stroke-current"
+        fill="none"
+        viewBox="0 0 24 24">
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>¡Solicitud de material creada!</span>
+    </div>
+  </div>
+)}
+     <div className='w-full h-screen overflow-auto'>
         <div className='w-full h-[10%] flex items-center justify-center bg-white '>
-            <button className='btn' onClick={()=>setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo)}>Asignar orden de trabajo</button>
+            <button className='btn hidden' onClick={()=>setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo)}>Asignar orden de trabajo</button>
             
         </div>
         
@@ -208,7 +313,7 @@ window.open(`/pdf-compra/${infoDestino.id}`,"_blank");
               </tr>
             </thead>
             <tbody>
-              {comprasPorGenerar.map((u,i) =>
+              {comprasPorGenerar?.map((u,i) =>
                 <>
                   <tr>
 

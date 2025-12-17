@@ -28,4 +28,8 @@ export interface OrdenesTrabajo {
   estadoTrabajo: {
     estado: string;
   };
+
+  estadoUso: {
+    uso: boolean;
+  };
 }

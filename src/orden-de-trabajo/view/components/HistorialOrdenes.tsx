@@ -8,7 +8,7 @@ import type { Users } from '../../../admin/models/users';
 import type { SolicitudOrden } from '../../models/solicitudOrden';
 import type { Estado } from '../../../orden-de-compra/models/Estados';
 
-export const HistorialOrdenes = () => {
+export const HistorialOrdenes = ({setcargaAuto,setsendId}) => {
 
    const [ordenesTrabajo, setordenesTrabajo] = useState<OrdenesTrabajo[]>([]);
    const [validarCambio, setvalidarCambio] = useState(false);
@@ -164,6 +164,11 @@ const ordenesTrabajoApi  = async() =>{
      const cargarPdf = (id:number) => {
       window.open(`/pdf/${id}`,"_blank");
      }
+
+       const redirigirSolMaterial = async(id:number) =>{
+    setsendId(id);
+    setcargaAuto(true);
+  }
      
     return (
         <>
@@ -193,6 +198,7 @@ const ordenesTrabajoApi  = async() =>{
                             <th>N.Orden</th>
                             <th>Fecha final</th>
                             <th>Solicitante</th>
+                            <th>Descripcion</th>
                             <th>Estado</th>
                             <th className='text-center'>Acciones</th>
                           </tr>
@@ -210,11 +216,13 @@ const ordenesTrabajoApi  = async() =>{
             
                                 </td>
                                 <td>{u.userSolicitante.name}</td>
+                                <td>{u.DescripcionTrabajo}</td>
                                 <td>{u.estadoTrabajo.estado}</td>
                                 <td>
                                   <button className="btn btn-ghost btn-xs" onClick={() => { asignarSolicitantexOrden(u.id); setventanaEmergente(!ventanaEmergente); setselectArea(u.Area); setselectCodigo(u.Codigo);}}>Detalles</button>
                                   <button className="btn btn-ghost btn-xs" onClick={()=>metodoEliminarOrdenTrabajo(u.id)}>Eliminar</button>
                                   <button className="btn btn-ghost btn-xs" onClick={()=>cargarPdf(u.id)}>Ver pdf</button>
+                                  <button className="btn btn-ghost btn-xs" disabled={u.estadoUso.uso} onClick={()=>redirigirSolMaterial(u.id)}>Crear Solicitud</button>
                                 </td>
                               </tr>
                             </>)}
@@ -333,7 +341,7 @@ const ordenesTrabajoApi  = async() =>{
                setordenTrabajoxUser((prev)=>({...prev,estadoTrabajo:e.target.value})); setconfirmarCambio(true);
               }}>
                 <option disabled={true}>...</option>
-                {estados.map((e) =>(e.id === 2 || e.id ===3?
+                {estados.map((e) =>(e.estado === "EN PROCESO" || e.estado ==="VENCIDO"?
                   <option disabled={true} value={e.estado}>{e.estado}</option>
                 :<option value={e.estado}>{e.estado}</option>))}
               </select></div>

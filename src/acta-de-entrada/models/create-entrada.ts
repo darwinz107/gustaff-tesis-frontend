@@ -1,7 +1,7 @@
 export interface CreateActaEntradaDto {
-  proovedor: number;
+  proovedor: string;
 
-  numFactura: string;
+  factura: string;
   total:number;
   itemsSolicitados: {
     id:number|null;
@@ -13,9 +13,9 @@ export interface CreateActaEntradaDto {
     iva: boolean;
     subtotal: number;
     total: number;
-    bodega: string;
-    seccion: string;
-    percha: string;
+    bodegaId: number;
+    seccionId: number;
+    perchaId: number;
     Observacion: string;
     
   }[];
