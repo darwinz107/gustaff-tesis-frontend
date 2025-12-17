@@ -35,8 +35,8 @@ export const getAllOrdenesTrabajoSinUso = async (): Promise<LllenarDestino[]> =>
 };
 
 export const crearOrdenCompra = async (guardarSolicitudCompra: GuardarSolicitudCompra):Promise<{msj:string,validate:boolean}> => {
-  
-  const response: Response = await fetch(`${route}solicitud-de-compra`, {
+  try {
+     const response: Response = await fetch(`${route}solicitud-de-compra`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -45,6 +45,10 @@ export const crearOrdenCompra = async (guardarSolicitudCompra: GuardarSolicitudC
   });
     const data = await response.json();
     return data;
+  } catch (error) {
+    console.error(error);
+  }
+ 
 };
 
 export const findAllSolicitudesCompra = async (): Promise<DetallesPrevioCompra[]> => {

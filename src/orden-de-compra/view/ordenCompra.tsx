@@ -36,6 +36,7 @@ const infoDestinoInicial: LllenarDestino = {
   const [destino, setdestino] = useState("");
   const [ventanaEmergente, setventanaEmergente] = useState(false); 
   const [inventarios, setinventarios] = useState<Inventarios[]>([])
+  const [showSuccess, setshowSuccess] = useState(false);
   
 
    const metodoInventarios = async() =>{
@@ -93,26 +94,67 @@ useEffect(() => {
 
   const funcionAgregarItems = async() =>{
 
-    if(cantidad !=0){
- setitems((prev)=>[...prev,{item:item,cantidad:cantidad,caracteristica:caracteristica,Observacion:observacion}]);
-    
-    const res = await evaluarStock({item:item,cantidad:cantidad});
-   if(res.validate){res.arr.map((r)=>{
-setcomprasPorGenerar((prev)=>[...prev,{cantidad:r.cantidad,item:item,caracteristica:caracteristica,observacion:observacion,estadoStock:r.estado,validate:r.validate}]);
-    })}
-    else{
-    setcomprasPorGenerar((prev)=>[...prev,{cantidad:cantidad,item:item,caracteristica:caracteristica,observacion:observacion,estadoStock:"Por comprar",validate:res.validate}]);
-    }
-    setcantidad(0);
-    setitem("");
-    setcaracteristica("");
-    setobservacion("");
-    }else{
+      if (cantidad === 0 || cantidad === "" || cantidad === null || isNaN(Number(cantidad))) {
     alert("Debe agregar una cantidad");
+    return;
+  }
+ 
+  setitems(prev => [
+    ...prev,
+    { item: item, cantidad: Number(cantidad), caracteristica: caracteristica, observacion: observacion }
+  ]);
+
+  try {
+    const res = await evaluarStock({ item: item, cantidad: Number(cantidad) });
+    console.log("respuesta evaluarStock:", res);
+
+    
+    if (res && res.validate) {
+      
+      res.compras.map((r: any) => {
+        setcomprasPorGenerar(prev => [
+          ...prev,
+          {
+            cantidad: r.cantidad,
+            item: item,
+            caracteristica: caracteristica,
+            observacion: observacion,
+            estadoStock: r.estado,
+            validate: r.validate
+          }
+        ]);
+      });
+      
+    } else {
+      
+      setcomprasPorGenerar(prev => [
+        ...prev,
+        {
+          cantidad: Number(cantidad),
+          item: item,
+          caracteristica: caracteristica,
+          observacion: observacion,
+          estadoStock: "Por comprar",
+          validate: res?.validate ?? false
+        }
+      ]);
+
     }
+  } catch (err) {
+    console.error("error al evaluar stock:", err);
+    alert("Ocurrió un error al evaluar el stock.");
+  }
 
  
-  }
+  setcantidad(0);
+  setitem("");
+  setcaracteristica("");
+  setobservacion("");
+};
+    
+
+ 
+  
 
   
   const funcionEliminarItems = (id:number) =>{
@@ -131,12 +173,30 @@ setcomprasPorGenerar((prev)=>[...prev,{cantidad:r.cantidad,item:item,caracterist
       Destino: destino,
       items:items
     });
-console.log(resOrdenCompra.msj);
-alert(resOrdenCompra.msj);
-
     if(resOrdenCompra.validate){
-window.open(`/pdf-compra/${infoDestino.id}`,"_blank");
 
+           
+      setshowSuccess(true);
+
+      setTimeout(() => {
+setshowSuccess(false);
+       window.open(`/pdf-compra/${infoDestino.id}`,"_blank");
+
+      }, 1000);
+
+setcomprasPorGenerar([]);
+setitems([]);
+setdestino("");
+setautoriza("");
+setbuscarItem("");
+setcantidad(0);
+setitem("");
+setcaracteristica("");
+setobservacion("");
+setventanaBuscarOrdenTrabajo(false);
+setventanaEmergente(false);
+setinfoDestino(infoDestinoInicial);
+      
     }
 
     } catch (error) {
@@ -147,6 +207,24 @@ window.open(`/pdf-compra/${infoDestino.id}`,"_blank");
   
   return (
      <>
+         {showSuccess && (
+  <div className="fixed top-5 right-5 z-50">
+    <div role="alert" className="alert alert-success shadow-lg">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6 shrink-0 stroke-current"
+        fill="none"
+        viewBox="0 0 24 24">
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>¡Solicitud de material creada!</span>
+    </div>
+  </div>
+)}
      <div className='w-full h-screen overflow-auto'>
         <div className='w-full h-[10%] flex items-center justify-center bg-white '>
             <button className='btn hidden' onClick={()=>setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo)}>Asignar orden de trabajo</button>
@@ -235,7 +313,7 @@ window.open(`/pdf-compra/${infoDestino.id}`,"_blank");
               </tr>
             </thead>
             <tbody>
-              {comprasPorGenerar.map((u,i) =>
+              {comprasPorGenerar?.map((u,i) =>
                 <>
                   <tr>
 
