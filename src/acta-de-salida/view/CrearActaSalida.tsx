@@ -23,6 +23,7 @@ export const CrearActaSalida = () => {
 
  const cargarInfoSolMaterial = async(id:number) =>{
         const res = await ordenCompraById(id);
+        console.log(res);
         setsolicitudMaterial(res);
         
     }
@@ -171,7 +172,7 @@ export const CrearActaSalida = () => {
              </div>
             <div className='w-full h-[70%] mt-4 text-center'>
              <div className='w-full h-[90%] pl-2 flex flex-row mb-4'>
-                <div className="overflow-x-auo w-full h-[100%] m-2">
+                <div className="overflow-auto w-full h-[100%] m-2">
               <table className="table">
     
             {conOrden ?<><thead >
@@ -198,7 +199,7 @@ export const CrearActaSalida = () => {
     
                         </td>
                         <td>{u.caracteristica}</td>
-                        <td>{u.Observacion}</td>
+                        <td>{u.Observacion ??"N/A"}</td>
  
                       </tr>
                     </>:<></>))}

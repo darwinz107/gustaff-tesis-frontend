@@ -1,3 +1,4 @@
+import type { FiltrarActaSalidaDto } from "../models/filtrarActaSalida";
 import type { InfoPdfSalida } from "../models/InfoPdfSalida";
 
 const route = "http://localhost:3000/";
@@ -39,4 +40,17 @@ const route = "http://localhost:3000/";
             return data;
         } 
         
-     
+     export const filtrarActasSalida = async (filtros: FiltrarActaSalidaDto): Promise<InfoPdfSalida[]> => {
+  try {
+    const response: Response = await fetch(`${route}inventario/actas-salidas/filter`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(filtros)
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("filtrarActasSalida error:", error);
+    return [];
+  }
+};

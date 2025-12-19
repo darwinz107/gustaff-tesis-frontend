@@ -36,6 +36,7 @@ export const CrearOrden = ({setcargarAuto,setsendId}) => {
   const [receptor, setreceptor] = useState("");
   const [tecnico, settecnico] = useState(null);
   const [showSuccess, setshowSuccess] = useState(false);
+  
 
   const navigate = useNavigate();
 
@@ -346,7 +347,7 @@ setshowSuccess(false);
           <div></div>
          </div>
 
-  <div className="my-2 flex items-center justify-center"><button className="btn p-4" type="submit">Send</button></div>
+  <div className="my-2 flex items-center justify-center"><button className="btn p-4 btn-primary" type="submit">Crear</button></div>
           
         </form>
       </div>

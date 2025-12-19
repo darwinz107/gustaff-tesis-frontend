@@ -14,7 +14,7 @@ export interface Users {
 
     password: string;
 
-
+estado:boolean;
     cargoId: 
     {
       id:number,

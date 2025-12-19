@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { NuevosRegistros } from "./components/NuevosRegistros"
 import { logoutSession } from "../controller/api/admin-api";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { CrearOrden } from "../../orden-de-trabajo/view/components/CrearOrden";
 import { HistorialOrdenes } from "../../orden-de-trabajo/view/components/HistorialOrdenes";
 import { VerDetalles } from "../../orden-de-trabajo/view/components/VerDetalles";
@@ -15,143 +15,158 @@ import { GestionSalida } from "../../acta-de-salida/view/GestionSalida";
 import { GestionInventario } from "../../inventario/view/GestionInventario";
 import { getLastSolicitud } from "../../orden-de-trabajo/controller/api/orden-api";
 
-
-
 export const Principal = () => {
-     const [ventanaEmergente, setventanaEmergente] = useState(false);
-    const [principal, setprincipal] = useState(false);
-    const [nuevoRegistro, setnuevoRegistro] = useState(false);
-    const [cargarAuto, setcargarAuto] = useState(false);
-    const navigate = useNavigate();
-    const [sendId, setsendId] = useState<Number|null|undefined>(null);
 
-useEffect(() => {
+  const [ventanaEmergente, setventanaEmergente] = useState(false);
+  const [principal, setprincipal] = useState(false);
+  const [nuevoRegistro, setnuevoRegistro] = useState(false);
+  const [cargarAuto, setcargarAuto] = useState(false);
+  const navigate = useNavigate();
+  const [sendId, setsendId] = useState<Number | null | undefined>(null);
 
-  if(cargarAuto && sendId === undefined){
-    const asignarId = async()=>{
-      const res = await getLastSolicitud(undefined);
-      console.log(res.id);
-      setsendId(res.id);
+  
+  const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    if (cargarAuto && sendId === undefined) {
+      const asignarId = async () => {
+        const res = await getLastSolicitud(undefined);
+        setsendId(res.id);
+      }
+      asignarId();
+      setcargarComponente(5);
+    } else if (cargarAuto && sendId !== 0) {
+      setcargarComponente(5);
     }
-   asignarId();
-  setcargarComponente(5);
-  }else if(cargarAuto && sendId !==0){
- setcargarComponente(5);
-  }
-   
-  setcargarAuto(false);
-}, [cargarAuto,sendId]);
+    setcargarAuto(false);
+  }, [cargarAuto, sendId]);
 
-
-
-
-    const terminarSesion = async()=>{
-try {
-       const res = await logoutSession();
+  const terminarSesion = async () => {
+    try {
+      const res = await logoutSession();
       alert(res.msj);
       navigate('/');
-} catch (error) {
-      console.error("Error al cargar la api: ",error);
-}
- 
+    } catch (error) {
+      console.error("Error al cargar la api: ", error);
     }
-     const componentes = 
-      {
-        0:<></>,
-        1:<CrearOrden setcargarAuto={setcargarAuto} setsendId={setsendId}></CrearOrden>,
-        2:<HistorialOrdenes setcargaAuto={setcargarAuto} setsendId={setsendId}></HistorialOrdenes>,
-        3:<NuevosRegistros></NuevosRegistros>,
-        4:<AdministrarUsuarios></AdministrarUsuarios>,
-        5:<OrdenCompra id={sendId}></OrdenCompra>,
-        6:<GestionCompra></GestionCompra>,
-        7:<CrearActaEntrada></CrearActaEntrada>,
-        8:<GestionEntrada></GestionEntrada>,
-        9:<CrearActaSalida></CrearActaSalida>,
-        10:<GestionSalida></GestionSalida>,
-        11:<GestionInventario></GestionInventario>
-      }
-    
-      const [cargarComponente, setcargarComponente] = useState(0);
-
-useEffect(() => {
-  if(cargarComponente !==5){
-   setsendId(0);
   }
-}, [cargarComponente]);
+
+  const componentes = {
+    0: <></>,
+    1: <CrearOrden setcargarAuto={setcargarAuto} setsendId={setsendId} />,
+    2: <HistorialOrdenes setcargaAuto={setcargarAuto} setsendId={setsendId} />,
+    3: <NuevosRegistros />,
+    4: <AdministrarUsuarios />,
+    5: <OrdenCompra id={sendId} />,
+    6: <GestionCompra />,
+    7: <CrearActaEntrada />,
+    8: <GestionEntrada />,
+    9: <CrearActaSalida />,
+    10: <GestionSalida />,
+    11: <GestionInventario />
+  }
+
+  const [cargarComponente, setcargarComponente] = useState(0);
+
+  useEffect(() => {
+    if (cargarComponente !== 5) {
+      setsendId(0);
+    }
+  }, [cargarComponente]);
 
   return (
     <>
-                <div className='flex  h-screen w-auto bg-pink-200'>
-        <div className='absolute inset-y-0 left-0 h-full w-1/5 z-0 bg-white border-r border-gray-300 flex flex-col'>
-        <img src="public\logo_alternativo.png" className='cursor-pointer my-7' alt="Gustaff S.A" onClick={()=>setcargarComponente(0)}/>
-        <div className='flex flex-col h-full'> 
-   <div className='min-w-min border-y border-gray-300 mx-4'>
-     <div className="w-full dropdown dropdown-hover" >
-  <div tabIndex={0} role="button" className="btn w-full border-none" >Usuarios</div>
-  <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
-    <li><a onClick={()=>setcargarComponente(4)}>Gestion de usuarios</a></li>
-  </ul>
-</div>
-  <div className="w-full dropdown dropdown-hover" >
-  <div tabIndex={0} role="button" className="btn w-full border-none" >Parametros del sistema</div>
-  <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
-    <li><a onClick={()=>setcargarComponente(3)}>Nuevo parametro</a></li>
-    <li><a>Gestion de parametros</a></li>
-  </ul>
-</div>
-<div className="w-full dropdown dropdown-hover" >
-  <div tabIndex={0} role="button" className="btn w-full border-none" >Orden de trabajo</div>
-  <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
-    <li><a onClick={()=>setcargarComponente(1)}>Nueva orden</a></li>
-    <li><a onClick={()=>setcargarComponente(2)}>Gestion de orden</a></li>
-  </ul>
-</div>
-<div className="w-full dropdown dropdown-hover" >
-  <div tabIndex={0} role="button" className="btn w-full border-none" >Solicitud de materiales</div>
-  <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
-    <li><a onClick={()=>setcargarComponente(5)}>Nueva solicitud</a></li>
-    <li><a onClick={()=>setcargarComponente(6)}>Gestion de solicitud</a></li>
-  </ul>
-</div>
-<div className="w-full dropdown dropdown-hover" >
-  <div tabIndex={0} role="button" className="btn w-full border-none" >Entrada de inventario</div>
-  <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
-    <li><a onClick={()=>setcargarComponente(7)}>Nueva entrada</a></li>
-    <li><a onClick={()=>setcargarComponente(8)}>Gestion de solicitudes de entrada</a></li>
-  </ul>
-</div>
-<div className="w-full dropdown dropdown-hover" >
-  <div tabIndex={0} role="button" className="btn w-full border-none" >Salida de inventario</div>
-  <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
-    <li><a onClick={()=>setcargarComponente(9)}>Nueva salida</a></li>
-    <li><a onClick={()=>setcargarComponente(10)}>Gestion de solicitudes de salida</a></li>
-  </ul>
-</div>
-<div className="w-full dropdown dropdown-hover" >
-  <div tabIndex={0} role="button" className="btn w-full border-none" >Inventario</div>
-  <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
-   
-    <li><a onClick={()=>setcargarComponente(11)}>Gestion de inventario</a></li>
-  </ul>
-</div>
-      <button className="btn w-full border-none" onClick={terminarSesion}>Cerrar sesion</button>
-   </div>
-     
+      <div className="flex h-screen w-full bg-gray-100">
+
+      
+        <div
+          className={`h-full bg-white border-r border-gray-300
+          transition-all duration-300 flex flex-col
+          ${collapsed ? "w-20" : "w-1/5"}`}
+        >
+
+          
+          <div className="flex items-center justify-between px-4 py-6">
+            {!collapsed && (
+              <img
+                src="public/logo_alternativo.png"
+                className="cursor-pointer w-32"
+                alt="Gustaff S.A"
+                onClick={() => setcargarComponente(0)}
+              />
+            )}
+            <button
+              className="btn btn-sm btn-ghost"
+              onClick={() => setCollapsed(!collapsed)}
+            >
+              {collapsed ? "➡️" : "⬅️"}
+            </button>
+          </div>
+
+       
+          <div className="flex flex-col gap-1 px-2">
+
+            <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(4)}>
+              👤 {!collapsed && "Gestión de usuarios"}
+            </button>
+
+            <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(3)}>
+              ⚙️ {!collapsed && "Nuevo parámetro"}
+            </button>
+
+            <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(1)}>
+              🛠️ {!collapsed && "Nueva orden"}
+            </button>
+
+            <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(2)}>
+              📋 {!collapsed && "Gestión de órdenes"}
+            </button>
+
+            <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(5)}>
+              📦 {!collapsed && "Nueva solicitud"}
+            </button>
+
+            <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(6)}>
+              📑 {!collapsed && "Gestión solicitudes"}
+            </button>
+
+            <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(7)}>
+              📥 {!collapsed && "Nueva entrada"}
+            </button>
+
+            <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(8)}>
+              📥 {!collapsed && "Gestión entradas"}
+            </button>
+
+            <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(9)}>
+              📤 {!collapsed && "Nueva salida"}
+            </button>
+
+            <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(10)}>
+              📤 {!collapsed && "Gestión salidas"}
+            </button>
+
+            <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(11)}>
+              📊 {!collapsed && "Inventario"}
+            </button>
+          </div>
+
+          
+          <div className="mt-auto px-2 pb-4">
+            <button className="btn btn-ghost justify-start w-full" onClick={terminarSesion}>
+              🚪 {!collapsed && "Cerrar sesión"}
+            </button>
+          </div>
+        </div>
+
+        
+        <div className="flex-1 flex items-center justify-center bg-white">
+          {componentes[cargarComponente]}
+        </div>
 
       </div>
-        </div>
-        <div className='h-full w-1/5 bg-white'>
-          xd
-        </div>
-        <div className=' w-4/5 bg-white h-full flex items-center justify-center'>
-        {
-         componentes[cargarComponente]
-        }
-        
-     </div>
-</div>
-<VerDetalles setventanaEmergente={setventanaEmergente} ventanaEmergente={ventanaEmergente}></VerDetalles>
+
+      <VerDetalles setventanaEmergente={setventanaEmergente} ventanaEmergente={ventanaEmergente} />
     </>
   )
 }
-

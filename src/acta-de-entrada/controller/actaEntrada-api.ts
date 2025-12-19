@@ -1,6 +1,7 @@
 import type { AsignarInfoEntrada } from "../../inventario/models/AsignarInfoEntrada";
 import type { CreateActaEntradaDto } from "../models/create-entrada";
 import type { CreateProovedor } from "../models/create-proovedor";
+import type { FiltrarActaEntradaDto } from "../models/filtrarActaEntrada";
 import type { InfoPdfEntrada } from "../models/infoPdfEntrada";
 
 const route = "http://localhost:3000/";
@@ -80,3 +81,18 @@ const route = "http://localhost:3000/";
             const data = await response.json();
             return data;
         } 
+
+        export const filtrarActasEntrada = async (filtros: FiltrarActaEntradaDto): Promise<InfoPdfEntrada[]> => {
+  try {
+    const response: Response = await fetch(`${route}inventario/actas-entradas/filter`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(filtros)
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("filtrarActasEntrada error:", error);
+    return [];
+  }
+};

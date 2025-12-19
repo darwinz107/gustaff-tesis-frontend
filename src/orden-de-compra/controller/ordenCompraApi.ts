@@ -140,4 +140,17 @@ export const ordenCompraByOrdenTrabajoId = async (id:number): Promise<InfoPdfCom
   return data;
 }
      
-
+export const filtrarSolicitudesCompra = async (filtros: FiltrarSolicitudCompraDto): Promise<DetallesPrevioCompra[]> => {
+  try {
+    const response: Response = await fetch(`${route}solicitud-de-compra/filter`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(filtros)
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("filtrarSolicitudesCompra error:", error);
+    return [];
+  }
+};

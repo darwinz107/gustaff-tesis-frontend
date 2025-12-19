@@ -3,7 +3,7 @@ import { BuscarOrdenCompra } from "../../acta-de-salida/view/BuscarOrdenCompra";
 import type { InfoPdfCompra } from "../../orden-de-compra/models/infoPdfCompra";
 import { getAllSolicitudesParciales, ordenCompraById } from "../../orden-de-compra/controller/ordenCompraApi";
 import type { BuscarSolMaterial } from "../../orden-de-compra/models/buscarSolMaterial";
-import { asignarInfoActaEntrada } from "../../inventario/controller/inventario-api";
+import { asignarInfoActaEntrada, existeItem } from "../../inventario/controller/inventario-api";
 import type { AsignarInfoEntrada } from "../../inventario/models/AsignarInfoEntrada";
 import { createActaEntrada, findProovedorByNombre, getPerchasBySeccion, getSeccionesByBodega } from "../controller/actaEntrada-api";
 import { CrearProovedor } from "./CrearProovedor";
@@ -36,6 +36,7 @@ export const CrearActaEntrada = () => {
     const [ventanaAgregarProovedor, setventanaAgregarProovedor] = useState(false);
     
     const [ordenes, setordenes] = useState<BuscarSolMaterial[]>([]);
+    const [habilitarStockMin, sethabilitarStockMin] = useState(true);
 
 
 const cargarInfoSolMaterial = async() =>{
@@ -55,7 +56,10 @@ const cargarInfoSolMaterial = async() =>{
 
     }
 
- const asignarCampos = (index:number,item:string,cantidad:number,preciU:number) => {
+ const asignarCampos = async(index:number,item:string,cantidad:number,preciU:number) => {
+
+  const validar = await existeItem(item);
+  sethabilitarStockMin(validar);
 
   console.log("index que llega", index);
   console.log("antes:", solicitudMaterial.itemsSolicitados);
@@ -195,6 +199,8 @@ const cargarInfoSolMaterial = async() =>{
    alert(res.msj);
     setsolicitudMaterial({numOrden:"",numOrdenTrabajo:"",itemsSolicitados:[],id:0});
     window.open(`/pdf-entrada/${solCompraId}`,"_blank");
+   }else{
+    console.error(res);
    }
   
 
@@ -349,9 +355,9 @@ useEffect(() => {
             </div>
 
            
-            <div className="md:col-span-2">
-              <label className="block text-sm">Stock Min.</label>
-              <input className="input w-full" placeholder="—" value={stockMin??""} onChange={(e)=> setstockMin(e.target.value)}/>
+            <div  className="md:col-span-2">
+              <label  className="block text-sm">Stock Min.</label>
+              <input className="input w-full" disabled={habilitarStockMin} placeholder="" value={stockMin??""} onChange={(e)=> setstockMin(e.target.value)}/>
             </div>
 
             
@@ -448,7 +454,7 @@ useEffect(() => {
             
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="overflow-auto">
             <table className="table w-full">
               <thead>
                 <tr>

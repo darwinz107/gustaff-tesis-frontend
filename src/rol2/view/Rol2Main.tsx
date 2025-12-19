@@ -5,79 +5,106 @@ import { CrearActaSalida } from '../../acta-de-salida/view/CrearActaSalida';
 import { GestionSalida } from '../../acta-de-salida/view/GestionSalida';
 import { CrearActaEntrada } from '../../acta-de-entrada/view/CrearActaEntrada';
 import { GestionEntrada } from '../../acta-de-entrada/view/GestionEntrada';
-
-
-
+import { GestionInventario } from '../../inventario/view/GestionInventario';
 
 export const Rol2Main = () => {
 
-   const navigate = useNavigate();
-   const [ventanaEmergente, setventanaEmergente] = useState(false);
+  const navigate = useNavigate();
+  const [ventanaEmergente, setventanaEmergente] = useState(false);
+  const [cargarComponente, setcargarComponente] = useState<number>(0);
+  const [collapsed, setCollapsed] = useState(false);
 
-   const logout = async () =>{
+  const logout = async () => {
     try {
       const res = await logoutSession();
-    
       alert(res.msj);
       navigate('/');
-    
     } catch (error) {
-      console.error("Error al cargar la api: ",error);
+      console.error(error);
     }
-   
   }
 
-  const componentes = 
-  [
+  const componentes = [
     <></>,
-    <CrearActaSalida></CrearActaSalida>,
-    <GestionSalida></GestionSalida>,
-    <CrearActaEntrada></CrearActaEntrada>,
-    <GestionEntrada></GestionEntrada>
-  ]
+    <CrearActaSalida />,
+    <GestionSalida />,
+    <CrearActaEntrada />,
+    <GestionEntrada />,
+    <GestionInventario></GestionInventario>
+  ];
 
-  const [cargarComponente, setcargarComponente] = useState<number>(0);
+  const Item = ({ icon, label, onClick }) => (
+    <div
+      onClick={onClick}
+      className="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer hover:bg-gray-100 transition"
+    >
+      <span className="text-lg">{icon}</span>
+      {!collapsed && <span className="text-sm">{label}</span>}
+    </div>
+  );
 
   return (
-      <>
-      
-      
-      <div className='flex  h-screen w-auto bg-pink-200'>
-        <div className='absolute inset-y-0 left-0 h-full w-1/5 z-0 bg-white border-r border-gray-300 flex flex-col'>
-        <img src="public\logo_alternativo.png" className='cursor-pointer my-7' alt="Gustaff S.A" onClick={()=>setcargarComponente(0)}/>
-        <div className='flex flex-col h-full'> 
-   <div className='min-w-min border-y border-gray-300 mx-4'>
-       <div className="w-full dropdown dropdown-hover" >
-  <div tabIndex={0} role="button" className="btn w-full border-none" >Entrada de inventario</div>
-  <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
-    <li><a onClick={()=>setcargarComponente(3)}>Nueva entrada</a></li>
-    <li><a onClick={()=>setcargarComponente(4)}>Gestion de actas de entradas</a></li>
-  </ul>
-</div>
-<div className="w-full dropdown dropdown-hover" >
-  <div tabIndex={0} role="button" className="btn w-full border-none" >Salida de inventario</div>
-  <ul tabIndex="-1" className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm w-full ">
-    <li><a onClick={()=>setcargarComponente(1)}>Nueva salida</a></li>
-    <li><a onClick={()=>setcargarComponente(2)}>Gestion de actas de salidas</a></li>
-  </ul>
-</div>
-      <button className="btn w-full border-none" onClick={logout}>Cerrar sesion</button>
-   </div>
-     
+    <>
+      <div className="flex h-screen w-auto bg-gray-100">
+
+        <div
+          className={`fixed inset-y-0 left-0 bg-white border-r border-gray-300 flex flex-col transition-all duration-300
+          ${collapsed ? "w-20" : "w-64"}`}
+        >
+          <div className="flex items-center justify-between px-4 py-6">
+            {!collapsed && (
+              <img
+                src="public/logo_alternativo.png"
+                className="cursor-pointer w-32"
+                onClick={() => setcargarComponente(0)}
+              />
+            )}
+            <button
+              className="btn btn-sm btn-ghost"
+              onClick={() => setCollapsed(!collapsed)}
+            >
+              {collapsed ? "➡️" : "⬅️"}
+            </button>
+          </div>
+
+          <div className="flex flex-col gap-1 px-2">
+
+            <button className="btn btn-ghost justify-start" label="Nueva entrada" onClick={() => setcargarComponente(3)} >📥{!collapsed && "Nueva entrada"}</button>
+            <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(4)}>
+              📥 {!collapsed && "Gestión entradas"}
+            </button>
+
+            <div className="divider my-1"></div>
+
+            <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(1)}>
+              📤 {!collapsed && "Nueva salida"}
+            </button>
+
+            <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(2)}>
+              📤 {!collapsed && "Gestión salidas"}
+            </button>
+
+             <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(5)}>
+              📊 {!collapsed && "Inventario"}
+            </button>
+
+          </div>
+
+          <div className="mt-auto px-2 pb-4">
+            <button
+              className="btn btn-ghost w-full flex items-center gap-3 justify-start"
+              onClick={logout}
+            >
+              🚪 {!collapsed && "Cerrar sesión"}
+            </button>
+          </div>
+        </div>
+
+        <div className={`${collapsed ? "ml-20" : "ml-64"} flex-1 bg-white flex items-center justify-center transition-all duration-300`}>
+          {componentes[cargarComponente]}
+        </div>
 
       </div>
-        </div>
-        <div className='h-full w-1/5 bg-white'>
-          xd
-        </div>
-        <div className=' w-4/5 bg-white h-full flex items-center justify-center'>
-        {
-         componentes[cargarComponente]
-        }
-        
-     </div>
-</div>
-
     </>
   )
 }
