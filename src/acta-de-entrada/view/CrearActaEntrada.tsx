@@ -3,7 +3,7 @@ import { BuscarOrdenCompra } from "../../acta-de-salida/view/BuscarOrdenCompra";
 import type { InfoPdfCompra } from "../../orden-de-compra/models/infoPdfCompra";
 import { getAllSolicitudesParciales, ordenCompraById } from "../../orden-de-compra/controller/ordenCompraApi";
 import type { BuscarSolMaterial } from "../../orden-de-compra/models/buscarSolMaterial";
-import { asignarInfoActaEntrada, existeItem } from "../../inventario/controller/inventario-api";
+import { asignarInfoActaEntrada, existeItem, filtrarInventario } from "../../inventario/controller/inventario-api";
 import type { AsignarInfoEntrada } from "../../inventario/models/AsignarInfoEntrada";
 import { createActaEntrada, findProovedorByNombre, getPerchasBySeccion, getSeccionesByBodega } from "../controller/actaEntrada-api";
 import { CrearProovedor } from "./CrearProovedor";
@@ -34,9 +34,9 @@ export const CrearActaEntrada = () => {
     const [perchas, setperchas] = useState<{id:number,percha:string}[]>([]);
     const [observacion, setobservacion] = useState("");
     const [ventanaAgregarProovedor, setventanaAgregarProovedor] = useState(false);
-    
+    const [items, setitems] = useState<{nombre:string}[]>([]);
     const [ordenes, setordenes] = useState<BuscarSolMaterial[]>([]);
-    const [habilitarStockMin, sethabilitarStockMin] = useState(true);
+    const [habilitarStockMin, sethabilitarStockMin] = useState(false);
 
 
 const cargarInfoSolMaterial = async() =>{
@@ -198,7 +198,7 @@ const cargarInfoSolMaterial = async() =>{
    if(res.validate){
    alert(res.msj);
     setsolicitudMaterial({numOrden:"",numOrdenTrabajo:"",itemsSolicitados:[],id:0});
-    window.open(`/pdf-entrada/${solCompraId}`,"_blank");
+    window.open(`/pdf-entrada/${solCompraId ===0 ? undefined:solCompraId}`,"_blank");
    }else{
     console.error(res);
    }
@@ -219,6 +219,26 @@ metodoExecProovedores();
   }
 
 }, [proovedor]);
+
+useEffect(() => {
+  if(item != ""){
+      const metodoExecProovedores = async()=>{
+    const res = await filtrarInventario(item);
+    setitems(res);
+    const existe = res.some(
+        (r) => r.nombre.toLowerCase() === item.toLowerCase()
+      );
+
+      sethabilitarStockMin(existe);
+    
+    console.log(res);
+  }
+metodoExecProovedores();
+  }else{
+    setitems([]);
+  }
+
+}, [item]);
 
 
 useEffect(() => {
@@ -345,7 +365,17 @@ useEffect(() => {
           
             <div className="md:col-span-6">
               <label className="block text-sm">Descripción</label>
-              <textarea className="textarea w-full" placeholder="Descripción del ítem" value={item} onChange={(e)=> setitem(e.target.value)}/>
+               <div className=" w-full">
+                
+ <input className="input w-full" list="browsers1" value={item}  onChange={(e)=> setitem(e.target.value)}/>
+<datalist id="browsers1">
+ {items?.map((p)=>
+<option value={p.nombre} onChange={(e)=>setitem(e.target.value)}>{p.nombre}</option>
+) 
+}
+</datalist>
+
+</div>
             </div>
 
            
