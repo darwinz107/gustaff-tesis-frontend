@@ -34,7 +34,7 @@ export const CrearActaEntrada = () => {
     const [perchas, setperchas] = useState<{id:number,percha:string}[]>([]);
     const [observacion, setobservacion] = useState("");
     const [ventanaAgregarProovedor, setventanaAgregarProovedor] = useState(false);
-    const [items, setitems] = useState<{nombre:string}[]>([]);
+    const [items, setitems] = useState<{nombre:string,costo:number}[]>([]);
     const [ordenes, setordenes] = useState<BuscarSolMaterial[]>([]);
     const [habilitarStockMin, sethabilitarStockMin] = useState(false);
 
@@ -180,10 +180,10 @@ const cargarInfoSolMaterial = async() =>{
  const enviarygenerarActaDeEntrada = async() =>{
  console.log("hice clic en");
  
- if (!solCompraId || solicitudMaterial.itemsSolicitados.length === 0) {
+/* if (!solCompraId || solicitudMaterial.itemsSolicitados.length === 0) {
   alert("Debe llenar la informacion antes de generar la acta de entrada");
   return;
-}
+}*/
 
    const registroEntradaFinal = {
     proovedor:proovedor,
@@ -198,7 +198,7 @@ const cargarInfoSolMaterial = async() =>{
    if(res.validate){
    alert(res.msj);
     setsolicitudMaterial({numOrden:"",numOrdenTrabajo:"",itemsSolicitados:[],id:0});
-    window.open(`/pdf-entrada/${solCompraId ===0 ? undefined:solCompraId}`,"_blank");
+    window.open(`/pdf-entrada/${undefined}`,"_blank");
    }else{
     console.error(res);
    }
@@ -230,7 +230,14 @@ useEffect(() => {
       );
 
       sethabilitarStockMin(existe);
-    
+  if(existe){
+    const seleccionado = res.find(p => p.nombre === item);
+    if (seleccionado) {
+      setprecioUni(seleccionado.costo);
+    }
+  }else{
+      setprecioUni(null);
+    }
     console.log(res);
   }
 metodoExecProovedores();
@@ -367,13 +374,24 @@ useEffect(() => {
               <label className="block text-sm">Descripción</label>
                <div className=" w-full">
                 
- <input className="input w-full" list="browsers1" value={item}  onChange={(e)=> setitem(e.target.value)}/>
+<input
+  className="input w-full"
+  list="browsers1"
+  value={item}
+  onChange={(e) => {
+    const value = e.target.value;
+    setitem(value);
+
+
+  }}
+/>
+
 <datalist id="browsers1">
- {items?.map((p)=>
-<option value={p.nombre} onChange={(e)=>setitem(e.target.value)}>{p.nombre}</option>
-) 
-}
+  {items?.map(p => (
+    <option key={p.id} value={p.nombre} />
+  ))}
 </datalist>
+
 
 </div>
             </div>

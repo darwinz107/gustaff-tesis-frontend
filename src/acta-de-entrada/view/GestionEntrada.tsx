@@ -12,6 +12,7 @@ export const GestionEntrada = () => {
 
 const llenarActas = async() => {
       const res = await findAllRegistroEntrada();
+      console.log(res);
       setactas(res || []);
     }
 
@@ -107,7 +108,7 @@ const llenarActas = async() => {
                         <div className="flex gap-2 justify-center">
                           <button className="btn btn-ghost btn-xs" disabled>Ver detalles</button>
                           <button className="btn btn-ghost btn-xs" disabled>Eliminar</button>
-                          <button className="btn btn-ghost btn-xs" onClick={()=>cargarPdf(u.numSolicitudCompra.id)}>Ver PDF</button>
+                          <button className="btn btn-ghost btn-xs" onClick={()=>cargarPdf(u.id)}>Ver PDF</button>
                         </div>
                       </td>
                     </tr>
