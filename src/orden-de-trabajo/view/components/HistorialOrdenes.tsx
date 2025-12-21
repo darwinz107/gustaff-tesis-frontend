@@ -7,6 +7,7 @@ import { getUsers } from '../../../user/controller/api/user-api';
 import type { Users } from '../../../admin/models/users';
 import type { SolicitudOrden } from '../../models/solicitudOrden';
 import type { Estado } from '../../../orden-de-compra/models/Estados';
+import { filtrarOrdenes } from '../../controller/api/orden-api';
 
 export const HistorialOrdenes = ({setcargaAuto,setsendId}) => {
 
@@ -35,6 +36,42 @@ export const HistorialOrdenes = ({setcargaAuto,setsendId}) => {
     const [confirmarCambio, setconfirmarCambio] = useState(false);
     const [salto, setsalto] = useState(false);
     const [estados, setestados] = useState<Estado[]>([]);
+    const [filtroNumOrden, setFiltroNumOrden] = useState("");
+const [filtroFechaFinal, setFiltroFechaFinal] = useState("");
+const [filtroSolicitante, setFiltroSolicitante] = useState("");
+const [filtroDescripcion, setFiltroDescripcion] = useState("");
+const [filtroEstado, setFiltroEstado] = useState("");
+const [filtroArea, setFiltroArea] = useState("");
+const [filtroCodigo, setFiltroCodigo] = useState("");
+const [filtroMaquina, setFiltroMaquina] = useState("");
+const [filtroCategoria, setFiltroCategoria] = useState("");
+const [filtroTipoTrabajo, setFiltroTipoTrabajo] = useState("");
+
+
+
+const applyFilters = async () => {
+  const filtros = {
+    numOrden: filtroNumOrden || undefined,
+    fechaFinal: filtroFechaFinal || undefined,
+    solicitante: filtroSolicitante || undefined,
+    descripcion: filtroDescripcion || undefined,
+    estado: filtroEstado || undefined,
+    area: filtroArea || undefined,
+    codigo: filtroCodigo || undefined,
+    maquina: filtroMaquina || undefined,
+    categoria: filtroCategoria || undefined,
+    tipoTrabajo: filtroTipoTrabajo || undefined
+  };
+  const res = await filtrarOrdenes(filtros);
+  setordenesTrabajo(res);
+}
+
+const clearFilters = async () => {
+  setFiltroNumOrden(""); setFiltroFechaFinal(""); setFiltroSolicitante(""); setFiltroDescripcion("");
+  setFiltroEstado(""); setFiltroArea(""); setFiltroCodigo(""); setFiltroMaquina("");
+  setFiltroCategoria(""); setFiltroTipoTrabajo("");
+  ordenesTrabajoApi();
+}
 
 
 const ordenesTrabajoApi  = async() =>{
@@ -170,203 +207,293 @@ const ordenesTrabajoApi  = async() =>{
     setcargaAuto(true);
   }
      
-    return (
-        <>
-             <div className='min-w-[70%] min-h-[60%] rounded-xl border border-gray-200'>
-                    <div className="bg-gray-200 w-full h-9 flex items-center justify-center mb-2 rounded-t-lg">
-                      <p className="">Listado de ordenes de trabajo</p></div>
-                   
-                    <div className='flex w-full p-5 '>
-                      <div className="dropdown w-[50%]">
-                        <div tabindex="0" role="button" class="btn m-1">Mostrar 3 filas</div>
-                        <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-                          <li><a>Item 1</a></li>
-                          <li><a>Item 2</a></li>
-                        </ul>
-            
+  return (
+  <>
+    <div className="min-w-[70%] min-h-[60%] rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="bg-gray-100 w-full h-12 flex items-center justify-between rounded-t-lg border-b px-4">
+        <p className="font-semibold text-gray-700">Listado de ordenes de trabajo</p>
+        <div className="flex items-center gap-3">
+           <button className="btn btn-sm btn-ghost" onClick={() => ordenesTrabajoApi()}>Refrescar</button>
+          <button className="btn btn-sm btn-outline" onClick={clearFilters}>Limpiar filtros</button>
+          <button className="btn btn-sm btn-primary" onClick={applyFilters}>Aplicar filtros</button>
+        </div>
+      </div>
+
+      <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-3">
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-600">NumOrden</label>
+          <input className="input input-sm" value={filtroNumOrden} onChange={(e)=>setFiltroNumOrden(e.target.value)} />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-600">Fecha final</label>
+          <input type="date" className="input input-sm" value={filtroFechaFinal} onChange={(e)=>setFiltroFechaFinal(e.target.value)} />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-600">Solicitante</label>
+          <input className="input input-sm" value={filtroSolicitante} onChange={(e)=>setFiltroSolicitante(e.target.value)} />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-600">Descripcion</label>
+          <input className="input input-sm" value={filtroDescripcion} onChange={(e)=>setFiltroDescripcion(e.target.value)} />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-600">Estado</label>
+          <select className="select select-sm" value={filtroEstado} onChange={(e)=>setFiltroEstado(e.target.value)}>
+            <option value="">Todos</option>
+            {estados.map((es)=> <option key={es.id} value={es.estado}>{es.estado}</option>)}
+          </select>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-600">Area</label>
+          <input className="input input-sm" value={filtroArea} onChange={(e)=>setFiltroArea(e.target.value)} />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-600">Codigo</label>
+          <input className="input input-sm" value={filtroCodigo} onChange={(e)=>setFiltroCodigo(e.target.value)} />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-600">Maquina</label>
+          <input className="input input-sm" value={filtroMaquina} onChange={(e)=>setFiltroMaquina(e.target.value)} />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-600">Categoria</label>
+          <input className="input input-sm" value={filtroCategoria} onChange={(e)=>setFiltroCategoria(e.target.value)} />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-600">Tipo trabajo</label>
+          <input className="input input-sm" value={filtroTipoTrabajo} onChange={(e)=>setFiltroTipoTrabajo(e.target.value)} />
+        </div>
+      </div>
+
+      <div className="px-4 pb-4">
+        <div className="overflow-hidden border rounded-lg">
+          <div className="max-h-[420px] overflow-auto">
+            <table className="table w-full min-w-full">
+              <thead className="bg-white sticky top-0 z-20">
+                <tr className="text-sm text-left text-gray-600">
+                  <th className="px-4 py-3">N.Orden</th>
+                  <th className="px-4 py-3">Fecha final</th>
+                  <th className="px-4 py-3">Solicitante</th>
+                  <th className="px-4 py-3">Descripcion</th>
+                  <th className="px-4 py-3">Estado</th>
+                  <th className="px-4 py-3 text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ordenesTrabajo?.map((u) => (
+                  <tr key={u.id} className="even:bg-gray-50 hover:bg-gray-100">
+                    <td className="px-4 py-3 align-top">{u.NumOrden}</td>
+                    <td className="px-4 py-3 align-top">{u.fechaFinal}</td>
+                    <td className="px-4 py-3 align-top">{u.userSolicitante.name}</td>
+                    <td className="px-4 py-3 align-top">{u.DescripcionTrabajo}</td>
+                    <td className="px-4 py-3 align-top">{u.estadoTrabajo.estado}</td>
+                    <td className="px-4 py-3 align-top text-center">
+                      <div className="flex items-center justify-center flex-wrap gap-2">
+                        <button
+                          className="btn btn-outline btn-sm"
+                          onClick={() => {
+                            asignarSolicitantexOrden(u.id);
+                            setventanaEmergente(!ventanaEmergente);
+                            setselectArea(u.Area);
+                            setselectCodigo(u.Codigo);
+                          }}
+                        >
+                          Detalles
+                        </button>
+                        <button className="btn btn-outline btn-sm" onClick={() => metodoEliminarOrdenTrabajo(u.id)}>
+                          Eliminar
+                        </button>
+                        <button className="btn btn-outline btn-sm" onClick={() => cargarPdf(u.id)}>
+                          Ver pdf
+                        </button>
+                        <button
+                          className="btn btn-outline btn-sm"
+                          disabled={u?.estadoUso?.uso}
+                          onClick={() => redirigirSolMaterial(u.id)}
+                        >
+                          Crear Solicitud
+                        </button>
                       </div>
-                      <div className='flex justify-end w-[50%]'>
-                        <div className='flex'> <p>Buscar por solicitante: </p> <input className='input ml-2' type="text" onChange={(e)=>setfiltrarxSolicitante(e.target.value)}/></div>
-                      </div>
-                    </div>
-                    <div className="overflow-x-auto">
-                      <table className="table">
-            
-                        <thead >
-                          <tr>
-            
-                            <th>N.Orden</th>
-                            <th>Fecha final</th>
-                            <th>Solicitante</th>
-                            <th>Descripcion</th>
-                            <th>Estado</th>
-                            <th className='text-center'>Acciones</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {ordenesTrabajo?.map((u) =>
-                            <>
-                              <tr>
-            
-                                <td>
-                                  {u.NumOrden}
-                                </td>
-                                <td>
-                                  {u.fechaFinal}
-            
-                                </td>
-                                <td>{u.userSolicitante.name}</td>
-                                <td>{u.DescripcionTrabajo}</td>
-                                <td>{u.estadoTrabajo.estado}</td>
-                                <td>
-                                  <button className="btn btn-ghost btn-xs" onClick={() => { asignarSolicitantexOrden(u.id); setventanaEmergente(!ventanaEmergente); setselectArea(u.Area); setselectCodigo(u.Codigo);}}>Detalles</button>
-                                  <button className="btn btn-ghost btn-xs" onClick={()=>metodoEliminarOrdenTrabajo(u.id)}>Eliminar</button>
-                                  <button className="btn btn-ghost btn-xs" onClick={()=>cargarPdf(u.id)}>Ver pdf</button>
-                                  <button className="btn btn-ghost btn-xs" disabled={u?.estadoUso?.uso} onClick={()=>redirigirSolMaterial(u.id)}>Crear Solicitud</button>
-                                </td>
-                              </tr>
-                            </>)}
-            
-                        </tbody>
-            
-                      </table>
-                    </div>
-                  </div>
-            
-                  <div className={`z-10 fixed  bg-transparent inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaEmergente ? "opacity-100" : "opacity-0 pointer-events-none"} `}>
-                  <div className={`border border-gray-300 w-4/5 h-4/5 rounded-sm fixed  bg-white`}>
-                    <div className='w-full h-[12%] flex justify-between p-5'>
-                      <div>Detalle de ordenes</div>
-                      <div onClick={() => { setventanaEmergente(!ventanaEmergente); setordenTrabajoxUser({}); console.log(ventanaEmergente); sethabilitarEdicion(false);}} className='cursor-pointer'>❌</div>
-                    </div>
-                    <div className='w-full h-[76%] border-y border-gray-300 px-4 flex'>
-                      <div className='w-[25%] h-[100%]'>
-                        <div className='w-[100%] h-[20%]'><p>N.Orden</p><input type="text" disabled={true} className='input' value={ordenTrabajoxUser.NumOrden} onChange={(e)=>setordenTrabajoxUser((prev)=>({...prev,NumOrden:e.target.value}))}/></div>
-                        <div className='w-[100%] h-[20%]'><p>Fecha de inicio</p><button disabled={!habilitarEdicion} type="button" onClick={() => { callyPpopover4.current?.showPopover() }} className="input input-border" id="cally4" style={{ anchorName: "--cally4" }}>
-                           {ordenTrabajoxUser.fechaInicio}
-                            </button>
-                            <div popover="auto" ref={callyPpopover4} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally4" }}>
-                              <calendar-date className="cally" onchange={(e) =>{document.getElementById("cally4").innerText = e.target.value; setordenTrabajoxUser((prev)=>({...prev,fechaInicio:e.target.value})); setconfirmarCambio(true);}}>
-                                <svg aria-label="Previous" className="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
-                                <svg aria-label="Next" className="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
-                                <calendar-month></calendar-month>
-                              </calendar-date>
-                            </div></div>
-                        <div className='w-[100%] h-[20%]'><p>Fecha de finalizacion</p><button disabled={!habilitarEdicion} type="button" onClick={() => { callyPpopover5.current?.showPopover() }} className="input input-border" id="cally5" style={{ anchorName: "--cally5" }}>
-                           {ordenTrabajoxUser.fechaFinal}
-                            </button>
-                            <div popover="auto" ref={callyPpopover5} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally5" }}>
-                              <calendar-date className="cally" onchange={(e) =>{document.getElementById("cally5").innerText = e.target.value; setordenTrabajoxUser((prev)=>({...prev,fechaFinal:e.target.value})); setconfirmarCambio(true);}}>
-                                <svg aria-label="Previous" className="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
-                                <svg aria-label="Next" className="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
-                                <calendar-month></calendar-month>
-                              </calendar-date>
-                            </div></div>
-                        <div className='w-[100%] h-[20%]'><p>Hora de inicio</p><input  type="time" disabled={!habilitarEdicion} className='input' value={ordenTrabajoxUser.HoraInicio} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,HoraInicio:e.target.value}));setconfirmarCambio(true);}}/></div>
-                        <div className='w-[100%] h-[20%]'><p>Hora de finalizacion</p><input  type="time" disabled={!habilitarEdicion} className='input' value={ordenTrabajoxUser.HoraFinal} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,HoraFinal:e.target.value}));setconfirmarCambio(true);}}/></div>
-                      </div>
-                      <div className='w-[25%] h-[100%]'>
-                        <div className='w-[100%] h-[20%]'><p>Area</p><select   disabled={!habilitarEdicion} value={ordenTrabajoxUser.Area} className="select" id="" onChange={(e) => {
-                          setordenTrabajoxUser((prev)=>({...prev,Area:e.target.value}));setconfirmarCambio(true);
-              }}>
-                <option disabled={true}>...</option>
-                {areasAll.map((a) => <>
-                  <option value={a.nombre}>{a.nombre}</option>
-                </>)}
-              </select></div>
-                        <div className='w-[100%] h-[20%]'><p>Codigo</p><select   disabled={!habilitarEdicion} value={ordenTrabajoxUser.Codigo} className="select" id="" onChange={(e) => {
-                         setordenTrabajoxUser((prev)=>({...prev,Codigo:e.target.value}));setconfirmarCambio(true);
-              }}>
-                <option disabled={true}>...</option>
-                {codigossAll.map((c) => <>
-                  <option value={c.cod}>{c.cod}</option>
-                </>)}
-              </select></div>
-                        <div className='w-[100%] h-[20%]'><p>Maquina</p><select   disabled={!habilitarEdicion} value={ordenTrabajoxUser.Maquina} className="select" id="" onChange={(e) => {
-               setordenTrabajoxUser((prev)=>({...prev,Maquinaea:e.target.value})); setconfirmarCambio(true);
-              }}>
-                <option disabled={true}>...</option>
-                {maquinasAll.map((m) => <>
-                  <option value={m.nombre}>{m.nombre}</option>
-                </>)}
-              </select></div>
-                        <div className='w-[100%] h-[20%]'><p>Especificacion</p><input   type="text" disabled={!habilitarEdicion} className='input' value={ordenTrabajoxUser.EspecificacionMaquina} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,HoraFinal:e.target.value})); setconfirmarCambio(true);}}/></div>
-                       <div className='w-[100%] h-[20%]'><p>Categoria</p><select   disabled={!habilitarEdicion} value={ordenTrabajoxUser.Categoria} className="select" id="" onChange={(e) => {
-               setordenTrabajoxUser((prev)=>({...prev,Categoria:e.target.value})); setconfirmarCambio(true);
-              }}>
-                <option disabled={true}>...</option>
-                {categorias.map((ca) => <>
-                  <option value={ca.nombre}>{ca.nombre}</option>
-                </>)}
-              </select></div>
-               
-                      </div>
-                      <div className='w-[25%] h-[100%]'>
-                       <div className='w-[100%] h-[20%]'><p>Tipo de trabajo</p><select   disabled={!habilitarEdicion} value={ordenTrabajoxUser.TipoTrabajo} className="select" id="" onChange={(e) => {
-               setordenTrabajoxUser((prev)=>({...prev,TipoTrabajo:e.target.value})); setconfirmarCambio(true);
-              }}>
-                <option disabled={true}>...</option>
-                {tiposTrabajo.map((tp) => <>
-                  <option value={tp.tipo}>{tp.tipo}</option>
-                </>)}
-              </select></div>
-                        <div className='w-[100%] h-[20%]'><p>Descripcion</p><input   type="text" disabled={!habilitarEdicion} className='input' value={ordenTrabajoxUser.DescripcionTrabajo} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,DescripcionTrabajo:e.target.value})); setconfirmarCambio(true);}}/></div>
-                        <div className='w-[100%] h-[20%]'><p>Solicitante</p><select   disabled={!habilitarEdicion} value={ordenTrabajoxUser.userSolicitante?.name ?? ""} className="select" id="" onChange={(e) => {
-               setordenTrabajoxUser((prev)=>({...prev,userSolicitante:e.target.value})); setconfirmarCambio(true);
-              }}>
-                <option disabled={true}>...</option>
-                {users.map((u) => <>
-                  <option value={u.name}>{u.name}</option>
-                </>)}
-              </select></div>
-                        <div className='w-[100%] h-[20%]'><p>Receptor</p><select   disabled={!habilitarEdicion} value={ordenTrabajoxUser.userReceptor?.name ?? ""} className="select" id="" onChange={(e) => {
-               setordenTrabajoxUser((prev)=>({...prev,userReceptor:e.target.value})); setconfirmarCambio(true);
-              }}>
-                <option disabled={true}>...</option>
-                {users.map((u) => <>
-                  <option value={u.name}>{u.name}</option>
-                </>)}
-              </select></div>
-                        <div className='w-[100%] h-[20%]'><p>Tecnico</p><select   disabled={!habilitarEdicion} value={ordenTrabajoxUser.userTecnico?.name ?? ""} className="select" id="" onChange={(e) => {
-               setordenTrabajoxUser((prev)=>({...prev,userTecnico:e.target.value})); setconfirmarCambio(true);
-              }}>
-                <option disabled={true}>...</option>
-                {users.map((u) => <>
-                  <option value={u.name}>{u.name}</option>
-                </>)}
-              </select></div>
-                      </div>
-                      <div className='w-[25%] h-[100%]'>
-                       <div className='w-[100%] h-[20%]'><p>Estado</p><select   disabled={!habilitarEdicion} value={ordenTrabajoxUser.estadoTrabajo?.estado} className="select" id="" onChange={(e) => {
-               setordenTrabajoxUser((prev)=>({...prev,estadoTrabajo:e.target.value})); setconfirmarCambio(true);
-              }}>
-                <option disabled={true}>...</option>
-                {estados.map((e) =>(e.estado === "EN PROCESO" || e.estado ==="VENCIDO"?
-                  <option disabled={true} value={e.estado}>{e.estado}</option>
-                :<option value={e.estado}>{e.estado}</option>))}
-              </select></div>
-                        
-                        
-                      </div>
-                    </div>
-                    <div className='w-full h-[12%] flex justify-between p-5'>
-            
-                      {habilitarEdicion 
-                      ? <>
-                      <button className='btn' disabled={!confirmarCambio} onClick={editarOrdenTrabajo}>Hecho</button>
-                        <button className='btn' onClick={()=>{asignarSolicitantexOrden(ordenTrabajoxUser.id);  sethabilitarEdicion(!habilitarEdicion); setconfirmarCambio(false);}}>Cancelar</button></> 
-                      : <>
-                      <button className='btn' onClick={() => { sethabilitarEdicion(!habilitarEdicion); }}>Editar</button>
-                        <button className='btn' onClick={() => { setventanaEmergente(!ventanaEmergente); }}>Cerrar</button></>}
-                    </div>
-                  </div>
-                  </div>
-                  
-                  <div className={`z-10 fixed  bg-transparent inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaCrearUsuario ? "opacity-100" : "opacity-0 pointer-events-none"} `}>
-                  <div className={`border border-gray-300 w-4/5 h-4/5 rounded-sm fixed  bg-white`}>
-                  
-                  </div>
-                  </div>
-        </>
-    )
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className={`z-50 fixed inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaEmergente ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+      <div className="relative border border-gray-300 w-11/12 max-w-6xl h-[85vh] rounded-md bg-white shadow-lg overflow-hidden">
+        <div className="w-full h-14 flex items-center justify-between px-6 border-b">
+          <div className="font-medium text-gray-700">Detalle de ordenes</div>
+          <div onClick={() => { setventanaEmergente(!ventanaEmergente); setordenTrabajoxUser({}); sethabilitarEdicion(false);}} className="cursor-pointer text-xl">❌</div>
+        </div>
+
+        <div className="w-full h-[74%] px-6 py-4 grid grid-cols-4 gap-4 overflow-auto border-b">
+          <div className="flex flex-col gap-3">
+            <div>
+              <p className="text-xs text-gray-500">N.Orden</p>
+              <input type="text" disabled className="input input-sm w-full mt-1" value={ordenTrabajoxUser.NumOrden} onChange={(e)=>setordenTrabajoxUser((prev)=>({...prev,NumOrden:e.target.value}))}/>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500">Fecha de inicio</p>
+              <button disabled={!habilitarEdicion} type="button" onClick={()=>callyPpopover4.current?.showPopover()} className="input input-sm input-border w-full text-left mt-1" id="cally4" style={{ anchorName: "--cally4" }}>{ordenTrabajoxUser.fechaInicio}</button>
+              <div popover="auto" ref={callyPpopover4} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally4" }}>
+                <calendar-date className="cally" onchange={(e)=>{document.getElementById("cally4").innerText = e.target.value; setordenTrabajoxUser((prev)=>({...prev,fechaInicio:e.target.value})); setconfirmarCambio(true);}}>
+                  <svg aria-label="Previous" className="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                  <svg aria-label="Next" className="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                  <calendar-month></calendar-month>
+                </calendar-date>
+              </div>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500">Fecha de finalizacion</p>
+              <button disabled={!habilitarEdicion} type="button" onClick={()=>callyPpopover5.current?.showPopover()} className="input input-sm input-border w-full text-left mt-1" id="cally5" style={{ anchorName: "--cally5" }}>{ordenTrabajoxUser.fechaFinal}</button>
+              <div popover="auto" ref={callyPpopover5} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally5" }}>
+                <calendar-date className="cally" onchange={(e)=>{document.getElementById("cally5").innerText = e.target.value; setordenTrabajoxUser((prev)=>({...prev,fechaFinal:e.target.value})); setconfirmarCambio(true);}}>
+                  <svg aria-label="Previous" className="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                  <svg aria-label="Next" className="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                  <calendar-month></calendar-month>
+                </calendar-date>
+              </div>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500">Hora de inicio</p>
+              <input type="time" disabled={!habilitarEdicion} className="input input-sm w-full mt-1" value={ordenTrabajoxUser.HoraInicio} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,HoraInicio:e.target.value}));setconfirmarCambio(true);}}/>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500">Hora de finalizacion</p>
+              <input type="time" disabled={!habilitarEdicion} className="input input-sm w-full mt-1" value={ordenTrabajoxUser.HoraFinal} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,HoraFinal:e.target.value}));setconfirmarCambio(true);}}/>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <div>
+              <p className="text-xs text-gray-500">Area</p>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.Area} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,Area:e.target.value}));setconfirmarCambio(true);}}>
+                <option disabled>...</option>
+                {areasAll.map((a)=> <option key={a.nombre} value={a.nombre}>{a.nombre}</option>)}
+              </select>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500">Codigo</p>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.Codigo} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,Codigo:e.target.value}));setconfirmarCambio(true);}}>
+                <option disabled>...</option>
+                {codigossAll.map((c)=> <option key={c.cod} value={c.cod}>{c.cod}</option>)}
+              </select>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500">Maquina</p>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.Maquina} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,Maquinaea:e.target.value})); setconfirmarCambio(true);}}>
+                <option disabled>...</option>
+                {maquinasAll.map((m)=> <option key={m.nombre} value={m.nombre}>{m.nombre}</option>)}
+              </select>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500">Especificacion</p>
+              <input type="text" disabled={!habilitarEdicion} className="input input-sm w-full mt-1" value={ordenTrabajoxUser.EspecificacionMaquina} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,HoraFinal:e.target.value})); setconfirmarCambio(true);}}/>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500">Categoria</p>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.Categoria} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,Categoria:e.target.value})); setconfirmarCambio(true);}}>
+                <option disabled>...</option>
+                {categorias.map((ca)=> <option key={ca.nombre} value={ca.nombre}>{ca.nombre}</option>)}
+              </select>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <div>
+              <p className="text-xs text-gray-500">Tipo de trabajo</p>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.TipoTrabajo} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,TipoTrabajo:e.target.value})); setconfirmarCambio(true);}}>
+                <option disabled>...</option>
+                {tiposTrabajo.map((tp)=> <option key={tp.tipo} value={tp.tipo}>{tp.tipo}</option>)}
+              </select>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500">Descripcion</p>
+              <input type="text" disabled={!habilitarEdicion} className="input input-sm w-full mt-1" value={ordenTrabajoxUser.DescripcionTrabajo} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,DescripcionTrabajo:e.target.value})); setconfirmarCambio(true);}}/>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500">Solicitante</p>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.userSolicitante?.name ?? ""} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userSolicitante:e.target.value})); setconfirmarCambio(true);}}>
+                <option disabled>...</option>
+                {users.map((u)=> <option key={u.id} value={u.name}>{u.name}</option>)}
+              </select>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500">Receptor</p>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.userReceptor?.name ?? ""} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userReceptor:e.target.value})); setconfirmarCambio(true);}}>
+                <option disabled>...</option>
+                {users.map((u)=> <option key={u.id} value={u.name}>{u.name}</option>)}
+              </select>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500">Tecnico</p>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.userTecnico?.name ?? ""} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userTecnico:e.target.value})); setconfirmarCambio(true);}}>
+                <option disabled>...</option>
+                {users.map((u)=> <option key={u.id} value={u.name}>{u.name}</option>)}
+              </select>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <div>
+              <p className="text-xs text-gray-500">Estado</p>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.estadoTrabajo?.estado} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,estadoTrabajo:e.target.value})); setconfirmarCambio(true);}}>
+                <option disabled>...</option>
+                {estados.map((ee)=>(ee.estado === "EN PROCESO" || ee.estado === "VENCIDO"? <option key={ee.estado} disabled value={ee.estado}>{ee.estado}</option> : <option key={ee.estado} value={ee.estado}>{ee.estado}</option>))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div className="w-full h-14 flex items-center justify-between px-6">
+          {habilitarEdicion ? (
+            <>
+              <button className="btn btn-primary" disabled={!confirmarCambio} onClick={editarOrdenTrabajo}>Hecho</button>
+              <button className="btn btn-ghost" onClick={()=>{asignarSolicitantexOrden(ordenTrabajoxUser.id); sethabilitarEdicion(!habilitarEdicion); setconfirmarCambio(false);}}>Cancelar</button>
+            </>
+          ) : (
+            <>
+              <button className="btn" onClick={()=>sethabilitarEdicion(!habilitarEdicion)}>Editar</button>
+              <button className="btn btn-ghost" onClick={()=>setventanaEmergente(!ventanaEmergente)}>Cerrar</button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+
+    <div className={`z-50 fixed inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaCrearUsuario ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+      <div className="absolute inset-0 bg-black/30" />
+      <div className="relative border border-gray-300 w-4/5 h-4/5 rounded-sm bg-white" />
+    </div>
+  </>
+);
+
+
 }

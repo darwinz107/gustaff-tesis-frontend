@@ -19,6 +19,7 @@ import { ProtectRoute2 } from './Principal/auth/ProtectRoute2.tsx'
 import { GenerarPdfActaDeSalida } from './acta-de-salida/view/GenerarPdfActaDeSalida.tsx'
 import { GenerarPdfActaDeEntrada } from './acta-de-entrada/view/GenerarPdfActaDeEntrada.tsx'
 
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>

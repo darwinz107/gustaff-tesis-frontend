@@ -173,3 +173,16 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{nombre:string}[]>
         const data = await response.json();
         return data;
     }
+
+    export const filtrarOrdenes = async (filtros: any): Promise<OrdenesTrabajo[]> => {
+  try {
+    const response: Response = await fetch(`${route}orden-de-trabajo/filter`, {
+      method: 'POST',
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(filtros)
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('filtrarOrdenes error:', error);
+  }};

@@ -3,7 +3,7 @@ import { BuscarOrdenCompra } from "../../acta-de-salida/view/BuscarOrdenCompra";
 import type { InfoPdfCompra } from "../../orden-de-compra/models/infoPdfCompra";
 import { getAllSolicitudesParciales, ordenCompraById } from "../../orden-de-compra/controller/ordenCompraApi";
 import type { BuscarSolMaterial } from "../../orden-de-compra/models/buscarSolMaterial";
-import { asignarInfoActaEntrada } from "../../inventario/controller/inventario-api";
+import { asignarInfoActaEntrada, existeItem, filtrarInventario } from "../../inventario/controller/inventario-api";
 import type { AsignarInfoEntrada } from "../../inventario/models/AsignarInfoEntrada";
 import { createActaEntrada, findProovedorByNombre, getPerchasBySeccion, getSeccionesByBodega } from "../controller/actaEntrada-api";
 import { CrearProovedor } from "./CrearProovedor";
@@ -34,8 +34,9 @@ export const CrearActaEntrada = () => {
     const [perchas, setperchas] = useState<{id:number,percha:string}[]>([]);
     const [observacion, setobservacion] = useState("");
     const [ventanaAgregarProovedor, setventanaAgregarProovedor] = useState(false);
-    
+    const [items, setitems] = useState<{nombre:string,costo:number}[]>([]);
     const [ordenes, setordenes] = useState<BuscarSolMaterial[]>([]);
+    const [habilitarStockMin, sethabilitarStockMin] = useState(false);
 
 
 const cargarInfoSolMaterial = async() =>{
@@ -55,7 +56,10 @@ const cargarInfoSolMaterial = async() =>{
 
     }
 
- const asignarCampos = (index:number,item:string,cantidad:number,preciU:number) => {
+ const asignarCampos = async(index:number,item:string,cantidad:number,preciU:number) => {
+
+  const validar = await existeItem(item);
+  sethabilitarStockMin(validar);
 
   console.log("index que llega", index);
   console.log("antes:", solicitudMaterial.itemsSolicitados);
@@ -176,10 +180,10 @@ const cargarInfoSolMaterial = async() =>{
  const enviarygenerarActaDeEntrada = async() =>{
  console.log("hice clic en");
  
- if (!solCompraId || solicitudMaterial.itemsSolicitados.length === 0) {
+/* if (!solCompraId || solicitudMaterial.itemsSolicitados.length === 0) {
   alert("Debe llenar la informacion antes de generar la acta de entrada");
   return;
-}
+}*/
 
    const registroEntradaFinal = {
     proovedor:proovedor,
@@ -194,7 +198,9 @@ const cargarInfoSolMaterial = async() =>{
    if(res.validate){
    alert(res.msj);
     setsolicitudMaterial({numOrden:"",numOrdenTrabajo:"",itemsSolicitados:[],id:0});
-    window.open(`/pdf-entrada/${solCompraId}`,"_blank");
+    window.open(`/pdf-entrada/${undefined}`,"_blank");
+   }else{
+    console.error(res);
    }
   
 
@@ -213,6 +219,33 @@ metodoExecProovedores();
   }
 
 }, [proovedor]);
+
+useEffect(() => {
+  if(item != ""){
+      const metodoExecProovedores = async()=>{
+    const res = await filtrarInventario(item);
+    setitems(res);
+    const existe = res.some(
+        (r) => r.nombre.toLowerCase() === item.toLowerCase()
+      );
+
+      sethabilitarStockMin(existe);
+  if(existe){
+    const seleccionado = res.find(p => p.nombre === item);
+    if (seleccionado) {
+      setprecioUni(seleccionado.costo);
+    }
+  }else{
+      setprecioUni(null);
+    }
+    console.log(res);
+  }
+metodoExecProovedores();
+  }else{
+    setitems([]);
+  }
+
+}, [item]);
 
 
 useEffect(() => {
@@ -339,7 +372,28 @@ useEffect(() => {
           
             <div className="md:col-span-6">
               <label className="block text-sm">Descripción</label>
-              <textarea className="textarea w-full" placeholder="Descripción del ítem" value={item} onChange={(e)=> setitem(e.target.value)}/>
+               <div className=" w-full">
+                
+<input
+  className="input w-full"
+  list="browsers1"
+  value={item}
+  onChange={(e) => {
+    const value = e.target.value;
+    setitem(value);
+
+
+  }}
+/>
+
+<datalist id="browsers1">
+  {items?.map(p => (
+    <option key={p.id} value={p.nombre} />
+  ))}
+</datalist>
+
+
+</div>
             </div>
 
            
@@ -349,9 +403,9 @@ useEffect(() => {
             </div>
 
            
-            <div className="md:col-span-2">
-              <label className="block text-sm">Stock Min.</label>
-              <input className="input w-full" placeholder="—" value={stockMin??""} onChange={(e)=> setstockMin(e.target.value)}/>
+            <div  className="md:col-span-2">
+              <label  className="block text-sm">Stock Min.</label>
+              <input className="input w-full" disabled={habilitarStockMin} placeholder="" value={stockMin??""} onChange={(e)=> setstockMin(e.target.value)}/>
             </div>
 
             
@@ -448,7 +502,7 @@ useEffect(() => {
             
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="overflow-auto">
             <table className="table w-full">
               <thead>
                 <tr>

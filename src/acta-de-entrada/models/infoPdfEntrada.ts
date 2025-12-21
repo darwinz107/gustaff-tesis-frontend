@@ -1,4 +1,5 @@
 export interface InfoPdfEntrada {
+  id:number;
   numActa: string;
   factura:string;
   proovedor:string;
