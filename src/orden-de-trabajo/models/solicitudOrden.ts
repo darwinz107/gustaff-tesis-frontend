@@ -31,4 +31,5 @@ export interface SolicitudOrden{
     userReceptor:string|object;
     
     userTecnico:string|null; 
+    estado:string;
 }

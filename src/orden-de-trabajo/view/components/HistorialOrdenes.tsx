@@ -165,7 +165,7 @@ const ordenesTrabajoApi  = async() =>{
       
       const ordenEditada:SolicitudOrden = {
         
-        NumOrden:ordenTrabajoxUser.NumOrden,
+        
         fechaInicio:ordenTrabajoxUser.fechaInicio,
         fechaFinal:ordenTrabajoxUser.fechaFinal,
         HoraInicio:ordenTrabajoxUser.HoraInicio,  
@@ -179,12 +179,14 @@ const ordenesTrabajoApi  = async() =>{
         DescripcionTrabajo:ordenTrabajoxUser.DescripcionTrabajo,
         userSolicitante:ordenTrabajoxUser.userSolicitante.name,
         userReceptor:ordenTrabajoxUser.userReceptor.name,
-        userTecnico:ordenTrabajoxUser.userTecnico?.name
+        userTecnico:ordenTrabajoxUser.userTecnico?.name,
+        estado:ordenTrabajoxUser.estadoTrabajo?.estado
       };
 
       const res = await editarOrdenTrabajoApi(ordenTrabajoxUser.id,ordenEditada);
     
       alert(res.msj);
+      console.log(res);
       setconfirmarCambio(false);
       sethabilitarEdicion(!habilitarEdicion);
       ordenesTrabajoApi();
@@ -438,7 +440,7 @@ const ordenesTrabajoApi  = async() =>{
 
             <div>
               <p className="text-xs text-gray-500">Solicitante</p>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.userSolicitante?.name ?? ""} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userSolicitante:e.target.value})); setconfirmarCambio(true);}}>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.userSolicitante?.name ?? ""} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userSolicitante:{name: e.target.value}})); setconfirmarCambio(true);}}>
                 <option disabled>...</option>
                 {users.map((u)=> <option key={u.id} value={u.name}>{u.name}</option>)}
               </select>
@@ -446,7 +448,7 @@ const ordenesTrabajoApi  = async() =>{
 
             <div>
               <p className="text-xs text-gray-500">Receptor</p>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.userReceptor?.name ?? ""} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userReceptor:e.target.value})); setconfirmarCambio(true);}}>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.userReceptor?.name ?? ""} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userReceptor:{name: e.target.value}})); setconfirmarCambio(true);}}>
                 <option disabled>...</option>
                 {users.map((u)=> <option key={u.id} value={u.name}>{u.name}</option>)}
               </select>
@@ -454,7 +456,7 @@ const ordenesTrabajoApi  = async() =>{
 
             <div>
               <p className="text-xs text-gray-500">Tecnico</p>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.userTecnico?.name ?? ""} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userTecnico:e.target.value})); setconfirmarCambio(true);}}>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.userTecnico?.name ?? ""} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userTecnico:{name: e.target.value}})); setconfirmarCambio(true);}}>
                 <option disabled>...</option>
                 {users.map((u)=> <option key={u.id} value={u.name}>{u.name}</option>)}
               </select>
@@ -464,9 +466,9 @@ const ordenesTrabajoApi  = async() =>{
           <div className="flex flex-col gap-3">
             <div>
               <p className="text-xs text-gray-500">Estado</p>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.estadoTrabajo?.estado} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,estadoTrabajo:e.target.value})); setconfirmarCambio(true);}}>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.estadoTrabajo?.estado} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,estadoTrabajo:{estado: e.target.value}})); setconfirmarCambio(true);}}>
                 <option disabled>...</option>
-                {estados.map((ee)=>(ee.estado === "EN PROCESO" || ee.estado === "VENCIDO"? <option key={ee.estado} disabled value={ee.estado}>{ee.estado}</option> : <option key={ee.estado} value={ee.estado}>{ee.estado}</option>))}
+                {estados.map((ee)=>(ee.estado === "EN PROCESO" || ee.estado === "VENCIDO"? <option key={ee.estado} disabled={true} value={ee.estado}>{ee.estado}</option> : <option key={ee.estado} value={ee.estado}>{ee.estado}</option>))}
               </select>
             </div>
           </div>

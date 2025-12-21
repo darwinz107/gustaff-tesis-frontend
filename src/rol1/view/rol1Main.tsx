@@ -7,6 +7,8 @@ import { OrdenCompra } from '../../orden-de-compra/view/ordenCompra';
 import { GestionCompra } from '../../orden-de-compra/view/GestionCompra';
 import { useNavigate } from 'react-router-dom';
 import { getLastSolicitud } from '../../orden-de-trabajo/controller/api/orden-api';
+import { DbMantenimiento } from '../../dashboards/DbMantenimiento';
+
 
 export const Rol1Main = () => {
 
@@ -42,7 +44,7 @@ export const Rol1Main = () => {
   }
 
   const componentes = [
-    <></>,
+    <DbMantenimiento></DbMantenimiento>,
     <CrearOrden setcargarAuto={setcargarAuto} setsendId={setsendId} />,
     <HistorialOrdenes setcargaAuto={setcargarAuto} setsendId={setsendId} />,
     <OrdenCompra id={sendId} />,
