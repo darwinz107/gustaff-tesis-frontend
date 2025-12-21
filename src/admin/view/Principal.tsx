@@ -76,11 +76,11 @@ export const Principal = () => {
 
   return (
     <>
-      <div className="flex h-screen w-full bg-gray-100">
+      <div className="flex min-h-screen w-full bg-gray-50">
 
       
         <div
-          className={`h-full bg-white border-r border-gray-300
+          className={`min-h-full bg-white border-r border-gray-300
           transition-all duration-300 flex flex-col
           ${collapsed ? "w-20" : "w-1/5"}`}
         >
@@ -152,7 +152,7 @@ export const Principal = () => {
           </div>
 
           
-          <div className="mt-auto px-2 pb-4">
+          <div className="mt-auto px-2 pb-4 ">
             <button className="btn btn-ghost justify-start w-full" onClick={terminarSesion}>
               🚪 {!collapsed && "Cerrar sesión"}
             </button>
@@ -160,7 +160,7 @@ export const Principal = () => {
         </div>
 
         
-        <div className="flex-1 flex items-center justify-center bg-white">
+        <div className="flex-1 flex items-center justify-center my-2">
           {componentes[cargarComponente]}
         </div>
 

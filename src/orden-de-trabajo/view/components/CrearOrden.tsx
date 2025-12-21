@@ -194,9 +194,9 @@ setshowSuccess(false);
     </div>
   </div>
 </dialog>
-      <div className='flex items-center justify-center mt-[20%]'>
+      <div className='flex items-center justify-center '>
         <form className='min-w-170'  onSubmit={(e) => { addSolicitudOrden(e); }} >
-          <div className=' bg-gray-100 rounded-xl shadow-md p-4 mb-6'>
+          <div className=' bg-white rounded-xl shadow-md p-4 mb-6'>
              <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
     Tiempos de trabajo
   </h2>
@@ -230,7 +230,7 @@ setshowSuccess(false);
             </div>
           </div>
 
-          <div className="bg-gray-100 rounded-xl shadow-md p-4 mb-6">
+          <div className="bg-white rounded-xl shadow-md p-4 mb-6">
              <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
     Ubicación
   </h2>
@@ -276,7 +276,7 @@ setshowSuccess(false);
             </div>
           </div>
 
-         <div className="bg-gray-100 rounded-xl shadow-md p-4 mb-6">
+         <div className="bg-white rounded-xl shadow-md p-4 mb-6">
   <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
     Especificación del trabajo
   </h2>
@@ -317,7 +317,7 @@ setshowSuccess(false);
               }}></textarea>
             </div>
           </div>
-         <div className="bg-gray-50 rounded-xl shadow p-4 mt-6">
+         <div className="bg-white rounded-xl shadow p-4 mt-6">
   <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
     Personal
   </h2>

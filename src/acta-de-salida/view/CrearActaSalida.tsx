@@ -93,13 +93,13 @@ export const CrearActaSalida = () => {
 
   return (
      <>
-         <div className='w-full h-[85%] '>
-            <div className='w-full h-[10%] flex items-center justify-center bg-white '>
+         <div className='w-full h-full m-2'>
+            <div className='w-full h-[10%] flex items-center justify-center '>
                 <button className='btn' disabled={!conOrden}onClick={()=>{setactaSalida(true); setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo);}}>Asignar solicitud de material</button>
                 
             </div>
             
-            <div className='w-full h-[30%] bg-gray-100 rounded-xl shadow-md p-4 mb-6'>
+            <div className='w-full h-[30%] bg-white rounded-xl shadow-md p-4 mb-6'>
             <div className=' h-[15%] mb-4'>
                <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Informacion de orden de material</h2> 
             </div>
@@ -126,7 +126,7 @@ export const CrearActaSalida = () => {
               </div>
              </div>
             </div>
-                 <div className='w-full min-h-[25%] bg-gray-100 rounded-xl shadow-md p-4 mb-6'>
+                 <div className='w-full min-h-[25%] bg-white rounded-xl shadow-md p-4 mb-6'>
             <div className=' min-h-[20%]'>
                 <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Agregar items</h2>    
             </div>
@@ -166,7 +166,7 @@ export const CrearActaSalida = () => {
             
            </div>
             
-            <div className='w-full h-[40%] bg-gray-100 rounded-xl shadow-md p-4 mb-6'>
+            <div className='w-full h-[40%] bg-white rounded-xl shadow-md p-4 mb-6'>
               <div className=' min-h-[10%]'>
                 <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Salidas</h2>  
              </div>
@@ -245,9 +245,10 @@ export const CrearActaSalida = () => {
               </table>
             </div>
               </div>
-              <div className=' text-center'><button className='btn' onClick={generarActaSalida}>Generar acta de salida</button></div>
+             
              </div>
             </div>
+             <div className=' text-center'><button className='btn btn-primary' onClick={generarActaSalida}>Generar acta de salida</button></div>
          </div>
     
            <div className={`z-10 fixed  bg-transparent inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaBuscarOrdenTrabajo ? "opacity-100" : "opacity-0 pointer-events-none"} `}>

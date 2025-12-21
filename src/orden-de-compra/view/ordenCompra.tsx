@@ -242,7 +242,7 @@ setinfoDestino(infoDestinoInicial);
       </div>
     )}
 
-    <div className="w-full h-screen overflow-auto bg-gray-50 p-6">
+    <div className="w-full   p-6">
 
       <div className="bg-white rounded-xl shadow-md p-6 mb-6">
         <h2 className="text-lg font-semibold text-gray-700 border-b pb-2 mb-4">

@@ -69,7 +69,7 @@ export const Rol1Main = () => {
 
   return (
     <>
-      <div className="flex h-screen w-auto bg-gray-100">
+      <div className="flex min-h-screen w-auto bg-gray-50">
 
         <div
           className={`fixed inset-y-0 left-0 bg-white border-r border-gray-300 flex flex-col transition-all duration-300
@@ -122,7 +122,7 @@ export const Rol1Main = () => {
           </div>
         </div>
 
-        <div className={`${collapsed ? "ml-20" : "ml-64"} flex-1 bg-white flex items-center justify-center transition-all duration-300`}>
+        <div className={`${collapsed ? "ml-20" : "ml-64"} flex-1 bg-gray-50 flex items-center justify-center my-2  transition-all duration-300`}>
           {componentes[cargarComponente]}
         </div>
 

@@ -8,6 +8,7 @@ export const DbMantenimiento = () => {
   const API = "http://localhost:3000/dashboard"; 
 
   const [kpis, setKpis] = useState(null);
+  const [solicitudes, setsolicitudes] = useState<{totalSol:number,enProceso:number,parcial:number,entregado:number}|null>(null);
   const [ordenesEstado, setOrdenesEstado] = useState([]);
   const [solicitudesDia, setSolicitudesDia] = useState([]);
   const [ultimasOrdenes, setUltimasOrdenes] = useState([]);
@@ -18,8 +19,9 @@ export const DbMantenimiento = () => {
     let mounted = true;
     async function load() {
       try {
-        const [k, oe, sd, uo, us] = await Promise.all([
+        const [k,g, oe, sd, uo, us] = await Promise.all([
           axios.get(`${API}/kpis`).then((r) => r.data),
+          axios.get(`${API}/solicitudes`).then((r) => r.data),
           axios.get(`${API}/ordenes-por-estado`).then((r) => r.data),
           axios.get(`${API}/solicitudes-por-dia?days=30`).then((r) => r.data),
           axios.get(`${API}/ultimas-ordenes?limit=5`).then((r) => r.data),
@@ -27,7 +29,7 @@ export const DbMantenimiento = () => {
         ]);
         if (!mounted) return;
         setKpis(k);
-        console.log(k);
+        setsolicitudes(g);
         setOrdenesEstado(oe);
         setSolicitudesDia(sd);
         setUltimasOrdenes(uo);
@@ -53,8 +55,8 @@ export const DbMantenimiento = () => {
 
   return (
     <div className="p-6 space-y-6">
-      {/* KPIs */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+      
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div className="card p-4 bg-base-100 border">
           <div className="text-sm text-gray-500">Total órdenes</div>
           <div className="text-2xl font-semibold">{kpis?.totalOrdenes ?? 0}</div>
@@ -68,8 +70,25 @@ export const DbMantenimiento = () => {
           <div className="text-2xl font-semibold">{kpis?.vencidas ?? 0}</div>
         </div>
         <div className="card p-4 bg-base-100 border">
+          <div className="text-sm text-gray-500">Ordenes completadas</div>
+          <div className="text-2xl font-semibold">{kpis?.finalizadas ?? 0}</div>
+        </div>
+
+        <div className="card p-4 bg-base-100 border">
+          <div className="text-sm text-gray-500">Total solicitudes</div>
+          <div className="text-2xl font-semibold">{solicitudes?.totalSol ?? 0}</div>
+        </div>
+        <div className="card p-4 bg-base-100 border">
+          <div className="text-sm text-gray-500">En proceso</div>
+          <div className="text-2xl font-semibold">{solicitudes?.enProceso ?? 0}</div>
+        </div>
+        <div className="card p-4 bg-base-100 border">
+          <div className="text-sm text-gray-500">Parcial</div>
+          <div className="text-2xl font-semibold">{solicitudes?.parcial ?? 0}</div>
+        </div>
+        <div className="card p-4 bg-base-100 border">
           <div className="text-sm text-gray-500">Solicitudes completadas</div>
-          <div className="text-2xl font-semibold">{kpis?.solicitudesPendientes ?? 0}</div>
+          <div className="text-2xl font-semibold">{solicitudes?.entregado ?? 0}</div>
         </div>
       </div>
 
@@ -82,7 +101,7 @@ export const DbMantenimiento = () => {
               labels: ordenesEstado.map((d) => d.estado),
               datasets: [
                 {
-                  label: "Cantidad",
+                  label: "",
                   data: ordenesEstado.map((d) => d.count),
                   borderWidth: 1,
                 },
@@ -120,7 +139,7 @@ export const DbMantenimiento = () => {
             <table className="table w-full">
               <thead>
                 <tr>
-                  <th>#</th><th>NumOrden</th><th>Solicitante</th><th>Estado</th>
+                  <th>#</th><th>NumOrden</th><th>Solicitante</th><th>Estado</th><th>Descripcion</th>
                 </tr>
               </thead>
               <tbody>
@@ -130,6 +149,7 @@ export const DbMantenimiento = () => {
                     <td>{o.numOrden}</td>
                     <td>{o.solicitante}</td>
                     <td>{o.estado}</td>
+                    <td>{o.descripcion}</td>
                   </tr>
                 ))}
               </tbody>
@@ -142,7 +162,7 @@ export const DbMantenimiento = () => {
           <div className="overflow-auto">
             <table className="table w-full">
               <thead>
-                <tr><th>#</th><th>NumOrden</th><th>Solicitante</th><th>Destino</th></tr>
+                <tr><th>#</th><th>NumOrden</th><th>Solicitante</th><th>Destino</th><th>Total items</th></tr>
               </thead>
               <tbody>
                 {ultimasSolicitudes.map(s => (
@@ -151,6 +171,7 @@ export const DbMantenimiento = () => {
                     <td>{s.numOrden}</td>
                     <td>{s.solicitante}</td>
                     <td>{s.destino}</td>
+                    <td>{s.total_items}</td>
                   </tr>
                 ))}
               </tbody>
