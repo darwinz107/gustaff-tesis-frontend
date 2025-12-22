@@ -6,6 +6,7 @@ import { GestionSalida } from '../../acta-de-salida/view/GestionSalida';
 import { CrearActaEntrada } from '../../acta-de-entrada/view/CrearActaEntrada';
 import { GestionEntrada } from '../../acta-de-entrada/view/GestionEntrada';
 import { GestionInventario } from '../../inventario/view/GestionInventario';
+import { DbLogistica } from '../../dashboards/DbLogistica';
 
 export const Rol2Main = () => {
 
@@ -25,7 +26,7 @@ export const Rol2Main = () => {
   }
 
   const componentes = [
-    <></>,
+    <DbLogistica></DbLogistica>,
     <CrearActaSalida />,
     <GestionSalida />,
     <CrearActaEntrada />,

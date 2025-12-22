@@ -26,6 +26,7 @@ export const DbMantenimiento = () => {
           axios.get(`${API}/solicitudes-por-dia?days=30`).then((r) => r.data),
           axios.get(`${API}/ultimas-ordenes?limit=5`).then((r) => r.data),
           axios.get(`${API}/ultimas-solicitudes?limit=5`).then((r) => r.data),
+          
         ]);
         if (!mounted) return;
         setKpis(k);
@@ -93,7 +94,7 @@ export const DbMantenimiento = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Chart: ordenes por estado */}
+       
         <div className="card p-4 bg-base-100 border">
           <h3 className="font-medium mb-3">Órdenes por estado</h3>
           <Bar
@@ -111,7 +112,7 @@ export const DbMantenimiento = () => {
           />
         </div>
 
-        {/* Chart: solicitudes por dia */}
+       
         <div className="card p-4 bg-base-100 border">
           <h3 className="font-medium mb-3">Solicitudes (últimos 30 días)</h3>
           <Line
@@ -123,15 +124,22 @@ export const DbMantenimiento = () => {
                   data: solicitudesDia.map((d) => d.count),
                   borderWidth: 2,
                   fill: true,
-                },
+                }
               ],
             }}
-            options={{ responsive: true, plugins: { legend: { display: false } } }}
+            options={{ responsive: true, plugins: { legend: { display: false } } },{scales:{
+              x:{
+                ticks:{
+                  maxRotation:50,
+                  minRotation:50
+                }
+              }
+            }}}
           />
         </div>
       </div>
 
-      {/* Tablas simples con daisyUI classes */}
+      
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="card p-4 bg-base-100 border">
           <h3 className="font-medium mb-3">Últimas órdenes</h3>
