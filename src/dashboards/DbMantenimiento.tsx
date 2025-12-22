@@ -170,7 +170,7 @@ export const DbMantenimiento = () => {
           <div className="overflow-auto">
             <table className="table w-full">
               <thead>
-                <tr><th>#</th><th>NumOrden</th><th>Solicitante</th><th>Destino</th><th>Total items</th></tr>
+                <tr><th>#</th><th>NumOrden</th><th>Solicitante</th><th>Estado</th><th>Total items</th></tr>
               </thead>
               <tbody>
                 {ultimasSolicitudes.map(s => (
@@ -178,7 +178,7 @@ export const DbMantenimiento = () => {
                     <td>{s.id}</td>
                     <td>{s.numOrden}</td>
                     <td>{s.solicitante}</td>
-                    <td>{s.destino}</td>
+                    <td>{s.estado}</td>
                     <td>{s.total_items}</td>
                   </tr>
                 ))}

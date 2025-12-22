@@ -1,5 +1,6 @@
 import {
   Chart as ChartJS,
+  ArcElement,
   CategoryScale,
   LinearScale,
   BarElement,
@@ -10,6 +11,7 @@ import {
 } from "chart.js";
 
 ChartJS.register(
+  ArcElement,
   CategoryScale,
   LinearScale,
   BarElement,
