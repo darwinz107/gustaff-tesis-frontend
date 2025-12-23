@@ -78,13 +78,18 @@ const obtenerUsers = async () =>{
         identification: asignarDetalle.identification,
         cellphone: asignarDetalle.cellphone,
         email: asignarDetalle.email,
-        password: asignarDetalle.password,
+        password: contrasenia,
         cargoId: selectCargo
       }
       const res = await actualizarUsuario(asignarDetalle.id, newInfoUsuario);
+      if(res.validte ===false){
+       alert("Fallo al actualizar los datos!");
+       return;
+      }
       alert(res.msj);
       detalleUsuario(asignarDetalle.id);
       sethabilitarEdicion(!habilitarEdicion);
+      setcontrasenia("");
     }
   };
 
@@ -217,7 +222,7 @@ const obtenerUsers = async () =>{
               <p className="text-xs text-gray-500 mt-4">Email</p>
               <input className="input w-full mt-1" value={asignarDetalle.email ?? ""} onChange={(e)=>setasignarDetalle(prev=>({...prev, email: e.target.value}))} disabled={!habilitarEdicion} />
               <p className="text-xs text-gray-500 mt-4">Nueva contraseña</p>
-              <input className="input w-full mt-1" onChange={(e)=>setcontrasenia(e.target.value)} disabled={!habilitarEdicion} />
+              <input className="input w-full mt-1" value={contrasenia} onChange={(e)=>setcontrasenia(e.target.value)} disabled={!habilitarEdicion} />
             </div>
 
             <div className="w-1/3">
@@ -240,7 +245,7 @@ const obtenerUsers = async () =>{
             ) : (
               <>
                 <button className="btn" onClick={() => sethabilitarEdicion(!habilitarEdicion)}>Editar</button>
-                <button className="btn btn-ghost" onClick={() => setventanaEmergente(!ventanaEmergente)}>Cerrar</button>
+                <button className="btn btn-ghost" onClick={() =>{ setventanaEmergente(!ventanaEmergente); setcontrasenia("")}}>Cerrar</button>
               </>
             )}
           </div>

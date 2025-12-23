@@ -140,7 +140,7 @@ export const getAllCargos = async (): Promise<{ id:number,name: string}[]> => {
 }
 
 
-export const actualizarUsuario = async (id:number,infoActualizada: object): Promise<{ msj: string }> => {
+export const actualizarUsuario = async (id:number,infoActualizada: object): Promise<{ msj: string ,validte:boolean}> => {
   
   const response: Response = await fetch(`${route}admin/user/${id}`, {
     method: "PATCH",
