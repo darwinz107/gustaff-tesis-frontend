@@ -14,6 +14,7 @@ export const NuevoUsuario = ({showCrearUsuario,setshowCrearUsuario,setconfirmarC
   const callyPpopover2 = useRef(null);
 
   const crearNuevoUsuario = async() =>{
+    console.log(selectCargo);
     try {
       const res = await crearUsuario({
         name:nombre,
@@ -24,9 +25,14 @@ export const NuevoUsuario = ({showCrearUsuario,setshowCrearUsuario,setconfirmarC
         password:contrasenia,
         cargo:selectCargo
       });
-
+     if(res.validate===false){
+      alert("Hubo un error al crear el usuario, por favor verifique los datos ingresados");
+      return;
+     }
       alert(res.msj);
+      console.log(res);
       setconfirmarCambio((prev)=>!prev);
+      setshowCrearUsuario(!showCrearUsuario);
 
     } catch (error) {
       console.log(error); 
@@ -71,38 +77,9 @@ export const NuevoUsuario = ({showCrearUsuario,setshowCrearUsuario,setconfirmarC
         <div className="space-y-4">
           <div>
             <label className="label">Fecha de nacimiento</label>
-            <button
-              type="button"
-              onClick={() => callyPpopover2.current?.showPopover()}
-              className="input w-full text-left"
-              id="cally2"
-              style={{ anchorName: "--cally2" }}
-            >
-              {selectFechaNac || "Seleccionar fecha"}
-            </button>
-
-            <div
-              popover="auto"
-              ref={callyPpopover2}
-              className="dropdown bg-base-100 rounded-box shadow-lg"
-              style={{ positionAnchor: "--cally2" }}
-            >
-              <calendar-date
-                className="cally"
-                onchange={(e) => {
-                  document.getElementById("cally2").innerText = e.target.value;
-                  setselectFechaNac(e.target.value);
-                }}
-              >
-                <svg slot="previous" className="fill-current size-4" viewBox="0 0 24 24">
-                  <path d="M15.75 19.5 8.25 12l7.5-7.5"></path>
-                </svg>
-                <svg slot="next" className="fill-current size-4" viewBox="0 0 24 24">
-                  <path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
-                </svg>
-                <calendar-month></calendar-month>
-              </calendar-date>
-            </div>
+            
+              <input type="date" className="input input-sm" value={selectFechaNac} onChange={(e)=>{ setselectFechaNac(e.target.value);}} />
+           
           </div>
 
           <div>
