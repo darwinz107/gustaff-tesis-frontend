@@ -205,9 +205,8 @@ const obtenerUsers = async () =>{
               <p className="text-xs text-gray-500">Nombre</p>
               <input type="text" disabled={!habilitarEdicion} className="input w-full mt-1" value={asignarDetalle.name ?? ""} onChange={(e)=>setasignarDetalle(prev=>({...prev, name: e.target.value}))} />
               <p className="text-xs text-gray-500 mt-4">Fecha de nacimiento</p>
-              <button disabled={!habilitarEdicion} type="button" className="input input-border w-full text-left mt-1" id="cally3" style={{ anchorName: "--cally3" }}>
-                {asignarDetalle.fechaNac ?? ""}
-              </button>
+        
+              <input type="date" className="input input-sm" value={asignarDetalle.fechaNac ?? ""} disabled={!habilitarEdicion} onChange={(e)=>{ setasignarDetalle(prev=>({...prev, fechaNac: e.target.value}));}} />
               <p className="text-xs text-gray-500 mt-4">Cédula</p>
               <input className="input w-full mt-1" value={asignarDetalle.identification ?? ""} onChange={(e)=>setasignarDetalle(prev=>({...prev, identification: e.target.value}))} disabled={!habilitarEdicion} />
             </div>

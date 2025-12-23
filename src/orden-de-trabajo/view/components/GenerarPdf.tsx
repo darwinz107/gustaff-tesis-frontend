@@ -100,7 +100,7 @@ const id = useParams();
               </TH>
               <TR style={styles.tr}>
                 <TD style={styles.td}>{newSolicitud?.Codigo}</TD>
-                <TD style={styles.td}>{newSolicitud?.Maquina}</TD>
+                <TD style={styles.td}>{newSolicitud?.Maquina }</TD>
               </TR>
              </Table>
             </View>
@@ -111,7 +111,7 @@ const id = useParams();
                 
               </TH>
               <TR style={styles.tr}>
-                <TD style={styles.textArea}>{newSolicitud?.DescripcionTrabajo} 
+                <TD style={styles.textArea}>{newSolicitud?.DescripcionTrabajo === "" || newSolicitud?.DescripcionTrabajo === null ? "N/A" :newSolicitud?.DescripcionTrabajo} 
 </TD>                
               </TR>
              </Table>

@@ -255,8 +255,8 @@ setinfoDestino(infoDestinoInicial);
           <input className="input" disabled value={infoDestino.DescripcionTrabajo} />
           <select defaultValue="..." className="select" onChange={(e) => setautoriza(e.target.value)}>
             <option disabled>...</option>
-            {users.map((m) => (
-              <option value={m.name}>{m.name}</option>
+            {users.map((m,i) => (
+              <option key={i} value={m.name}>{m.name}</option>
             ))}
           </select>
           <input className="input" disabled value={infoDestino.Codigo} />
