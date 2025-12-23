@@ -109,7 +109,14 @@ setloading(false);
               data: salidasPorDia?.map((f)=>f.total)
             }]
           }}
-          options={{ plugins:{legend:{display:false}}}}
+          options={{ responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false}},scales:{
+            x:{
+              ticks:{
+                maxRotation:20,
+                minRotation:20
+              }
+            }
+          }}}
           />
         </div>
         

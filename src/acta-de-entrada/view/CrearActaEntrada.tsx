@@ -305,279 +305,240 @@ useEffect(() => {
  
 }, [seccion]);
 
-  return (
-    <>
-      <div className="w-full h-full p-6 space-y-6">
+ return (
+  <>
+    <div className="w-full h-full p-6 space-y-6">
 
-       
-        <div className="w-full flex items-center justify-center">
-          <button type="button" className="btn" onClick={()=>{ setventanaBuscarSolicitudMaterial(!ventanaBuscarSolicitudMaterial);}}>Asignar solicitud de material</button>
-        </div>
-
-        
-        <div className="w-full bg-gray-100 rounded-xl shadow-md p-4">
-          <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Destino / Documento</h2>
-<div className="flex gap-4 flex-wrap">
-
-          <div className="flex flex-row min-w-[180px]">
-             <div>  <label className="block text-sm">Proovedor</label>
-              <div className=" w-full">
-                
- <input className="input w-full" list="browsers" value={proovedor}  onChange={(e)=> setproovedor(e.target.value)}/>
-<datalist id="browsers">
- {proovedores?.map((p)=>
-<option value={p.nombreComercial} onChange={(e)=>setproovedor(e.target.value)}></option>
-) 
-}
-</datalist>
-
-</div>
-</div>
-     <div className="flex items-center justify-center">    <button
-    type="button"
-    className=" text-gray-500 cursor-pointer"
-    onClick={()=>setventanaAgregarProovedor(!ventanaAgregarProovedor)}
-  >
-    <img className="w-5 h-5" src="https://img.icons8.com/ios-glyphs/30/add-user-male.png" alt="add-user-male"/>
-  </button>  
-  </div>    
-            </div>
-
-          
-
-            <div className="flex-1 min-w-[180px]">
-              <label className="block text-sm">S/Factura</label>
-              <input className="input w-full"  value={factura} onChange={(e)=> setfactura(e.target.value)}/>
-            </div>
-
-            <div className="flex-1 min-w-[180px]">
-              <label className="block text-sm">N. Orden</label>
-              <input className="input w-full" value={solicitudMaterial?.numOrdenTrabajo?.NumOrden} disabled={true}/>
-            </div>
-
-            
-            <div className="flex-1 min-w-[220px]">
-              <label className="block text-sm">N. Solicitud</label>
-              <input className="input w-full" value={solicitudMaterial?.numOrden}  disabled={true}/>
-            </div>
-
-          </div>
-        </div>
-
-       
-        <div className="w-full bg-gray-100 rounded-xl shadow-md p-4">
-          <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Agregar ítems</h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
-          
-            <div className="md:col-span-6">
-              <label className="block text-sm">Descripción</label>
-               <div className=" w-full">
-                
-<input
-  className="input w-full"
-  list="browsers1"
-  value={item}
-  onChange={(e) => {
-    const value = e.target.value;
-    setitem(value);
-
-
-  }}
-/>
-
-<datalist id="browsers1">
-  {items?.map(p => (
-    <option key={p.id} value={p.nombre} />
-  ))}
-</datalist>
-
-
-</div>
-            </div>
-
-           
-            <div className="md:col-span-2">
-              <label className="block text-sm">Cantidad</label>
-              <input className="input w-full" placeholder="0" value={cantidad??""} onChange={(e)=> setcantidad(e.target.value)}/>
-            </div>
-
-           
-            <div  className="md:col-span-2">
-              <label  className="block text-sm">Stock Min.</label>
-              <input className="input w-full" disabled={habilitarStockMin} placeholder="" value={stockMin??""} onChange={(e)=> setstockMin(e.target.value)}/>
-            </div>
-
-            
-            <div className="md:col-span-2">
-              <label className="block text-sm">Precio U.</label>
-              <input className="input w-full" placeholder="0.00" value={precioUni??""} onChange={(e)=> setprecioUni(e.target.value)}/>
-            </div>
-
-            
-            <div className="md:col-span-2">
-              <label className="block text-sm">% Desc.</label>
-              <input className="input w-full" placeholder="0" value={descuento} onChange={(e)=> setdescuento(e.target.value)}/>
-            </div>
-
-            
-            <div className="md:col-span-3 flex items-center gap-4">
-              <label>
-  <input type="radio" name="iva" checked={iva === false} onChange={() => setiva(false)}/>
-  Sin IVA
-</label>
-
-<label>
-  <input type="radio" name="iva" checked={iva === true} onChange={() => setiva(true)}/>
-  Con IVA
-</label>
-
-            </div>
-
-            
-            <div className="md:col-span-9">
-              <label className="block text-sm">Observación</label>
-              <input className="input w-full" placeholder="Observación del ítem" />
-            </div>
-          </div>
-
-         
-        </div>
-
-        
-        <div className="w-full bg-gray-100 rounded-xl shadow-md p-4">
-          <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Almacenamiento</h2>
-
-          <div className="flex gap-4 flex-wrap">
-            <div className="w-full md:w-1/4">
-              <label className="block text-sm">Bodega</label> 
-              <select className="select w-full" defaultValue={"..."} onChange={(e)=>setbodega(e.target.value)}>
-                <option value="..." disabled={true} defaultChecked={true}>Seleccione una bodega</option>
-      {bodegas?.map(bodega => (
-        <option key={bodega.id} value={bodega.id}>{bodega.bodega}</option>
-      ))}
-              </select>
-            </div>
-
-            <div className="w-full md:w-1/4">
-              <label className="block text-sm">Sección</label>
-              <select className="select w-full" ref={selSecc} defaultValue={"..."} onChange={(e)=>setseccion(e.target.value)}>
-                      <option value="..." disabled={true} defaultChecked={true}>Seleccione una sección</option>
-      {secciones?.map(seccion => (
-        <option key={seccion.id} value={seccion.id}>{seccion.seccion}</option>
-      ))}
-
-              </select>
-            </div>
-
-            <div className="w-full md:w-1/4">
-              <label className="block text-sm">Percha</label>
-             <select className="select w-full" defaultValue={"..."} onChange={(e)=>setpercha(e.target.value)}>
-                      <option value="..." disabled={true} defaultChecked={true}>Seleccione una percha</option>
-      {perchas?.map(percha => (
-        <option key={percha.id} value={percha.id}>{percha.percha}</option>
-      ))}
-
-              </select>
-            </div>
-
-            <div className="w-full md:w-1/2">
-              <label className="block text-sm">Observación</label>
-              <textarea className="textarea w-full" placeholder="Observación de almacenamiento" value={observacion} onChange={(e)=> setobservacion(e.target.value)}/>
-            </div>
-          </div>
-          
-        </div>
- <div className="mt-4 flex justify-center">
-            <button type="button" className="btn" onClick={agregarItemsActualizado}>Agregar</button>
-          </div>
-        
-        <div className="w-full bg-gray-50 rounded-xl shadow-md p-4">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-sm font-medium">TOTAL DOCUMENTO</h3>
-              <div className="text-2xl font-bold text-yellow-400">{`$${total.toFixed(2)}`}</div>
-            </div>
-
-            
-          </div>
-
-          <div className="overflow-auto">
-            <table className="table w-full">
-              <thead>
-                <tr>
-                  <th>Descripción</th>
-                  <th>Cantidad</th>
-                  <th>Precio U.</th>
-                  <th>% Desc.</th>
-                  <th>Subtotal</th>
-                  <th>IVA</th>
-                  <th>Total</th>
-                  <th>Observación</th>
-                  <th>Acción</th>
-                </tr>
-              </thead>
-              <tbody>
-               
-                  {solicitudMaterial?.itemsSolicitados?.map((s,i)=>
-                     <tr key={i}>
-                   <td>{s.nombre}</td>
-                   <td>{s.cantidad}</td>
-                   <td>{s.costo}</td>
-                   <td>{s.descuento}</td>
-                   <td>{s.subtotal}</td>
-                   <td>{s.iva ?"15%":"0%"}</td>
-                   <td>{s.total.toFixed(2)}</td>
-                   <td>{s.Observacion}</td>
-                  <td>
-  <button 
-    className="btn"
-    onClick={() =>
-      asignarCampos(
-        i,
-        s.nombre,
-        s.cantidad,
-        s.costo 
-      )
-    }
-  >
-    Editar
-  </button>
-</td>
-
-                   </tr>
-                  )}
-                
-              </tbody>
-            </table>
-          </div>
-        </div>
-<div className="mt-4 flex justify-center">
-            <button type="button" className="btn" onClick={enviarygenerarActaDeEntrada}>Generar</button>
-          </div>
-       
-       
-
+      {/* Asignar solicitud */}
+      <div className="w-full flex items-center justify-center">
+        <button
+          type="button"
+          className="btn btn-primary btn-sm"
+          onClick={() => { setventanaBuscarSolicitudMaterial(!ventanaBuscarSolicitudMaterial); }}
+        >
+          Asignar solicitud de material
+        </button>
       </div>
 
-       <div className={`z-10 fixed  bg-transparent inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaBuscarSolicitudMaterial ? "opacity-100" : "opacity-0 pointer-events-none"} `}>
-                     <div className={`border border-gray-300 w-4/5 h-4/5 rounded-sm fixed  bg-white`}>
-                    <BuscarOrdenCompra ordenes={ordenes} setidSolMaterial={setsolCompraId} setventanaBuscarOrdenTrabajo={setventanaBuscarSolicitudMaterial} ventanaBuscarOrdenTrabajo={ventanaBuscarSolicitudMaterial}></BuscarOrdenCompra>
-                     </div>
-                     </div>
+      {/* Destino / Documento */}
+      <div className="w-full bg-base-100 rounded-2xl shadow-md p-5">
+        <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-3">Destino / Documento</h2>
 
-           <div
-  className={`fixed inset-0 z-10 flex items-center justify-center bg-black/40 transition-opacity duration-300
-    ${ventanaAgregarProovedor ? "opacity-100" : "opacity-0 pointer-events-none"}
-  `}
->
-<div className="bg-white w-4/5 max-w-5xl h-[78vh] rounded-lg shadow-xl overflow-y-auto">
-  <CrearProovedor
-    setventanaAgregarProovedor={setventanaAgregarProovedor}
-    ventanaAgregarProovedor={ventanaAgregarProovedor}
-  />
-</div>
-</div>           
-    </>
-  );
+        <div className="flex gap-4 flex-wrap">
+          <div className="flex gap-2 items-start min-w-[220px]">
+            <div className="w-full">
+              <label className="block text-sm text-gray-600 mb-1">Proveedor</label>
+              <div className="relative">
+                <input
+                  className="input input-bordered w-full"
+                  list="browsers"
+                  value={proovedor}
+                  onChange={(e) => setproovedor(e.target.value)}
+                  placeholder="Buscar proveedor..."
+                />
+                <datalist id="browsers">
+                  {proovedores?.map((p) =>
+                    <option key={p.id} value={p.nombreComercial} />
+                  )}
+                </datalist>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="btn btn-ghost btn-square ml-2 self-end"
+              onClick={() => setventanaAgregarProovedor(!ventanaAgregarProovedor)}
+              title="Agregar proveedor"
+            >
+              <img className="w-5 h-5" src="https://img.icons8.com/ios-glyphs/30/add-user-male.png" alt="add" />
+            </button>
+          </div>
+
+          <div className="min-w-[180px] flex-1">
+            <label className="block text-sm text-gray-600 mb-1">S/Factura</label>
+            <input className="input input-bordered w-full" value={factura} onChange={(e) => setfactura(e.target.value)} />
+          </div>
+
+          <div className="min-w-[180px] flex-1">
+            <label className="block text-sm text-gray-600 mb-1">N. Orden</label>
+            <input className="input input-bordered w-full bg-gray-50" value={solicitudMaterial?.numOrdenTrabajo?.NumOrden} disabled />
+          </div>
+
+          <div className="min-w-[220px] flex-1">
+            <label className="block text-sm text-gray-600 mb-1">N. Solicitud</label>
+            <input className="input input-bordered w-full bg-gray-50" value={solicitudMaterial?.numOrden} disabled />
+          </div>
+        </div>
+      </div>
+
+      {/* Agregar ítems */}
+      <div className="w-full bg-base-100 rounded-2xl shadow-md p-5">
+        <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-3">Agregar ítems</h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+          <div className="md:col-span-6">
+            <label className="block text-sm text-gray-600 mb-1">Descripción</label>
+            <input
+              className="input input-bordered w-full"
+              list="browsers1"
+              value={item}
+              onChange={(e) => { const value = e.target.value; setitem(value); }}
+              placeholder="Buscar o escribir descripción"
+            />
+            <datalist id="browsers1">
+              {items?.map(p => (
+                <option key={p.id} value={p.nombre} />
+              ))}
+            </datalist>
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-sm text-gray-600 mb-1">Cantidad</label>
+            <input className="input input-bordered w-full" placeholder="0" value={cantidad ?? ""} onChange={(e) => setcantidad(e.target.value)} />
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-sm text-gray-600 mb-1">Stock Min.</label>
+            <input className="input input-bordered w-full" disabled={habilitarStockMin} value={stockMin ?? ""} onChange={(e) => setstockMin(e.target.value)} />
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-sm text-gray-600 mb-1">Precio U.</label>
+            <input className="input input-bordered w-full" placeholder="0.00" value={precioUni ?? ""} onChange={(e) => setprecioUni(e.target.value)} />
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-sm text-gray-600 mb-1">% Desc.</label>
+            <input className="input input-bordered w-full" placeholder="0" value={descuento} onChange={(e) => setdescuento(e.target.value)} />
+          </div>
+
+          <div className="md:col-span-3 flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <input id="iva-no" type="radio" name="iva" checked={iva === false} onChange={() => setiva(false)} className="radio" />
+              <label htmlFor="iva-no" className="text-sm">Sin IVA</label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input id="iva-si" type="radio" name="iva" checked={iva === true} onChange={() => setiva(true)} className="radio" />
+              <label htmlFor="iva-si" className="text-sm">Con IVA</label>
+            </div>
+          </div>
+
+          <div className="md:col-span-9">
+            <label className="block text-sm text-gray-600 mb-1">Observación</label>
+            <input className="input input-bordered w-full" placeholder="Observación del ítem" />
+          </div>
+        </div>
+      </div>
+
+      {/* Almacenamiento */}
+      <div className="w-full bg-base-100 rounded-2xl shadow-md p-5">
+        <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-3">Almacenamiento</h2>
+
+        <div className="flex gap-4 flex-wrap">
+          <div className="w-full md:w-1/4">
+            <label className="block text-sm text-gray-600 mb-1">Bodega</label>
+            <select className="select select-bordered w-full" defaultValue={"..."} onChange={(e) => setbodega(e.target.value)}>
+              <option value="..." disabled>Seleccione una bodega</option>
+              {bodegas?.map(b => <option key={b.id} value={b.id}>{b.bodega}</option>)}
+            </select>
+          </div>
+
+          <div className="w-full md:w-1/4">
+            <label className="block text-sm text-gray-600 mb-1">Sección</label>
+            <select className="select select-bordered w-full" ref={selSecc} defaultValue={"..."} onChange={(e) => setseccion(e.target.value)}>
+              <option value="..." disabled>Seleccione una sección</option>
+              {secciones?.map(s => <option key={s.id} value={s.id}>{s.seccion}</option>)}
+            </select>
+          </div>
+
+          <div className="w-full md:w-1/4">
+            <label className="block text-sm text-gray-600 mb-1">Percha</label>
+            <select className="select select-bordered w-full" defaultValue={"..."} onChange={(e) => setpercha(e.target.value)}>
+              <option value="..." disabled>Seleccione una percha</option>
+              {perchas?.map(p => <option key={p.id} value={p.id}>{p.percha}</option>)}
+            </select>
+          </div>
+
+          <div className="w-full md:w-1/2">
+            <label className="block text-sm text-gray-600 mb-1">Observación</label>
+            <textarea className="textarea textarea-bordered w-full" placeholder="Observación de almacenamiento" value={observacion} onChange={(e) => setobservacion(e.target.value)} />
+          </div>
+        </div>
+
+        <div className="mt-4 flex justify-center">
+          <button type="button" className="btn btn-success" onClick={agregarItemsActualizado}>Agregar</button>
+        </div>
+      </div>
+
+      {/* Total y tabla */}
+      <div className="w-full bg-base-100 rounded-2xl shadow-md p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-sm font-medium text-gray-600">TOTAL DOCUMENTO</h3>
+            <div className="text-2xl font-bold text-yellow-500">{`$${total.toFixed(2)}`}</div>
+          </div>
+        </div>
+
+        <div className="overflow-auto rounded-md border">
+          <table className="table table-zebra w-full">
+            <thead>
+              <tr>
+                <th>Descripción</th>
+                <th>Cantidad</th>
+                <th>Precio U.</th>
+                <th>% Desc.</th>
+                <th>Subtotal</th>
+                <th>IVA</th>
+                <th>Total</th>
+                <th>Observación</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              {solicitudMaterial?.itemsSolicitados?.map((s, i) =>
+                <tr key={i}>
+                  <td className="max-w-xs truncate">{s.nombre}</td>
+                  <td>{s.cantidad}</td>
+                  <td>{s.costo}</td>
+                  <td>{s.descuento}</td>
+                  <td>{s.subtotal}</td>
+                  <td>{s.iva ? "15%" : "0%"}</td>
+                  <td>{s.total.toFixed(2)}</td>
+                  <td className="max-w-sm truncate">{s.Observacion}</td>
+                  <td>
+                    <button
+                      className="btn btn-ghost btn-xs"
+                      onClick={() => asignarCampos(i, s.nombre, s.cantidad, s.costo)}
+                    >
+                      Editar
+                    </button>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="mt-4 flex justify-center">
+        <button type="button" className="btn btn-primary" onClick={enviarygenerarActaDeEntrada}>Generar</button>
+      </div>
+    </div>
+
+    {/* Modal: Buscar solicitud (overlay) */}
+    <div className={`z-10 fixed inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaBuscarSolicitudMaterial ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+      <div className="border border-gray-200 w-11/12 md:w-4/5 h-4/5 rounded-lg fixed bg-white shadow-lg overflow-hidden">
+        <BuscarOrdenCompra ordenes={ordenes} setidSolMaterial={setsolCompraId} setventanaBuscarOrdenTrabajo={setventanaBuscarSolicitudMaterial} ventanaBuscarOrdenTrabajo={ventanaBuscarSolicitudMaterial} />
+      </div>
+    </div>
+
+    {/* Modal: Crear proveedor */}
+    <div className={`fixed inset-0 z-10 flex items-center justify-center bg-black/40 transition-opacity duration-300 ${ventanaAgregarProovedor ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+      <div className="bg-white w-11/12 md:w-4/5 max-w-5xl h-[78vh] rounded-lg shadow-xl overflow-y-auto">
+        <CrearProovedor setventanaAgregarProovedor={setventanaAgregarProovedor} ventanaAgregarProovedor={ventanaAgregarProovedor} />
+      </div>
+    </div>
+  </>
+);
+
 };

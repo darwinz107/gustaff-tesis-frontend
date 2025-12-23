@@ -92,224 +92,216 @@ export const CrearActaSalida = () => {
   
 
   return (
-     <>
-         <div className='w-full h-full m-2'>
-            <div className='w-full h-[10%] flex items-center justify-center '>
-                <button className='btn' disabled={!conOrden}onClick={()=>{setactaSalida(true); setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo);}}>Asignar solicitud de material</button>
-                
+  <>
+    <div className="w-full h-full p-6 space-y-6">
+
+      {/* Header / acción */}
+      <div className="w-full flex items-center justify-center">
+        <button
+          className="btn btn-primary"
+          disabled={!conOrden}
+          onClick={() => { setactaSalida(true); setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo); }}
+        >
+          Asignar solicitud de material
+        </button>
+      </div>
+
+      {/* Información de orden */}
+      <div className="w-full bg-base-100 rounded-2xl shadow p-5">
+        <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-3">
+          Información de orden de material
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-3">
+            <label className="text-sm text-gray-600">Solicitante</label>
+            <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.userSolicitante?.name} disabled />
+
+            <label className="text-sm text-gray-600 mt-2">Área</label>
+            <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.Area} disabled />
+
+            <label className="text-sm text-gray-600 mt-2">Destino</label>
+            <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.Destino} disabled />
+          </div>
+
+          <div className="space-y-3">
+            <label className="text-sm text-gray-600">Entrega</label>
+            <select value={entrega} className="select select-bordered w-full" disabled={!conOrden} onChange={(e) => setentrega(e.target.value)}>
+              <option value={0} disabled>...</option>
+              {users.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
+            </select>
+
+            <label className="text-sm text-gray-600 mt-2">Código</label>
+            <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.Codigo} disabled />
+
+            <label className="text-sm text-gray-600 mt-2">Observación</label>
+            <input type="text" className="input input-bordered w-full" disabled={!conOrden} onChange={(e) => setobservacion(e.target.value)} />
+          </div>
+
+          <div className="space-y-3">
+            <label className="text-sm text-gray-600">Recibe</label>
+            <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.userSolicitante?.name} disabled />
+
+            <label className="text-sm text-gray-600 mt-2">Máquina</label>
+            <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.Maquina} disabled />
+
+            <label className="text-sm text-gray-600 mt-2">N.Orden</label>
+            <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrden} disabled />
+          </div>
+        </div>
+      </div>
+
+      {/* Agregar items */}
+      <div className="w-full bg-base-100 rounded-2xl shadow p-5">
+        <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-3">Agregar ítems</h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+          <div className="md:col-span-4">
+            <label className="text-sm text-gray-600">Cantidad</label>
+            <input disabled={conOrden} type="text" className="input input-bordered w-full" />
+          </div>
+
+          <div className="md:col-span-5">
+            <label className="text-sm text-gray-600">Item</label>
+            <div className="relative">
+              <input
+                disabled={conOrden}
+                type="text"
+                className="input input-bordered w-full pr-10"
+              />
+              <button
+                disabled={conOrden}
+                type="button"
+                className="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-sm"
+                onClick={() => setventanaEmergente(!ventanaEmergente)}
+                aria-label="buscar item">
+                {conOrden ? '' : '🔎'}
+              </button>
             </div>
-            
-            <div className='w-full h-[30%] bg-white rounded-xl shadow-md p-4 mb-6'>
-            <div className=' h-[15%] mb-4'>
-               <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Informacion de orden de material</h2> 
-            </div>
-            <div className='w-full h-[85%] flex flex-row'>
-             <div className='w-[33.33%] h-[80%] pl-2'>
-                <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>Solicitante</p><input type="text"  className='input ml-10 mr-3' value={solicitudMaterial?.numOrdenTrabajo?.userSolicitante?.name}  disabled={true}/></div>
-                <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Area</p><input   type="text"  className='input ml-1 mr-2' value={solicitudMaterial?.numOrdenTrabajo?.Area} disabled={true}/></div>
-                <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Destino</p><input  type="text"  className='input ml-5 mr-2' disabled={true} value={solicitudMaterial?.Destino}/></div>
-              </div>
-                <div className='w-[33.33%] h-[80%] '>
-                <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>Entrega</p>  <select value={entrega} className="select mr-2 ml-3" id="" disabled={!conOrden} onChange={(e)=>setentrega(e.target.value)}>
-                    <option value={0} disabled={true}>...</option>
-                    {users.map((m) => <>
-                      <option value={m.id}>{m.name}</option>
-                    </>)}
-                  </select></div>
-                <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Codigo</p><input   type="text"  className='input ml-1' value={solicitudMaterial?.numOrdenTrabajo?.Codigo} disabled={true}/></div>
-                <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%] mr-5'>Observacion</p><input  type="text"  className='input ml-5' disabled={!conOrden} onChange={(e)=>setobservacion(e.target.value)}/></div>
-              </div>
-              <div className='w-[33.34%] h-[80%] pr-2'>
-                <div className='w-[100%] h-[33.33%] flex flex-row'><p className='min-w-[17%]'>Recibe</p><input type="text"  className='input ml-5'  value={solicitudMaterial?.numOrdenTrabajo?.userSolicitante?.name} disabled={true}/></div>
-                <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%]'>Maquina</p><input   type="text"  className='input ml-4' value={solicitudMaterial?.numOrdenTrabajo?.Maquina} disabled={true}/></div>
-               <div className='w-[100%] h-[33.34%] flex flex-row'><p className='min-w-[17%] mr-5'>N.Orden</p><input  type="text"  className='input ml-5' disabled={true} value={solicitudMaterial?.numOrden}/></div>
-              </div>
-             </div>
-            </div>
-                 <div className='w-full min-h-[25%] bg-white rounded-xl shadow-md p-4 mb-6'>
-            <div className=' min-h-[20%]'>
-                <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Agregar items</h2>    
-            </div>
-            <div className='w-full h-[80%] mt-4 text-center'>
-             <div className='w-full h-[80%] pl-2 flex flex-row mb-4'>
-                <div className='w-[100%]  flex flex-col mr-2'><p className='min-w-[17%]'>Cantidad</p><input disabled={conOrden}  type="text"  className='input'  /*onChange={(e)=>setcantidad(e.target.value)}*//></div>
-                <div className='w-[100%]  flex flex-col mr-2'>
-                  <p className='min-w-[17%]'>Item</p>
-                  <div className="relative w-full">
-      <input disabled={conOrden}
-        type="text"
-        className="input input-bordered w-full pr-10"
-        /*value={item}
-        onChange={(e) => setitem(e.target.value)}*/
-      />
-    
-      <button
-      disabled={conOrden}
-        type="button"
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer"
-        onClick={()=>setventanaEmergente(!ventanaEmergente)}
-      >
-        {conOrden ?'': '🔎'}
-      </button>
-    </div>
-    </div>
-                <div className='w-[100%]  flex flex-col mr-2'><p className='min-w-[17%]'>Destino</p><input disabled={conOrden}   type="text"  className='input'  /*onChange={(e)=>setcaracteristica(e.target.value)}*//></div>
-                <div className='w-[100%]  flex flex-col mr-2'><p className='min-w-[17%]'>Observacion</p><input disabled={conOrden}  type="text"  className='input' /*onChange={(e)=>setobservacion(e.target.value)}*/ /></div>
-              </div>
-            
-             {
-                conOrden ? (<button className='btn' onClick={()=>{setconOrden(!conOrden); setsolicitudMaterial({numOrden:"",numOrdenTrabajo:{Area:"",userSolicitante:{name:""},Maquina:"",Codigo:""},Destino:"",itemSolicitados:[]});setentrega(0);}}>Activar</button>):
-                <><button className='btn' /*onClick={funcionAgregarItems}*/>Agregar a compras</button>
-                <button className='btn' onClick={()=>setconOrden(!conOrden)}>Cancelar</button></>
-             } 
-             </div>
-            
-           </div>
-            
-            <div className='w-full h-[40%] bg-white rounded-xl shadow-md p-4 mb-6'>
-              <div className=' min-h-[10%]'>
-                <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Salidas</h2>  
-             </div>
-            <div className='w-full h-[70%] mt-4 text-center'>
-             <div className='w-full h-[90%] pl-2 flex flex-row mb-4'>
-                <div className="overflow-auto w-full h-[100%] m-2">
-              <table className="table">
-    
-            {conOrden ?<><thead >
-                  <tr>
-    
-                    <th>Cantidad</th>
-                    <th>Item</th>
-                    <th>Caracteristica</th>
-                    <th>Observacion</th>
-                    
-                    
+          </div>
+
+          <div className="md:col-span-3">
+            <label className="text-sm text-gray-600">Destino</label>
+            <input disabled={conOrden} type="text" className="input input-bordered w-full" />
+          </div>
+
+          <div className="md:col-span-12">
+            <label className="text-sm text-gray-600 mt-2">Observación</label>
+            <input disabled={conOrden} type="text" className="input input-bordered w-full" />
+          </div>
+
+          <div className="md:col-span-12 flex gap-3 mt-3">
+            {conOrden ? (
+              <button className="btn btn-outline" onClick={() => { setconOrden(!conOrden); setsolicitudMaterial({ numOrden: "", numOrdenTrabajo: { Area: "", userSolicitante: { name: "" }, Maquina: "", Codigo: "" }, Destino: "", itemSolicitados: [] }); setentrega(0); }}>
+                Activar
+              </button>
+            ) : (
+              <>
+                <button className="btn btn-primary">Agregar a compras</button>
+                <button className="btn" onClick={() => setconOrden(!conOrden)}>Cancelar</button>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Salidas / tabla */}
+      <div className="w-full bg-base-100 rounded-2xl shadow p-5">
+        <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-3">Salidas</h2>
+
+        <div className="overflow-auto max-h-72">
+          <table className="table table-zebra w-full">
+            <thead>
+              <tr>
+                <th>Cantidad</th>
+                <th>Item</th>
+                <th>Característica</th>
+                <th>Observación</th>
+                {conOrden ? null : <th>Acciones</th>}
+              </tr>
+            </thead>
+
+            <tbody>
+              {conOrden ? (
+                solicitudMaterial?.itemSolicitados?.map((u, i) =>
+                  u.existencia ? (
+                    <tr key={i}>
+                      <td>{u.cantidad}</td>
+                      <td>{u.item}</td>
+                      <td>{u.caracteristica}</td>
+                      <td>{u.Observacion ?? "N/A"}</td>
+                    </tr>
+                  ) : null
+                )
+              ) : (
+                solicitudMaterial?.itemSolicitados?.map((u, i) => (
+                  <tr key={i}>
+                    <td>{u.cantidad}</td>
+                    <td>{u.item}</td>
+                    <td>{u.caracteristica}</td>
+                    <td>{u.Observacion}</td>
+                    <td>
+                      <button className="btn btn-ghost btn-xs">Eliminar</button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {solicitudMaterial?.itemSolicitados?.map((u,i) =>( u.existencia ? 
-                    <>
-                      <tr>
-    
-                        <td>
-                          {u.cantidad}
-                        </td>
-                        <td>
-                          {u.item}
-    
-                        </td>
-                        <td>{u.caracteristica}</td>
-                        <td>{u.Observacion ??"N/A"}</td>
- 
-                      </tr>
-                    </>:<></>))}
-    
-                </tbody></>:
-                <>
-                                <thead >
-                  <tr>
-    
-                    <th>Cantidad</th>
-                    <th>Item</th>
-                    <th>Caracteristica</th>
-                    <th>Observacion</th>
-                    
-                    <th>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {/*solicitudMaterial?.itemSolicitados.map((u,i) =>
-                    <>
-                      <tr>
-    
-                        <td>
-                          {u.cantidad}
-                        </td>
-                        <td>
-                          {u.item}
-    
-                        </td>
-                        <td>{u.caracteristica}</td>
-                        <td>{u.Observacion}</td>
-                        
-                        <td>
-                          
-                          <button className="btn btn-ghost btn-xs" onClick={()=>funcionEliminarItems(i)}>Eliminar</button>
-                        </td>
-                      </tr>
-                    </>)*/}
-    
-                </tbody>
-                </>}
-    
-              </table>
-            </div>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Generar */}
+      <div className="flex justify-center">
+        <button className="btn btn-success" onClick={generarActaSalida}>Generar acta de salida</button>
+      </div>
+
+      {/* Modal: Buscar Orden Trabajo */}
+      <div className={`fixed inset-0 z-40 flex items-center justify-center transition-opacity duration-300 ${ventanaBuscarOrdenTrabajo ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+        <div className="bg-white w-11/12 md:w-4/5 h-4/5 rounded-lg shadow-lg overflow-hidden border">
+          <BuscarOrdenCompra ordenes={ordenes} setidSolMaterial={cargarInfoSolMaterial} setventanaBuscarOrdenTrabajo={setventanaBuscarOrdenTrabajo} ventanaBuscarOrdenTrabajo={ventanaBuscarOrdenTrabajo} />
+        </div>
+      </div>
+
+      {/* Modal: Ventana emergente items */}
+      <div className={`fixed inset-0 z-40 flex items-center justify-center transition-opacity duration-300 ${ventanaEmergente ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+        <div className="bg-white w-11/12 md:w-2/5 h-3/5 rounded-lg shadow-lg border">
+          <div className="flex items-center justify-between p-4 border-b">
+            <div className="font-medium">Listado de ítems</div>
+            <button className="btn btn-ghost btn-sm" onClick={() => { setventanaEmergente(!ventanaEmergente); }}>❌</button>
+          </div>
+
+          <div className="p-4 flex flex-col h-[70%]">
+            <div className="flex justify-end mb-3">
+              <div className="flex items-center gap-2">
+                <span className="text-sm">Buscar:</span>
+                <input className="input input-bordered input-sm" type="text" />
               </div>
-             
-             </div>
             </div>
-             <div className=' text-center'><button className='btn btn-primary' onClick={generarActaSalida}>Generar acta de salida</button></div>
-         </div>
-    
-           <div className={`z-10 fixed  bg-transparent inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaBuscarOrdenTrabajo ? "opacity-100" : "opacity-0 pointer-events-none"} `}>
-               <div className={`border border-gray-300 w-4/5 h-4/5 rounded-sm fixed  bg-white`}>
-              <BuscarOrdenCompra ordenes={ordenes} setidSolMaterial={cargarInfoSolMaterial} setventanaBuscarOrdenTrabajo={setventanaBuscarOrdenTrabajo} ventanaBuscarOrdenTrabajo={ventanaBuscarOrdenTrabajo}></BuscarOrdenCompra>
-               </div>
-               </div>
-                 <div className={`z-10 fixed  bg-transparent inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaEmergente ? "opacity-100" : "opacity-0 pointer-events-none"} `}>
-                      <div className={`border border-gray-300 w-2/5 h-2/5 rounded-sm fixed  bg-white`}>
-                        <div className='w-full h-[12%] flex justify-between p-5 mb-2'>
-                          <div>Listado de items</div>
-                          <div onClick={() => { setventanaEmergente(!ventanaEmergente); console.log(ventanaEmergente) }} className='cursor-pointer'>❌</div>
-                        </div>
-                        <div className='w-full h-[76%] border-y border-gray-300 px-4 flex flex-col'>
-                          <div className='flex justify-end h-[15%] w-full mt-2'>
-                            <div className='flex'> <p>Buscar: </p> <input className='input ml-2' type="text" /*onChange={(e)=>setbuscarItem(e.target.value)}*//></div>
-                          </div>
-                         <div className="overflow-x-auto w-full h-[85%] m-2">
-              <table className="table">
-    
-                <thead >
+
+            <div className="overflow-auto border rounded">
+              <table className="table w-full">
+                <thead>
                   <tr>
-    
-                    
                     <th>Item</th>
                     <th>Stock</th>
-      
-                    <th>Accion</th>
+                    <th>Acción</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {/*inventarios.map((i) =>
-                    <>
-                      <tr>
-    
-                        <td>
-                          {i.nombre}
-                        </td>
-                        <td>
-                          {i.stock}
-    
-                        </td>
-                        
-                        <td>
-                          
-                          <button className="btn btn-ghost btn-xs" onClick={()=>{setitem(i.nombre); setventanaEmergente(false);}}>Seleccionar</button>
-                        </td>
-                      </tr>
-                    </>)*/}
-    
+                  {/* contenido dinámico (sin tocar lógica) */}
                 </tbody>
-    
               </table>
             </div>
-                        </div>
-                        <div className='w-full h-[12%] flex justify-between p-5'>
-                
-                  
-                        </div>
-                      </div>
-                      </div>
-         </>
-  )
+
+            <div className="mt-3 flex justify-end gap-2">
+              <button className="btn">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </>
+);
+
 }

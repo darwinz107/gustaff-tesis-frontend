@@ -14,6 +14,7 @@ import { CrearActaEntrada } from "../../acta-de-entrada/view/CrearActaEntrada";
 import { GestionSalida } from "../../acta-de-salida/view/GestionSalida";
 import { GestionInventario } from "../../inventario/view/GestionInventario";
 import { getLastSolicitud } from "../../orden-de-trabajo/controller/api/orden-api";
+import { AdminDashboard } from "../../dashboards/AdminDashboard";
 
 export const Principal = () => {
 
@@ -52,7 +53,7 @@ export const Principal = () => {
   }
 
   const componentes = {
-    0: <></>,
+    0: <AdminDashboard></AdminDashboard>,
     1: <CrearOrden setcargarAuto={setcargarAuto} setsendId={setsendId} />,
     2: <HistorialOrdenes setcargaAuto={setcargarAuto} setsendId={setsendId} />,
     3: <NuevosRegistros />,

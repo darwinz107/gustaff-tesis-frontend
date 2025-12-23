@@ -159,198 +159,240 @@ setshowSuccess(false);
   }
   
  
-  return (
-    <>
+ return (
+  <>
     {showSuccess && (
-  <div className="fixed top-5 right-5 z-50">
-    <div role="alert" className="alert alert-success shadow-lg">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-6 w-6 shrink-0 stroke-current"
-        fill="none"
-        viewBox="0 0 24 24">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-      <span>¡Orden de trabajo creada!</span>
-    </div>
-  </div>
-)}
+      <div className="fixed top-6 right-6 z-50">
+        <div role="alert" className="alert alert-success shadow-lg">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 shrink-0 stroke-current"
+            fill="none"
+            viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div>
+            <h3 className="font-medium">¡Orden de trabajo creada!</h3>
+            <div className="text-sm">La orden se generó correctamente.</div>
+          </div>
+        </div>
+      </div>
+    )}
 
+    <dialog ref={dialog} id="my_modal_1" className="modal">
+      <div className="modal-box">
+        <h3 className="font-bold text-lg">Solicitud de material!</h3>
+        <p className="py-4">¿Desea generar la solicitud de material?</p>
+        <div className="modal-action">
+          <form method="dialog" className="flex gap-2">
+            <button className="btn btn-primary" onClick={redirigirSolMaterial}>Crear</button>
+            <button className="btn">Cancelar</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
 
+    <div className="max-w-4xl mx-auto p-6">
+      <form className="space-y-6" onSubmit={(e) => { addSolicitudOrden(e); }}>
+        {/* Tiempos */}
+        <div className="card bg-base-100 shadow-lg rounded-2xl p-4">
+          <div className="card-body p-0">
+            <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
+              Tiempos de trabajo
+            </h2>
 
-<dialog ref={dialog} id="my_modal_1" className="modal">
-  <div className="modal-box">
-    <h3 className="font-bold text-lg">Solicitud de material!</h3>
-    <p className="py-4">¿Desea generar la solicitud de material?</p>
-    <div className="modal-action">
-      <form method="dialog">
-        <button className="btn mr-3" onClick={redirigirSolMaterial}>Crear</button>
-        <button className="btn">Cancelar</button>
+            <div className="grid gap-4 md:grid-cols-2 items-center">
+              <div className="space-y-2">
+                <label className="text-sm">Fecha y hora planificada</label>
+                <div className="flex items-center gap-2">
+                  
+         <input type="date" className="input input-sm" value={tiempos[0]} onChange={(e)=>{const arr = tiempos; arr[0] = e.target.value; settiempos(arr);}} />
+                 
+
+                  <input
+                    onChange={(e) => { const arr = tiempos; arr[1] = e.target.value; settiempos(arr); }}
+                    type="time"
+                    className="input input-bordered input-sm w-50"
+                  />
+
+                  <span className="text-sm opacity-70">Estimado</span>
+
+                  <input
+                    onChange={(e) => { const arr = tiempos; arr[2] = e.target.value; settiempos(arr); }}
+                    type="time"
+                    className="input input-bordered input-sm w-50"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm">Fecha estimada de finalización</label>
+                <div className="flex items-center gap-3">
+               <input type="date" className="input input-sm" value={tiempos[3]} onChange={(e)=>{const arr = tiempos; arr[3] = e.target.value; settiempos(arr);}} />
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Ubicación */}
+        <div className="card bg-base-100 shadow-lg rounded-2xl p-4">
+          <div className="card-body p-0">
+            <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
+              Ubicación
+            </h2>
+
+            <div className="grid gap-4 md:grid-cols-3 items-end">
+              <div className="form-control">
+                <label className="label p-0 pb-1"><span className="label-text">Area</span></label>
+                <select
+                  defaultValue={'...'}
+                  className="select select-bordered"
+                  onChange={(e) => setselectArea(e.target.value)}
+                >
+                  <option disabled={true}>...</option>
+                  {area?.map((a) => <option key={a?.nombre} value={a?.nombre}>{a?.nombre}</option>)}
+                </select>
+              </div>
+
+              <div className="form-control">
+                <label className="label p-0 pb-1"><span className="label-text">Codigo</span></label>
+                <select
+                  ref={select1}
+                  defaultValue={'...'}
+                  className="select select-bordered"
+                  onChange={(e) => setselectCodigo(e.target.value)}
+                >
+                  <option disabled={true}>...</option>
+                  {codigos?.map((c) => <option key={c?.cod} value={c?.cod}>{c?.cod}</option>)}
+                </select>
+              </div>
+
+              <div className="form-control">
+                <label className="label p-0 pb-1"><span className="label-text">Maquina</span></label>
+                <select
+                  defaultValue={'...'}
+                  className="select select-bordered"
+                  onChange={(e) => setselectMaquina(e.target.value)}
+                >
+                  <option disabled={true}>...</option>
+                  {maquinas?.map((m) => <option key={m?.nombre} value={m?.nombre}>{m?.nombre}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <label className="label p-0 pb-1"><span className="label-text">Equipos/Piezas</span></label>
+              <textarea
+                className="textarea textarea-bordered w-full"
+                onChange={(e) => setespecPiezas(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Especificación del trabajo */}
+        <div className="card bg-base-100 shadow-lg rounded-2xl p-4">
+          <div className="card-body p-0">
+            <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
+              Especificación del trabajo
+            </h2>
+
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="form-control">
+                <label className="label p-0 pb-1"><span className="label-text">Categoria</span></label>
+                <select
+                  defaultValue={'...'}
+                  className="select select-bordered"
+                  onChange={(e) => {
+                    const nueva = [...especificacion];
+                    nueva[0] = e.target.value;
+                    setespecificacion(nueva);
+                  }}
+                >
+                  <option disabled={true}>...</option>
+                  {categorias.map((c) => <option key={c.nombre} value={c.nombre}>{c.nombre}</option>)}
+                </select>
+              </div>
+
+              <div className="form-control">
+                <label className="label p-0 pb-1"><span className="label-text">Tipo de trabajo</span></label>
+                <select
+                  defaultValue={'...'}
+                  className="select select-bordered"
+                  onChange={(e) => {
+                    const nueva = [...especificacion];
+                    nueva[1] = e.target.value;
+                    setespecificacion(nueva);
+                  }}
+                >
+                  <option disabled={true}>...</option>
+                  {tipoTrabajos.map((t) => <option key={t.tipo} value={t.tipo}>{t.tipo}</option>)}
+                </select>
+              </div>
+
+              <div className="form-control">
+                <label className="label p-0 pb-1"><span className="label-text">Descripcion del trabajo</span></label>
+                <textarea
+                  className="textarea textarea-bordered h-24"
+                  onChange={(e) => {
+                    const nueva = [...especificacion];
+                    nueva[2] = e.target.value;
+                    setespecificacion(nueva);
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Personal */}
+        <div className="card bg-base-100 shadow-lg rounded-2xl p-4">
+          <div className="card-body p-0">
+            <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
+              Personal
+            </h2>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <label className="label p-0 pb-1"><span className="label-text">Solicitante</span></label>
+                <select className="select select-bordered w-full" defaultValue={"..."} onChange={(e) => setsolicitante(e.target.value)}>
+                  <option defaultChecked={true}>...</option>
+                  {users.map((u) => <option key={u.name} value={u.name}>{u.name}</option>)}
+                </select>
+              </div>
+
+              <div>
+                <label className="label p-0 pb-1"><span className="label-text">Tecnico 1 (Receptor)</span></label>
+                <select className="select select-bordered w-full" defaultValue={"..."} onChange={(e) => setreceptor(e.target.value)}>
+                  <option defaultChecked={true} disabled={true}>...</option>
+                  {users.map((u) => <option key={u.name} value={u.name}>{u.name}</option>)}
+                </select>
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="label p-0 pb-1"><span className="label-text">Tecnico 2</span></label>
+                <select className="select select-bordered w-full" defaultValue={"..."} onChange={(e) => settecnico(e.target.value)}>
+                  <option defaultChecked={true} disabled={true}>...</option>
+                  {users.map((u) => <option key={u.name} value={u.name}>{u.name}</option>)}
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Submit */}
+        <div className="flex justify-center">
+          <button className="btn btn-primary btn-lg px-10" type="submit">Crear</button>
+        </div>
       </form>
     </div>
-  </div>
-</dialog>
-      <div className='flex items-center justify-center '>
-        <form className='min-w-170'  onSubmit={(e) => { addSolicitudOrden(e); }} >
-          <div className=' bg-white rounded-xl shadow-md p-4 mb-6'>
-             <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
-    Tiempos de trabajo
-  </h2>
-            <div>
-              <div className='flex flex-row mb-3 my-4 px-2'>
-                <p>Fecha y hora planificada</p> <button type="button" onClick={() => { callyPpopover1.current?.showPopover() }} className="input input-border" id="cally1" style={{ anchorName: "--cally1" }}>
-                  Pick a date
-                </button>
-                <div popover="auto" ref={callyPpopover1} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally1" }}>
-                  <calendar-date className="cally" onchange={(e) =>{document.getElementById("cally1").innerText = e.target.value; const arr = tiempos; arr[0] = e.target.value; settiempos(arr);}}>
-                    <svg aria-label="Previous" className="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
-                    <svg aria-label="Next" className="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
-                    <calendar-month></calendar-month>
-                  </calendar-date>
-                </div>
-                <div className="mx-2"></div>
-                <input onChange={(e)=>{const arr = tiempos; arr[1] = e.target.value; settiempos(arr);}} type="time" className="input" />
-                <div className="mx-2"></div>
-                <p>Tiempo estimado</p> <div className="mx-2"></div> <input onChange={(e)=>{const arr = tiempos; arr[2] = e.target.value; settiempos(arr);}} type="time" className="input" />
-              </div>
-              <div className='flex flex-row px-2'><p className="mr-2">Fecha estimada de finalizacion</p> <button type="button" onClick={() => { callyPpopover3.current?.showPopover() }} className="input input-border" id="cally3" style={{ anchorName: "--cally3" }}>
-                  Pick a date
-                </button>
-                <div popover="auto" ref={callyPpopover3} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally3" }}>
-                  <calendar-date className="cally" onchange={(e) =>{document.getElementById("cally3").innerText = e.target.value; const arr = tiempos; arr[3] = e.target.value; settiempos(arr);}}>
-                    <svg aria-label="Previous" className="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
-                    <svg aria-label="Next" className="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
-                    <calendar-month></calendar-month>
-                  </calendar-date>
-                </div></div>
-            </div>
-          </div>
+  </>
+);
 
-          <div className="bg-white rounded-xl shadow-md p-4 mb-6">
-             <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
-    Ubicación
-  </h2>
-            <div className="flex flex-row mb-4 px-2">
-              <p className="mr-2">Area</p>
-              <select defaultValue={'...'} className="select" id="" onChange={(e) => {
-              setselectArea(e.target.value);
-              }}>
-                <option disabled={true}>...</option>
-                {area?.map((a) =>
-                  <>
-                    <option value={a?.nombre}>{a?.nombre}</option>
-                  </>
-                )}
-              </select>
-
-              <p className="mx-2">Codigo</p>
-              <select ref={select1}  defaultValue={'...'} className="select" id="" onChange={(e) => {
-                setselectCodigo(e.target.value);
-               
-              }}>
-                <option disabled={true}>...</option>
-                {codigos?.map((c) => <>
-                  <option value={c?.cod}>{c?.cod}</option>
-                </>)}
-              </select>
-
-              <p className="mx-2">Maquina</p>
-              <select defaultValue={'...'} className="select" id="" onChange={(e) => {
-                setselectMaquina(e.target.value);
-              }}>
-                <option disabled={true}>...</option>
-                {maquinas?.map((m) => <>
-                  <option value={m?.nombre }>{m?.nombre}</option>
-                </>)}
-              </select>
-            </div>
-            <div className="flex flex-row px-2">
-              <p className="mr-2">Equipos/Piezas</p>
-              <textarea className="textarea" onChange={(e) => {
-              setespecPiezas(e.target.value);
-              }}></textarea>
-            </div>
-          </div>
-
-         <div className="bg-white rounded-xl shadow-md p-4 mb-6">
-  <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
-    Especificación del trabajo
-  </h2>
-            <div className="px-2">
-              <p className="mr-2">Categoria</p>
-              <select defaultValue={'...'} className="select" id="" onChange={(e) => {
-                const nueva = [...especificacion];
-                nueva[0] = e.target.value;
-                setespecificacion(nueva);
-
-              }}>
-                <option disabled={true}>...</option>
-                {categorias.map((c) => <>
-                  <option value={c.nombre}>{c.nombre}</option>
-                </>)}
-              </select>
-            </div>
-            <div className="px-2">
-              <p className="mr-2">Tipo de trabajo</p>
-              <select defaultValue={'...'} className="select" onChange={(e)=>{
-                const nueva = [...especificacion];
-                nueva[1] = e.target.value;
-                setespecificacion(nueva);
-              }      
-              }>
-                <option disabled={true}>...</option>
-                {tipoTrabajos.map((t) => <>
-                  <option value={t.tipo}>{t.tipo}</option>
-                </>)}
-              </select>
-            </div>
-            <div className="px-2">
-              <p className="mr-2">Descripcion del trabajo</p>
-              <textarea className="textarea" id="" onChange={(e) => {
-                const nueva = [...especificacion];
-                nueva[2] = e.target.value;
-                setespecificacion(nueva)
-              }}></textarea>
-            </div>
-          </div>
-         <div className="bg-white rounded-xl shadow p-4 mt-6">
-  <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
-    Personal
-  </h2>
-          <div className="mt-4"><div className="flex"><label htmlFor="" className="mr-2">Solicitante</label> 
-          <select className="select mr-2" defaultValue={"..."} onChange={(e)=>setsolicitante(e.target.value)}>
-            <option defaultChecked={true}>...</option>
-            {users.map((u)=><>
-             <option value={u.name}>{u.name}</option>
-            </>)}
-            </select>
-             <label htmlFor="" className="mr-2">Tecnico 1</label> 
-            <select className="select" defaultValue={"..."} onChange={(e)=>setreceptor(e.target.value)}>
-            <option defaultChecked={true} disabled={true}>...</option>
-            {users.map((u)=><>
-             <option value={u.name}>{u.name}</option>
-            </>)}
-            </select></div>
-            <div className="mt-5">
-              <label htmlFor="" className="mr-2">Tecnico 2</label>
-              <select className="select" defaultValue={"..."} onChange={(e)=>settecnico(e.target.value)}>
-            <option defaultChecked={true} disabled={true}>...</option>
-            {users.map((u)=><>
-             <option value={u.name}>{u.name}</option>
-            </>)}
-            </select>
-              </div></div>
-          <div></div>
-         </div>
-
-  <div className="my-2 flex items-center justify-center"><button className="btn p-4 btn-primary" type="submit">Crear</button></div>
-          
-        </form>
-      </div>
-    </>
-  )
 }
