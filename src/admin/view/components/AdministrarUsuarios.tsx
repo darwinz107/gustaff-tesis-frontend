@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { NuevoUsuario } from './NuevoUsuario';
 import { getOneUser, getUsers } from '../../../user/controller/api/user-api';
 import type { Users } from '../../models/users';
-import { actualizarUsuario, getAllCargos } from '../../controller/api/admin-api';
+import { actualizarUsuario, deleteUser, getAllCargos } from '../../controller/api/admin-api';
 import { filtrarUsers } from '../../../user/controller/api/user-api';
 
 export const AdministrarUsuarios = () => {
@@ -115,6 +115,19 @@ const obtenerUsers = async () =>{
     setusers(res);
   };
 
+  const metodoEliminarUser = async (id:number) => {
+   const res = await deleteUser(id);
+
+   if(res.validate ===false){
+    alert(res.msj);
+    return;
+   }
+
+   alert(res.msj);
+   const res2 = await getUsers();
+    setusers(res2);
+  }
+
   return (
     <>
       <div className="min-w-[70%] min-h-[60%] rounded-xl border border-gray-200 bg-white shadow-sm">
@@ -181,6 +194,7 @@ const obtenerUsers = async () =>{
                       <td className="px-4 py-3 align-top text-center">
                         <div className="flex items-center justify-center gap-2">
                           <button className="btn btn-outline btn-sm" onClick={() => { detalleUsuario(u.id); setventanaEmergente(true); }}>Detalles</button>
+                           <button className="btn btn-outline btn-sm" onClick={() => { metodoEliminarUser(u.id); }}>Eliminar</button>
                         </div>
                       </td>
                     </tr>

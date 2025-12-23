@@ -220,4 +220,13 @@ export const getAllBodegas = async (): Promise<{ id: number; bodega: string }[]>
   return data;
 };
 
+export const deleteUser = async (id:number): Promise<{ msj:string,validate:boolean }> => {
+  const response = await fetch(`${route}admin/user/${id}`, {
+    method: "DELETE",
+  });
+
+  const data = await response.json();
+  return data;
+};
+
 
