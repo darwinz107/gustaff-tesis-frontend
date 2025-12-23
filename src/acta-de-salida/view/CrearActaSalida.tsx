@@ -95,7 +95,7 @@ export const CrearActaSalida = () => {
   <>
     <div className="w-full h-full p-6 space-y-6">
 
-      {/* Header / acción */}
+      
       <div className="w-full flex items-center justify-center">
         <button
           className="btn btn-primary"
@@ -106,7 +106,7 @@ export const CrearActaSalida = () => {
         </button>
       </div>
 
-      {/* Información de orden */}
+     
       <div className="w-full bg-base-100 rounded-2xl shadow p-5">
         <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-3">
           Información de orden de material
@@ -151,7 +151,7 @@ export const CrearActaSalida = () => {
         </div>
       </div>
 
-      {/* Agregar items */}
+    
       <div className="w-full bg-base-100 rounded-2xl shadow p-5">
         <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-3">Agregar ítems</h2>
 
@@ -205,7 +205,7 @@ export const CrearActaSalida = () => {
         </div>
       </div>
 
-      {/* Salidas / tabla */}
+      
       <div className="w-full bg-base-100 rounded-2xl shadow p-5">
         <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-3">Salidas</h2>
 
@@ -251,19 +251,19 @@ export const CrearActaSalida = () => {
         </div>
       </div>
 
-      {/* Generar */}
+      
       <div className="flex justify-center">
         <button className="btn btn-success" onClick={generarActaSalida}>Generar acta de salida</button>
       </div>
 
-      {/* Modal: Buscar Orden Trabajo */}
+      
       <div className={`fixed inset-0 z-40 flex items-center justify-center transition-opacity duration-300 ${ventanaBuscarOrdenTrabajo ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
         <div className="bg-white w-11/12 md:w-4/5 h-4/5 rounded-lg shadow-lg overflow-hidden border">
           <BuscarOrdenCompra ordenes={ordenes} setidSolMaterial={cargarInfoSolMaterial} setventanaBuscarOrdenTrabajo={setventanaBuscarOrdenTrabajo} ventanaBuscarOrdenTrabajo={ventanaBuscarOrdenTrabajo} />
         </div>
       </div>
 
-      {/* Modal: Ventana emergente items */}
+      
       <div className={`fixed inset-0 z-40 flex items-center justify-center transition-opacity duration-300 ${ventanaEmergente ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
         <div className="bg-white w-11/12 md:w-2/5 h-3/5 rounded-lg shadow-lg border">
           <div className="flex items-center justify-between p-4 border-b">
@@ -289,7 +289,7 @@ export const CrearActaSalida = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {/* contenido dinámico (sin tocar lógica) */}
+                  
                 </tbody>
               </table>
             </div>

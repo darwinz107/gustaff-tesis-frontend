@@ -55,7 +55,7 @@ export const AdminDashboard: React.FC = () => {
   const commonOptions = { responsive: true, plugins: { legend: { display: false } } };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 w-full">
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
         <div className="card p-4 bg-base-100 border">
           <div className="text-sm text-gray-500">Usuarios</div>
@@ -82,7 +82,7 @@ export const AdminDashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="card p-4 bg-base-100 border">
           <h3 className="font-medium mb-3">Usuarios por cargo</h3>
-          <Pie data={pieData} options={{ ...commonOptions, maintainAspectRatio: true }} />
+          <Pie data={pieData} options={{ ...commonOptions }} />
         </div>
 
         <div className="card p-4 bg-base-100 border">

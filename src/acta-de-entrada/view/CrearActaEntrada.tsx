@@ -309,7 +309,7 @@ useEffect(() => {
   <>
     <div className="w-full h-full p-6 space-y-6">
 
-      {/* Asignar solicitud */}
+      
       <div className="w-full flex items-center justify-center">
         <button
           type="button"
@@ -320,7 +320,7 @@ useEffect(() => {
         </button>
       </div>
 
-      {/* Destino / Documento */}
+      
       <div className="w-full bg-base-100 rounded-2xl shadow-md p-5">
         <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-3">Destino / Documento</h2>
 
@@ -371,7 +371,7 @@ useEffect(() => {
         </div>
       </div>
 
-      {/* Agregar ítems */}
+     
       <div className="w-full bg-base-100 rounded-2xl shadow-md p-5">
         <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-3">Agregar ítems</h2>
 
@@ -430,7 +430,7 @@ useEffect(() => {
         </div>
       </div>
 
-      {/* Almacenamiento */}
+      
       <div className="w-full bg-base-100 rounded-2xl shadow-md p-5">
         <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-3">Almacenamiento</h2>
 
@@ -470,7 +470,7 @@ useEffect(() => {
         </div>
       </div>
 
-      {/* Total y tabla */}
+      
       <div className="w-full bg-base-100 rounded-2xl shadow-md p-5">
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -525,14 +525,14 @@ useEffect(() => {
       </div>
     </div>
 
-    {/* Modal: Buscar solicitud (overlay) */}
+   
     <div className={`z-10 fixed inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaBuscarSolicitudMaterial ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
       <div className="border border-gray-200 w-11/12 md:w-4/5 h-4/5 rounded-lg fixed bg-white shadow-lg overflow-hidden">
         <BuscarOrdenCompra ordenes={ordenes} setidSolMaterial={setsolCompraId} setventanaBuscarOrdenTrabajo={setventanaBuscarSolicitudMaterial} ventanaBuscarOrdenTrabajo={ventanaBuscarSolicitudMaterial} />
       </div>
     </div>
 
-    {/* Modal: Crear proveedor */}
+    
     <div className={`fixed inset-0 z-10 flex items-center justify-center bg-black/40 transition-opacity duration-300 ${ventanaAgregarProovedor ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
       <div className="bg-white w-11/12 md:w-4/5 max-w-5xl h-[78vh] rounded-lg shadow-xl overflow-y-auto">
         <CrearProovedor setventanaAgregarProovedor={setventanaAgregarProovedor} ventanaAgregarProovedor={ventanaAgregarProovedor} />

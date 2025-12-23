@@ -198,7 +198,7 @@ setshowSuccess(false);
 
     <div className="max-w-4xl mx-auto p-6">
       <form className="space-y-6" onSubmit={(e) => { addSolicitudOrden(e); }}>
-        {/* Tiempos */}
+        
         <div className="card bg-base-100 shadow-lg rounded-2xl p-4">
           <div className="card-body p-0">
             <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
@@ -240,7 +240,7 @@ setshowSuccess(false);
           </div>
         </div>
 
-        {/* Ubicación */}
+        
         <div className="card bg-base-100 shadow-lg rounded-2xl p-4">
           <div className="card-body p-0">
             <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
@@ -296,7 +296,7 @@ setshowSuccess(false);
           </div>
         </div>
 
-        {/* Especificación del trabajo */}
+        
         <div className="card bg-base-100 shadow-lg rounded-2xl p-4">
           <div className="card-body p-0">
             <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
@@ -351,7 +351,7 @@ setshowSuccess(false);
           </div>
         </div>
 
-        {/* Personal */}
+        
         <div className="card bg-base-100 shadow-lg rounded-2xl p-4">
           <div className="card-body p-0">
             <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
@@ -386,7 +386,7 @@ setshowSuccess(false);
           </div>
         </div>
 
-        {/* Submit */}
+        
         <div className="flex justify-center">
           <button className="btn btn-primary btn-lg px-10" type="submit">Crear</button>
         </div>
