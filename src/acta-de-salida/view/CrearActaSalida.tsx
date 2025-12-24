@@ -20,6 +20,10 @@ export const CrearActaSalida = () => {
   const [actaSalida, setactaSalida] = useState(false);
   //const [idSolMaterial, setidSolMaterial] = useState<number>(0);
   const [ordenes, setordenes] = useState<BuscarSolMaterial[]>([]);
+  const [erroresEntrega, seterroresEntrega] = useState("");
+  const [showSuccess, setshowSuccess] = useState(false);
+  const [showError, setshowError] = useState(false);
+  const [mensajeError, setmensajeError] = useState("");
 
  const cargarInfoSolMaterial = async(id:number) =>{
         const res = await ordenCompraById(id);
@@ -28,10 +32,36 @@ export const CrearActaSalida = () => {
         
     }
 
+ const validarEntrega = (valor: number): string => {
+  if (!valor || valor === 0 || valor === null) {
+    return "Debe seleccionar una persona para entrega";
+  }
+  return "";
+};
+
    const generarActaSalida = async () => {
 
-  if (solicitudMaterial.id == null) {
-    alert("Debe llenar la informacion necesaria antes de generar una acta de salida!");
+  const errorEntrega = validarEntrega(entrega);
+  seterroresEntrega(errorEntrega);
+
+  if (errorEntrega) {
+   /* setmensajeError("Debe seleccionar una persona para entrega");
+    setshowError(true);
+    setTimeout(() => setshowError(false), 3000);*/
+    return;
+  }
+
+  if (conOrden && solicitudMaterial.id == null) {
+    setmensajeError("Debe seleccionar una solicitud de material!");
+    setshowError(true);
+    setTimeout(() => setshowError(false), 3000);
+    return;
+  }
+
+  if (!solicitudMaterial.itemSolicitados || solicitudMaterial.itemSolicitados.length === 0) {
+    setmensajeError("Debe agregar al menos un item a la orden de salida");
+    setshowError(true);
+    setTimeout(() => setshowError(false), 3000);
     return;
   }
 
@@ -45,26 +75,31 @@ export const CrearActaSalida = () => {
     console.log(res);
 
     if (res?.validate) {
-      alert(res.msj);
-      window.open(`/pdf-salida/${solicitudMaterial.id}`, "_blank");
+      setshowSuccess(true);
+      setTimeout(() => {
+        setshowSuccess(false);
+        window.open(`/pdf-salida/${solicitudMaterial.id}`, "_blank");
 
-      setsolicitudMaterial({
-        id: null,
-        numOrden: "",
-        numOrdenTrabajo: {
-          Area: "",
-          userSolicitante: { name: "" },
-          Maquina: "",
-          Codigo: ""
-        },
-        Destino: "",
-        itemSolicitados: []
-      });
+        setsolicitudMaterial({
+          id: null,
+          numOrden: "",
+          numOrdenTrabajo: {
+            Area: "",
+            userSolicitante: { name: "" },
+            Maquina: "",
+            Codigo: ""
+          },
+          Destino: "",
+          itemSolicitados: []
+        });
 
-      setentrega(0);
-      setobservacion("");
+        setentrega(0);
+        setobservacion("");
+      }, 1000);
     } else {
-      console.warn("Respuesta inválida:", res);
+      setmensajeError(res?.msj || "Error al generar acta de salida");
+      setshowError(true);
+      setTimeout(() => setshowError(false), 3000);
     }
 
   } catch (error) {
@@ -93,6 +128,28 @@ export const CrearActaSalida = () => {
 
   return (
   <>
+    {showSuccess && (
+      <div className="fixed top-5 right-5 z-50">
+        <div role="alert" className="alert alert-success shadow-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>Acta de salida registrada exitosamente!</span>
+        </div>
+      </div>
+    )}
+
+    {showError && (
+      <div className="fixed top-5 right-5 z-50">
+        <div role="alert" className="alert alert-error shadow-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{mensajeError}</span>
+        </div>
+      </div>
+    )}
+
     <div className="w-full h-full p-6 space-y-6">
 
       
@@ -116,9 +173,11 @@ export const CrearActaSalida = () => {
           <div className="space-y-3">
             <label className="text-sm text-gray-600">Solicitante</label>
             <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.userSolicitante?.name} disabled />
+            <div className="max-h-1"></div>
 
             <label className="text-sm text-gray-600 mt-2">Área</label>
             <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.Area} disabled />
+            <div className="max-h-1"></div>
 
             <label className="text-sm text-gray-600 mt-2">Destino</label>
             <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.Destino} disabled />
@@ -126,13 +185,15 @@ export const CrearActaSalida = () => {
 
           <div className="space-y-3">
             <label className="text-sm text-gray-600">Entrega</label>
-            <select value={entrega} className="select select-bordered w-full" disabled={!conOrden} onChange={(e) => setentrega(e.target.value)}>
+            <select value={entrega} className={`select select-bordered w-full ${erroresEntrega ? 'select-error' : ''}`} disabled={!conOrden} onChange={(e) => {setentrega(e.target.value); seterroresEntrega(validarEntrega(e.target.value));}}>
               <option value={0} disabled>...</option>
               {users.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
             </select>
+            <div className="max-h-1">{erroresEntrega && <p className="text-red-500 text-xs">{erroresEntrega}</p>}</div>
 
             <label className="text-sm text-gray-600 mt-2">Código</label>
             <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.Codigo} disabled />
+            <div ></div>
 
             <label className="text-sm text-gray-600 mt-2">Observación</label>
             <input type="text" className="input input-bordered w-full" disabled={!conOrden} onChange={(e) => setobservacion(e.target.value)} />
@@ -141,9 +202,11 @@ export const CrearActaSalida = () => {
           <div className="space-y-3">
             <label className="text-sm text-gray-600">Recibe</label>
             <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.userSolicitante?.name} disabled />
+            <div className="max-h-1"></div>
 
             <label className="text-sm text-gray-600 mt-2">Máquina</label>
             <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.Maquina} disabled />
+            <div className="max-h-1"></div>
 
             <label className="text-sm text-gray-600 mt-2">N.Orden</label>
             <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrden} disabled />
@@ -153,7 +216,7 @@ export const CrearActaSalida = () => {
 
     
       <div className="w-full bg-base-100 rounded-2xl shadow p-5">
-        <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-3">Agregar ítems</h2>
+        <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-3">Agregar ítems (Solo para salida de items sin orden)</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
           <div className="md:col-span-4">

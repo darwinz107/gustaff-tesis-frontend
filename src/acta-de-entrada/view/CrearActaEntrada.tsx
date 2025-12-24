@@ -570,7 +570,7 @@ useEffect(() => {
               list="browsers1"
               value={item}
               onChange={(e) => { const value = e.target.value; setitem(value); seterroresItems({...erroresItems, item: validarItem(value)}); }}
-              placeholder="Buscar o escribir descripcion"
+              
             />
             <datalist id="browsers1">
               {items?.map(p => (

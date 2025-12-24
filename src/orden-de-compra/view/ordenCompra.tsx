@@ -116,9 +116,9 @@ useEffect(() => {
     if (!value || value.trim() === "") {
       return "Debe seleccionar un item";
     }
-    if (!/^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(value)) {
+   /* if (!/^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(value)) {
       return "El item solo puede contener letras";
-    }
+    }*/
     return "";
   };
 
@@ -183,17 +183,23 @@ useEffect(() => {
       ]);
 
     }
-  } catch (err) {
-    console.error("error al evaluar stock:", err);
-    alert("Ocurrió un error al evaluar el stock.");
-  }
 
- 
-  seterroresItems({ cantidad: "", item: "" });
+     seterroresItems({ cantidad: "", item: "" });
   setcantidad(0);
   setitem("");
   setcaracteristica("");
   setobservacion("");
+  } catch (err) {
+    console.error("error al evaluar stock:", err);
+   
+      setmensajeErrorOrdenCompra("Ocurrió un error al evaluar el stock");
+      setshowErrorOrdenCompra(true);
+      setTimeout(() => setshowErrorOrdenCompra(false), 3000);
+      
+  }
+
+ 
+ 
 };
     
 
@@ -225,7 +231,7 @@ useEffect(() => {
 
   const validarTablaCompras = (): string => {
     if (comprasPorGenerar.length === 0) {
-      return "Debe llenar información necesaria";
+      return "La tabla de compras no puede estar vacía";
     }
     return "";
   };
@@ -246,6 +252,13 @@ const errorAutoriza = validarAutoriza(autoriza);
       return;
     }
 
+    if (errorAutoriza) {
+     seterroresDestino({ autoriza: errorAutoriza });
+     console.log("Items", items);
+     
+      return;
+    }
+
     // Si hay error en autoriza
   
     // Si la tabla está vacía
@@ -255,12 +268,7 @@ const errorAutoriza = validarAutoriza(autoriza);
       setTimeout(() => setshowErrorOrdenCompra(false), 3000);
       return;
     }
- if (errorAutoriza) {
-     seterroresDestino({ autoriza: errorAutoriza });
-     console.log("Items", items);
-     
-      return;
-    }
+ 
 
     try {
        const resOrdenCompra = await crearOrdenCompra({
@@ -484,7 +492,7 @@ setinfoDestino(infoDestinoInicial);
                   <td>{u.cantidad}</td>
                   <td>{u.item}</td>
                   <td>{u.caracteristica}</td>
-                  <td>{u.observacion}</td>
+                  <td>{u.Observacion}</td>
                   <td>{u.estadoStock}</td>
                   <td>
                     <button className="btn btn-ghost btn-xs" onClick={() => funcionEliminarItems(i)}>
