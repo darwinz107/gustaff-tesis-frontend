@@ -36,6 +36,7 @@ export const getAllOrdenesTrabajoSinUso = async (): Promise<LllenarDestino[]> =>
 
 export const crearOrdenCompra = async (guardarSolicitudCompra: GuardarSolicitudCompra):Promise<{msj:string,validate:boolean}> => {
   try {
+    console.log("guardarSolicitudCompra en API:", guardarSolicitudCompra);
      const response: Response = await fetch(`${route}solicitud-de-compra`, {
     method: "POST",
     headers: {

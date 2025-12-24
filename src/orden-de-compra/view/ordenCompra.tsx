@@ -39,6 +39,10 @@ const infoDestinoInicial: LllenarDestino = {
   const [inventarios, setinventarios] = useState<Inventarios[]>([])
   const [showSuccess, setshowSuccess] = useState(false);
   const [showError, setshowError] = useState(false);
+  const [erroresItems, seterroresItems] = useState({cantidad: "", item: ""});
+  const [erroresDestino, seterroresDestino] = useState({autoriza: ""});
+  const [mensajeErrorOrdenCompra, setmensajeErrorOrdenCompra] = useState("");
+  const [showErrorOrdenCompra, setshowErrorOrdenCompra] = useState(false);
   
 
    const metodoInventarios = async() =>{
@@ -94,25 +98,53 @@ useEffect(() => {
   }
   }, [buscarItem]);
 
-  const funcionAgregarItems = async() =>{
+  const validarCantidadItem = (value: any): string => {
+    if (!value || value === "" || value === 0) {
+      return "La cantidad no puede estar vacía";
+    }
+    const num = Number(value);
+    if (isNaN(num)) {
+      return "La cantidad debe ser un número válido";
+    }
+    if (num < 0) {
+      return "La cantidad no puede ser negativa";
+    }
+    return "";
+  };
 
-      if (cantidad === 0 || cantidad === "" || cantidad === null || isNaN(Number(cantidad)) || item === "") {
-    alert("Debe llenar la informacion del item");
-    return;
-  }
+  const validarItemField = (value: string): string => {
+    if (!value || value.trim() === "") {
+      return "Debe seleccionar un item";
+    }
+    if (!/^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(value)) {
+      return "El item solo puede contener letras";
+    }
+    return "";
+  };
+
+  const funcionAgregarItems = async() =>{
+      // Validar cantidad
+      const errorCantidad = validarCantidadItem(cantidad);
+      const errorItem = validarItemField(item);
+      
+      seterroresItems({ cantidad: errorCantidad, item: errorItem });
+      
+      if (errorCantidad || errorItem) {
+        return;
+      }
 
   const existeItem =  items.some((i)=>i.item === item);
  
   if(existeItem){
-    setshowError(true);
+    seterroresItems({ cantidad: "", item: "Error! Item ya ingresado." });
     setTimeout(() => {
-      setshowError(false);
-    }, 2000);
+      seterroresItems({ cantidad: "", item: "" });
+    }, 3000);
     return;
   }
   setitems(prev => [
     ...prev,
-    { item: item, cantidad: Number(cantidad), caracteristica: caracteristica, observacion: observacion }
+    { item: item, cantidad: Number(cantidad), caracteristica: caracteristica, Observacion: observacion }
   ]);
 
   try {
@@ -129,7 +161,7 @@ useEffect(() => {
             cantidad: r.cantidad,
             item: item,
             caracteristica: caracteristica,
-            observacion: observacion,
+            Observacion: observacion,
             estadoStock: r.estado,
             validate: r.validate
           }
@@ -144,7 +176,7 @@ useEffect(() => {
           cantidad: Number(cantidad),
           item: item,
           caracteristica: caracteristica,
-          observacion: observacion,
+          Observacion: observacion,
           estadoStock: "Por comprar",
           validate: res?.validate ?? false
         }
@@ -157,6 +189,7 @@ useEffect(() => {
   }
 
  
+  seterroresItems({ cantidad: "", item: "" });
   setcantidad(0);
   setitem("");
   setcaracteristica("");
@@ -175,10 +208,60 @@ useEffect(() => {
      setitems(newArrayItems);
   }
 
+  // Funciones de validación para orden de compra
+  const validarOrdenTrabajoSeleccionada = (): string => {
+    if (!infoDestino.id || infoDestino.id === 0) {
+      return "Debe seleccionar una orden de trabajo";
+    }
+    return "";
+  };
+
+  const validarAutoriza = (valor: string): string => {
+    if (!valor || valor === "" || valor === "Seleccionar...") {
+      return "Campo obligatorio";
+    }
+    return "";
+  };
+
+  const validarTablaCompras = (): string => {
+    if (comprasPorGenerar.length === 0) {
+      return "Debe llenar información necesaria";
+    }
+    return "";
+  };
+
   const crearYGenerarOrdenCompra = async() => {
- if(infoDestino === [] || comprasPorGenerar.length === 0){
-   alert("Debe ingresar la informacion correspondiente!");
- }
+    // Validar orden de trabajo seleccionada
+    const errorOrdenTrabajo = validarOrdenTrabajoSeleccionada();
+const errorAutoriza = validarAutoriza(autoriza);
+    const errorTabla = validarTablaCompras();
+
+    seterroresDestino({ autoriza: errorAutoriza });
+
+    // Si hay error en orden de trabajo
+    if (errorOrdenTrabajo) {
+      setmensajeErrorOrdenCompra(errorOrdenTrabajo);
+      setshowErrorOrdenCompra(true);
+      setTimeout(() => setshowErrorOrdenCompra(false), 3000);
+      return;
+    }
+
+    // Si hay error en autoriza
+  
+    // Si la tabla está vacía
+    if (errorTabla) {
+      setmensajeErrorOrdenCompra(errorTabla);
+      setshowErrorOrdenCompra(true);
+      setTimeout(() => setshowErrorOrdenCompra(false), 3000);
+      return;
+    }
+ if (errorAutoriza) {
+     seterroresDestino({ autoriza: errorAutoriza });
+     console.log("Items", items);
+     
+      return;
+    }
+
     try {
        const resOrdenCompra = await crearOrdenCompra({
       Autoriza: autoriza,
@@ -186,6 +269,7 @@ useEffect(() => {
       Destino: destino,
       items:items
     });
+    console.log("respuesta crearOrdenCompra:", resOrdenCompra);
     if(resOrdenCompra.validate){
 
            
@@ -210,12 +294,18 @@ setventanaBuscarOrdenTrabajo(false);
 setventanaEmergente(false);
 setinfoDestino(infoDestinoInicial);
       
+    } else {
+      setmensajeErrorOrdenCompra(resOrdenCompra.msj || "Error al crear la orden de compra");
+      setshowErrorOrdenCompra(true);
+      setTimeout(() => setshowErrorOrdenCompra(false), 3000);
     }
 
     } catch (error) {
       console.error("Error creating order and items:", error);
+      setmensajeErrorOrdenCompra("Error al generar la orden de compra");
+      setshowErrorOrdenCompra(true);
+      setTimeout(() => setshowErrorOrdenCompra(false), 3000);
     }
-  
   }
   
   return (
@@ -242,6 +332,17 @@ setinfoDestino(infoDestinoInicial);
       </div>
     )}
 
+    {showErrorOrdenCompra && (
+      <div className="fixed top-5 right-5 z-50">
+        <div role="alert" className="alert alert-error shadow-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{mensajeErrorOrdenCompra}</span>
+        </div>
+      </div>
+    )}
+
     <div className="w-full   p-6">
 
       <div className="bg-white rounded-xl shadow-md p-6 mb-6">
@@ -250,18 +351,53 @@ setinfoDestino(infoDestinoInicial);
         </h2>
 
         <div className="grid grid-cols-3 gap-4">
-          <input className="input" disabled value={infoDestino.userSolicitante.name} />
-          <input className="input" disabled value={infoDestino.Area} />
-          <input className="input" disabled value={infoDestino.DescripcionTrabajo} />
-          <select defaultValue="..." className="select" onChange={(e) => setautoriza(e.target.value)}>
-            <option disabled>...</option>
-            {users.map((m,i) => (
-              <option key={i} value={m.name}>{m.name}</option>
-            ))}
-          </select>
-          <input className="input" disabled value={infoDestino.Codigo} />
-          <input className="input" disabled value={infoDestino.NumOrden} />
-          <input className="input" disabled value={infoDestino.Maquina} />
+          <div>
+            <label className="text-xs font-semibold text-gray-600 mb-1 block">Solicitante</label>
+            <input className="input input-sm w-full" disabled value={infoDestino.userSolicitante.name} />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-gray-600 mb-1 block">Área</label>
+            <input className="input input-sm w-full" disabled value={infoDestino.Area} />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-gray-600 mb-1 block">Descripción</label>
+            <input className="input input-sm w-full" disabled value={infoDestino.DescripcionTrabajo} />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-gray-600 mb-1 block">Autoriza</label>
+            <select 
+              defaultValue="Seleccionar..." 
+              className={`select select-sm w-full ${erroresDestino.autoriza ? 'select-error' : ''}`} 
+              onChange={(e) => {
+                setautoriza(e.target.value); 
+                seterroresDestino({...erroresDestino, autoriza: validarAutoriza(e.target.value)});
+              }}
+            >
+              <option disabled>Seleccionar...</option>
+              {users.map((m,i) => (
+                <option key={i} value={m.name}>{m.name}</option>
+              ))}
+            </select>
+            <div className="h-5">{erroresDestino.autoriza && <p className="text-red-500 text-xs">{erroresDestino.autoriza}</p>}</div>
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-gray-600 mb-1 block">Código</label>
+            <input className="input input-sm w-full" disabled value={infoDestino.Codigo} />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-gray-600 mb-1 block">Nº Orden</label>
+            <input className="input input-sm w-full" disabled value={infoDestino.NumOrden} />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-gray-600 mb-1 block">Máquina</label>
+            <input className="input input-sm w-full" disabled value={infoDestino.Maquina} />
+          </div>
         </div>
       </div>
 
@@ -271,26 +407,52 @@ setinfoDestino(infoDestinoInicial);
         </h2>
 
         <div className="grid grid-cols-4 gap-4 mb-4">
-          <input className="input" placeholder="Cantidad" value={cantidad} onChange={(e) => setcantidad(e.target.value)} />
-
-          <div className="relative">
-            <input
-              className="input input-bordered w-full pr-10"
-              placeholder="Item"
-              value={item}
-              onChange={(e) => setitem(e.target.value)}
+          <div>
+            <input 
+              className={`input ${erroresItems.cantidad ? 'input-error' : ''}`} 
+              placeholder="Cantidad" 
+              value={cantidad} 
+              onChange={(e) => setcantidad(e.target.value)} 
             />
-            <button
-              type="button"
-              className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 z-20 text-gray-400 hover:text-primary transition"
-              onClick={() => setventanaEmergente(!ventanaEmergente)}
-            >
-              🔎
-            </button>
+            <div className="h-5">{erroresItems.cantidad && <p className="text-red-500 text-xs">{erroresItems.cantidad}</p>}</div>
           </div>
 
-          <input className="input" placeholder="Característica" value={caracteristica} onChange={(e) => setcaracteristica(e.target.value)} />
-          <input className="input" placeholder="Observación" value={observacion} onChange={(e) => setobservacion(e.target.value)} />
+          <div>
+            <div className="relative">
+              <input
+                className={`input input-bordered w-full pr-10 ${erroresItems.item ? 'input-error' : ''}`}
+                placeholder="Item"
+                value={item}
+                onChange={(e) => setitem(e.target.value)}
+              />
+              <button
+                type="button"
+                className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 z-20 text-gray-400 hover:text-primary transition"
+                onClick={() => setventanaEmergente(!ventanaEmergente)}
+              >
+                🔎
+              </button>
+            </div>
+            <div className="h-5">{erroresItems.item && <p className="text-red-500 text-xs">{erroresItems.item}</p>}</div>
+          </div>
+
+          <div>
+            <input 
+              className="input" 
+              placeholder="Característica" 
+              value={caracteristica} 
+              onChange={(e) => setcaracteristica(e.target.value)} 
+            />
+          </div>
+
+          <div>
+            <input 
+              className="input" 
+              placeholder="Observación" 
+              value={observacion} 
+              onChange={(e) => setobservacion(e.target.value)} 
+            />
+          </div>
         </div>
 
         <button className="btn btn-primary" onClick={funcionAgregarItems}>
@@ -353,7 +515,7 @@ setinfoDestino(infoDestinoInicial);
       </div>
     </div>
 
-    <div className={`fixed inset-0 z-50 flex items-center justify-center transition-opacity ${ventanaEmergente ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+    <div className={` fixed inset-x-0 z-50 flex items-center justify-center min-h-fit transition-opacity ${ventanaEmergente ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
       <div className="bg-white w-2/5 h-2/5 rounded-xl shadow-lg border">
         <div className="flex justify-between items-center p-4 border-b">
           <span className="font-semibold">Listado de items</span>

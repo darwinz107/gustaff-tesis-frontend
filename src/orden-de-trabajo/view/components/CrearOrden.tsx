@@ -37,8 +37,46 @@ export const CrearOrden = ({setcargarAuto,setsendId}) => {
   const [tecnico, settecnico] = useState(null);
   const [showSuccess, setshowSuccess] = useState(false);
   
+  // Estados para validaciones y alertas
+  const [erroresCrearOrden, seterroresCrearOrden] = useState({});
+  const [showErrorCrearOrden, setshowErrorCrearOrden] = useState(false);
+  const [showSuccessCrearOrden, setshowSuccessCrearOrden] = useState(false);
+  const [mensajeErrorCrearOrden, setmensajeErrorCrearOrden] = useState("");
 
   const navigate = useNavigate();
+
+  // Validaciones de campos obligatorios
+  const validarArea = (valor) => !valor || valor === "..." ? "El área es requerida" : "";
+  const validarCodigo = (valor) => !valor || valor === "..." ? "El código es requerido" : "";
+  const validarMaquina = (valor) => !valor || valor === "..." ? "La máquina es requerida" : "";
+  const validarCategoria = (valor) => !valor || valor === "..." ? "La categoría es requerida" : "";
+  const validarTipoTrabajo = (valor) => !valor || valor === "..." ? "El tipo de trabajo es requerido" : "";
+  const validarSolicitante = (valor) => !valor || valor === "..." ? "El solicitante es requerido" : "";
+  const validarReceptor = (valor) => !valor || valor === "..." ? "El técnico 1 (receptor) es requerido" : "";
+
+  // Validaciones de fechas y horas
+  const validarFechaInicio = (valor) => !valor ? "La fecha de inicio es requerida" : "";
+  const validarHoraInicio = (valor) => !valor ? "La hora de inicio es requerida" : "";
+  const validarHoraFin = (valor) => !valor ? "La hora de fin estimada es requerida" : "";
+  const validarFechaFin = (valor) => !valor ? "La fecha de finalización es requerida" : "";
+
+  const validarCoherenciaFechas = (fechaIni, horaIni, horaFin, fechaFin) => {
+    if (!fechaIni || !fechaFin) return "";
+    if (fechaIni > fechaFin) {
+      return "La fecha de inicio no puede ser mayor que la de finalización";
+    }
+    if (fechaIni === fechaFin && horaIni && horaFin && horaIni > horaFin) {
+      return "La hora de inicio no puede ser mayor que la de fin";
+    }
+    return "";
+  };
+
+  const limpiarErroresCrearOrden = () => {
+    seterroresCrearOrden({});
+    setshowErrorCrearOrden(false);
+   // setshowSuccessCrearOrden(false);
+    setmensajeErrorCrearOrden("");
+  };
 
   useEffect(() => {
     
@@ -113,6 +151,35 @@ const getCodigos = async () => {
   
   const addSolicitudOrden = async(e:Event) =>{
        e.preventDefault();
+    
+    // Validar campos obligatorios
+    const nuevosErrores = {
+      area: validarArea(selectArea),
+      codigo: validarCodigo(selectCodigo),
+      maquina: validarMaquina(selectMaquina),
+      categoria: validarCategoria(especificacion[0]),
+      tipoTrabajo: validarTipoTrabajo(especificacion[1]),
+      solicitante: validarSolicitante(solicitante),
+      receptor: validarReceptor(receptor),
+      fechaInicio: validarFechaInicio(tiempos[0]),
+      horaInicio: validarHoraInicio(tiempos[1]),
+      horaFin: validarHoraFin(tiempos[2]),
+      fechaFin: validarFechaFin(tiempos[3]),
+      coherenciaFechas: validarCoherenciaFechas(tiempos[0], tiempos[1], tiempos[2], tiempos[3])
+    };
+
+    seterroresCrearOrden(nuevosErrores);
+
+    // Si hay errores, mostrar mensaje
+    if (Object.values(nuevosErrores).some(error => error !== "")) {
+      setmensajeErrorCrearOrden("Por favor complete correctamente todos los campos obligatorios");
+      setshowErrorCrearOrden(true);
+      setTimeout(() => {
+        setshowErrorCrearOrden(false);
+      }, 3000);
+      return;
+    }
+
     try {
        const infoSolicitud:SolicitudOrden ={
       fechaInicio:tiempos[0],
@@ -135,20 +202,35 @@ const getCodigos = async () => {
     
     if(res.validate){
      
-      setshowSuccess(true);
+      
+      setmensajeErrorCrearOrden("¡Orden de trabajo creada correctamente!");
+      setshowSuccessCrearOrden(true);
+      limpiarErroresCrearOrden();
 
       setTimeout(() => {
-setshowSuccess(false);
         window.open(`/pdf/undefined`,"_blank");
+        setshowSuccessCrearOrden(false);
+        
    if(dialog.current){
   dialog.current.showModal();
 }     
-      }, 1000);
+      }, 2000);
 
+    } else {
+      setmensajeErrorCrearOrden(res.msj || "Error al crear la orden de trabajo");
+      setshowErrorCrearOrden(true);
+      setTimeout(() => {
+        setshowErrorCrearOrden(false);
+      }, 3000);
     }
 
     } catch (error) {
       console.log("Error al generar la solicitud: ",error);
+      setmensajeErrorCrearOrden("Error al generar la solicitud");
+      setshowErrorCrearOrden(true);
+      setTimeout(() => {
+        setshowErrorCrearOrden(false);
+      }, 3000);
     }
 
   }
@@ -161,7 +243,29 @@ setshowSuccess(false);
  
  return (
   <>
-    {showSuccess && (
+    {showSuccessCrearOrden && (
+      <div className="fixed top-5 right-5 z-50">
+        <div role="alert" className="alert alert-success shadow-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{ "¡Orden de trabajo creada correctamente!"}</span>
+        </div>
+      </div>
+    )}
+
+    {showErrorCrearOrden && (
+      <div className="fixed top-5 right-5 z-50">
+        <div role="alert" className="alert alert-error shadow-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{mensajeErrorCrearOrden}</span>
+        </div>
+      </div>
+    )}
+
+    {/*showSuccess && (
       <div className="fixed top-6 right-6 z-50">
         <div role="alert" className="alert alert-success shadow-lg">
           <svg
@@ -181,7 +285,7 @@ setshowSuccess(false);
           </div>
         </div>
       </div>
-    )}
+    )*/}
 
     <dialog ref={dialog} id="my_modal_1" className="modal">
       <div className="modal-box">
@@ -205,36 +309,59 @@ setshowSuccess(false);
               Tiempos de trabajo
             </h2>
 
-            <div className="grid gap-4 md:grid-cols-2 items-center">
-              <div className="space-y-2">
-                <label className="text-sm">Fecha y hora planificada</label>
-                <div className="flex items-center gap-2">
-                  
-         <input type="date" className="input input-sm" value={tiempos[0]} onChange={(e)=>{const arr = tiempos; arr[0] = e.target.value; settiempos(arr);}} />
-                 
+            <div className="space-y-6">
+              <div>
+                <label className="text-sm font-medium mb-3 block">Fecha y hora planificada</label>
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <input 
+                      type="date" 
+                      className={`input input-sm w-full ${erroresCrearOrden.fechaInicio ? 'input-error' : ''}`}
+                      value={tiempos[0] || ''} 
+                      onChange={(e)=>{const arr = tiempos; arr[0] = e.target.value; settiempos(arr); seterroresCrearOrden({...erroresCrearOrden, fechaInicio: validarFechaInicio(e.target.value), coherenciaFechas: validarCoherenciaFechas(e.target.value, tiempos[1], tiempos[2], tiempos[3])});}} 
+                    />
+                    <div className="h-5">{erroresCrearOrden.fechaInicio && <p className="text-red-500 text-xs">{erroresCrearOrden.fechaInicio}</p>}</div>
+                  </div>
 
-                  <input
-                    onChange={(e) => { const arr = tiempos; arr[1] = e.target.value; settiempos(arr); }}
-                    type="time"
-                    className="input input-bordered input-sm w-50"
-                  />
+                  <div>
+                    <input
+                      onChange={(e) => { const arr = tiempos; arr[1] = e.target.value; settiempos(arr); seterroresCrearOrden({...erroresCrearOrden, horaInicio: validarHoraInicio(e.target.value), coherenciaFechas: validarCoherenciaFechas(tiempos[0], e.target.value, tiempos[2], tiempos[3])}); }}
+                      type="time"
+                      className={`input input-sm w-full ${erroresCrearOrden.horaInicio ? 'input-error' : ''}`}
+                      value={tiempos[1] || ''}
+                    />
+                    <div className="h-5">{erroresCrearOrden.horaInicio && <p className="text-red-500 text-xs">{erroresCrearOrden.horaInicio}</p>}</div>
+                  </div>
 
-                  <span className="text-sm opacity-70">Estimado</span>
-
-                  <input
-                    onChange={(e) => { const arr = tiempos; arr[2] = e.target.value; settiempos(arr); }}
-                    type="time"
-                    className="input input-bordered input-sm w-50"
-                  />
+                  <div>
+                    <div className="flex items-center gap-1 mb-1">
+                      <input
+                        onChange={(e) => { const arr = tiempos; arr[2] = e.target.value; settiempos(arr); seterroresCrearOrden({...erroresCrearOrden, horaFin: validarHoraFin(e.target.value), coherenciaFechas: validarCoherenciaFechas(tiempos[0], tiempos[1], e.target.value, tiempos[3])}); }}
+                        type="time"
+                        className={`input input-sm w-full ${erroresCrearOrden.horaFin ? 'input-error' : ''}`}
+                        value={tiempos[2] || ''}
+                      />
+                      <span className="text-xs opacity-70 whitespace-nowrap">Est.</span>
+                    </div>
+                    <div className="h-5">{erroresCrearOrden.horaFin && <p className="text-red-500 text-xs">{erroresCrearOrden.horaFin}</p>}</div>
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm">Fecha estimada de finalización</label>
-                <div className="flex items-center gap-3">
-               <input type="date" className="input input-sm" value={tiempos[3]} onChange={(e)=>{const arr = tiempos; arr[3] = e.target.value; settiempos(arr);}} />
-
+              <div>
+                <label className="text-sm font-medium mb-3 block">Fecha estimada de finalización</label>
+                <div className="flex gap-3">
+                  <div className="flex-1">
+                    <input 
+                      type="date" 
+                      className={`input input-sm w-full ${erroresCrearOrden.fechaFin ? 'input-error' : ''}`}
+                      value={tiempos[3] || ''} 
+                      onChange={(e)=>{const arr = tiempos; arr[3] = e.target.value; settiempos(arr); seterroresCrearOrden({...erroresCrearOrden, fechaFin: validarFechaFin(e.target.value), coherenciaFechas: validarCoherenciaFechas(tiempos[0], tiempos[1], tiempos[2], e.target.value)});}} 
+                    />
+                    <div className="h-5">{erroresCrearOrden.fechaFin && <p className="text-red-500 text-xs">{erroresCrearOrden.fechaFin}</p>}</div>
+                  </div>
                 </div>
+                <div className="h-5 mt-2">{erroresCrearOrden.coherenciaFechas && <p className="text-red-500 text-xs">{erroresCrearOrden.coherenciaFechas}</p>}</div>
               </div>
             </div>
           </div>
@@ -252,12 +379,13 @@ setshowSuccess(false);
                 <label className="label p-0 pb-1"><span className="label-text">Area</span></label>
                 <select
                   defaultValue={'...'}
-                  className="select select-bordered"
-                  onChange={(e) => setselectArea(e.target.value)}
+                  className={`select select-bordered ${erroresCrearOrden.area ? 'select-error' : ''}`}
+                  onChange={(e) => {setselectArea(e.target.value); seterroresCrearOrden({...erroresCrearOrden, area: validarArea(e.target.value)});}}
                 >
                   <option disabled={true}>...</option>
                   {area?.map((a) => <option key={a?.nombre} value={a?.nombre}>{a?.nombre}</option>)}
                 </select>
+                <div className="h-5">{erroresCrearOrden.area && <p className="text-red-500 text-sm">{erroresCrearOrden.area}</p>}</div>
               </div>
 
               <div className="form-control">
@@ -265,24 +393,26 @@ setshowSuccess(false);
                 <select
                   ref={select1}
                   defaultValue={'...'}
-                  className="select select-bordered"
-                  onChange={(e) => setselectCodigo(e.target.value)}
+                  className={`select select-bordered ${erroresCrearOrden.codigo ? 'select-error' : ''}`}
+                  onChange={(e) => {setselectCodigo(e.target.value); seterroresCrearOrden({...erroresCrearOrden, codigo: validarCodigo(e.target.value)});}}
                 >
                   <option disabled={true}>...</option>
                   {codigos?.map((c) => <option key={c?.cod} value={c?.cod}>{c?.cod}</option>)}
                 </select>
+                <div className="h-5">{erroresCrearOrden.codigo && <p className="text-red-500 text-sm">{erroresCrearOrden.codigo}</p>}</div>
               </div>
 
               <div className="form-control">
                 <label className="label p-0 pb-1"><span className="label-text">Maquina</span></label>
                 <select
                   defaultValue={'...'}
-                  className="select select-bordered"
-                  onChange={(e) => setselectMaquina(e.target.value)}
+                  className={`select select-bordered ${erroresCrearOrden.maquina ? 'select-error' : ''}`}
+                  onChange={(e) => {setselectMaquina(e.target.value); seterroresCrearOrden({...erroresCrearOrden, maquina: validarMaquina(e.target.value)});}}
                 >
                   <option disabled={true}>...</option>
                   {maquinas?.map((m) => <option key={m?.nombre} value={m?.nombre}>{m?.nombre}</option>)}
                 </select>
+                <div className="h-5">{erroresCrearOrden.maquina && <p className="text-red-500 text-sm">{erroresCrearOrden.maquina}</p>}</div>
               </div>
             </div>
 
@@ -308,32 +438,36 @@ setshowSuccess(false);
                 <label className="label p-0 pb-1"><span className="label-text">Categoria</span></label>
                 <select
                   defaultValue={'...'}
-                  className="select select-bordered"
+                  className={`select select-bordered ${erroresCrearOrden.categoria ? 'select-error' : ''}`}
                   onChange={(e) => {
                     const nueva = [...especificacion];
                     nueva[0] = e.target.value;
                     setespecificacion(nueva);
+                    seterroresCrearOrden({...erroresCrearOrden, categoria: validarCategoria(e.target.value)});
                   }}
                 >
                   <option disabled={true}>...</option>
                   {categorias.map((c) => <option key={c.nombre} value={c.nombre}>{c.nombre}</option>)}
                 </select>
+                <div className="h-5">{erroresCrearOrden.categoria && <p className="text-red-500 text-sm">{erroresCrearOrden.categoria}</p>}</div>
               </div>
 
               <div className="form-control">
                 <label className="label p-0 pb-1"><span className="label-text">Tipo de trabajo</span></label>
                 <select
                   defaultValue={'...'}
-                  className="select select-bordered"
+                  className={`select select-bordered ${erroresCrearOrden.tipoTrabajo ? 'select-error' : ''}`}
                   onChange={(e) => {
                     const nueva = [...especificacion];
                     nueva[1] = e.target.value;
                     setespecificacion(nueva);
+                    seterroresCrearOrden({...erroresCrearOrden, tipoTrabajo: validarTipoTrabajo(e.target.value)});
                   }}
                 >
                   <option disabled={true}>...</option>
                   {tipoTrabajos.map((t) => <option key={t.tipo} value={t.tipo}>{t.tipo}</option>)}
                 </select>
+                <div className="h-5">{erroresCrearOrden.tipoTrabajo && <p className="text-red-500 text-sm">{erroresCrearOrden.tipoTrabajo}</p>}</div>
               </div>
 
               <div className="form-control">
@@ -361,18 +495,20 @@ setshowSuccess(false);
             <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <label className="label p-0 pb-1"><span className="label-text">Solicitante</span></label>
-                <select className="select select-bordered w-full" defaultValue={"..."} onChange={(e) => setsolicitante(e.target.value)}>
+                <select className={`select select-bordered w-full ${erroresCrearOrden.solicitante ? 'select-error' : ''}`} defaultValue={"..."} onChange={(e) => {setsolicitante(e.target.value); seterroresCrearOrden({...erroresCrearOrden, solicitante: validarSolicitante(e.target.value)})}}>
                   <option defaultChecked={true}>...</option>
                   {users.map((u) => <option key={u.name} value={u.name}>{u.name}</option>)}
                 </select>
+                <div className="h-5">{erroresCrearOrden.solicitante && <p className="text-red-500 text-sm">{erroresCrearOrden.solicitante}</p>}</div>
               </div>
 
               <div>
-                <label className="label p-0 pb-1"><span className="label-text">Tecnico 1 (Receptor)</span></label>
-                <select className="select select-bordered w-full" defaultValue={"..."} onChange={(e) => setreceptor(e.target.value)}>
+                <label className="label p-0 pb-1"><span className="label-text">Tecnico 1</span></label>
+                <select className={`select select-bordered w-full ${erroresCrearOrden.receptor ? 'select-error' : ''}`} defaultValue={"..."} onChange={(e) => {setreceptor(e.target.value); seterroresCrearOrden({...erroresCrearOrden, receptor: validarReceptor(e.target.value)})}}>
                   <option defaultChecked={true} disabled={true}>...</option>
                   {users.map((u) => <option key={u.name} value={u.name}>{u.name}</option>)}
                 </select>
+                <div className="h-5">{erroresCrearOrden.receptor && <p className="text-red-500 text-sm">{erroresCrearOrden.receptor}</p>}</div>
               </div>
 
               <div className="md:col-span-2">

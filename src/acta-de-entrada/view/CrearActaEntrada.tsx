@@ -37,6 +37,11 @@ export const CrearActaEntrada = () => {
     const [items, setitems] = useState<{nombre:string,costo:number}[]>([]);
     const [ordenes, setordenes] = useState<BuscarSolMaterial[]>([]);
     const [habilitarStockMin, sethabilitarStockMin] = useState(false);
+    const [erroresProovedor, seterroresProovedor] = useState("");
+    const [erroresItems, seterroresItems] = useState({factura: "", item: "", cantidad: "", precioUni: "", descuento: "", stockMin: "", bodega: "", seccion: "", percha: ""});
+    const [showSuccess, setshowSuccess] = useState(false);
+    const [showError, setshowError] = useState(false);
+    const [mensajeError, setmensajeError] = useState("");
 
 
 const cargarInfoSolMaterial = async() =>{
@@ -116,30 +121,50 @@ const cargarInfoSolMaterial = async() =>{
      
      
   const agregarItemsActualizado = () => {
+  const errorItem = validarItem(item);
+  const errorCantidad = validarCantidad(cantidad);
+  const errorPrecio = validarPrecio(precioUni);
+  const errorDescuento = validarDescuento(descuento);
+  const errorStockMin = validarStockMin(stockMin, habilitarStockMin);
+  const errorBodega = validarBodega(bodega);
+  const errorSeccion = validarSeccion(seccion);
+  const errorPercha = validarPercha(percha);
+
+  seterroresItems({
+    factura: "",
+    item: errorItem,
+    cantidad: errorCantidad,
+    precioUni: errorPrecio,
+    descuento: errorDescuento,
+    stockMin: errorStockMin,
+    bodega: errorBodega,
+    seccion: errorSeccion,
+    percha: errorPercha
+  });
+
+  if (errorItem || errorCantidad || errorPrecio || errorDescuento || errorStockMin || errorBodega || errorSeccion || errorPercha) {
+    console.log("Errores en la validación de ítems:", {
+      item: errorItem,
+      cantidad: errorCantidad,
+      precioUni: errorPrecio,
+      descuento: errorDescuento,
+      stockMin: errorStockMin,
+      bodega: errorBodega,
+      seccion: errorSeccion,
+      percha: errorPercha
+    });
+    return;
+  }
+
   const c = Number(cantidad ?? 0);
   const pu = Number(precioUni ?? 0);
   const d = Number(descuento ?? 0);
-  const ivaFinal = iva ? 0.15 : 0; 
+  const ivaFinal = iva ? 0.15 : 0;
 
   const subtotal1 = c * pu;
   const descuento1 = subtotal1 * (d / 100);
   const iva1 = (subtotal1 - descuento1) * ivaFinal;
   const calcTotal = subtotal1 - descuento1 + iva1;
-
-  if(bodega === ""){
-   alert("Elija una bodega");
-   return;
-  }
-
-  if(seccion === ""){
-   alert("Elija una seccion");
-   return;
-  }
-
-   if(percha === ""){
-   alert("Elija una percha");
-   return;
-  }
 
   const newItem = {
     nombre: item ?? "",
@@ -148,8 +173,8 @@ const cargarInfoSolMaterial = async() =>{
     costo: pu,
     descuento: d,
     iva: iva,
-    subtotal: parseFloat(subtotal1),
-    total: parseFloat(calcTotal),
+    subtotal: parseFloat(subtotal1.toString()),
+    total: parseFloat(calcTotal.toString()),
     bodegaId: Number(bodega),
     seccionId: Number(seccion),
     perchaId: Number(percha),
@@ -170,20 +195,148 @@ const cargarInfoSolMaterial = async() =>{
   setprecioUni(null);
   setdescuento(null);
   setiva(false);
-  //setbodega("");
-  //setseccion("");
- // setpercha("");
   setobservacion("");
+  seterroresItems({factura: "", item: "", cantidad: "", precioUni: "", descuento: "", stockMin: "", bodega: "", seccion: "", percha: ""});
 };
 
+const validarProovedor = (valor: string): string => {
+  if (!valor || valor.trim() === "") {
+    return "El campo no puede estar vacío";
+  }
+  if (!/^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(valor)) {
+    return "El proveedor solo puede contener letras";
+  }
+  const existe = proovedores.some(p => p.nombreComercial.toLowerCase() === valor.toLowerCase());
+  if (!existe) {
+    return "Debe digitar un proveedor existente";
+  }
+  return "";
+};
+
+const validarFactura = (valor: string): string => {
+  if (!valor || valor.trim() === "") {
+    return "El campo no puede estar vacío";
+  }
+  return "";
+};
+
+const validarItem = (valor: string | null): string => {
+  if (!valor || (typeof valor === 'string' && valor.trim() === "")) {
+    return "Debe seleccionar un item";
+  }
+  if (typeof valor === 'string' && !/^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(valor)) {
+    return "El item solo puede contener letras";
+  }
+  return "";
+};
+
+const validarCantidad = (valor: number | null): string => {
+  if (!valor || valor === 0 || valor === null) {
+    return "La cantidad no puede estar vacía";
+  }
+  const num = Number(valor);
+  if (isNaN(num)) {
+    return "Debe ser un número válido";
+  }
+  if (num < 0) {
+    return "La cantidad no puede ser negativa";
+  }
+  return "";
+};
+
+const validarPrecio = (valor: number | null): string => {
+  if (!valor || valor === null) {
+    return "El precio no puede estar vacío";
+  }
+  const num = Number(valor);
+  if (isNaN(num)) {
+    return "Debe ser un número válido";
+  }
+  if (num < 0) {
+    return "El precio no puede ser negativo";
+  }
+  return "";
+};
+
+const validarDescuento = (valor: number | null): string => {
+  if (valor === null || valor === undefined) {
+    return "El descuento no puede estar vacío";
+  }
+  const num = Number(valor);
+  if (isNaN(num)) {
+    return "Debe ser un número válido";
+  }
+  if (num < 0) {
+    return "El descuento no puede ser negativo";
+  }
+  return "";
+};
+
+const validarStockMin = (valor: number | null, habilitado: boolean): string => {
+  if (habilitado) {
+    return "";
+  }
+  if (!valor || valor === null) {
+    return "El stock mínimo no puede estar vacío";
+  }
+  const num = Number(valor);
+  if (isNaN(num)) {
+    return "Debe ser un número válido";
+  }
+  if (num < 0) {
+    return "El stock mínimo no puede ser negativo";
+  }
+  return "";
+};
+
+const validarBodega = (valor: string): string => {
+  if (!valor || valor === "...") {
+    return "Debe seleccionar una bodega";
+  }
+  return "";
+};
+
+const validarSeccion = (valor: string): string => {
+  if (!valor || valor === "...") {
+    return "Debe seleccionar una sección";
+  }
+  return "";
+};
+
+const validarPercha = (valor: string): string => {
+  if (!valor || valor === "...") {
+    return "Debe seleccionar una percha";
+  }
+  return "";
+};
 
  const enviarygenerarActaDeEntrada = async() =>{
- console.log("hice clic en");
+ const errorProovedor = validarProovedor(proovedor);
+ const errorFactura = validarFactura(factura);
  
-/* if (!solCompraId || solicitudMaterial.itemsSolicitados.length === 0) {
-  alert("Debe llenar la informacion antes de generar la acta de entrada");
-  return;
-}*/
+ seterroresProovedor(errorProovedor);
+ seterroresItems({...erroresItems, factura: errorFactura});
+
+ if (errorProovedor || errorFactura) {
+   setmensajeError("Debe llenar correctamente los campos obligatorios");
+   setshowError(true);
+   setTimeout(() => setshowError(false), 3000);
+   return;
+ }
+
+/* if (errorFactura) {
+   setmensajeError(errorFactura);
+   setshowError(true);
+   setTimeout(() => setshowError(false), 3000);
+   return;
+ }*/
+
+ if (solicitudMaterial.itemsSolicitados.length === 0) {
+   setmensajeError("Debe agregar al menos un item a la orden de entrada");
+   setshowError(true);
+   setTimeout(() => setshowError(false), 3000);
+   return;
+ }
 
    const registroEntradaFinal = {
     proovedor:proovedor,
@@ -196,11 +349,18 @@ const cargarInfoSolMaterial = async() =>{
    const res = await createActaEntrada(solCompraId,registroEntradaFinal);
 
    if(res.validate){
-   alert(res.msj);
-    setsolicitudMaterial({numOrden:"",numOrdenTrabajo:"",itemsSolicitados:[],id:0});
-    window.open(`/pdf-entrada/${undefined}`,"_blank");
+   setshowSuccess(true);
+   setTimeout(() => {
+     setshowSuccess(false);
+     setsolicitudMaterial({numOrden:"",numOrdenTrabajo:"",itemsSolicitados:[],id:0});
+     setproovedor("");
+     setfactura("");
+     window.open(`/pdf-entrada/${undefined}`,"_blank");
+   }, 1000);
    }else{
-    console.error(res);
+    setmensajeError(res.msj || "Error al crear el acta de entrada");
+    setshowError(true);
+    setTimeout(() => setshowError(false), 3000);
    }
   
 
@@ -307,6 +467,28 @@ useEffect(() => {
 
  return (
   <>
+    {showSuccess && (
+      <div className="fixed top-5 right-5 z-50">
+        <div role="alert" className="alert alert-success shadow-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>Acta de entrada registrada exitosamente!</span>
+        </div>
+      </div>
+    )}
+
+    {showError && (
+      <div className="fixed top-5 right-5 z-50">
+        <div role="alert" className="alert alert-error shadow-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{mensajeError}</span>
+        </div>
+      </div>
+    )}
+
     <div className="w-full h-full p-6 space-y-6">
 
       
@@ -325,15 +507,18 @@ useEffect(() => {
         <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-3">Destino / Documento</h2>
 
         <div className="flex gap-4 flex-wrap">
-          <div className="flex gap-2 items-start min-w-[220px]">
+          <div className="flex gap-2 items-start max-w-[220px]">
             <div className="w-full">
               <label className="block text-sm text-gray-600 mb-1">Proveedor</label>
               <div className="relative">
                 <input
-                  className="input input-bordered w-full"
+                  className={`input input-bordered w-full ${erroresProovedor ? 'input-error' : ''}`}
                   list="browsers"
                   value={proovedor}
-                  onChange={(e) => setproovedor(e.target.value)}
+                  onChange={(e) => {
+                    setproovedor(e.target.value);
+                    seterroresProovedor(validarProovedor(e.target.value));
+                  }}
                   placeholder="Buscar proveedor..."
                 />
                 <datalist id="browsers">
@@ -342,11 +527,12 @@ useEffect(() => {
                   )}
                 </datalist>
               </div>
+              <div className="h-5">{erroresProovedor && <p className="text-red-500 text-xs">{erroresProovedor}</p>}</div>
             </div>
 
             <button
               type="button"
-              className="btn btn-ghost btn-square ml-2 self-end"
+              className="btn btn-ghost btn-square place-self-center"
               onClick={() => setventanaAgregarProovedor(!ventanaAgregarProovedor)}
               title="Agregar proveedor"
             >
@@ -354,9 +540,10 @@ useEffect(() => {
             </button>
           </div>
 
-          <div className="min-w-[180px] flex-1">
+          <div className="min-w-[180px] flex-1 mx-1">
             <label className="block text-sm text-gray-600 mb-1">S/Factura</label>
-            <input className="input input-bordered w-full" value={factura} onChange={(e) => setfactura(e.target.value)} />
+            <input className={`input input-bordered w-full ${erroresItems.factura ? 'input-error' : ''}`} value={factura} onChange={(e) => {setfactura(e.target.value); seterroresItems({...erroresItems, factura: validarFactura(e.target.value)});}} />
+            <div className="h-5">{erroresItems.factura && <p className="text-red-500 text-xs">{erroresItems.factura}</p>}</div>
           </div>
 
           <div className="min-w-[180px] flex-1">
@@ -377,39 +564,44 @@ useEffect(() => {
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
           <div className="md:col-span-6">
-            <label className="block text-sm text-gray-600 mb-1">Descripción</label>
+            <label className="block text-sm text-gray-600 mb-1">Descripcion</label>
             <input
-              className="input input-bordered w-full"
+              className={`input input-bordered w-full ${erroresItems.item ? 'input-error' : ''}`}
               list="browsers1"
               value={item}
-              onChange={(e) => { const value = e.target.value; setitem(value); }}
-              placeholder="Buscar o escribir descripción"
+              onChange={(e) => { const value = e.target.value; setitem(value); seterroresItems({...erroresItems, item: validarItem(value)}); }}
+              placeholder="Buscar o escribir descripcion"
             />
             <datalist id="browsers1">
               {items?.map(p => (
                 <option key={p.id} value={p.nombre} />
               ))}
             </datalist>
+            <div className="h-5">{erroresItems.item && <p className="text-red-500 text-xs">{erroresItems.item}</p>}</div>
           </div>
 
           <div className="md:col-span-2">
             <label className="block text-sm text-gray-600 mb-1">Cantidad</label>
-            <input className="input input-bordered w-full" placeholder="0" value={cantidad ?? ""} onChange={(e) => setcantidad(e.target.value)} />
+            <input className={`input input-bordered w-full ${erroresItems.cantidad ? 'input-error' : ''}`} placeholder="0" value={cantidad ?? ""} onChange={(e) => {setcantidad(e.target.value); seterroresItems({...erroresItems, cantidad: validarCantidad(e.target.value)});}} />
+            <div className="h-5">{erroresItems.cantidad && <p className="text-red-500 text-xs">{erroresItems.cantidad}</p>}</div>
           </div>
 
           <div className="md:col-span-2">
             <label className="block text-sm text-gray-600 mb-1">Stock Min.</label>
-            <input className="input input-bordered w-full" disabled={habilitarStockMin} value={stockMin ?? ""} onChange={(e) => setstockMin(e.target.value)} />
+            <input className={`input input-bordered w-full ${erroresItems.stockMin && habilitarStockMin ? 'input-error' : ''}`} disabled={habilitarStockMin} value={stockMin ?? ""} onChange={(e) => {setstockMin(e.target.value); seterroresItems({...erroresItems, stockMin: validarStockMin(e.target.value, habilitarStockMin)});}} />
+            <div className="h-5">{erroresItems.stockMin && !habilitarStockMin && <p className="text-red-500 text-xs">{erroresItems.stockMin}</p>}</div>
           </div>
 
           <div className="md:col-span-2">
             <label className="block text-sm text-gray-600 mb-1">Precio U.</label>
-            <input className="input input-bordered w-full" placeholder="0.00" value={precioUni ?? ""} onChange={(e) => setprecioUni(e.target.value)} />
+            <input className={`input input-bordered w-full ${erroresItems.precioUni ? 'input-error' : ''}`} placeholder="0.00" value={precioUni ?? ""} onChange={(e) => {setprecioUni(e.target.value); seterroresItems({...erroresItems, precioUni: validarPrecio(e.target.value)});}} />
+            <div className="h-5">{erroresItems.precioUni && <p className="text-red-500 text-xs">{erroresItems.precioUni}</p>}</div>
           </div>
 
           <div className="md:col-span-2">
             <label className="block text-sm text-gray-600 mb-1">% Desc.</label>
-            <input className="input input-bordered w-full" placeholder="0" value={descuento} onChange={(e) => setdescuento(e.target.value)} />
+            <input className={`input input-bordered w-full ${erroresItems.descuento ? 'input-error' : ''}`} placeholder="0" value={descuento} onChange={(e) => {setdescuento(e.target.value); seterroresItems({...erroresItems, descuento: validarDescuento(e.target.value)});}} />
+            <div className="h-5">{erroresItems.descuento && <p className="text-red-500 text-xs">{erroresItems.descuento}</p>}</div>
           </div>
 
           <div className="md:col-span-3 flex items-center gap-6">
@@ -437,26 +629,29 @@ useEffect(() => {
         <div className="flex gap-4 flex-wrap">
           <div className="w-full md:w-1/4">
             <label className="block text-sm text-gray-600 mb-1">Bodega</label>
-            <select className="select select-bordered w-full" defaultValue={"..."} onChange={(e) => setbodega(e.target.value)}>
+            <select className={`select select-bordered w-full ${erroresItems.bodega ? 'select-error' : ''}`} defaultValue={"..."} onChange={(e) => {setbodega(e.target.value); seterroresItems({...erroresItems, bodega: validarBodega(e.target.value)});}}>
               <option value="..." disabled>Seleccione una bodega</option>
               {bodegas?.map(b => <option key={b.id} value={b.id}>{b.bodega}</option>)}
             </select>
+            <div className="h-5">{erroresItems.bodega && <p className="text-red-500 text-xs">{erroresItems.bodega}</p>}</div>
           </div>
 
           <div className="w-full md:w-1/4">
             <label className="block text-sm text-gray-600 mb-1">Sección</label>
-            <select className="select select-bordered w-full" ref={selSecc} defaultValue={"..."} onChange={(e) => setseccion(e.target.value)}>
+            <select className={`select select-bordered w-full ${erroresItems.seccion ? 'select-error' : ''}`} ref={selSecc} defaultValue={"..."} onChange={(e) => {setseccion(e.target.value); seterroresItems({...erroresItems, seccion: validarSeccion(e.target.value)});}}>
               <option value="..." disabled>Seleccione una sección</option>
               {secciones?.map(s => <option key={s.id} value={s.id}>{s.seccion}</option>)}
             </select>
+            <div className="h-5">{erroresItems.seccion && <p className="text-red-500 text-xs">{erroresItems.seccion}</p>}</div>
           </div>
 
           <div className="w-full md:w-1/4">
             <label className="block text-sm text-gray-600 mb-1">Percha</label>
-            <select className="select select-bordered w-full" defaultValue={"..."} onChange={(e) => setpercha(e.target.value)}>
+            <select className={`select select-bordered w-full ${erroresItems.percha ? 'select-error' : ''}`} defaultValue={"..."} onChange={(e) => {setpercha(e.target.value); seterroresItems({...erroresItems, percha: validarPercha(e.target.value)});}}>
               <option value="..." disabled>Seleccione una percha</option>
               {perchas?.map(p => <option key={p.id} value={p.id}>{p.percha}</option>)}
             </select>
+            <div className="h-5">{erroresItems.percha && <p className="text-red-500 text-xs">{erroresItems.percha}</p>}</div>
           </div>
 
           <div className="w-full md:w-1/2">
