@@ -11,7 +11,7 @@ import type { CrearUser } from "../../models/create-user";
 const route: string = "http://localhost:3000/"
 
 export const crearUsuario = async (crearUser: CrearUser): Promise<{ msj: string ,validate:boolean}> => {
-  
+  console.log("crearUsuario in front", crearUser);  
   const response: Response = await fetch(`${route}admin/create/user`, {
     method: "POST",
     headers: {

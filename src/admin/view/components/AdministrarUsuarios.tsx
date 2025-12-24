@@ -28,6 +28,17 @@ export const AdministrarUsuarios = () => {
   const [filtroIdentificacion, setFiltroIdentificacion] = useState("");
   const [filtroActivo, setFiltroActivo] = useState<string>("");
 
+  // Estados para alertas de éxito y error
+  const [showError, setshowError] = useState(false);
+  const [showSuccess, setshowSuccess] = useState(false);
+  const [mensajeError, setmensajeError] = useState("");
+  
+  // Estados para errores de validación en detalles
+  const [erroresEdicion, seterroresEdicion] = useState({});
+  const [showErrorEdicion, setshowErrorEdicion] = useState(false);
+  const [showSuccessEdicion, setshowSuccessEdicion] = useState(false);
+  const [mensajeErrorEdicion, setmensajeErrorEdicion] = useState("");
+
   useEffect(() => {
     const asignarCargos = async () =>{
       const traerCargos = await getAllCargos();
@@ -40,6 +51,51 @@ const obtenerUsers = async () =>{
       const getUsersbyApi = await getUsers();
       setusers(getUsersbyApi);
     };
+
+  // Validaciones para detalles
+  const validarNombre = (valor) => {
+    if (!valor.trim()) return "El nombre es requerido";
+    if (!/^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(valor)) return "El nombre solo puede contener letras y espacios";
+    return "";
+  };
+
+  const validarCedula = (valor) => {
+    if (!valor) return "La cédula es requerida";
+    if (!/^\d+$/.test(valor.toString())) return "La cédula solo puede contener números";
+    if (valor.toString().length < 10) return "La cédula debe tener al menos 10 dígitos";
+    return "";
+  };
+
+  const validarCelular = (valor) => {
+    if (!valor) return "El celular es requerido";
+    if (!/^\d+$/.test(valor.toString())) return "El celular solo puede contener números";
+    if (valor.toString().length < 10) return "El celular debe tener al menos 10 dígitos";
+    return "";
+  };
+
+  const validarEmail = (valor) => {
+    if (!valor.trim()) return "El email es requerido";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor)) return "El email no es válido";
+    return "";
+  };
+
+  const validarFecha = (valor) => {
+    if (!valor) return "La fecha de nacimiento es requerida";
+    return "";
+  };
+
+  const validarCargo = (valor) => {
+    if (!valor || valor === 0) return "Debe seleccionar un cargo";
+    return "";
+  };
+
+  const limpiarErroresEdicion = () => {
+    seterroresEdicion({});
+    setshowErrorEdicion(false);
+    setshowSuccessEdicion(false);
+    setmensajeErrorEdicion("");
+    setcontrasenia("");
+  };
 
   useEffect(() => {
     const obtenerUsers = async () =>{
@@ -54,42 +110,88 @@ const obtenerUsers = async () =>{
     console.log(infoUsuario);
     setselectCargo(infoUsuario.cargoId.id);
     setasignarDetalle(infoUsuario);
+    limpiarErroresEdicion();
   };
 
   const actualizarInfoUsuario = async () =>{
-    if(contrasenia===""){
-      const newInfoUsuario = {
-        name: asignarDetalle.name,
-        fechaNac: asignarDetalle.fechaNac,
-        identification: asignarDetalle.identification,
-        cellphone: asignarDetalle.cellphone,
-        email: asignarDetalle.email,
-        cargo: selectCargo
+    // Validar campos
+    const nuevosErrores = {
+      nombre: validarNombre(asignarDetalle.name || ""),
+      cedula: validarCedula(asignarDetalle.identification || ""),
+      celular: validarCelular(asignarDetalle.cellphone || ""),
+      email: validarEmail(asignarDetalle.email || ""),
+      fecha: validarFecha(asignarDetalle.fechaNac || ""),
+      cargo: validarCargo(selectCargo)
+    };
+
+    seterroresEdicion(nuevosErrores);
+
+    // Si hay errores, mostrar mensaje
+    if (Object.values(nuevosErrores).some(error => error !== "")) {
+      setmensajeErrorEdicion("Por favor complete correctamente todos los campos");
+      setshowErrorEdicion(true);
+      setTimeout(() => {
+        setshowErrorEdicion(false);
+      }, 3000);
+      return;
+    }
+
+    try {
+      if(contrasenia===""){
+        const newInfoUsuario = {
+          name: asignarDetalle.name,
+          fechaNac: asignarDetalle.fechaNac,
+          identification: asignarDetalle.identification,
+          cellphone: asignarDetalle.cellphone,
+          email: asignarDetalle.email,
+          cargo: selectCargo
+        }
+        const res = await actualizarUsuario(asignarDetalle.id, newInfoUsuario);
+        setmensajeErrorEdicion(res.msj);
+        setshowSuccessEdicion(true);
+        setTimeout(() => {
+          setshowSuccessEdicion(false);
+            console.log(res);
+        detalleUsuario(asignarDetalle.id);
+       
+        }, 2000);
+       sethabilitarEdicion(!habilitarEdicion);
+      }else{
+        const newInfoUsuario = {
+          name: asignarDetalle.name,
+          fechaNac: asignarDetalle.fechaNac,
+          identification: asignarDetalle.identification,
+          cellphone: asignarDetalle.cellphone,
+          email: asignarDetalle.email,
+          password: contrasenia,
+          cargoId: selectCargo
+        }
+        const res = await actualizarUsuario(asignarDetalle.id, newInfoUsuario);
+        if(res.validate === false){
+          setmensajeErrorEdicion("Fallo al actualizar los datos!");
+          setshowErrorEdicion(true);
+          setTimeout(() => {
+            setshowErrorEdicion(false);
+          }, 3000);
+          return;
+        }
+        setmensajeErrorEdicion(res.msj);
+        setshowSuccessEdicion(true);
+        setTimeout(() => {
+          setshowSuccessEdicion(false);
+           detalleUsuario(asignarDetalle.id);
+        sethabilitarEdicion(!habilitarEdicion);
+
+        }, 2000);
+               setcontrasenia("");
       }
-      const res = await actualizarUsuario(asignarDetalle.id, newInfoUsuario);
-      alert(res.msj);
-      console.log(res);
-      detalleUsuario(asignarDetalle.id);
-      sethabilitarEdicion(!habilitarEdicion);
-    }else{
-      const newInfoUsuario = {
-        name: asignarDetalle.name,
-        fechaNac: asignarDetalle.fechaNac,
-        identification: asignarDetalle.identification,
-        cellphone: asignarDetalle.cellphone,
-        email: asignarDetalle.email,
-        password: contrasenia,
-        cargoId: selectCargo
-      }
-      const res = await actualizarUsuario(asignarDetalle.id, newInfoUsuario);
-      if(res.validte ===false){
-       alert("Fallo al actualizar los datos!");
-       return;
-      }
-      alert(res.msj);
-      detalleUsuario(asignarDetalle.id);
-      sethabilitarEdicion(!habilitarEdicion);
-      setcontrasenia("");
+    } catch (error) {
+      console.log(error);
+      setmensajeErrorEdicion("Error al actualizar el usuario");
+      setshowErrorEdicion(true);
+      setTimeout(() => {
+        setshowErrorEdicion(false);
+      }, 3000);
     }
   };
 
@@ -118,18 +220,68 @@ const obtenerUsers = async () =>{
   const metodoEliminarUser = async (id:number) => {
    const res = await deleteUser(id);
 
-   if(res.validate ===false){
-    alert(res.msj);
-    return;
+   if(res.validate === true){
+    setmensajeError(res.msj ?? "Usuario eliminado correctamente");
+    setshowSuccess(true);
+    setTimeout(() => {
+      setshowSuccess(false);
+      
+    }, 2000);
+    obtenerUsers();
+   } else {
+    setmensajeError(res.msj);
+    setshowError(true);
+    setTimeout(() => {
+      setshowError(false);
+    }, 3000);
    }
-
-   alert(res.msj);
-   const res2 = await getUsers();
-    setusers(res2);
   }
 
   return (
     <>
+      {showSuccess && (
+        <div className="fixed top-5 right-5 z-50">
+          <div role="alert" className="alert alert-success shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{mensajeError}</span>
+          </div>
+        </div>
+      )}
+
+      {showError && (
+        <div className="fixed top-5 right-5 z-50">
+          <div role="alert" className="alert alert-error shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{mensajeError}</span>
+          </div>
+        </div>
+      )}
+
+      {showSuccessEdicion && (
+        <div className="fixed top-5 right-5 z-50">
+          <div role="alert" className="alert alert-success shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{mensajeErrorEdicion}</span>
+          </div>
+        </div>
+      )}
+
+      {showErrorEdicion && (
+        <div className="fixed top-5 right-5 z-50">
+          <div role="alert" className="alert alert-error shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{mensajeErrorEdicion}</span>
+          </div>
+        </div>
+      )}
       <div className="min-w-[70%] min-h-[60%] rounded-xl border border-gray-200 bg-white shadow-sm">
         <div className="bg-gray-100 w-full h-12 flex items-center justify-between rounded-t-lg border-b px-4">
           <p className="font-semibold text-gray-700">Listado de usuarios</p>
@@ -216,35 +368,45 @@ const obtenerUsers = async () =>{
         <div className="relative border border-gray-300 w-11/12 max-w-4xl h-[85vh] rounded-md bg-white shadow-lg overflow-auto">
           <div className="w-full h-[12%] flex justify-between p-5 border-b">
             <div className="font-medium text-gray-700">Detalle de usuario</div>
-            <div onClick={() => setventanaEmergente(!ventanaEmergente)} className="cursor-pointer">❌</div>
+            <div onClick={() => {limpiarErroresEdicion(); setventanaEmergente(!ventanaEmergente);}} className="cursor-pointer">❌</div>
           </div>
 
           <div className="w-full h-[76%] border-y border-gray-300 px-6 py-4 flex">
             <div className="w-1/3">
               <p className="text-xs text-gray-500">Nombre</p>
-              <input type="text" disabled={!habilitarEdicion} className="input w-full mt-1" value={asignarDetalle.name ?? ""} onChange={(e)=>setasignarDetalle(prev=>({...prev, name: e.target.value}))} />
+              <input type="text" disabled={!habilitarEdicion} className={`input w-full mt-1 ${erroresEdicion.nombre ? 'input-error' : ''}`} value={asignarDetalle.name ?? ""} onChange={(e)=>{setasignarDetalle(prev=>({...prev, name: e.target.value})); seterroresEdicion({...erroresEdicion, nombre: validarNombre(e.target.value)});}} />
+              <div className="h-5">{erroresEdicion.nombre && <p className="text-red-500 text-sm">{erroresEdicion.nombre}</p>}</div>
+              
               <p className="text-xs text-gray-500 mt-4">Fecha de nacimiento</p>
-        
-              <input type="date" className="input input-sm" value={asignarDetalle.fechaNac ?? ""} disabled={!habilitarEdicion} onChange={(e)=>{ setasignarDetalle(prev=>({...prev, fechaNac: e.target.value}));}} />
+              <input type="date" className={`input input-sm ${erroresEdicion.fecha ? 'input-error' : ''}`} value={asignarDetalle.fechaNac ?? ""} disabled={!habilitarEdicion} onChange={(e)=>{ setasignarDetalle(prev=>({...prev, fechaNac: e.target.value})); seterroresEdicion({...erroresEdicion, fecha: validarFecha(e.target.value)});}} />
+              <div className="h-5">{erroresEdicion.fecha && <p className="text-red-500 text-sm">{erroresEdicion.fecha}</p>}</div>
+              
               <p className="text-xs text-gray-500 mt-4">Cédula</p>
-              <input className="input w-full mt-1" value={asignarDetalle.identification ?? ""} onChange={(e)=>setasignarDetalle(prev=>({...prev, identification: e.target.value}))} disabled={!habilitarEdicion} />
+              <input className={`input w-full mt-1 ${erroresEdicion.cedula ? 'input-error' : ''}`} value={asignarDetalle.identification ?? ""} onChange={(e)=>{setasignarDetalle(prev=>({...prev, identification: e.target.value})); seterroresEdicion({...erroresEdicion, cedula: validarCedula(e.target.value)});}} disabled={!habilitarEdicion} />
+              <div className="h-5">{erroresEdicion.cedula && <p className="text-red-500 text-sm">{erroresEdicion.cedula}</p>}</div>
             </div>
 
             <div className="w-1/3 px-4">
               <p className="text-xs text-gray-500">Celular</p>
-              <input className="input w-full mt-1" value={asignarDetalle.cellphone ?? ""} onChange={(e)=>setasignarDetalle(prev=>({...prev, cellphone: e.target.value}))} disabled={!habilitarEdicion} />
+              <input className={`input w-full mt-1 ${erroresEdicion.celular ? 'input-error' : ''}`} value={asignarDetalle.cellphone ?? ""} onChange={(e)=>{setasignarDetalle(prev=>({...prev, cellphone: e.target.value})); seterroresEdicion({...erroresEdicion, celular: validarCelular(e.target.value)});}} disabled={!habilitarEdicion} />
+              <div className="h-5">{erroresEdicion.celular && <p className="text-red-500 text-sm">{erroresEdicion.celular}</p>}</div>
+              
               <p className="text-xs text-gray-500 mt-4">Email</p>
-              <input className="input w-full mt-1" value={asignarDetalle.email ?? ""} onChange={(e)=>setasignarDetalle(prev=>({...prev, email: e.target.value}))} disabled={!habilitarEdicion} />
+              <input className={`input w-full mt-1 ${erroresEdicion.email ? 'input-error' : ''}`} value={asignarDetalle.email ?? ""} onChange={(e)=>{setasignarDetalle(prev=>({...prev, email: e.target.value})); seterroresEdicion({...erroresEdicion, email: validarEmail(e.target.value)});}} disabled={!habilitarEdicion} />
+              <div className="h-5">{erroresEdicion.email && <p className="text-red-500 text-sm">{erroresEdicion.email}</p>}</div>
+              
               <p className="text-xs text-gray-500 mt-4">Nueva contraseña</p>
               <input className="input w-full mt-1" value={contrasenia} onChange={(e)=>setcontrasenia(e.target.value)} disabled={!habilitarEdicion} />
             </div>
 
             <div className="w-1/3">
               <p className="text-xs text-gray-500">Cargo</p>
-              <select disabled={!habilitarEdicion} className="select w-full mt-1" value={selectCargo} onChange={(e)=>setselectCargo(Number(e.target.value))}>
+              <select disabled={!habilitarEdicion} className={`select w-full mt-1 ${erroresEdicion.cargo ? 'select-error' : ''}`} value={selectCargo} onChange={(e)=>{setselectCargo(Number(e.target.value)); seterroresEdicion({...erroresEdicion, cargo: validarCargo(Number(e.target.value))});}}>
                 <option value={0}>...</option>
                 {cargos.map((a)=><option key={a.id} value={a.id}>{a.name}</option>)}
               </select>
+              <div className="h-5">{erroresEdicion.cargo && <p className="text-red-500 text-sm">{erroresEdicion.cargo}</p>}</div>
+              
               <p className="text-xs text-gray-500 mt-4">Estado</p>
               <input className="input w-full mt-1" disabled={!habilitarEdicion} value={asignarDetalle?.estado ?"ACTIVO":"INACTIVO"} />
             </div>
@@ -254,12 +416,12 @@ const obtenerUsers = async () =>{
             {habilitarEdicion ? (
               <>
                 <button className="btn btn-primary" onClick={actualizarInfoUsuario}>Hecho</button>
-                <button className="btn" onClick={() => { detalleUsuario(asignarDetalle.id); setcontrasenia(""); sethabilitarEdicion(!habilitarEdicion); }}>Cancelar</button>
+                <button className="btn" onClick={() => { limpiarErroresEdicion(); detalleUsuario(asignarDetalle.id); sethabilitarEdicion(!habilitarEdicion); }}>Cancelar</button>
               </>
             ) : (
               <>
                 <button className="btn" onClick={() => sethabilitarEdicion(!habilitarEdicion)}>Editar</button>
-                <button className="btn btn-ghost" onClick={() =>{ setventanaEmergente(!ventanaEmergente); setcontrasenia("")}}>Cerrar</button>
+                <button className="btn btn-ghost" onClick={() =>{ limpiarErroresEdicion(); setventanaEmergente(!ventanaEmergente);}}>Cerrar</button>
               </>
             )}
           </div>
