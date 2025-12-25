@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { crearNuevaArea, crearNuevaMaquina, getAllInfoAreas } from '../../controller/api/admin-api';
+import type { Area } from '../../models/areas.dto';
 
-interface Maquina {
+/*interface Maquina {
   id: number;
   nombre: string;
 }
@@ -16,9 +17,11 @@ interface Area {
   id: number;
   nombre: string;
   codigo: Codigo[];
-}
+}*/
 
 export const AdministrarAreasMaquinas = () => {
+
+  const [habilitarEdicion, sethabilitarEdicion] = useState(true)
   // Estados para crear área
   const [newArea, setnewArea] = useState("");
   const [areas, setareas] = useState<Area[]>([]);
@@ -32,6 +35,8 @@ export const AdministrarAreasMaquinas = () => {
   const [itemEnEdicion, setitemEnEdicion] = useState<{ tipo: "area" | "maquina" | null; data: any }>({ tipo: null, data: null });
   const [areaEditTemp, setareaEditTemp] = useState("");
   const [maquinaEditTemp, setmaquinaEditTemp] = useState("");
+  const [areName, setareName] = useState("");
+
 
   // Estados para alertas
   const [showSuccess, setshowSuccess] = useState(false);
@@ -132,19 +137,25 @@ export const AdministrarAreasMaquinas = () => {
   const abrirEdicion = (tipo: "area" | "maquina", data: any) => {
     setitemEnEdicion({ tipo, data });
     if (tipo === "area") {
-      setareaEditTemp(data.nombre);
+      
+      setareName(data.nombre);
     } else {
+    const buscarArea = areas.find(a => a.codigo.some(c => c.maquina.some(m => m.id === data.id)));
+      if (buscarArea) {
+        setareaEditTemp(buscarArea.nombre);
       setmaquinaEditTemp(data.nombre);
     }
-    setmodalEdicion(true);
+    
   };
-
+  setmodalEdicion(true);
+  };
   // Cerrar modal de edición
   const cerrarEdicion = () => {
     setmodalEdicion(false);
     setitemEnEdicion({ tipo: null, data: null });
     setareaEditTemp("");
     setmaquinaEditTemp("");
+    sethabilitarEdicion(true);
   };
 
   // Guardar edición (por ahora no hace nada)
@@ -328,7 +339,7 @@ export const AdministrarAreasMaquinas = () => {
 
       {/* MODAL DE EDICIÓN */}
       {modalEdicion && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-transparent bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-6 w-96">
             <h3 className="text-lg font-bold mb-4">
               {itemEnEdicion.tipo === "area" ? "Editar Área" : "Editar Máquina"}
@@ -340,16 +351,12 @@ export const AdministrarAreasMaquinas = () => {
                   <label className="label">
                     <span className="label-text">Nombre del área</span>
                   </label>
-                  <select
-                    className="select select-bordered w-full"
-                    value={areaEditTemp}
-                    onChange={(e) => setareaEditTemp(e.target.value)}
-                  >
-                    <option value="">Selecciona un área</option>
-                    {areas.map((a) => (
-                      <option key={a.id} value={a.nombre}>{a.nombre}</option>
-                    ))}
-                  </select>
+                   <input
+                    type="text"
+                    className="input input-bordered w-full"
+                    value={areName}
+                    onChange={(e) =>{setareName(e.target.value); if(e.target.value.trim() !== ""){sethabilitarEdicion(false)} else{sethabilitarEdicion(true)} }}
+                  />
                 </div>
               </>
             ) : (
@@ -362,8 +369,21 @@ export const AdministrarAreasMaquinas = () => {
                     type="text"
                     className="input input-bordered w-full"
                     value={maquinaEditTemp}
-                    onChange={(e) => setmaquinaEditTemp(e.target.value)}
+                    onChange={(e) =>{setmaquinaEditTemp(e.target.value); if(e.target.value.trim() !== ""){sethabilitarEdicion(false)} else{sethabilitarEdicion(true)} }}
                   />
+                    <label className="label">
+                    <span className="label-text">Nombre del área</span>
+                  </label>
+                  <select
+                    className="select select-bordered w-full"
+                    value={areaEditTemp}
+                    onChange={(e) => (e.target.value)}
+                  >
+                    <option value="">Selecciona un área</option>
+                    {areas.map((a) => (
+                      <option key={a.id} value={a.nombre}>{a.nombre}</option>
+                    ))}
+                  </select>
                 </div>
               </>
             )}
