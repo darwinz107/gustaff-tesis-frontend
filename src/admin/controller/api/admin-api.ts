@@ -1,3 +1,4 @@
+import type { AreasResponse } from "../../models/areas.dto";
 import type { CrearArea } from "../../models/create-area";
 import type { CreateBodega } from "../../models/create-bodega";
 import type { CreateCargo } from "../../models/create-cargo";
@@ -230,3 +231,15 @@ export const deleteUser = async (id:number): Promise<{ msj:string,validate:boole
 };
 
 
+export const getAllInfoAreas = async (): Promise<AreasResponse[]> => {
+ try {
+  const response = await fetch(`${route}admin/info/areas`, {
+    method: "GET",
+  });
+  const data = await response.json();
+  return data;
+  } catch (error) {
+    console.error("Error al obtener la información de áreas:", error);
+    return [];
+  }
+}

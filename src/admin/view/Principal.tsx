@@ -15,6 +15,11 @@ import { GestionSalida } from "../../acta-de-salida/view/GestionSalida";
 import { GestionInventario } from "../../inventario/view/GestionInventario";
 import { getLastSolicitud } from "../../orden-de-trabajo/controller/api/orden-api";
 import { AdminDashboard } from "../../dashboards/AdminDashboard";
+import { AdministrarAreasMaquinas } from "./components/AdministrarAreasMaquinas";
+/*import { AdministrarBodegasSeccionesPerchas } from "./components/AdministrarBodegasSeccionesPerchas";
+import { AdministrarCategorias } from "./components/AdministrarCategorias";
+import { AdministrarTiposTrabajo } from "./components/AdministrarTiposTrabajo";
+import { AdministrarCargos } from "./components/AdministrarCargos";*/
 
 export const Principal = () => {
 
@@ -64,7 +69,12 @@ export const Principal = () => {
     8: <GestionEntrada />,
     9: <CrearActaSalida />,
     10: <GestionSalida />,
-    11: <GestionInventario />
+    11: <GestionInventario />,
+    12: <AdministrarAreasMaquinas />,
+  /*  13: <AdministrarBodegasSeccionesPerchas />,
+    14: <AdministrarCategorias />,
+    15: <AdministrarTiposTrabajo />,
+    16: <AdministrarCargos />*/
   }
 
   const [cargarComponente, setcargarComponente] = useState(0);
@@ -113,6 +123,26 @@ export const Principal = () => {
 
             <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(3)}>
               ⚙️ {!collapsed && "Nuevo parámetro"}
+            </button>
+
+            <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(12)}>
+              🏭 {!collapsed && "Áreas y Máquinas"}
+            </button>
+
+            <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(13)}>
+              📦 {!collapsed && "Bodegas, Secciones y Perchas"}
+            </button>
+
+            <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(14)}>
+              🏷️ {!collapsed && "Categorías"}
+            </button>
+
+            <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(15)}>
+              🔧 {!collapsed && "Tipos de Trabajo"}
+            </button>
+
+            <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(16)}>
+              💼 {!collapsed && "Cargos"}
             </button>
 
             <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(1)}>
