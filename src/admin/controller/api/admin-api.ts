@@ -243,3 +243,28 @@ export const getAllInfoAreas = async (): Promise<Area[]> => {
     return [];
   }
 }
+
+export const actualizarArea = async (id:number,area: string): Promise<{ msj: string ,validate:boolean}> => {
+ try {
+  const response: Response = await fetch(`${route}admin/area/edit/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({area})
+  });
+  const data = await response.json();
+  return data;
+  } catch (error) {
+    console.error("Error al actualizar el área:", error);
+    return { msj: "Error al actualizar el área", validate: false };
+  }
+}
+
+export const eliminarArea = async (id:number): Promise<{ msj:string,validate:boolean }> => {
+  const response = await fetch(`${route}admin/area/delete/${id}`, {
+    method: "DELETE",
+  });
+  const data = await response.json();
+  return data;
+}

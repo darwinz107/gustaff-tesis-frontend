@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { crearNuevaArea, crearNuevaMaquina, getAllInfoAreas } from '../../controller/api/admin-api';
+import { actualizarArea, crearNuevaArea, crearNuevaMaquina, eliminarArea, getAllInfoAreas } from '../../controller/api/admin-api';
 import type { Area } from '../../models/areas.dto';
 
 /*interface Maquina {
@@ -50,7 +50,7 @@ export const AdministrarAreasMaquinas = () => {
   // Funciones de validación
   const validarNombre = (valor: string) => {
     if (!valor.trim()) return "Este campo es requerido";
-    if (!/^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(valor)) return "Solo se permiten letras y espacios";
+   // if (!/^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(valor)) return "Solo se permiten letras y espacios";
     return "";
   };
 
@@ -158,17 +158,41 @@ export const AdministrarAreasMaquinas = () => {
     sethabilitarEdicion(true);
   };
 
-  // Guardar edición (por ahora no hace nada)
-  const guardarEdicion = () => {
-    console.log("Guardar edición:", itemEnEdicion.tipo, itemEnEdicion.data);
-    // TODO: Crear API para guardar cambios
-    cerrarEdicion();
-  };
 
+  const guardarEdicion = async() => {
+    const { tipo, data } = itemEnEdicion;
+console.log(areName);
+   if(tipo === "area"){
+   const res = await actualizarArea(data.id, areName);
+   if(res.validate){
+    setmensajeError(res.msj);
+    setshowSuccess(true);
+    setTimeout(() => setshowSuccess(false), 2000);
+    cargarAreas();
+    cerrarEdicion();
+   }else{ 
+    setmensajeError(res.msj);
+    setshowError(true);
+    setTimeout(() => setshowError(false), 3000);
+   }
+    
+  };
+  }
   // Eliminar (por ahora no hace nada)
-  const eliminarItem = (tipo: "area" | "maquina", id: number) => {
-    console.log("Eliminar:", tipo, id);
-    // TODO: Crear API para eliminar
+  const eliminarItem = async(tipo: "area" | "maquina", id: number) => {
+    if (tipo === "area") {
+      const res = await eliminarArea(id);
+      if(res.validate){
+        setmensajeError(res.msj);
+        setshowSuccess(true);
+        setTimeout(() => setshowSuccess(false), 2000);
+        cargarAreas();
+      }else{
+        setmensajeError(res.msj);
+        setshowError(true);
+        setTimeout(() => setshowError(false), 3000);
+      }
+    }
   };
 
   return (
@@ -392,7 +416,7 @@ export const AdministrarAreasMaquinas = () => {
               <button className="btn btn-ghost" onClick={cerrarEdicion}>
                 Cancelar
               </button>
-              <button className="btn btn-primary" onClick={guardarEdicion}>
+              <button className="btn btn-primary" disabled={habilitarEdicion} onClick={guardarEdicion}>
                 Guardar
               </button>
             </div>
