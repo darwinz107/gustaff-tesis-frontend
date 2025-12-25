@@ -18,7 +18,7 @@ const id = useParams();
         const cargarSolicitud = async() =>{
        const res = await actaDeEntradaByIdCompra(id.id);
        setnewSolicitud(res);
-       
+       console.log(res);
     }
     cargarSolicitud();
     } catch (error) {

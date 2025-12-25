@@ -143,7 +143,7 @@ export const CrearProovedor = ({setventanaAgregarProovedor,ventanaAgregarProoved
         setshowSuccess(false);
         limpiarFormulario();
         setventanaAgregarProovedor(!ventanaAgregarProovedor);
-      }, 3000);
+      }, 2000);
     } catch (error) {
       setmensajeError("Error al registrar el proveedor");
       setshowError(true);

@@ -617,7 +617,7 @@ useEffect(() => {
 
           <div className="md:col-span-9">
             <label className="block text-sm text-gray-600 mb-1">Observación</label>
-            <input className="input input-bordered w-full" placeholder="Observación del ítem" />
+            <input className="input input-bordered w-full" placeholder="Observación del ítem" value={observacion} onChange={(e) => setobservacion(e.target.value)}/>
           </div>
         </div>
       </div>
@@ -654,10 +654,7 @@ useEffect(() => {
             <div className="h-5">{erroresItems.percha && <p className="text-red-500 text-xs">{erroresItems.percha}</p>}</div>
           </div>
 
-          <div className="w-full md:w-1/2">
-            <label className="block text-sm text-gray-600 mb-1">Observación</label>
-            <textarea className="textarea textarea-bordered w-full" placeholder="Observación de almacenamiento" value={observacion} onChange={(e) => setobservacion(e.target.value)} />
-          </div>
+         
         </div>
 
         <div className="mt-4 flex justify-center">
