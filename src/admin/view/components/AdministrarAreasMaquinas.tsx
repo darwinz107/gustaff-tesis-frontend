@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { actualizarArea, crearNuevaArea, crearNuevaMaquina, editarMaquina, eliminarArea, getAllInfoAreas } from '../../controller/api/admin-api';
+import { actualizarArea, crearNuevaArea, crearNuevaMaquina, editarMaquina, eliminarArea, eliminarMaquina, getAllInfoAreas } from '../../controller/api/admin-api';
 import type { Area } from '../../models/areas.dto';
 
 /*interface Maquina {
@@ -179,7 +179,8 @@ console.log(areName);
   };
 
   if(tipo === "maquina"){
-    const res = await editarMaquina(data.id, maquinaEditTemp);
+    console.log(data.id,areaEditTemp);
+    const res = await editarMaquina(data.id, areaEditTemp);
     if(res.validate){
      setmensajeError(res.msj);
       setshowSuccess(true);
@@ -191,7 +192,7 @@ console.log(areName);
       setshowError(true);
       setTimeout(() => setshowError(false), 3000);
     }
-
+     setselectArea("");
   }
   };
   // Eliminar (por ahora no hace nada)
@@ -431,11 +432,11 @@ console.log(areName);
                   <select
                     className="select select-bordered w-full"
                     value={areaEditTemp}
-                    onChange={(e) => (e.target.value)}
+                    onChange={(e)=>{setareaEditTemp(e.target.value); if(e.target.value.trim() !== ""){sethabilitarEdicion(false)} else{sethabilitarEdicion(true)};}}
                   >
                     <option value="">Selecciona un área</option>
                     {areas.map((a) => (
-                      <option key={a.id} value={a.nombre} onChange={(e)=>{setselectArea(e.target.value); if(e.target.value.trim() !== ""){sethabilitarEdicion(false)} else{sethabilitarEdicion(true)};}}>{a.nombre}</option>
+                      <option key={a.id} value={a.nombre} >{a.nombre}</option>
                     ))}
                   </select>
                 </div>

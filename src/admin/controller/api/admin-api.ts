@@ -269,14 +269,14 @@ export const eliminarArea = async (id:number): Promise<{ msj:string,validate:boo
   return data;
 }
 
-export const editarMaquina = async (id:number,maquina: string): Promise<{ msj: string ,validate:boolean}> => {
+export const editarMaquina = async (id:number,area: string): Promise<{ msj: string ,validate:boolean}> => {
   try {
     const response: Response = await fetch(`${route}admin/maquina/edit/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({maquina})
+      body: JSON.stringify({area})
     });
     const data = await response.json();
     return data;
