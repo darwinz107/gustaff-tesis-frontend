@@ -141,7 +141,7 @@ export const getAllCargos = async (): Promise<{ id:number,name: string}[]> => {
 }
 
 
-export const actualizarUsuario = async (id:number,infoActualizada: object): Promise<{ msj: string ,validte:boolean}> => {
+export const actualizarUsuario = async (id:number,infoActualizada: object): Promise<{ msj: string ,validate:boolean}> => {
   
   const response: Response = await fetch(`${route}admin/user/${id}`, {
     method: "PATCH",
@@ -263,6 +263,31 @@ export const actualizarArea = async (id:number,area: string): Promise<{ msj: str
 
 export const eliminarArea = async (id:number): Promise<{ msj:string,validate:boolean }> => {
   const response = await fetch(`${route}admin/area/delete/${id}`, {
+    method: "DELETE",
+  });
+  const data = await response.json();
+  return data;
+}
+
+export const editarMaquina = async (id:number,maquina: string): Promise<{ msj: string ,validate:boolean}> => {
+  try {
+    const response: Response = await fetch(`${route}admin/maquina/edit/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({maquina})
+    });
+    const data = await response.json();
+    return data;
+    } catch (error) {
+      console.error("Error al actualizar la máquina:", error);
+      return { msj: "Error al actualizar la máquina", validate: false };
+    }
+}
+
+export const eliminarMaquina = async (id:number): Promise<{ msj:string,validate:boolean }> => {
+  const response = await fetch(`${route}admin/maquina/delete/${id}`, {
     method: "DELETE",
   });
   const data = await response.json();

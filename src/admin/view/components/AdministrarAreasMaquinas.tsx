@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { actualizarArea, crearNuevaArea, crearNuevaMaquina, eliminarArea, getAllInfoAreas } from '../../controller/api/admin-api';
+import { actualizarArea, crearNuevaArea, crearNuevaMaquina, editarMaquina, eliminarArea, getAllInfoAreas } from '../../controller/api/admin-api';
 import type { Area } from '../../models/areas.dto';
 
 /*interface Maquina {
@@ -36,7 +36,7 @@ export const AdministrarAreasMaquinas = () => {
   const [areaEditTemp, setareaEditTemp] = useState("");
   const [maquinaEditTemp, setmaquinaEditTemp] = useState("");
   const [areName, setareName] = useState("");
-
+  
 
   // Estados para alertas
   const [showSuccess, setshowSuccess] = useState(false);
@@ -177,11 +177,41 @@ console.log(areName);
    }
     
   };
+
+  if(tipo === "maquina"){
+    const res = await editarMaquina(data.id, maquinaEditTemp);
+    if(res.validate){
+     setmensajeError(res.msj);
+      setshowSuccess(true);
+      setTimeout(() => setshowSuccess(false), 2000);
+      cargarAreas();
+      cerrarEdicion();
+    }else{ 
+      setmensajeError(res.msj);
+      setshowError(true);
+      setTimeout(() => setshowError(false), 3000);
+    }
+
   }
+  };
   // Eliminar (por ahora no hace nada)
   const eliminarItem = async(tipo: "area" | "maquina", id: number) => {
     if (tipo === "area") {
       const res = await eliminarArea(id);
+      if(res.validate){
+        setmensajeError(res.msj);
+        setshowSuccess(true);
+        setTimeout(() => setshowSuccess(false), 2000);
+        cargarAreas();
+      }else{
+        setmensajeError(res.msj);
+        setshowError(true);
+        setTimeout(() => setshowError(false), 3000);
+      }
+    }
+
+    if (tipo === "maquina") {
+      const res = await eliminarMaquina(id);
       if(res.validate){
         setmensajeError(res.msj);
         setshowSuccess(true);
@@ -405,7 +435,7 @@ console.log(areName);
                   >
                     <option value="">Selecciona un área</option>
                     {areas.map((a) => (
-                      <option key={a.id} value={a.nombre}>{a.nombre}</option>
+                      <option key={a.id} value={a.nombre} onChange={(e)=>{setselectArea(e.target.value); if(e.target.value.trim() !== ""){sethabilitarEdicion(false)} else{sethabilitarEdicion(true)};}}>{a.nombre}</option>
                     ))}
                   </select>
                 </div>
