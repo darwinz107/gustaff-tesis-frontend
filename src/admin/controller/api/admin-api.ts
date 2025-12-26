@@ -269,14 +269,14 @@ export const eliminarArea = async (id:number): Promise<{ msj:string,validate:boo
   return data;
 }
 
-export const editarMaquina = async (id:number,area: string): Promise<{ msj: string ,validate:boolean}> => {
+export const editarMaquina = async (id:number,area: string,maquina:string): Promise<{ msj: string ,validate:boolean}> => {
   try {
     const response: Response = await fetch(`${route}admin/maquina/edit/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({area})
+      body: JSON.stringify({area,maquina})
     });
     const data = await response.json();
     return data;
@@ -292,4 +292,17 @@ export const eliminarMaquina = async (id:number): Promise<{ msj:string,validate:
   });
   const data = await response.json();
   return data;
+}
+
+export const getAllInfoBodegas = async (): Promise<{}[]> => {
+ try {
+  const response = await fetch(`${route}admin/info/bodegas`, {
+    method: "GET",
+  });
+  const data = await response.json();
+  return data;
+  } catch (error) {
+    console.error("Error al obtener la información de bodegas:", error);
+    return [];
+  }
 }

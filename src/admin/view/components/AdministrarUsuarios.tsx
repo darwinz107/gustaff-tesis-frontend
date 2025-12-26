@@ -179,11 +179,14 @@ const obtenerUsers = async () =>{
         setshowSuccessEdicion(true);
         setTimeout(() => {
           setshowSuccessEdicion(false);
-           detalleUsuario(asignarDetalle.id);
-        sethabilitarEdicion(!habilitarEdicion);
-
+           
         }, 2000);
                setcontrasenia("");
+               detalleUsuario(asignarDetalle.id);
+        sethabilitarEdicion(!habilitarEdicion);
+        const res2 = await getUsers();
+    setusers(res2);
+
       }
     } catch (error) {
       console.log(error);

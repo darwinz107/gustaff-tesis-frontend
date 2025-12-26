@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { actualizarArea, crearNuevaArea, crearNuevaMaquina, editarMaquina, eliminarArea, eliminarMaquina, getAllInfoAreas } from '../../controller/api/admin-api';
 import type { Area } from '../../models/areas.dto';
 
@@ -46,6 +46,8 @@ export const AdministrarAreasMaquinas = () => {
   // Estados para errores de validación
   const [erroresArea, seterroresArea] = useState("");
   const [erroresMaquina, seterroresMaquina] = useState({ maquina: "", area: "" });
+
+  const dialog = useRef<HTMLDialogElement>(null);
 
   // Funciones de validación
   const validarNombre = (valor: string) => {
@@ -180,7 +182,7 @@ console.log(areName);
 
   if(tipo === "maquina"){
     console.log(data.id,areaEditTemp);
-    const res = await editarMaquina(data.id, areaEditTemp);
+    const res = await editarMaquina(data.id, areaEditTemp, maquinaEditTemp);
     if(res.validate){
      setmensajeError(res.msj);
       setshowSuccess(true);
@@ -196,9 +198,10 @@ console.log(areName);
   }
   };
   // Eliminar (por ahora no hace nada)
-  const eliminarItem = async(tipo: "area" | "maquina", id: number) => {
+  const eliminarItem = async() => {
+const { tipo, data } = itemEnEdicion;
     if (tipo === "area") {
-      const res = await eliminarArea(id);
+      const res = await eliminarArea(data.id);
       if(res.validate){
         setmensajeError(res.msj);
         setshowSuccess(true);
@@ -212,7 +215,7 @@ console.log(areName);
     }
 
     if (tipo === "maquina") {
-      const res = await eliminarMaquina(id);
+      const res = await eliminarMaquina(data.id);
       if(res.validate){
         setmensajeError(res.msj);
         setshowSuccess(true);
@@ -249,6 +252,19 @@ console.log(areName);
           </div>
         </div>
       )}
+
+      <dialog ref={dialog} id="my_modal_1" className="modal">
+      <div className="modal-box">
+        <h3 className="font-bold text-lg">Advertencia!</h3>
+        <p className="py-4">¿Esta seguro que desea eliminar la {itemEnEdicion.tipo}?</p>
+        <div className="modal-action">
+          <form method="dialog" className="flex gap-2">
+            <button className="btn btn-primary" onClick={eliminarItem}>Eliminar</button>
+            <button className="btn">Cancelar</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
 
       <div className="w-full h-full p-6 space-y-6">
         {/* SECCIÓN CREAR ÁREA Y MÁQUINA */}
@@ -351,7 +367,7 @@ console.log(areName);
                                         </button>
                                         <button
                                           className="btn btn-xs btn-error"
-                                          onClick={() => eliminarItem("maquina", maq.id)}
+                                          onClick={() => {setitemEnEdicion({tipo:"maquina",data:maq}); dialog.current.showModal(); }}
                                         >
                                           Eliminar
                                         </button>
@@ -379,7 +395,7 @@ console.log(areName);
                       </button>
                       <button
                         className="btn btn-xs btn-error"
-                        onClick={() => eliminarItem("area", area.id)}
+                       onClick={() => {setitemEnEdicion({tipo:"area",data: area}); dialog.current.showModal(); }}
                       >
                         Eliminar
                       </button>
