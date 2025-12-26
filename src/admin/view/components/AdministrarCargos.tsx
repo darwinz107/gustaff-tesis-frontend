@@ -1,17 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import { crearCargo, getAllCargos, getAllRoles, actualizarCargo, eliminarCargo } from '../../controller/api/admin-api';
+import React, { useEffect, useState, useRef } from 'react'
+import { crearCargo, getAllCargos, getAllRoles, editarCargo, eliminarCargo } from '../../controller/api/admin-api';
+import type { Cargo, Rol } from '../../models/cargos';
 
-interface Cargo {
-  id?: number;
-  cargo: string;
-  rolId?: number;
-  rol?: string;
-}
 
-interface Rol {
-  id: number;
-  role: string;
-}
 
 export const AdministrarCargos = () => {
   const [cargo, setcargo] = useState("");
@@ -20,11 +11,15 @@ export const AdministrarCargos = () => {
   const [roles, setroles] = useState<Rol[]>([]);
   const [cargoEnEdicion, setcargoEnEdicion] = useState<Cargo | null>(null);
   const [ventanaEdicion, setventanaEdicion] = useState(false);
+  const [cargoAEliminar, setcargoAEliminar] = useState<Cargo | null>(null);
+  const [habilitarBotonGuardar, sethabilitarBotonGuardar] = useState(true);
 
   const [showSuccess, setshowSuccess] = useState(false);
   const [showError, setshowError] = useState(false);
   const [mensajeError, setmensajeError] = useState("");
   const [errores, seterrores] = useState({ cargo: "", rol: "" });
+
+  const dialog = useRef<HTMLDialogElement>(null);
 
   const validarCargo = (valor: string) => {
     if (!valor.trim()) return "Este campo es requerido";
@@ -89,55 +84,81 @@ export const AdministrarCargos = () => {
     }
   };
 
-  // const editarCargo = (car: Cargo) => {
-  //   setcargoEnEdicion({ ...car });
-  //   seterrores({ cargo: "", rol: "" });
-  //   setventanaEdicion(true);
-  // };
+  const abrirEdicion = (car: Cargo) => {
+    setcargoEnEdicion({ ...car });
+    seterrores({ cargo: "", rol: "" });
+    sethabilitarBotonGuardar(true);
+    setventanaEdicion(true);
+  };
 
-  // const guardarEdicion = async () => {
-  //   if (!cargoEnEdicion) return;
-  //   
-  //   const errorCargo = validarCargo(cargoEnEdicion.cargo);
-  //   const errorRol = validarRol(cargoEnEdicion.rolId || "");
-  //   
-  //   if (errorCargo || errorRol) {
-  //     seterrores({
-  //       cargo: errorCargo,
-  //       rol: errorRol
-  //     });
-  //     setmensajeError(errorCargo || errorRol);
-  //     setshowError(true);
-  //     setTimeout(() => setshowError(false), 3000);
-  //     return;
-  //   }
+  const guardarEdicion = async () => {
+    console.log(cargoEnEdicion);
+    if (cargoEnEdicion === null) return; 
+    
+    const errorCargo = validarCargo(cargoEnEdicion?.name);
+    const errorRol = validarRol(cargoEnEdicion.rolId.id || "");
+    console.error("No hay cargo en edición");
+    if (errorCargo || errorRol) {
+      seterrores({
+        cargo: errorCargo,
+        rol: errorRol
+      });
+      setmensajeError(errorCargo || errorRol);
+      setshowError(true);
+      setTimeout(() => setshowError(false), 3000);
+      return;
+    }
 
-  //   try {
-  //     const res = await actualizarCargo(cargoEnEdicion.id, { cargo: cargoEnEdicion.cargo, rolId: cargoEnEdicion.rolId });
-  //     setmensajeError(res.msj || "Cargo actualizado correctamente");
-  //     setshowSuccess(true);
-  //     setTimeout(() => setshowSuccess(false), 2000);
-  //     setventanaEdicion(false);
-  //     seterrores({ cargo: "", rol: "" });
-  //     cargarCargos();
-  //   } catch (error) {
-  //     console.error("Error al actualizar cargo:", error);
-  //   }
-  // };
+    try {
+      const res = await editarCargo(cargoEnEdicion.id || 0, cargoEnEdicion?.name, cargoEnEdicion.rolId.id || 0);
+      if (res.validate) {
+        setmensajeError(res.msj || "Cargo actualizado correctamente");
+        setshowSuccess(true);
+        setTimeout(() => setshowSuccess(false), 2000);
+        setventanaEdicion(false);
+        seterrores({ cargo: "", rol: "" });
+        cargarCargos();
+      } else {
+        setmensajeError(res.msj || "Error al actualizar cargo");
+        setshowError(true);
+        setTimeout(() => setshowError(false), 3000);
+      }
+    } catch (error) {
+      console.error("Error al actualizar cargo:", error);
+    }
+  };
 
-  // const eliminarCargoMetodo = async (id: number | undefined) => {
-  //   if (!id) return;
-  //   
-  //   try {
-  //     const res = await eliminarCargo(id);
-  //     setmensajeError(res.msj || "Cargo eliminado correctamente");
-  //     setshowSuccess(true);
-  //     setTimeout(() => setshowSuccess(false), 2000);
-  //     cargarCargos();
-  //   } catch (error) {
-  //     console.error("Error al eliminar cargo:", error);
-  //   }
-  // };
+  const abrirDialogoEliminar = (car: Cargo) => {
+    setcargoAEliminar(car);
+    dialog.current?.showModal();
+  };
+
+  const eliminarCargoMetodo = async () => {
+    if (!cargoAEliminar?.id) return;
+    
+    try {
+      const res = await eliminarCargo(cargoAEliminar.id);
+      if (res.validate) {
+        setmensajeError(res.msj || "Cargo eliminado correctamente");
+        setshowSuccess(true);
+        setTimeout(() => setshowSuccess(false), 2000);
+        cargarCargos();
+      } else {
+        setmensajeError(res.msj || "Error al eliminar cargo");
+        setshowError(true);
+        setTimeout(() => setshowError(false), 3000);
+      }
+      setcargoAEliminar(null);
+    } catch (error) {
+      console.error("Error al eliminar cargo:", error);
+    }
+  };
+
+  const cerrarEdicion = () => {
+    setventanaEdicion(false);
+    setcargoEnEdicion(null);
+    seterrores({ cargo: "", rol: "" });
+  };
 
   return (
     <>
@@ -163,9 +184,22 @@ export const AdministrarCargos = () => {
         </div>
       )}
 
+      <dialog ref={dialog} className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Advertencia!</h3>
+          <p className="py-4">¿Está seguro que desea eliminar el cargo "{cargoAEliminar?.name}"?</p>
+          <div className="modal-action">
+            <form method="dialog" className="flex gap-2">
+              <button className="btn btn-primary" onClick={eliminarCargoMetodo}>Eliminar</button>
+              <button className="btn">Cancelar</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
+
       <div className="w-full h-full p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-1 bg-gray-100 rounded-xl shadow-md p-4">
+        <div className="grid grid-cols-1 gap-6 justify-items-center">
+          <div className="lg:col-span-1 bg-gray-100 rounded-xl shadow-md p-4 w-1/2 ">
             <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Nuevo Cargo</h2>
             <div className="flex flex-col gap-3">
               <div>
@@ -216,12 +250,12 @@ export const AdministrarCargos = () => {
                 <tbody>
                   {cargos.map((car) => (
                     <tr key={car.id} className="hover:bg-gray-50">
-                      <td>{car.cargo}</td>
-                      <td>{car.rol}</td>
+                      <td>{car.name}</td>
+                      <td>{car.rolId.role}</td>
                       <td className="text-center">
                         <div className="flex justify-center gap-2">
-                          {/* <button className="btn btn-outline btn-xs" onClick={() => editarCargo(car)}>Editar</button>
-                          <button className="btn btn-outline btn-xs btn-error" onClick={() => eliminarCargoMetodo(car.id)}>Eliminar</button> */}
+                          <button className="btn btn-outline btn-xs" onClick={() => abrirEdicion(car)}>Editar</button>
+                          <button className="btn btn-outline btn-xs btn-error" onClick={() => abrirDialogoEliminar(car)}>Eliminar</button>
                         </div>
                       </td>
                     </tr>
@@ -239,52 +273,57 @@ export const AdministrarCargos = () => {
       </div>
 
       {/* MODAL EDICIÓN */}
-      {/* <div className={`z-50 fixed inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaEdicion ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="relative border border-gray-300 w-96 rounded-lg bg-white shadow-lg p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold">Editar Cargo</h2>
-            <button onClick={() => setventanaEdicion(false)} className="text-gray-500 hover:text-gray-700">❌</button>
-          </div>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm mb-2">Nombre del cargo</label>
-              <input 
-                type="text" 
-                className={`input w-full ${errores.cargo ? 'input-error' : ''}`}
-                value={cargoEnEdicion?.cargo || ""}
-                onChange={(e) => {
-                  setcargoEnEdicion({...cargoEnEdicion, cargo: e.target.value} as Cargo);
-                  seterrores({...errores, cargo: validarCargo(e.target.value)});
-                }}
-              />
-              <div className="h-5">{errores.cargo && <p className="text-red-500 text-sm">{errores.cargo}</p>}</div>
+      {ventanaEdicion && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-96">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold">Editar Cargo</h2>
+              <button onClick={cerrarEdicion} className="text-gray-500 hover:text-gray-700">❌</button>
             </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm mb-2">Nombre del cargo</label>
+                <input 
+                  type="text" 
+                  className={`input w-full ${errores.cargo ? 'input-error' : ''}`}
+                  value={cargoEnEdicion?.name || ""}
+                  onChange={(e) => {
+                    const newValue = e.target.value;
+                    setcargoEnEdicion({...cargoEnEdicion, name: newValue} as Cargo);
+                    seterrores({...errores, cargo: validarCargo(newValue)});
+                    sethabilitarBotonGuardar(newValue.trim() === "");
+                  }}
+                />
+                <div className="h-5">{errores.cargo && <p className="text-red-500 text-sm">{errores.cargo}</p>}</div>
+              </div>
 
-            <div>
-              <label className="block text-sm mb-2">Rol</label>
-              <select 
-                className={`select w-full ${errores.rol ? 'select-error' : ''}`}
-                value={cargoEnEdicion?.rolId || ""}
-                onChange={(e) => {
-                  setcargoEnEdicion({...cargoEnEdicion, rolId: Number(e.target.value)} as Cargo);
-                  seterrores({...errores, rol: validarRol(e.target.value)});
-                }}
-              >
-                <option value="">Selecciona un rol</option>
-                {roles.map((r) => <option key={r.id} value={r.id}>{r.role}</option>)}
-              </select>
-              <div className="h-5">{errores.rol && <p className="text-red-500 text-sm">{errores.rol}</p>}</div>
-            </div>
+              <div>
+                <label className="block text-sm mb-2">Rol</label>
+                <select 
+                  className={`select w-full ${errores.rol ? 'select-error' : ''}`}
+                  value={cargoEnEdicion?.rolId.id || ""}
+                  onChange={(e) => {
+                    const newValue = e.target.value ? Number(e.target.value) : 0;
+                    setcargoEnEdicion({...cargoEnEdicion, rolId:{id: newValue}} as Cargo);
+                    seterrores({...errores, rol: validarRol(newValue)});
+                    sethabilitarBotonGuardar(newValue === 0);
+                  }}
+                >
+                  <option value="">Selecciona un rol</option>
+                  {roles.map((r) => <option key={r.id} value={r.id}>{r.role}</option>)}
+                </select>
+                <div className="h-5">{errores.rol && <p className="text-red-500 text-sm">{errores.rol}</p>}</div>
+              </div>
 
-            <div className="flex gap-2 justify-end">
-              <button className="btn btn-ghost" onClick={() => setventanaEdicion(false)}>Cancelar</button>
-              <button className="btn btn-primary" onClick={guardarEdicion}>Guardar</button>
+              <div className="flex gap-2 justify-end">
+                <button className="btn btn-ghost" onClick={cerrarEdicion}>Cancelar</button>
+                <button className="btn btn-primary" disabled={habilitarBotonGuardar} onClick={guardarEdicion}>Guardar</button>
+              </div>
             </div>
           </div>
         </div>
-      </div> */}
+      )}
     </>
   );
 };
