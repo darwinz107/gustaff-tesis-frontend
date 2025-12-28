@@ -205,4 +205,18 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{nombre:string}[]>
 
 }
     }
+
+    export const getPromedioFasesByOrdenTrabajo = async (id:number):Promise<number> => {
+  try{
+    const response:Response = await fetch(`${route}orden-de-trabajo/promedio-tiempo-fases/${id}`,{
+    method:"GET"
+    });
+    const data = await response.json();
+    return data;
+}
+    catch(error){
+    console.log("getPromedioFasesByOrdenTrabajo error:",error);
+    return {};
+}
+    }
  

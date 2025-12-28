@@ -1,6 +1,6 @@
 
-import React, { useEffect, useRef, useState } from 'react'
-import { areas, editarOrdenTrabajoApi, eliminarOrdenTrabajo, getAllCategorias, getAllCodByArea, getAllMaquinasByCod, getAllOrdenesTrabajo, getAllTipoTrabajo, getEstados, getOrdenTrabajoById, getOrdenTrabajoBySolicitante } from '../../controller/api/orden-api';
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { areas, editarOrdenTrabajoApi, eliminarOrdenTrabajo, getAllCategorias, getAllCodByArea, getAllMaquinasByCod, getAllOrdenesTrabajo, getAllTipoTrabajo, getEstados, getOrdenTrabajoById, getOrdenTrabajoBySolicitante, getPromedioFasesByOrdenTrabajo } from '../../controller/api/orden-api';
 import type { OrdenesTrabajo } from '../../models/ordenesTrabajo';
 import type { Maquina } from '../../models/maquinas';
 import { getUsers } from '../../../user/controller/api/user-api';
@@ -46,6 +46,7 @@ const [filtroCodigo, setFiltroCodigo] = useState("");
 const [filtroMaquina, setFiltroMaquina] = useState("");
 const [filtroCategoria, setFiltroCategoria] = useState("");
 const [filtroTipoTrabajo, setFiltroTipoTrabajo] = useState("");
+const [promedios, setpromedios] = useState<{otId:number,promedio:number}[]>([]);
 
 
 
@@ -78,8 +79,32 @@ const ordenesTrabajoApi  = async() =>{
        const res = await getAllOrdenesTrabajo();
        console.log("res ordenes trabajo: ",res);
        setordenesTrabajo(res);
+   const nuevosPromedios = await Promise.all(
+    res.map(async (a) => {
+      const prom = await getPromedioFasesByOrdenTrabajo(a.id);
+      return { otId: a.id, promedio: prom };
+    })
+  );
+
+  setpromedios(nuevosPromedios);
+
       }
 
+     /* useEffect(() => {
+       const actualizarProgresos = () => {
+        const ordenesConProgreso = 
+        setordenesTrabajo(ordenesConProgreso);
+       };
+       actualizarProgresos();
+      }, [ordenesTrabajo,promedios])*/
+      
+     const ordenesConProgreso = useMemo(() => {
+    return  ordenesTrabajo.map((ot) => {
+          const promedioObj = promedios.find((p) => p.otId === ot.id);
+          const progreso = promedioObj ? promedioObj.promedio : 0;
+          return { ...ot, progreso };
+        });},
+     [ordenesTrabajo,promedios])
     
     
      useEffect(() => {
@@ -90,6 +115,8 @@ const ordenesTrabajoApi  = async() =>{
        const res = await areas();
        setareasAll(res);
        
+    
+
       }
       areasApi();
 
@@ -292,15 +319,15 @@ const ordenesTrabajoApi  = async() =>{
                 </tr>
               </thead>
               <tbody>
-                {ordenesTrabajo?.map((u) => (
+                {ordenesConProgreso?.map((u) => (
                   <tr key={u.id} className="even:bg-gray-50 hover:bg-gray-100">
                     <td className="px-4 py-3 align-top">{u.NumOrden}</td>
                     <td className="px-4 py-3 align-top">{u.fechaFinal}</td>
                     <td className="px-4 py-3 align-top">{u.userSolicitante.name}</td>
                     <td className="px-4 py-3 align-top">{u.DescripcionTrabajo}</td>
                     <td className="px-4 py-3 align-top">{u.estadoTrabajo.estado}</td>
-                    <td className="px-4 py-3 align-top"><div className="radial-progress cursor-pointer" onClick={()=>alert("xd")} style={{ "--value": 70 } as React.CSSProperties} 
-  aria-valuenow={70} role="progressbar">70%</div></td>
+                    <td className="px-4 py-3 align-top"><div className="radial-progress cursor-pointer" onClick={()=>alert("xd")} style={{ "--value": u.progreso ?? 0 } as React.CSSProperties} 
+  aria-valuenow={u.progreso ?? 0} role="progressbar">{u.progreso ?? 0}%</div></td>
                     <td className="px-4 py-3 align-top text-center">
                       <div className="flex items-center justify-center flex-wrap gap-2">
                         <button

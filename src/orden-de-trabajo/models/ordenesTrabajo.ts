@@ -32,4 +32,6 @@ export interface OrdenesTrabajo {
   estadoUso: {
     uso: boolean;
   };
+
+  progreso:number;
 }
