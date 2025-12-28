@@ -192,7 +192,7 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{nombre:string}[]>
     console.log('filtrarOrdenes error:', error);
   }};
 
-  export const getFasesByOrdenTrabajo = async (id:number):Promise<{}> => {
+  export const getFasesByOrdenTrabajo = async (id:number):Promise<{}[]> => {
   try{
     const response:Response = await fetch(`${route}orden-de-trabajo/fases-by-orden-trabajo/${id}`,{
     method:"GET"
@@ -216,7 +216,25 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{nombre:string}[]>
 }
     catch(error){
     console.log("getPromedioFasesByOrdenTrabajo error:",error);
-    return {};
+    return 0;
+}
+    }
+
+    export const faseCompletada = async (id:number,descripcion:string):Promise<{msj:string}> => {
+  try{
+    const response:Response = await fetch(`${route}orden-de-trabajo/update-fase-completa/${id}`,{
+    method:"PATCH",
+    headers:{
+        "Content-Type":"application/json"
+    },
+    body:JSON.stringify({descripcion})
+    });
+    const data = await response.json();
+    return data;
+}
+    catch(error){
+    console.log("faseCompletada error:",error);
+    return {msj:"Error en la conexión con el servidor"};
 }
     }
  

@@ -1,6 +1,6 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { areas, editarOrdenTrabajoApi, eliminarOrdenTrabajo, getAllCategorias, getAllCodByArea, getAllMaquinasByCod, getAllOrdenesTrabajo, getAllTipoTrabajo, getEstados, getOrdenTrabajoById, getOrdenTrabajoBySolicitante, getPromedioFasesByOrdenTrabajo } from '../../controller/api/orden-api';
+import { areas, editarOrdenTrabajoApi, eliminarOrdenTrabajo, faseCompletada, getAllCategorias, getAllCodByArea, getAllMaquinasByCod, getAllOrdenesTrabajo, getAllTipoTrabajo, getEstados, getFasesByOrdenTrabajo, getOrdenTrabajoById, getOrdenTrabajoBySolicitante, getPromedioFasesByOrdenTrabajo } from '../../controller/api/orden-api';
 import type { OrdenesTrabajo } from '../../models/ordenesTrabajo';
 import type { Maquina } from '../../models/maquinas';
 import { getUsers } from '../../../user/controller/api/user-api';
@@ -47,7 +47,15 @@ const [filtroMaquina, setFiltroMaquina] = useState("");
 const [filtroCategoria, setFiltroCategoria] = useState("");
 const [filtroTipoTrabajo, setFiltroTipoTrabajo] = useState("");
 const [promedios, setpromedios] = useState<{otId:number,promedio:number}[]>([]);
-
+   const [ventanaFase, setventanaFase] = useState(false);
+   const [fases, setfases] = useState<{}[]>([]);
+   const [faseActual, setfaseActual] = useState<any>(null);
+   const [descripcionFase, setdescripcionFase] = useState("");
+   const [faseHabilitada, setfaseHabilitada] = useState(false);
+   const [showErrorFase, setshowErrorFase] = useState(false);
+   const [showSuccessFase, setshowSuccessFase] = useState(false);
+   const [mensajeFase, setmensajeFase] = useState("");
+   const [idOrdenTrabajoActual, setidOrdenTrabajoActual] = useState<number>(0);
 
 
 const applyFilters = async () => {
@@ -235,6 +243,72 @@ const ordenesTrabajoApi  = async() =>{
     setsendId(id);
     setcargaAuto(true);
   }
+
+  const cargarFases = async(idOrdenTrabajo: number) => {
+    try {
+      const res = await getFasesByOrdenTrabajo(idOrdenTrabajo);
+      setfases(res);
+      // Obtener la siguiente fase a completar (agotado: false)
+      const proximaFase = res.find((f: any) => f.agotado === false);
+      setfaseActual(proximaFase || null);
+      console.log(proximaFase.descripcion);
+      setdescripcionFase(proximaFase.descripcion ?? "");
+      setidOrdenTrabajoActual(idOrdenTrabajo);
+    } catch (error) {
+      console.log("Error al cargar fases:", error);
+      setmensajeFase("Error al cargar las fases");
+      setshowErrorFase(true);
+      setTimeout(() => setshowErrorFase(false), 3000);
+    }
+  }
+
+  const handleAbrirModalFase = async(idOrdenTrabajo: number) => {
+    await cargarFases(idOrdenTrabajo);
+    setventanaFase(true);
+    //setdescripcionFase("");
+    setfaseHabilitada(false);
+  }
+
+  const enviarFaseCompletada = async() => {
+    if (!faseActual) {
+      setmensajeFase("No hay fase para completar");
+      setshowErrorFase(true);
+      setTimeout(() => setshowErrorFase(false), 3000);
+      return;
+    }
+
+    if (!descripcionFase.trim()) {
+      setmensajeFase("La descripción no puede estar vacía");
+      setshowErrorFase(true);
+      setTimeout(() => setshowErrorFase(false), 3000);
+      return;
+    }
+
+    try {
+      const res = await faseCompletada(faseActual.id, descripcionFase);
+      setmensajeFase(res.msj);
+      setshowSuccessFase(true);
+      setTimeout(() => {
+        setshowSuccessFase(false);
+        setventanaFase(false);
+        setdescripcionFase("");
+        setfaseHabilitada(false);
+        ordenesTrabajoApi();
+        cargarFases(idOrdenTrabajoActual);
+      }, 2000);
+    } catch (error) {
+      setmensajeFase("Error al completar la fase");
+      setshowErrorFase(true);
+      setTimeout(() => setshowErrorFase(false), 3000);
+    }
+  }
+
+  const cerrarModalFase = () => {
+    setventanaFase(false);
+    setdescripcionFase("");
+    setfaseHabilitada(false);
+    setfaseActual(null);
+  }
      
   return (
   <>
@@ -326,7 +400,7 @@ const ordenesTrabajoApi  = async() =>{
                     <td className="px-4 py-3 align-top">{u.userSolicitante.name}</td>
                     <td className="px-4 py-3 align-top">{u.DescripcionTrabajo}</td>
                     <td className="px-4 py-3 align-top">{u.estadoTrabajo.estado}</td>
-                    <td className="px-4 py-3 align-top"><div className="radial-progress cursor-pointer" onClick={()=>alert("xd")} style={{ "--value": u.progreso ?? 0 } as React.CSSProperties} 
+                    <td className="px-4 py-3 align-top"><div className="radial-progress cursor-pointer" onClick={() => handleAbrirModalFase(u.id)} style={{ "--value": u.progreso ?? 0 } as React.CSSProperties} 
   aria-valuenow={u.progreso ?? 0} role="progressbar">{u.progreso ?? 0}%</div></td>
                     <td className="px-4 py-3 align-top text-center">
                       <div className="flex items-center justify-center flex-wrap gap-2">
@@ -523,6 +597,92 @@ const ordenesTrabajoApi  = async() =>{
     <div className={`z-50 fixed inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaCrearUsuario ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
       <div className="absolute inset-0 bg-black/30" />
       <div className="relative border border-gray-300 w-4/5 h-4/5 rounded-sm bg-white" />
+    </div>
+
+    {showSuccessFase && (
+      <div className="fixed top-5 right-5 z-100">
+        <div role="alert" className="alert alert-success shadow-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{mensajeFase}</span>
+        </div>
+      </div>
+    )}
+
+    {showErrorFase && (
+      <div className="fixed top-5 right-5 z-50">
+        <div role="alert" className="alert alert-error shadow-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{mensajeFase}</span>
+        </div>
+      </div>
+    )}
+
+    <div className={`z-50 fixed inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaFase ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+      <div className="relative border border-gray-300 w-full max-w-md rounded-lg bg-white shadow-lg p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold">Registrar fase completada</h3>
+          <button onClick={cerrarModalFase} className="btn btn-ghost btn-sm">✕</button>
+        </div>
+
+        {faseActual ? (
+          <div className="space-y-4">
+            <div>
+              <label className="label">Hora de la fase</label>
+              <input 
+                type="text" 
+                className="input input-bordered w-full" 
+                value={faseActual.hora} 
+                disabled 
+              />
+            </div>
+
+            <div>
+              <label className="label">Descripción</label>
+              <textarea 
+                className="textarea textarea-bordered w-full" 
+                placeholder="Describe el trabajo realizado en esta fase..."
+                value={descripcionFase}
+                onChange={(e) => setdescripcionFase(e.target.value)}
+                disabled={!faseHabilitada}
+                rows={4}
+              />
+            </div>
+
+            <div className="flex gap-2">
+              {!faseHabilitada ? (
+                <button 
+                  className="btn btn-primary flex-1"
+                  onClick={() => setfaseHabilitada(true)}
+                >
+                  Activar
+                </button>
+              ) : (
+                <button 
+                  className="btn btn-success flex-1"
+                  onClick={enviarFaseCompletada}
+                >
+                  Enviar
+                </button>
+              )}
+              <button 
+                className="btn btn-ghost flex-1"
+                onClick={cerrarModalFase}
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-gray-500">No hay fases pendientes para completar</p>
+          </div>
+        )}
+      </div>
     </div>
   </>
 );
