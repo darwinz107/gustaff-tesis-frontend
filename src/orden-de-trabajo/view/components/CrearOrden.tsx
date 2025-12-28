@@ -102,6 +102,9 @@ export const CrearOrden = ({setcargarAuto,setsendId}) => {
     getAreas();
     getCategorias();
     getAllUsers();
+
+    settiempos(["","09:30","16:30",""]);
+
   }, []);
 
   useEffect(() => {

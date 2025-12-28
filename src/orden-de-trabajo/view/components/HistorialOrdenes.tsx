@@ -287,6 +287,7 @@ const ordenesTrabajoApi  = async() =>{
                   <th className="px-4 py-3">Solicitante</th>
                   <th className="px-4 py-3">Descripcion</th>
                   <th className="px-4 py-3">Estado</th>
+                  <th className="px-4 py-3">Progreso</th>
                   <th className="px-4 py-3 text-center">Acciones</th>
                 </tr>
               </thead>
@@ -298,6 +299,8 @@ const ordenesTrabajoApi  = async() =>{
                     <td className="px-4 py-3 align-top">{u.userSolicitante.name}</td>
                     <td className="px-4 py-3 align-top">{u.DescripcionTrabajo}</td>
                     <td className="px-4 py-3 align-top">{u.estadoTrabajo.estado}</td>
+                    <td className="px-4 py-3 align-top"><div className="radial-progress cursor-pointer" onClick={()=>alert("xd")} style={{ "--value": 70 } as React.CSSProperties} 
+  aria-valuenow={70} role="progressbar">70%</div></td>
                     <td className="px-4 py-3 align-top text-center">
                       <div className="flex items-center justify-center flex-wrap gap-2">
                         <button

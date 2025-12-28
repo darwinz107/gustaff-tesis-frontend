@@ -191,3 +191,18 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{nombre:string}[]>
   } catch (error) {
     console.log('filtrarOrdenes error:', error);
   }};
+
+  export const getFasesByOrdenTrabajo = async (id:number):Promise<{}> => {
+  try{
+    const response:Response = await fetch(`${route}orden-de-trabajo/fases-by-orden-trabajo/${id}`,{
+    method:"GET"
+    });
+    const data = await response.json();
+    return data;
+} catch(error){
+    console.log("getFasesByOrdenTrabajo error:",error);
+    return [];
+
+}
+    }
+ 
