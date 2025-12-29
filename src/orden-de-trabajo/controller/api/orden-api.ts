@@ -1,4 +1,5 @@
 import type { Estado } from "../../../orden-de-compra/models/Estados";
+import type { OrdenTrabajo } from "../../models/jornadasFases";
 import type { OrdenesTrabajo } from "../../models/ordenesTrabajo";
 import type { SolicitudOrden } from "../../models/solicitudOrden";
 
@@ -238,3 +239,16 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{nombre:string}[]>
 }
     }
  
+        export const getAllJornadas = async ():Promise<OrdenTrabajo[]> => {
+  try{
+    const response:Response = await fetch(`${route}orden-de-trabajo/all/jornadas`,{
+    method:"GET"
+    });
+    const data = await response.json();
+    return data;
+}
+    catch(error){
+    console.log("getAllJornadas error:",error);
+    return [];
+}
+    }

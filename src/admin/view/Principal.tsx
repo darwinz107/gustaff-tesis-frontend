@@ -20,6 +20,7 @@ import { AdministrarBodegasSeccionesPerchas } from "./components/AdministrarBode
 import { AdministrarCategorias } from "./components/AdministrarCategorias";
 import { AdministrarTiposTrabajo } from "./components/AdministrarTiposTrabajo";
 import { AdministrarCargos } from "./components/AdministrarCargos";
+import { GestionJornadas } from "../../orden-de-trabajo/view/components/GestionJornadas";
 
 export const Principal = () => {
 
@@ -74,7 +75,8 @@ export const Principal = () => {
     13: <AdministrarBodegasSeccionesPerchas />,
     14: <AdministrarCategorias />,
     15: <AdministrarTiposTrabajo />,
-    16: <AdministrarCargos />
+    16: <AdministrarCargos />,
+    17: <GestionJornadas></GestionJornadas>,
   }
 
   const [cargarComponente, setcargarComponente] = useState(0);
@@ -149,6 +151,9 @@ export const Principal = () => {
 
             <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(2)}>
               📋 {!collapsed && "Gestión de órdenes"}
+            </button>
+             <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(17)}>
+              📅 {!collapsed && "Jornadas de orden de trabajo"}
             </button>
 
             <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(5)}>
