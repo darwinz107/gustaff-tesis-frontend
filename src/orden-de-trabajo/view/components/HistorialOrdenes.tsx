@@ -248,10 +248,10 @@ const ordenesTrabajoApi  = async() =>{
     try {
       const res = await getFasesByOrdenTrabajo(idOrdenTrabajo);
       setfases(res);
-      // Obtener la siguiente fase a completar (agotado: false)
-      const proximaFase = res.find((f: any) => f.agotado === false);
+      
+      const proximaFase = res.find((f: any) => f.agotado === false );
       setfaseActual(proximaFase || null);
-      console.log(proximaFase.descripcion);
+      console.log(proximaFase);
       setdescripcionFase(proximaFase.descripcion ?? "");
       setidOrdenTrabajoActual(idOrdenTrabajo);
     } catch (error) {
@@ -290,12 +290,13 @@ const ordenesTrabajoApi  = async() =>{
       setshowSuccessFase(true);
       setTimeout(() => {
         setshowSuccessFase(false);
-        setventanaFase(false);
+        
+       // cargarFases(idOrdenTrabajoActual);
+      }, 2000);
+      setventanaFase(false);
         setdescripcionFase("");
         setfaseHabilitada(false);
         ordenesTrabajoApi();
-        cargarFases(idOrdenTrabajoActual);
-      }, 2000);
     } catch (error) {
       setmensajeFase("Error al completar la fase");
       setshowErrorFase(true);
