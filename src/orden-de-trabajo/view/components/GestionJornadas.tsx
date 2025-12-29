@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import type { Fases, OrdenTrabajo } from '../../models/jornadasFases';
-import { faseCompletada, getAllJornadas } from '../../controller/api/orden-api';
+import { actualizarFases, faseCompletada, getAllJornadas, getFasesByOrdenTrabajo } from '../../controller/api/orden-api';
 
 export const GestionJornadas = () => {
 
@@ -20,6 +20,11 @@ export const GestionJornadas = () => {
     }
 
     useEffect(() => {
+      const actualizarEstadoFases = async() =>{
+        await actualizarFases();
+       
+      }
+      actualizarEstadoFases();
         cargarJornadas();
     }, []);
 

@@ -207,6 +207,20 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{nombre:string}[]>
 }
     }
 
+
+      export const actualizarFases = async () => {
+  try{
+    const response:Response = await fetch(`${route}orden-de-trabajo/actualizar/fases`,{
+    method:"GET"
+    });
+    
+} catch(error){
+    console.log("actualizarFases error:",error);
+    return [];
+
+}
+    }
+
     export const getPromedioFasesByOrdenTrabajo = async (id:number):Promise<number> => {
   try{
     const response:Response = await fetch(`${route}orden-de-trabajo/promedio-tiempo-fases/${id}`,{

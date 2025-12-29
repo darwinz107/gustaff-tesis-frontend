@@ -48,7 +48,7 @@ const [filtroCategoria, setFiltroCategoria] = useState("");
 const [filtroTipoTrabajo, setFiltroTipoTrabajo] = useState("");
 const [promedios, setpromedios] = useState<{otId:number,promedio:number}[]>([]);
    const [ventanaFase, setventanaFase] = useState(false);
-   const [fases, setfases] = useState<{}[]>([]);
+ //  const [fases, setfases] = useState<{}[]>([]);
    const [faseActual, setfaseActual] = useState<any>(null);
    const [descripcionFase, setdescripcionFase] = useState("");
    const [faseHabilitada, setfaseHabilitada] = useState(false);
@@ -247,7 +247,7 @@ const ordenesTrabajoApi  = async() =>{
   const cargarFases = async(idOrdenTrabajo: number) => {
     try {
       const res = await getFasesByOrdenTrabajo(idOrdenTrabajo);
-      setfases(res);
+     // setfases(res);
       
       const proximaFase = res.find((f: any) => f.agotado === false );
       setfaseActual(proximaFase || null);
