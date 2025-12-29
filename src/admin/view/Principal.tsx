@@ -153,7 +153,7 @@ export const Principal = () => {
               📋 {!collapsed && "Gestión de órdenes"}
             </button>
              <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(17)}>
-              📅 {!collapsed && "Jornadas de orden de trabajo"}
+              📅 {!collapsed && "Gestion de jornadas"}
             </button>
 
             <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(5)}>

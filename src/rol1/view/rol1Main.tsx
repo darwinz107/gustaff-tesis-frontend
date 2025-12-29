@@ -8,6 +8,7 @@ import { GestionCompra } from '../../orden-de-compra/view/GestionCompra';
 import { useNavigate } from 'react-router-dom';
 import { getLastSolicitud } from '../../orden-de-trabajo/controller/api/orden-api';
 import { DbMantenimiento } from '../../dashboards/DbMantenimiento';
+import { GestionJornadas } from '../../orden-de-trabajo/view/components/GestionJornadas';
 
 
 export const Rol1Main = () => {
@@ -48,7 +49,8 @@ export const Rol1Main = () => {
     <CrearOrden setcargarAuto={setcargarAuto} setsendId={setsendId} />,
     <HistorialOrdenes setcargaAuto={setcargarAuto} setsendId={setsendId} />,
     <OrdenCompra id={sendId} />,
-    <GestionCompra />
+    <GestionCompra />,
+    <GestionJornadas></GestionJornadas>,
   ];
 
   useEffect(() => {
@@ -99,6 +101,10 @@ export const Rol1Main = () => {
 
             <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(2)}>
               📋 {!collapsed && "Gestión de órdenes "}
+            </button>
+
+             <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(5)}>
+              📅 {!collapsed && "Gestion de jornadas"}
             </button>
 
 <div className="divider my-1"></div>
