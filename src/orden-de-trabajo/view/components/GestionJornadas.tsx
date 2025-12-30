@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import type { Fases, OrdenTrabajo } from '../../models/jornadasFases';
-import { actualizarFases, faseCompletada, getAllJornadas, getFasesByOrdenTrabajo } from '../../controller/api/orden-api';
+import { actualizarFases, faseCompletada, filtrarFases, getAllJornadas, getEstados, getFasesByOrdenTrabajo } from '../../controller/api/orden-api';
+import type { Estado } from '../../../orden-de-compra/models/Estados';
 
 export const GestionJornadas = () => {
 
@@ -12,7 +13,10 @@ export const GestionJornadas = () => {
     const [showErrorFase, setshowErrorFase] = useState(false);
     const [showSuccessFase, setshowSuccessFase] = useState(false);
     const [descripcionFase, setdescripcionFase] = useState("");
-
+    const [estados, setestados] = useState<Estado[]>([]);
+    const [filtroNumOrden, setFiltroNumOrden] = useState("");
+const [filtroFechaInicial, setFiltroFechaInicial] = useState("");
+const [filtroEstado, setFiltroEstado] = useState("");
 
     const cargarJornadas = async () => {
         const res = await getAllJornadas();
@@ -22,11 +26,30 @@ export const GestionJornadas = () => {
     useEffect(() => {
       const actualizarEstadoFases = async() =>{
         await actualizarFases();
-       
+        const res4 = await getEstados();
+               setestados(res4);
       }
       actualizarEstadoFases();
         cargarJornadas();
     }, []);
+
+    const applyFilters = async () => {
+      const filtros = {
+        numOrden: filtroNumOrden || undefined,
+        fechaInicio: filtroFechaInicial || undefined,
+        
+        estado: filtroEstado || undefined,
+        
+      };
+      const res = await filtrarFases(filtros);
+      console.log(res);
+      setjornadas(res);
+    }
+
+    const clearFilters = async () => {
+      setFiltroNumOrden(""); setFiltroFechaInicial(""); setFiltroEstado("");
+      cargarJornadas();
+    }
 
       const enviarFaseCompletada = async() => {
         if (!faseActual) {
@@ -94,7 +117,34 @@ export const GestionJornadas = () => {
     )}
             <div className="w-full h-full p-6 space-y-6">
                 <div className="bg-white rounded-xl shadow-md p-4">
-                    <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Jornadas y fases</h2>
+                   <div className="bg-gray-100 w-full h-12 flex items-center justify-between rounded-t-lg border-b px-4">
+                    <p className="font-semibold text-gray-700">Jornadas y fases</p>
+                    <div className="flex items-center gap-3">
+          
+          <button className="btn btn-sm btn-outline" onClick={clearFilters}>Limpiar filtros</button>
+          <button className="btn btn-sm btn-primary" onClick={applyFilters}>Aplicar filtros</button>
+        </div>
+        </div>
+        <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-3">
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-600" >NumOrden</label>
+          <input className="input input-sm"  value={filtroNumOrden} onChange={(e)=>setFiltroNumOrden(e.target.value)} />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-600">Fecha inicial</label>
+          <input type="date" className="input input-sm"  value={filtroFechaInicial} onChange={(e)=>setFiltroFechaInicial(e.target.value)}/>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-600">Estado</label>
+          <select className="select select-sm" value={filtroEstado} onChange={(e)=>setFiltroEstado(e.target.value)}>
+            <option value="">Todos</option>
+            {estados.map((es)=> <option key={es.id} value={es.estado}>{es.estado}</option>)}
+          </select>
+        </div>
+
+      </div>
                     {jornadas.length === 0 ? (
                         <p className="text-gray-500 text-center py-4">No hay jornadas registradas</p>
                     ) : (
