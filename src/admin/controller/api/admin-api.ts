@@ -316,6 +316,21 @@ export const getAllInfoBodegas = async (): Promise<Bodega[]> => {
   }
 }
 
+export const filtrarBodegas = async (filtros:any): Promise<Bodega[]> => {
+ try {
+  const response = await fetch(`${route}admin/filtrar/bodegas`, {
+    method: 'POST',
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(filtros)
+    });
+  const data = await response.json();
+  return data;
+  } catch (error) {
+    console.error("Error al obtener la información de bodegas:", error);
+    return [];
+  }
+}
+
 export const actualizarBodega = async (id:number,bodega: string): Promise<{ msj: string ,validate:boolean}> => {
  try {
   console.log("Actualizar Bodega in front", id, bodega);

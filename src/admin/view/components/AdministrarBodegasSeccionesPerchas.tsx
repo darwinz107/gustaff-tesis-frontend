@@ -1,23 +1,26 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { crearBodega, crearSeccion, crearPercha, getAllInfoBodegas, getAllSecciones, actualizarBodega, actualizarSeccion, actualizarPercha, eliminarBodega, eliminarSeccion, eliminarPercha } from '../../controller/api/admin-api';
+import { crearBodega, crearSeccion, crearPercha, getAllInfoBodegas, getAllSecciones, actualizarBodega, actualizarSeccion, actualizarPercha, eliminarBodega, eliminarSeccion, eliminarPercha, filtrarBodegas } from '../../controller/api/admin-api';
 import type { Bodega } from '../../models/bodegas';
 
 export const AdministrarBodegasSeccionesPerchas = () => {
   const [habilitarEdicion, sethabilitarEdicion] = useState(true)
   
-  // Estados para crear bodega
+ 
   const [newBodega, setnewBodega] = useState("");
   const [bodegas, setbodegas] = useState<Bodega[]>([]);
 
-  // Estados para crear sección
+
   const [seccion, setseccion] = useState("");
   const [selectBodega, setselectBodega] = useState("");
 
-  // Estados para crear percha
+  
   const [percha, setpercha] = useState("");
   const [selectSeccion, setselectSeccion] = useState("");
-
-  // Estados para edición
+  
+  const [filtroBodega, setfiltroBodega] = useState("");
+  const [filtroSeccion, setfiltroSeccion] = useState("");
+  const [filtroPercha, setfiltroPercha] = useState("");
+ 
   const [modalEdicion, setmodalEdicion] = useState(false);
   const [itemEnEdicion, setitemEnEdicion] = useState<{ tipo: "bodega" | "seccion" | "percha" | null; data: any }>({ tipo: null, data: null });
   const [bodegaEditTemp, setbodegaEditTemp] = useState("");
@@ -51,7 +54,7 @@ export const AdministrarBodegasSeccionesPerchas = () => {
     return "";
   };
 
-  // Cargar datos iniciales
+  
   useEffect(() => {
     cargarBodegas();
   }, []);
@@ -65,7 +68,26 @@ export const AdministrarBodegasSeccionesPerchas = () => {
     }
   };
 
-  // CRUD BODEGAS
+
+  const applyFilters = async () => {
+        const filtros = {
+          bodega: filtroBodega || undefined,
+          seccion: filtroSeccion || undefined,
+          
+          percha: filtroPercha || undefined,
+          
+        };
+        const res = await filtrarBodegas(filtros);
+        console.log(res);
+        setbodegas(res);
+      }
+
+       const clearFilters = async () => {
+      setfiltroBodega(""); setfiltroSeccion(""); setfiltroPercha("");
+      cargarBodegas();
+    }
+
+ 
   const crearBodegaFunc = async () => {
     const error = validarNombreGeneral(newBodega);
     if (error) {
@@ -91,7 +113,7 @@ export const AdministrarBodegasSeccionesPerchas = () => {
     }
   };
 
-  // CRUD SECCIONES
+  
   const crearSeccionFunc = async () => {
     const errorSeccion = validarNombreGeneral(seccion);
     const errorBodega = validarSeleccion(selectBodega);
@@ -124,7 +146,7 @@ export const AdministrarBodegasSeccionesPerchas = () => {
     }
   };
 
-  // CRUD PERCHAS
+  
   const crearPerchaFunc = async () => {
     const errorPercha = validarNombreGeneral(percha);
     const errorSeccion = validarSeleccion(selectSeccion);
@@ -157,7 +179,7 @@ export const AdministrarBodegasSeccionesPerchas = () => {
     }
   };
 
-  // Abrir modal de edición
+  
   const abrirEdicion = (tipo: "bodega" | "seccion" | "percha", data: any) => {
     setitemEnEdicion({ tipo, data });
     if (tipo === "bodega") {
@@ -328,9 +350,9 @@ export const AdministrarBodegasSeccionesPerchas = () => {
       </dialog>
 
       <div className="w-full h-full p-6 space-y-6">
-        {/* SECCIÓN CREAR BODEGA, SECCIÓN Y PERCHA */}
+        
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Crear Bodega */}
+          
           <div className="bg-gray-100 rounded-xl shadow-md p-4">
             <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Nueva Bodega</h2>
             <div className="flex flex-col gap-3">
@@ -353,7 +375,7 @@ export const AdministrarBodegasSeccionesPerchas = () => {
             </div>
           </div>
 
-          {/* Crear Sección */}
+          
           <div className="bg-gray-100 rounded-xl shadow-md p-4">
             <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Nueva Sección</h2>
             <div className="flex flex-col gap-3">
@@ -393,7 +415,7 @@ export const AdministrarBodegasSeccionesPerchas = () => {
             </div>
           </div>
 
-          {/* Crear Percha */}
+        
           <div className="bg-gray-100 rounded-xl shadow-md p-4">
             <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Nueva Percha</h2>
             <div className="flex flex-col gap-3">
@@ -436,10 +458,34 @@ export const AdministrarBodegasSeccionesPerchas = () => {
           </div>
         </div>
 
-        {/* SECCIÓN TABLA DE BODEGAS CON SECCIONES Y PERCHAS */}
+       
         <div className="bg-white rounded-xl shadow-md p-4">
-          <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Bodegas con Secciones y Perchas</h2>
+       
+  <div className="bg-gray-100 w-full h-12 flex items-center justify-between rounded-t-lg border-b px-4">
+                    <p className="font-semibold text-gray-700">Bodegas con Secciones y Perchas</p>
+                    <div className="flex items-center gap-3">
+          
+          <button className="btn btn-sm btn-outline" onClick={clearFilters}>Limpiar filtros</button>
+          <button className="btn btn-sm btn-primary" onClick={applyFilters}>Aplicar filtros</button>
+        </div>
+        </div>
+        <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-3">
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-600" >Bodega</label>
+          <input className="input input-sm"  value={filtroBodega} onChange={(e)=>setfiltroBodega(e.target.value)}/>
+        </div>
 
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-600">Seccion</label>
+          <input  className="input input-sm"  value={filtroSeccion} onChange={(e)=>setfiltroSeccion(e.target.value)}/>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-gray-600">Percha</label>
+         <input className="input input-sm"  value={filtroPercha} onChange={(e)=>setfiltroPercha(e.target.value)}/>
+        </div>
+
+      </div>
           {bodegas.length === 0 ? (
             <p className="text-gray-500 text-center py-4">No hay bodegas registradas</p>
           ) : (
