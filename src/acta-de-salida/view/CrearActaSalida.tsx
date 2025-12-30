@@ -6,6 +6,9 @@ import { getUsers } from "../../user/controller/api/user-api";
 import type { Users } from "../../admin/models/users";
 import { createActaSalidaApi } from "../controller/actaSalida-api";
 import type { BuscarSolMaterial } from "../../orden-de-compra/models/buscarSolMaterial";
+import type { Inventarios } from "../../inventario/models/inventarios";
+import { getInventario } from "../../inventario/controller/inventario-api";
+import type { CreateItemsSolicitados } from "../../inventario/models/createItemsSolocitados";
 
 
 export const CrearActaSalida = () => {
@@ -14,6 +17,7 @@ export const CrearActaSalida = () => {
   const [ventanaBuscarOrdenTrabajo, setventanaBuscarOrdenTrabajo] = useState(false);
   const [ventanaEmergente, setventanaEmergente] = useState(false);
   const [solicitudMaterial, setsolicitudMaterial] = useState<InfoPdfCompra>({itemSolicitados:[]});
+  const [agregarItems, setagregarItems] = useState<CreateItemsSolicitados[]>([])
   const [users, setusers] = useState<Users[]>([]);
   const [entrega, setentrega] = useState(0);
   const [observacion, setobservacion] = useState("");
@@ -24,6 +28,20 @@ export const CrearActaSalida = () => {
   const [showSuccess, setshowSuccess] = useState(false);
   const [showError, setshowError] = useState(false);
   const [mensajeError, setmensajeError] = useState("");
+  const [cantidad, setcantidad] = useState("");
+  const [item, setitem] = useState("");
+  const [caracteristica, setcaracteristica] = useState("");
+  const [observacion2, setobservacion2] = useState("");
+  const [inventarios, setinventarios] = useState<Inventarios[]>([]);
+
+
+  const agregarCompras = async() =>{
+     setagregarItems(prev => [...prev,{cantidad:cantidad,item:item,caracteristica:caracteristica,Observacion:observacion2}]);
+     setcantidad("");
+     setitem("");
+     setcaracteristica("");
+     setobservacion2("");
+    }
 
  const cargarInfoSolMaterial = async(id:number) =>{
         const res = await ordenCompraById(id);
@@ -106,7 +124,11 @@ export const CrearActaSalida = () => {
     console.error("Error generando acta de salida:", error);
   }
 };
-
+const metodoInventarios = async() =>{
+      const resInv = await getInventario();
+      console.log(resInv);
+      setinventarios(resInv);
+    }
 
     useEffect(() => {
        const getAllUsers = async () => {
@@ -121,9 +143,14 @@ export const CrearActaSalida = () => {
     setordenes(res);
    }
    metodoSolicitudesMaterialesSalidas();
+   metodoInventarios();
     }, []);
     
-
+      const funcionEliminarItems = (id:number) =>{
+   
+     const newArrayItems = agregarItems.filter((item, index) => index !== id);
+     setagregarItems(newArrayItems);
+  }
   
 
   return (
@@ -166,7 +193,7 @@ export const CrearActaSalida = () => {
      
       <div className="w-full bg-base-100 rounded-2xl shadow p-5">
         <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-3">
-          Información de orden de material
+          Información
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -221,7 +248,7 @@ export const CrearActaSalida = () => {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
           <div className="md:col-span-4">
             <label className="text-sm text-gray-600">Cantidad</label>
-            <input disabled={conOrden} type="text" className="input input-bordered w-full" />
+            <input disabled={conOrden} type="text" className="input input-bordered w-full" value={cantidad} onChange={(e)=>setcantidad(e.target.value)}/>
           </div>
 
           <div className="md:col-span-5">
@@ -231,6 +258,7 @@ export const CrearActaSalida = () => {
                 disabled={conOrden}
                 type="text"
                 className="input input-bordered w-full pr-10"
+                value={item} onChange={(e)=>setitem(e.target.value)}
               />
               <button
                 disabled={conOrden}
@@ -244,13 +272,17 @@ export const CrearActaSalida = () => {
           </div>
 
           <div className="md:col-span-3">
-            <label className="text-sm text-gray-600">Destino</label>
-            <input disabled={conOrden} type="text" className="input input-bordered w-full" />
+            <label className="text-sm text-gray-600">Característica</label>
+            <input disabled={conOrden} type="text" className="input input-bordered w-full" 
+            value={caracteristica} onChange={(e)=>setcaracteristica(e.target.value)}
+            />
           </div>
 
           <div className="md:col-span-12">
             <label className="text-sm text-gray-600 mt-2">Observación</label>
-            <input disabled={conOrden} type="text" className="input input-bordered w-full" />
+            <input disabled={conOrden} type="text" className="input input-bordered w-full" 
+            value={observacion2} onChange={(e)=>setobservacion2(e.target.value)}
+            />
           </div>
 
           <div className="md:col-span-12 flex gap-3 mt-3">
@@ -260,7 +292,7 @@ export const CrearActaSalida = () => {
               </button>
             ) : (
               <>
-                <button className="btn btn-primary">Agregar a compras</button>
+                <button className="btn btn-primary" onClick={agregarCompras}>Agregar a compras</button>
                 <button className="btn" onClick={() => setconOrden(!conOrden)}>Cancelar</button>
               </>
             )}
@@ -297,14 +329,14 @@ export const CrearActaSalida = () => {
                   ) : null
                 )
               ) : (
-                solicitudMaterial?.itemSolicitados?.map((u, i) => (
+                agregarItems.map((u, i) => (
                   <tr key={i}>
                     <td>{u.cantidad}</td>
                     <td>{u.item}</td>
                     <td>{u.caracteristica}</td>
                     <td>{u.Observacion}</td>
                     <td>
-                      <button className="btn btn-ghost btn-xs">Eliminar</button>
+                      <button className="btn btn-ghost btn-xs" onClick={()=>funcionEliminarItems(i)}>Eliminar</button>
                     </td>
                   </tr>
                 ))
@@ -352,13 +384,26 @@ export const CrearActaSalida = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  
+                    {inventarios.map((i) => (
+                  <tr key={i.id}>
+                    <td>{i.nombre}</td>
+                    <td>{i.stock}</td>
+                    <td>
+                      <button
+                        className="btn btn-ghost btn-xs"
+                        onClick={() => { setitem(i.nombre); setventanaEmergente(false); }}
+                      >
+                        Seleccionar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
                 </tbody>
               </table>
             </div>
 
             <div className="mt-3 flex justify-end gap-2">
-              <button className="btn">Cerrar</button>
+              <button className="btn"   onClick={() => {setventanaEmergente(false); }}>Cerrar</button>
             </div>
           </div>
         </div>
