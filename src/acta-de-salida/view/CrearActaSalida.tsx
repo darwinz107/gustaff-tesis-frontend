@@ -4,11 +4,12 @@ import type { InfoPdfCompra } from "../../orden-de-compra/models/infoPdfCompra";
 import { getAllSolicitudes, ordenCompraById } from "../../orden-de-compra/controller/ordenCompraApi";
 import { getUsers } from "../../user/controller/api/user-api";
 import type { Users } from "../../admin/models/users";
-import { createActaSalidaApi } from "../controller/actaSalida-api";
+import { createActaSalidaApi, createActaSalidaSinOrdenApi } from "../controller/actaSalida-api";
 import type { BuscarSolMaterial } from "../../orden-de-compra/models/buscarSolMaterial";
 import type { Inventarios } from "../../inventario/models/inventarios";
 import { getInventario } from "../../inventario/controller/inventario-api";
 import type { CreateItemsSolicitados } from "../../inventario/models/createItemsSolocitados";
+import type { ItemSalidaSinSM } from "../models/itemSalidaSinSM";
 
 
 export const CrearActaSalida = () => {
@@ -17,7 +18,7 @@ export const CrearActaSalida = () => {
   const [ventanaBuscarOrdenTrabajo, setventanaBuscarOrdenTrabajo] = useState(false);
   const [ventanaEmergente, setventanaEmergente] = useState(false);
   const [solicitudMaterial, setsolicitudMaterial] = useState<InfoPdfCompra>({itemSolicitados:[]});
-  const [agregarItems, setagregarItems] = useState<CreateItemsSolicitados[]>([])
+  const [agregarItems, setagregarItems] = useState<ItemSalidaSinSM[]>([])
   const [users, setusers] = useState<Users[]>([]);
   const [entrega, setentrega] = useState(0);
   const [observacion, setobservacion] = useState("");
@@ -32,11 +33,13 @@ export const CrearActaSalida = () => {
   const [item, setitem] = useState("");
   const [caracteristica, setcaracteristica] = useState("");
   const [observacion2, setobservacion2] = useState("");
+  const [recibe, setrecibe] = useState("");
+  
   const [inventarios, setinventarios] = useState<Inventarios[]>([]);
 
 
   const agregarCompras = async() =>{
-     setagregarItems(prev => [...prev,{cantidad:cantidad,item:item,caracteristica:caracteristica,Observacion:observacion2}]);
+     setagregarItems(prev => [...prev,{cantidad:cantidad,item:item,Observacion:observacion2,destino:}]);
      setcantidad("");
      setitem("");
      setcaracteristica("");
@@ -70,10 +73,29 @@ export const CrearActaSalida = () => {
   }
 
   if (conOrden && solicitudMaterial.id == null) {
-    setmensajeError("Debe seleccionar una solicitud de material!");
+   /* setmensajeError("Debe seleccionar una solicitud de material!");
     setshowError(true);
-    setTimeout(() => setshowError(false), 3000);
-    return;
+    setTimeout(() => setshowError(false), 3000);*/
+
+    try {
+      
+      const info ={
+         entregaId:entrega,
+   
+    recibeId:recibe, 
+    
+    observacion:observacion2,
+
+    itemsSalida: 
+      }
+
+      const res = await createActaSalidaSinOrdenApi();
+
+      return;
+    } catch (error) {
+      
+    }
+    
   }
 
   if (!solicitudMaterial.itemSolicitados || solicitudMaterial.itemSolicitados.length === 0) {
@@ -212,7 +234,7 @@ const metodoInventarios = async() =>{
 
           <div className="space-y-3">
             <label className="text-sm text-gray-600">Entrega</label>
-            <select value={entrega} className={`select select-bordered w-full ${erroresEntrega ? 'select-error' : ''}`} disabled={!conOrden} onChange={(e) => {setentrega(e.target.value); seterroresEntrega(validarEntrega(e.target.value));}}>
+            <select value={entrega} className={`select select-bordered w-full ${erroresEntrega ? 'select-error' : ''}`} onChange={(e) => {setentrega(e.target.value); seterroresEntrega(validarEntrega(e.target.value));}}>
               <option value={0} disabled>...</option>
               {users.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
             </select>
@@ -228,7 +250,11 @@ const metodoInventarios = async() =>{
 
           <div className="space-y-3">
             <label className="text-sm text-gray-600">Recibe</label>
-            <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.userSolicitante?.name} disabled />
+            {conOrden ? (<input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.userSolicitante?.name} disabled />)
+                      :(<select value={recibe} className={`select select-bordered w-full`} disabled={!conOrden} onChange={(e) => {setrecibe(e.target.value);}}>
+              <option value={0} disabled>...</option>
+              {users.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
+            </select>)}
             <div className="max-h-1"></div>
 
             <label className="text-sm text-gray-600 mt-2">Máquina</label>
