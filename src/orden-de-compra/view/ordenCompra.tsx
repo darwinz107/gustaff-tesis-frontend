@@ -373,6 +373,10 @@ setinfoDestino(infoDestinoInicial);
             <label className="text-xs font-semibold text-gray-600 mb-1 block">Descripción</label>
             <input className="input input-sm w-full" disabled value={infoDestino.DescripcionTrabajo} />
           </div>
+          <div>
+            <label className="text-xs font-semibold text-gray-600 mb-1 block">Destino</label>
+            <input className="input input-sm w-full" value={destino} onChange={(e)=>setdestino(e.target.value)} />
+          </div>
 
           <div>
             <label className="text-xs font-semibold text-gray-600 mb-1 block">Autoriza</label>
