@@ -39,7 +39,7 @@ export const CrearActaSalida = () => {
 
 
   const agregarCompras = async() =>{
-     setagregarItems(prev => [...prev,{cantidad:cantidad,item:item,Observacion:observacion2,destino:}]);
+     setagregarItems(prev => [...prev,{cantidad:cantidad,item:item,Observacion:observacion2}]);
      setcantidad("");
      setitem("");
      setcaracteristica("");
@@ -72,6 +72,13 @@ export const CrearActaSalida = () => {
     return;
   }
 
+    if (!solicitudMaterial.itemSolicitados || solicitudMaterial.itemSolicitados.length === 0) {
+    setmensajeError("Debe agregar al menos un item a la orden de salida");
+    setshowError(true);
+    setTimeout(() => setshowError(false), 3000);
+    return;
+  }
+
   if (conOrden && solicitudMaterial.id == null) {
    /* setmensajeError("Debe seleccionar una solicitud de material!");
     setshowError(true);
@@ -85,24 +92,40 @@ export const CrearActaSalida = () => {
     recibeId:recibe, 
     
     observacion:observacion2,
+    
 
-    itemsSalida: 
+    itemsSalida: agregarItems
       }
 
-      const res = await createActaSalidaSinOrdenApi();
+      const res = await createActaSalidaSinOrdenApi(info);
+      console.log(res);
+     if (res?.validate) {
+      setshowSuccess(true);
+      setTimeout(() => {
+        setshowSuccess(false);
+       // window.open(`/pdf-salida/${solicitudMaterial.id}`, "_blank");
 
-      return;
-    } catch (error) {
-      
+        setsolicitudMaterial({
+        
+          Destino:""
+        });
+
+        setentrega(0);
+        setobservacion2("");
+        setrecibe("");
+        setagregarItems([]);
+      }, 1000);
+    } else {
+      setmensajeError(res?.msj || "Error al generar acta de salida");
+      setshowError(true);
+      setTimeout(() => setshowError(false), 3000);
     }
-    
-  }
-
-  if (!solicitudMaterial.itemSolicitados || solicitudMaterial.itemSolicitados.length === 0) {
-    setmensajeError("Debe agregar al menos un item a la orden de salida");
-    setshowError(true);
-    setTimeout(() => setshowError(false), 3000);
     return;
+
+  } catch (error) {
+    console.error("Error generando acta de salida:", error);
+  }
+    
   }
 
   try {
@@ -297,12 +320,7 @@ const metodoInventarios = async() =>{
             </div>
           </div>
 
-          <div className="md:col-span-3">
-            <label className="text-sm text-gray-600">Característica</label>
-            <input disabled={conOrden} type="text" className="input input-bordered w-full" 
-            value={caracteristica} onChange={(e)=>setcaracteristica(e.target.value)}
-            />
-          </div>
+         
 
           <div className="md:col-span-12">
             <label className="text-sm text-gray-600 mt-2">Observación</label>

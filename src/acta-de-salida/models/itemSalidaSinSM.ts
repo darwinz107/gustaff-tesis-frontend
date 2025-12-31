@@ -8,6 +8,5 @@ export interface ItemSalidaSinSM {
     
     Observacion:string; 
 
-    destino:string
    
 }
