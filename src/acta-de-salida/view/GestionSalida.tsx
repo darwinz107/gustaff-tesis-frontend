@@ -12,6 +12,7 @@ export const GestionSalida = () => {
 
  const llenarActas = async() => {
       const res = await findAllRegistroSalida();
+      console.log(res);
       setactas(res || []);
     }
 
@@ -43,6 +44,7 @@ export const GestionSalida = () => {
   }
 
   const cargarPdf = async(id:number) => {
+    console.log(id);
     window.open(`/pdf-salida/${id}`,"_blank");
   }
 

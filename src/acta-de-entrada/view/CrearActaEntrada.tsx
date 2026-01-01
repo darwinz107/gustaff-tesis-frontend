@@ -126,9 +126,9 @@ const cargarInfoSolMaterial = async() =>{
   const errorPrecio = validarPrecio(precioUni);
   const errorDescuento = validarDescuento(descuento);
   const errorStockMin = validarStockMin(stockMin, habilitarStockMin);
-  const errorBodega = validarBodega(bodega);
-  const errorSeccion = validarSeccion(seccion);
-  const errorPercha = validarPercha(percha);
+  const errorBodega = validarBodega(habilitarStockMin ?"" :bodega);
+  const errorSeccion = validarSeccion(habilitarStockMin ?"" :seccion);
+  const errorPercha = validarPercha(habilitarStockMin ?"" :percha);
 
   seterroresItems({
     factura: "",
@@ -166,7 +166,24 @@ const cargarInfoSolMaterial = async() =>{
   const iva1 = (subtotal1 - descuento1) * ivaFinal;
   const calcTotal = subtotal1 - descuento1 + iva1;
 
-  const newItem = {
+  let newItem = {};
+
+  
+  if(habilitarStockMin){
+ newItem = {
+    nombre: item ?? "",
+    cantidad: c,
+   
+    costo: pu,
+    descuento: d,
+    iva: iva,
+    subtotal: parseFloat(subtotal1.toString()),
+    total: parseFloat(calcTotal.toString()),
+    
+    Observacion: observacion ?? ""
+  };
+  }else{
+newItem = {
     nombre: item ?? "",
     cantidad: c,
     stockMin: Number(stockMin ?? 0),
@@ -180,6 +197,25 @@ const cargarInfoSolMaterial = async() =>{
     perchaId: Number(percha),
     Observacion: observacion ?? ""
   };
+  }
+ 
+
+ /* newItem = {
+    nombre: item ?? "",
+    cantidad: c,
+    stockMin: Number(stockMin ?? 0),
+    costo: pu,
+    descuento: d,
+    iva: iva,
+    subtotal: parseFloat(subtotal1.toString()),
+    total: parseFloat(calcTotal.toString()),
+    bodegaId: Number(bodega),
+    seccionId: Number(seccion),
+    perchaId: Number(percha),
+    Observacion: observacion ?? ""
+  };*/
+
+   
 
   setsolicitudMaterial(prev => ({
     ...prev,
@@ -196,6 +232,10 @@ const cargarInfoSolMaterial = async() =>{
   setdescuento(null);
   setiva(false);
   setobservacion("");
+  setbodega("...");
+  setseccion("...");
+  setpercha("...");
+  
   seterroresItems({factura: "", item: "", cantidad: "", precioUni: "", descuento: "", stockMin: "", bodega: "", seccion: "", percha: ""});
 };
 
@@ -290,6 +330,7 @@ const validarStockMin = (valor: number | null, habilitado: boolean): string => {
 };
 
 const validarBodega = (valor: string): string => {
+  if(habilitarStockMin === true) return "";
   if (!valor || valor === "...") {
     return "Debe seleccionar una bodega";
   }
@@ -297,6 +338,7 @@ const validarBodega = (valor: string): string => {
 };
 
 const validarSeccion = (valor: string): string => {
+  if(habilitarStockMin === true) return "";
   if (!valor || valor === "...") {
     return "Debe seleccionar una sección";
   }
@@ -304,6 +346,7 @@ const validarSeccion = (valor: string): string => {
 };
 
 const validarPercha = (valor: string): string => {
+  if(habilitarStockMin === true) return "";
   if (!valor || valor === "...") {
     return "Debe seleccionar una percha";
   }
@@ -629,7 +672,7 @@ useEffect(() => {
         <div className="flex gap-4 flex-wrap">
           <div className="w-full md:w-1/4">
             <label className="block text-sm text-gray-600 mb-1">Bodega</label>
-            <select className={`select select-bordered w-full ${erroresItems.bodega ? 'select-error' : ''}`} defaultValue={"..."} onChange={(e) => {setbodega(e.target.value); seterroresItems({...erroresItems, bodega: validarBodega(e.target.value)});}}>
+            <select disabled={habilitarStockMin} className={`select select-bordered w-full ${erroresItems.bodega ? 'select-error' : ''}`} defaultValue={"..."} onChange={(e) => {setbodega(e.target.value); seterroresItems({...erroresItems, bodega: validarBodega(e.target.value)});}}>
               <option value="..." disabled>Seleccione una bodega</option>
               {bodegas?.map(b => <option key={b.id} value={b.id}>{b.bodega}</option>)}
             </select>
@@ -638,7 +681,7 @@ useEffect(() => {
 
           <div className="w-full md:w-1/4">
             <label className="block text-sm text-gray-600 mb-1">Sección</label>
-            <select className={`select select-bordered w-full ${erroresItems.seccion ? 'select-error' : ''}`} ref={selSecc} defaultValue={"..."} onChange={(e) => {setseccion(e.target.value); seterroresItems({...erroresItems, seccion: validarSeccion(e.target.value)});}}>
+            <select disabled={habilitarStockMin} className={`select select-bordered w-full ${erroresItems.seccion ? 'select-error' : ''}`} ref={selSecc} defaultValue={"..."} onChange={(e) => {setseccion(e.target.value); seterroresItems({...erroresItems, seccion: validarSeccion(e.target.value)});}}>
               <option value="..." disabled>Seleccione una sección</option>
               {secciones?.map(s => <option key={s.id} value={s.id}>{s.seccion}</option>)}
             </select>
@@ -647,7 +690,7 @@ useEffect(() => {
 
           <div className="w-full md:w-1/4">
             <label className="block text-sm text-gray-600 mb-1">Percha</label>
-            <select className={`select select-bordered w-full ${erroresItems.percha ? 'select-error' : ''}`} defaultValue={"..."} onChange={(e) => {setpercha(e.target.value); seterroresItems({...erroresItems, percha: validarPercha(e.target.value)});}}>
+            <select disabled={habilitarStockMin} className={`select select-bordered w-full ${erroresItems.percha ? 'select-error' : ''}`} defaultValue={"..."} onChange={(e) => {setpercha(e.target.value); seterroresItems({...erroresItems, percha: validarPercha(e.target.value)});}}>
               <option value="..." disabled>Seleccione una percha</option>
               {perchas?.map(p => <option key={p.id} value={p.id}>{p.percha}</option>)}
             </select>
@@ -657,11 +700,11 @@ useEffect(() => {
          
         </div>
 
-        <div className="mt-4 flex justify-center">
+       
+      </div>
+ <div className="mt-4 flex justify-center">
           <button type="button" className="btn btn-success" onClick={agregarItemsActualizado}>Agregar</button>
         </div>
-      </div>
-
       
       <div className="w-full bg-base-100 rounded-2xl shadow-md p-5">
         <div className="flex items-center justify-between mb-4">

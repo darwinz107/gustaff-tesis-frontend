@@ -35,11 +35,18 @@ export const CrearActaSalida = () => {
   const [observacion2, setobservacion2] = useState("");
   const [recibe, setrecibe] = useState("");
   const [destino, setdestino] = useState("");
+  const [stockDis, setstockDis] = useState(0);
   
   const [inventarios, setinventarios] = useState<Inventarios[]>([]);
 
 
   const agregarCompras = async() =>{
+    if(stockDis < Number(cantidad)){
+        setmensajeError( "Cantidar mayor al stock disponible");
+      setshowError(true);
+      setTimeout(() => setshowError(false), 3000);
+      return;
+    }
      setagregarItems(prev => [...prev,{cantidad:cantidad,item:item,Observacion:observacion2,caracteristica:caracteristica}]);
      setcantidad("");
      setitem("");
@@ -79,7 +86,8 @@ export const CrearActaSalida = () => {
    /* setmensajeError("Debe seleccionar una solicitud de material!");
     setshowError(true);
     setTimeout(() => setshowError(false), 3000);*/
- console.log("entro aqui")
+ console.log("entro aqui");
+
     try {
       
       const info ={
@@ -449,7 +457,9 @@ const metodoInventarios = async() =>{
                     <td>
                       <button
                         className="btn btn-ghost btn-xs"
-                        onClick={() => { setitem(i.nombre); setventanaEmergente(false); }}
+                        onClick={() => { if(i.stock === 0){ setmensajeError( "No pude escoger un item sin stock");
+      setshowError(true);
+      setTimeout(() => setshowError(false), 3000); return;} setitem(i.nombre); setstockDis(i.stock);setventanaEmergente(false); }}
                       >
                         Seleccionar
                       </button>

@@ -19,7 +19,7 @@ const { id } = useParams<{ id?: string }>();
 
 useEffect(() => {
   const cargarSolicitud = async () => {
-    console.log(id);
+    console.log(id.id);
     const res = id
       ? await actaDeSalidaByIdCompra(Number(id.id))
       : await actaDeSalidaByIdCompra(undefined as any);
