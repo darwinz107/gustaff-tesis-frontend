@@ -4,7 +4,7 @@ export interface ItemSalidaSinSM {
     
     cantidad:number;
     
-    
+    caracteristica:string;
     
     Observacion:string; 
 

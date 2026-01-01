@@ -24,7 +24,8 @@ const route = "http://localhost:3000/";
   
   export const createActaSalidaSinOrdenApi = async(info:any):Promise<{msj:string, validate:boolean}| undefined> => {
     try {
-          const response:Response = await fetch(`${route}inventario/acta-salida/sin-orden`,{
+      console.log(info);
+          const response:Response = await fetch(`${route}inventario/acta-salida/sin-orden/crear`,{
            method:"POST",
             headers: {
       "Content-Type": "application/json"

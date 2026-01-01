@@ -15,22 +15,21 @@ import { actaDeSalidaByIdCompra } from "../controller/actaSalida-api";
 export const GenerarPdfActaDeSalida = () => {
 
 const [newSolicitud, setnewSolicitud] = useState<InfoPdfSalida>();
-const id = useParams();
-  useEffect(() => {
-   
-    try {
-        const cargarSolicitud = async() =>{
-       const res = await actaDeSalidaByIdCompra(id.id);
-       setnewSolicitud(res);
-       
-    }
-    cargarSolicitud();
-    } catch (error) {
-      console.log(error);
-    }
-  
+const { id } = useParams<{ id?: string }>();
 
-  }, []);
+useEffect(() => {
+  const cargarSolicitud = async () => {
+    console.log(id);
+    const res = id
+      ? await actaDeSalidaByIdCompra(Number(id.id))
+      : await actaDeSalidaByIdCompra(undefined as any);
+
+    setnewSolicitud(res);
+  };
+
+  cargarSolicitud();
+}, [id]);
+
   
   return (
     <>
@@ -49,7 +48,7 @@ const id = useParams();
             </View>
            <View style={styles.ocTercero}>
             <Text style={{textAlign:"right",fontWeight:"bold"}}>ACTA N°: {newSolicitud?.numActa}</Text>
-            <View><Text style={{textAlign:"left",fontWeight:"bold"}}>FECHA Y HORA DE RECEPCION: {newSolicitud?.fechaRemision.split("T")[0]}  {newSolicitud?.fechaRemision.split("T")[1].split(".")[0]}</Text> <Text style={{textAlign:"right",fontWeight:"bold"}}>SOLICITA: {newSolicitud?.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.name}</Text></View>
+            <View><Text style={{textAlign:"left",fontWeight:"bold"}}>FECHA Y HORA DE RECEPCION: {newSolicitud?.fechaRemision.split("T")[0]}  {newSolicitud?.fechaRemision.split("T")[1].split(".")[0]}</Text> <Text style={{textAlign:"right",fontWeight:"bold"}}>SOLICITA: {newSolicitud?.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.name ?? newSolicitud?.recibeSinSM?.name}</Text></View>
            </View>
             <View style={{ margin:"10px",   width:"60%",height:"4%", display:"flex",flexDirection:"row",borderWidth:1,borderColor:"#000"}}>
             
@@ -57,7 +56,7 @@ const id = useParams();
              <Text >DESTINO</Text>
             </View>
             <View style={{    textAlign:"center",width:"85%",height:"100%",borderLeftWidth:1,borderColor:"#000"}}>
-             <Text >{newSolicitud?.numSolicitudCompra?.Destino}</Text>
+             <Text >{newSolicitud?.destino}</Text>
             </View>
             </View>
             
@@ -75,6 +74,12 @@ const id = useParams();
     <Text style={{ width: "10%", fontWeight:"bold", textAlign: "center", borderRightWidth: 1 }}>CANT.</Text>
     <Text style={{ width: "40%", fontWeight:"bold", paddingLeft: 4, borderRightWidth: 1 }}>Item</Text>
     <Text style={{ width: "15%", fontWeight:"bold", paddingLeft: 4, borderRightWidth: 1 }}>Precio</Text>
+    {!newSolicitud?.numSolicitudCompra && (
+  <Text style={{ width: "15%", fontWeight:"bold", paddingLeft: 4, borderRightWidth: 1 }}>
+    Característica
+  </Text>
+)}
+
     <Text style={{ width: "35%", fontWeight:"bold", paddingLeft: 4 }}>OBSERVACION</Text>
     
   </View>
@@ -89,6 +94,12 @@ const id = useParams();
     <Text style={{ width: "10%", fontSize: 9, textAlign: "center" }}>{i?.cantidad} UNDS</Text>
     <Text style={{ width: "40%", fontSize: 9, paddingLeft: 4 }}>{i?.inventario?.nombre}</Text>
     <Text style={{ width: "15%", fontSize: 9, paddingLeft: 4 }}>{i?.inventario?.costo}</Text>
+     {!newSolicitud?.numSolicitudCompra && (
+  <Text style={{ width: "15%", fontSize: 9, paddingLeft: 4 }}>
+    {i?.caracteristica ?? "N/A"}
+  </Text>
+)}
+
     <Text style={{ width: "35%", fontSize: 9, paddingLeft: 4 }}>{i?.Observacion ??"N/A"}</Text>
 
   </View>)}
@@ -97,7 +108,7 @@ const id = useParams();
 
 <View style={{ marginHorizontal: 10, marginTop: 18, width: "97%", flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" }}>
   <View style={{ width: "48%" }}>
-    <Text style={{ fontSize: 9, fontWeight: "bold" }}>RECIBE: <Text style={{ fontWeight: "bold" }}>{newSolicitud?.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.name }</Text></Text>
+    <Text style={{ fontSize: 9, fontWeight: "bold" }}>RECIBE: <Text style={{ fontWeight: "bold" }}>{newSolicitud?.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.name ?? newSolicitud?.recibeSinSM?.name}</Text></Text>
     <View style={{ height: 24 }} />
     <Text style={{ borderTopWidth: 0.7, borderTopColor: "#000", width: "80%", paddingTop: 6 }}>FIRMA</Text>
   </View>

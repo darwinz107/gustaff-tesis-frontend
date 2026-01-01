@@ -100,14 +100,14 @@ export const GestionSalida = () => {
                     <tr key={i} className="hover:bg-gray-50">
                       <td className="px-4 py-3">{u.numActa}</td>
                       <td className="px-4 py-3">{u.fechaRemision ? u.fechaRemision.split("T")[0] : ""}</td>
-                      <td className="px-4 py-3">{u.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.name}</td>
+                      <td className="px-4 py-3">{u.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.name ?? u.recibeSinSM?.name}</td>
                       <td className="px-4 py-3">{u.entrega?.name ?? ""}</td>
-                      <td className="px-4 py-3">{u.numSolicitudCompra?.Destino}</td>
+                      <td className="px-4 py-3">{u.destino ?? "" }</td>
                       <td className="px-4 py-3 text-center">
                         <div className="flex gap-2 justify-center">
                           <button className="btn btn-ghost btn-xs" disabled>Ver detalles</button>
                           <button className="btn btn-ghost btn-xs" disabled>Eliminar</button>
-                          <button className="btn btn-ghost btn-xs" onClick={()=>cargarPdf(u.numSolicitudCompra.id)}>Ver PDF</button>
+                          <button className="btn btn-ghost btn-xs" onClick={()=>cargarPdf(u.id)}>Ver PDF</button>
                         </div>
                       </td>
                     </tr>
