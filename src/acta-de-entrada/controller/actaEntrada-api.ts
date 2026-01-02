@@ -29,6 +29,15 @@ const route = "http://localhost:3000/";
             return data;
         }     
 
+    export const findRegistroEntradaById = async(id:number):Promise<InfoPdfEntrada> => {
+    
+            const response:Response = await fetch(`${route}inventario/actas-entradas-by/${id}`,{
+           method:"GET"
+            });
+            const data = await response.json();
+            return data;
+        }       
+
        export const actaDeEntradaByIdCompra = async(id:number):Promise<InfoPdfEntrada> => {
       
               const response:Response = await fetch(`${route}inventario/acta-entrada-by/${id}`,{
@@ -50,6 +59,19 @@ const route = "http://localhost:3000/";
             const data = await response.json();
             return data;
         } 
+
+               export const findProovedores = async():Promise<{id:number,nombreComercial:string}[]> => {
+    
+            const response:Response = await fetch(`${route}inventario/proovedores`,{
+           method:"GET",
+            headers: {
+      "Content-Type": "application/json"
+    },
+    
+            });
+            const data = await response.json();
+            return data;
+        }     
 
         export const createProovedor = async(createProovedor:CreateProovedor):Promise<{ok:boolean,message:string}> => {
     

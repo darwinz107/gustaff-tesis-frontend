@@ -61,6 +61,15 @@ export const findAllSolicitudesCompra = async (): Promise<DetallesPrevioCompra[]
   return data;
 }
 
+export const solMaterialShort = async (): Promise<{id:number,numOrden:string}[]> => {
+  const response: Response = await fetch(`${route}solicitud-de-compra/olicitud-material-short`, {
+    method: "GET"
+  });
+
+  const data = await response.json();
+  return data;
+}
+
 export const getAllEstadosCompra = async (): Promise<{id:number,estado:string}[]> => {
   const response: Response = await fetch(`${route}solicitud-de-compra/estados-compra`, {
   method: "GET"

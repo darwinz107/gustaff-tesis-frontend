@@ -2,7 +2,10 @@ export interface InfoPdfEntrada {
   id:number;
   numActa: string;
   factura:string;
-  proovedor:string;
+  proovedor:{
+    id:number;
+    nombre:string;
+  };
   numSolicitudCompra: {
     id: number;
     numOrdenTrabajo: {

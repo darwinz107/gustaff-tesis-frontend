@@ -1,14 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React, { act, useEffect, useState } from 'react'
 import type { InfoPdfEntrada } from '../models/infoPdfEntrada';
-import { findAllRegistroEntrada, filtrarActasEntrada } from '../controller/actaEntrada-api';
+import { findAllRegistroEntrada, filtrarActasEntrada, findRegistroEntradaById, findProovedorByNombre, findProovedores } from '../controller/actaEntrada-api';
+import { solMaterialShort } from '../../orden-de-compra/controller/ordenCompraApi';
 
 export const GestionEntrada = () => {
   const [actas, setactas] = useState<InfoPdfEntrada[]>([]);
+  const [acta, setacta] = useState<InfoPdfEntrada|null>(null);
   const [filtroNumActa, setFiltroNumActa] = useState("");
   const [filtroFactura, setFiltroFactura] = useState("");
   const [filtroRecibe, setFiltroRecibe] = useState("");
   const [filtroProveedor, setFiltroProveedor] = useState("");
   const [filtroFecha, setFiltroFecha] = useState("");
+  const [ventanaEmergente, setventanaEmergente] = useState(false);
+  const [solMateriales, setsolMateriales] = useState<{id:number, numOrden:string}[]>([]);
+  const [habilitarEdicion, sethabilitarEdicion] = useState(false);
+   const [proovedores, setproovedores] = useState<{id:number,nombreComercial:string}[]>([]);
 
 const llenarActas = async() => {
       const res = await findAllRegistroEntrada();
@@ -16,9 +22,22 @@ const llenarActas = async() => {
       setactas(res || []);
     }
 
+ const solicitudesMaterial = async()=>{
+     const res = await solMaterialShort();
+     setsolMateriales(res);
+ }  
+ 
+    const metodoExecProovedores = async()=>{
+     const res = await findProovedores();
+     setproovedores(res);
+     
+   }
+
   useEffect(() => {
     
     llenarActas();
+    solicitudesMaterial();
+    metodoExecProovedores();
   }, []);
 
   const aplicarFiltros = async () => {
@@ -45,6 +64,18 @@ const llenarActas = async() => {
 
   const cargarPdf = async(id:number) => {
     window.open(`/pdf-entrada/${id}`,"_blank");
+  }
+
+  const llenarActaById = async(id:number)=>{
+       
+    const res = await findRegistroEntradaById(id);
+    if(res){
+      setacta(res);
+      setventanaEmergente(true);
+    }else{
+      alert("Fallo al carga la acta de entrada");
+    }
+    
   }
 
   return (
@@ -106,7 +137,7 @@ const llenarActas = async() => {
                       <td className="px-4 py-3">{u.numSolicitudCompra?.Destino}</td>
                       <td className="px-4 py-3 text-center">
                         <div className="flex gap-2 justify-center">
-                          <button className="btn btn-ghost btn-xs" disabled>Ver detalles</button>
+                          <button className="btn btn-ghost btn-xs" onClick={()=>llenarActaById(u.id)}>Ver detalles</button>
                           <button className="btn btn-ghost btn-xs" disabled>Eliminar</button>
                           <button className="btn btn-ghost btn-xs" onClick={()=>cargarPdf(u.id)}>Ver PDF</button>
                         </div>
@@ -123,7 +154,9 @@ const llenarActas = async() => {
             </div>
           </div>
         </div>
+
+  
+
       </div>
     </>
-  );
-}
+)};  
