@@ -1,6 +1,6 @@
-import React, { act, useEffect, useState } from 'react'
+import React, { act, useEffect, useState, useRef } from 'react'
 import type { InfoPdfEntrada } from '../models/infoPdfEntrada';
-import { findAllRegistroEntrada, filtrarActasEntrada, findRegistroEntradaById, findProovedorByNombre, findProovedores } from '../controller/actaEntrada-api';
+import { findAllRegistroEntrada, filtrarActasEntrada, findRegistroEntradaById, findProovedorByNombre, findProovedores, updateActaEntrada, deleteActaEntrada } from '../controller/actaEntrada-api';
 import { solMaterialShort } from '../../orden-de-compra/controller/ordenCompraApi';
 
 export const GestionEntrada = () => {
@@ -15,6 +15,14 @@ export const GestionEntrada = () => {
   const [solMateriales, setsolMateriales] = useState<{id:number, numOrden:string}[]>([]);
   const [habilitarEdicion, sethabilitarEdicion] = useState(false);
    const [proovedores, setproovedores] = useState<{id:number,nombreComercial:string}[]>([]);
+   const [facturaEditada, setfacturaEditada] = useState("");
+   const [provedorIdEditada, setprovedorIdEditada] = useState<number|undefined>();
+   const [solicitudCompraIdEditada, setsolicitudCompraIdEditada] = useState<number|undefined>();
+   const [showSuccess, setshowSuccess] = useState(false);
+   const [showError, setshowError] = useState(false);
+   const [mensajeError, setmensajeError] = useState("");
+
+const dialog = useRef<HTMLDialogElement>(null);
 
 const llenarActas = async() => {
       const res = await findAllRegistroEntrada();
@@ -24,6 +32,7 @@ const llenarActas = async() => {
 
  const solicitudesMaterial = async()=>{
      const res = await solMaterialShort();
+    // console.log(res);
      setsolMateriales(res);
  }  
  
@@ -69,17 +78,121 @@ const llenarActas = async() => {
   const llenarActaById = async(id:number)=>{
        
     const res = await findRegistroEntradaById(id);
+    console.log(res);
     if(res){
       setacta(res);
+      setfacturaEditada(res.factura);
+      setprovedorIdEditada(res.proovedor?.id);
+      setsolicitudCompraIdEditada(res.numSolicitudCompra?.id);
       setventanaEmergente(true);
     }else{
-      alert("Fallo al carga la acta de entrada");
+      setmensajeError("Fallo al cargar la acta de entrada");
+      setshowError(true);
+      setTimeout(() => setshowError(false), 3000);
     }
     
   }
 
+  const guardarCambios = async() => {
+    if(!acta) return;
+    try {
+      const updateData: { factura?: string; provedorId?: number; solicitudCompraId?: number } = {};
+      
+      if(facturaEditada !== acta.factura) {
+        updateData.factura = facturaEditada;
+      }
+      if(provedorIdEditada !== acta.proovedor?.id && provedorIdEditada !== undefined) {
+        updateData.provedorId = provedorIdEditada;
+      }
+      if(solicitudCompraIdEditada !== acta.numSolicitudCompra?.id && solicitudCompraIdEditada !== undefined) {
+        updateData.solicitudCompraId = solicitudCompraIdEditada;
+      }
+
+      const res = await updateActaEntrada(acta.id, updateData);
+      if(res.validate) {
+        setshowSuccess(true);
+        setTimeout(() => {
+          setshowSuccess(false);
+          sethabilitarEdicion(false);
+          llenarActas();
+          setventanaEmergente(false);
+          setacta(null);
+        }, 1000);
+      } else {
+        setmensajeError("Error: " + res.msj);
+        setshowError(true);
+        setTimeout(() => setshowError(false), 3000);
+      }
+    } catch (error) {
+      console.error("Error al actualizar:", error);
+      setmensajeError("Error al actualizar la acta");
+      setshowError(true);
+      setTimeout(() => setshowError(false), 3000);
+    }
+  }
+
+  const eliminarActa = async() => {
+    if(!acta) return;
+    try {
+      const res = await deleteActaEntrada(acta.id);
+      if(res.validate) {
+        setshowSuccess(true);
+        setTimeout(() => {
+          setshowSuccess(false);
+          llenarActas();
+          setventanaEmergente(false);
+          setacta(null);
+        }, 1000);
+      } else {
+        setmensajeError("Error: " + res.msj);
+        setshowError(true);
+        setTimeout(() => setshowError(false), 3000);
+      }
+    } catch (error) {
+      console.error("Error al eliminar:", error);
+      setmensajeError("Error al eliminar la acta");
+      setshowError(true);
+      setTimeout(() => setshowError(false), 3000);
+    }
+  }
+
   return (
     <>
+      {showSuccess && (
+        <div className="fixed top-5 right-5 z-100">
+          <div role="alert" className="alert alert-success shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>¡Acta actualizada correctamente!</span>
+          </div>
+        </div>
+      )}
+
+      {showError && (
+        <div className="fixed top-5 right-5 z-100">
+          <div role="alert" className="alert alert-error shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{mensajeError}</span>
+          </div>
+        </div>
+      )}
+
+      <dialog ref={dialog} id="my_modal_1" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">¡Advertencia!</h3>
+          <p className="py-4">¿Está seguro que desea eliminar esta acta de entrada? Esta acción no se puede deshacer.</p>
+          <div className="modal-action">
+            <form method="dialog" className="flex gap-2">
+              <button className="btn btn-error" onClick={eliminarActa}>Eliminar</button>
+              <button className="btn">Cancelar</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
+
       <div className="min-w-[70%] min-h-[60%] rounded-xl border border-gray-200 m-4 bg-white shadow-sm">
         <div className="bg-gray-100 w-full h-12 flex items-center justify-between rounded-t-lg border-b px-4">
           <p className="font-semibold text-gray-700">Listado de actas de entrada</p>
@@ -138,7 +251,7 @@ const llenarActas = async() => {
                       <td className="px-4 py-3 text-center">
                         <div className="flex gap-2 justify-center">
                           <button className="btn btn-ghost btn-xs" onClick={()=>llenarActaById(u.id)}>Ver detalles</button>
-                          <button className="btn btn-ghost btn-xs" disabled>Eliminar</button>
+                          <button className="btn btn-ghost btn-xs" onClick={() => {setacta(u); dialog.current?.showModal();}}>Eliminar</button>
                           <button className="btn btn-ghost btn-xs" onClick={()=>cargarPdf(u.id)}>Ver PDF</button>
                         </div>
                       </td>
@@ -158,5 +271,97 @@ const llenarActas = async() => {
   
 
       </div>
+      {acta && (
+       <div className={`z-50 fixed inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaEmergente ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+        <div className="absolute inset-0 bg-black/40" />
+        <div className="relative border border-gray-300 w-11/12 max-w-6xl h-[85vh] rounded-md bg-white shadow-lg overflow-auto">
+          <div className="w-full h-[12%] flex justify-between p-5 border-b">
+            <div className="font-medium text-gray-700">Detalle de orden de materiales</div>
+            <div onClick={() => { setventanaEmergente(!ventanaEmergente); }} className="cursor-pointer">❌</div>
+          </div>
+
+          <div className="w-full h-[76%] px-6 py-4 flex flex-col">
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <p className="text-xs text-gray-500">N.Acta</p>
+                <input type="text" disabled className="input w-full mt-1" value={acta?.numActa} />
+              </div>
+
+              <div>
+                <p className="text-xs text-gray-500">Fecha de remision</p>
+                <input type="date" disabled value={acta?.fechaRemision ? acta.fechaRemision.split("T")[0] : ""}/>
+              </div>
+
+               <div>
+                <p className="text-xs text-gray-500">Factura</p>
+                <input type="text" disabled={!habilitarEdicion}  className="input w-full mt-1" value={facturaEditada} onChange={(e)=>setfacturaEditada(e.target.value)} />
+              </div>
+
+              <div>
+                <p className="text-xs text-gray-500">Proovedor</p>
+                <select disabled={!habilitarEdicion} value={provedorIdEditada ?? 0} onChange={(e)=>setprovedorIdEditada(Number(e.target.value))} className="select w-full mt-1"
+                  >
+                  <option disabled>...</option>
+                  {(proovedores ?? []).map((s) => <option key={s.id} value={s.id}>{s.nombreComercial}</option>)}
+                </select>
+              </div>
+
+              <div>
+                <p className="text-xs text-gray-500">N.Solicitud de material</p>
+                <select disabled={!habilitarEdicion} className="select w-full mt-1" value={solicitudCompraIdEditada ?? 0} onChange={(e)=>setsolicitudCompraIdEditada(Number(e.target.value))}>
+                  <option disabled>...</option>
+                  {(solMateriales ?? []).map((o) => <option key={o.id} value={o.id}>{o.numOrden}</option>)}
+                </select>
+              </div>
+
+           
+            </div>
+
+            <div className="overflow-auto mt-5">
+              <table className="table w-full">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Cantidad</th>
+                    <th>Costo</th>
+                    <th>Descuento</th>
+                    <th>IVA</th>
+                     <th>Subtotal</th>
+                      <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(acta?.itemEntrada ?? []).map((is, idx) => (
+                    <tr key={idx}>
+                      <td>{is.item?.nombre ??""}</td>
+                      <td>{is.cantidad}</td>
+                      <td>{is.costo}</td>
+                      <td>{is.descuento}</td>
+                      <td>{is.iva ? "15%" : "0%"}</td>
+                       <td>{is.subtotal}</td>
+                        <td>{is.total}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+
+          <div className="w-full h-[12%] flex justify-between items-center px-6 border-t">
+            {habilitarEdicion ? (
+              <>
+                <button className="btn btn-primary" onClick={guardarCambios}>Hecho</button>
+                <button className="btn" onClick={() => { sethabilitarEdicion(!habilitarEdicion); setfacturaEditada(acta?.factura ?? ""); setprovedorIdEditada(acta?.proovedor?.id); setsolicitudCompraIdEditada(acta?.numSolicitudCompra?.id); }}>Cancelar</button>
+              </>
+            ) : (
+              <>
+                <button className="btn" onClick={() => { sethabilitarEdicion(!habilitarEdicion); }}>Editar</button>
+                <button className="btn btn-ghost" onClick={() => { setventanaEmergente(!ventanaEmergente); setacta(null); }}>Cerrar</button>
+              </>
+            )}
+          </div>
+        </div>
+      </div>)}
     </>
 )};  

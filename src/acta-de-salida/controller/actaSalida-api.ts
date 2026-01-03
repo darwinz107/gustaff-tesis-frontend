@@ -59,6 +59,15 @@ const route = "http://localhost:3000/";
             const data = await response.json();
             return data;
         } 
+
+    export const findRegistroSalidaById = async(id:number):Promise<InfoPdfSalida> => {
+    
+            const response:Response = await fetch(`${route}inventario/actas-salidas-by/${id}`,{
+           method:"GET"
+            });
+            const data = await response.json();
+            return data;
+        }
         
      export const filtrarActasSalida = async (filtros: FiltrarActaSalidaDto): Promise<InfoPdfSalida[]> => {
   try {
@@ -72,5 +81,38 @@ const route = "http://localhost:3000/";
   } catch (error) {
     console.error("filtrarActasSalida error:", error);
     return [];
+  }
+};
+
+export const updateActaSalida = async (id: number, updateData: { entregaId?: number; observacion?: string; recibeSinSMId?: number; solicitanteId?: number; destino?: string }): Promise<{ msj: string; validate: boolean }> => {
+  try {
+    const response: Response = await fetch(`${route}inventario/acta-salida/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(updateData)
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("updateActaSalida error:", error);
+    throw error;
+  }
+};
+
+export const deleteActaSalida = async (id: number): Promise<{ msj: string; validate: boolean }> => {
+  try {
+    const response: Response = await fetch(`${route}inventario/acta-salida/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("deleteActaSalida error:", error);
+    throw error;
   }
 };

@@ -62,7 +62,7 @@ export const findAllSolicitudesCompra = async (): Promise<DetallesPrevioCompra[]
 }
 
 export const solMaterialShort = async (): Promise<{id:number,numOrden:string}[]> => {
-  const response: Response = await fetch(`${route}solicitud-de-compra/olicitud-material-short`, {
+  const response: Response = await fetch(`${route}solicitud-de-compra/solicitud-material-short`, {
     method: "GET"
   });
 
