@@ -285,7 +285,7 @@ const obtenerUsers = async () =>{
           </div>
         </div>
       )}
-      <div className="min-w-[70%] min-h-[60%] rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="min-w-[70%] min-h-[60%] rounded-xl border border-gray-200 bg-white shadow-sm m-4">
         <div className="bg-gray-100 w-full h-12 flex items-center justify-between rounded-t-lg border-b px-4">
           <p className="font-semibold text-gray-700">Listado de usuarios</p>
           <div className="flex items-center gap-2">

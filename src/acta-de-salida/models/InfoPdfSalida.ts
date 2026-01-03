@@ -1,7 +1,13 @@
 export interface InfoPdfSalida {
+  id: number;
   numActa: string;
-  numSolicitudCompra: {
+  fechaRemision: string;
+  destino:string;
+
+  
+  numSolicitudCompra?: {
     id: number;
+    Destino: string;
     numOrdenTrabajo: {
       id: number;
       userSolicitante: {
@@ -9,20 +15,27 @@ export interface InfoPdfSalida {
         name: string;
       };
     };
-    Destino: string;
   };
+
+  
+  recibeSinSM?: {
+    id: number;
+    name: string;
+  };
+
+  entrega: {
+    name: string;
+  };
+
   itemSalida: {
     item: string;
     cantidad: number;
-    Observacion: string | null;
+    Observacion?: string | null;
+    caracteristica?: string;
     inventario: {
-                id: number;
-                nombre:string ;
-                costo:number;
-            }
+      id: number;
+      nombre: string;
+      costo: number;
+    };
   }[];
-  fechaRemision: string;
-  entrega: {
-    name:string;
-  };
 }

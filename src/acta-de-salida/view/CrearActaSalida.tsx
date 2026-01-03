@@ -34,12 +34,20 @@ export const CrearActaSalida = () => {
   const [caracteristica, setcaracteristica] = useState("");
   const [observacion2, setobservacion2] = useState("");
   const [recibe, setrecibe] = useState("");
+  const [destino, setdestino] = useState("");
+  const [stockDis, setstockDis] = useState(0);
   
   const [inventarios, setinventarios] = useState<Inventarios[]>([]);
 
 
   const agregarCompras = async() =>{
-     setagregarItems(prev => [...prev,{cantidad:cantidad,item:item,Observacion:observacion2}]);
+    if(stockDis < Number(cantidad)){
+        setmensajeError( "Cantidar mayor al stock disponible");
+      setshowError(true);
+      setTimeout(() => setshowError(false), 3000);
+      return;
+    }
+     setagregarItems(prev => [...prev,{cantidad:cantidad,item:item,Observacion:observacion2,caracteristica:caracteristica}]);
      setcantidad("");
      setitem("");
      setcaracteristica("");
@@ -66,35 +74,37 @@ export const CrearActaSalida = () => {
   seterroresEntrega(errorEntrega);
 
   if (errorEntrega) {
-   /* setmensajeError("Debe seleccionar una persona para entrega");
-    setshowError(true);
-    setTimeout(() => setshowError(false), 3000);*/
-    return;
-  }
-
-    if (!solicitudMaterial.itemSolicitados || solicitudMaterial.itemSolicitados.length === 0) {
-    setmensajeError("Debe agregar al menos un item a la orden de salida");
+    setmensajeError("Debe seleccionar una persona para entrega");
     setshowError(true);
     setTimeout(() => setshowError(false), 3000);
     return;
   }
 
-  if (conOrden && solicitudMaterial.id == null) {
+    
+
+  if (!conOrden && solicitudMaterial.id == null) {
    /* setmensajeError("Debe seleccionar una solicitud de material!");
     setshowError(true);
     setTimeout(() => setshowError(false), 3000);*/
+ console.log("entro aqui");
 
     try {
       
       const info ={
-         entregaId:entrega,
+         entregaId:Number(entrega),
    
-    recibeId:recibe, 
+    recibeId:Number(recibe), 
     
     observacion:observacion2,
     
-
-    itemsSalida: agregarItems
+    destino:destino,
+     itemsSalida: agregarItems.map(it => ({
+    item: it.item,
+    cantidad: Number(it.cantidad),  
+    Observacion: it.Observacion,
+    caracteristica: it.caracteristica
+  }))
+   // caracteristica:caracteristica
       }
 
       const res = await createActaSalidaSinOrdenApi(info);
@@ -103,7 +113,7 @@ export const CrearActaSalida = () => {
       setshowSuccess(true);
       setTimeout(() => {
         setshowSuccess(false);
-       // window.open(`/pdf-salida/${solicitudMaterial.id}`, "_blank");
+        window.open(`/pdf-salida/${undefined}`, "_blank");
 
         setsolicitudMaterial({
         
@@ -128,6 +138,13 @@ export const CrearActaSalida = () => {
     
   }
 
+  if (!solicitudMaterial.itemSolicitados || solicitudMaterial.itemSolicitados.length === 0) {
+    setmensajeError("Debe agregar al menos un item a la orden de salida");
+    setshowError(true);
+    setTimeout(() => setshowError(false), 3000);
+    return;
+  }
+
   try {
     const res = await createActaSalidaApi(
       solicitudMaterial.id,
@@ -141,7 +158,7 @@ export const CrearActaSalida = () => {
       setshowSuccess(true);
       setTimeout(() => {
         setshowSuccess(false);
-        window.open(`/pdf-salida/${solicitudMaterial.id}`, "_blank");
+        window.open(`/pdf-salida/${undefined}`, "_blank");
 
         setsolicitudMaterial({
           id: null,
@@ -252,7 +269,7 @@ const metodoInventarios = async() =>{
             <div className="max-h-1"></div>
 
             <label className="text-sm text-gray-600 mt-2">Destino</label>
-            <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.Destino} disabled />
+            {conOrden ?(<input type="text" className="input input-bordered w-full" value={solicitudMaterial?.Destino} disabled />) :(<input type="text" className="input input-bordered w-full" value={destino} onChange={(e)=>setdestino(e.target.value)}  />)}
           </div>
 
           <div className="space-y-3">
@@ -274,7 +291,7 @@ const metodoInventarios = async() =>{
           <div className="space-y-3">
             <label className="text-sm text-gray-600">Recibe</label>
             {conOrden ? (<input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.userSolicitante?.name} disabled />)
-                      :(<select value={recibe} className={`select select-bordered w-full`} disabled={!conOrden} onChange={(e) => {setrecibe(e.target.value);}}>
+                      :(<select value={recibe} className={`select select-bordered w-full`} onChange={(e) => {setrecibe(e.target.value);}}>
               <option value={0} disabled>...</option>
               {users.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
             </select>)}
@@ -300,7 +317,7 @@ const metodoInventarios = async() =>{
             <input disabled={conOrden} type="text" className="input input-bordered w-full" value={cantidad} onChange={(e)=>setcantidad(e.target.value)}/>
           </div>
 
-          <div className="md:col-span-5">
+          <div className="md:col-span-4">
             <label className="text-sm text-gray-600">Item</label>
             <div className="relative">
               <input
@@ -320,7 +337,12 @@ const metodoInventarios = async() =>{
             </div>
           </div>
 
-         
+         <div className="md:col-span-4">
+            <label className="text-sm text-gray-600">Característica</label>
+            <input disabled={conOrden} type="text" className="input input-bordered w-full" 
+            value={caracteristica} onChange={(e)=>setcaracteristica(e.target.value)}
+            />
+          </div>
 
           <div className="md:col-span-12">
             <label className="text-sm text-gray-600 mt-2">Observación</label>
@@ -435,7 +457,9 @@ const metodoInventarios = async() =>{
                     <td>
                       <button
                         className="btn btn-ghost btn-xs"
-                        onClick={() => { setitem(i.nombre); setventanaEmergente(false); }}
+                        onClick={() => { if(i.stock === 0){ setmensajeError( "No pude escoger un item sin stock");
+      setshowError(true);
+      setTimeout(() => setshowError(false), 3000); return;} setitem(i.nombre); setstockDis(i.stock);setventanaEmergente(false); }}
                       >
                         Seleccionar
                       </button>
@@ -446,9 +470,7 @@ const metodoInventarios = async() =>{
               </table>
             </div>
 
-            <div className="mt-3 flex justify-end gap-2">
-              <button className="btn"   onClick={() => {setventanaEmergente(false); }}>Cerrar</button>
-            </div>
+          
           </div>
         </div>
       </div>

@@ -67,7 +67,7 @@ const route = "http://localhost:3000/";
     return data;
 };
 
-  export const asignarInfoActaEntrada = async(id:number):Promise<AsignarInfoEntrada[]> => {
+  export const asignarInfoActaEntrada = async(id:number):Promise<AsignarInfoEntrada> => {
     
             const response:Response = await fetch(`${route}inventario/info-entrada/${id}`,{
            method:"GET"
