@@ -21,5 +21,7 @@ export interface AsignarInfoEntrada {
         perchaId:number
         Observacion: string;
         iva:boolean;
+        esActualizado?: boolean;
+        imagen?: string;
     }[];
 }
