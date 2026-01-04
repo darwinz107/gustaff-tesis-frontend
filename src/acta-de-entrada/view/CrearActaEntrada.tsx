@@ -264,9 +264,9 @@ const validarItem = (valor: string | null): string => {
   if (!valor || (typeof valor === 'string' && valor.trim() === "")) {
     return "Debe seleccionar un item";
   }
-  if (typeof valor === 'string' && !/^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(valor)) {
+ /* if (typeof valor === 'string' && !/^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(valor)) {
     return "El item solo puede contener letras";
-  }
+  }*/
   return "";
 };
 
