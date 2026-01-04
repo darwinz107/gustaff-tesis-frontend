@@ -527,18 +527,18 @@ setinfoDestino(infoDestinoInicial);
       </div>
     </div>
 
-    <div className={` fixed inset-x-0 z-50 flex items-center justify-center min-h-fit transition-opacity ${ventanaEmergente ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-      <div className="bg-white w-2/5 h-2/5 rounded-xl shadow-lg border">
+    <div className={` fixed inset-x-0 z-50 flex items-center justify-center max-h-2/5 transition-opacity ${ventanaEmergente ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+      <div className="bg-white w-2/5 max-h-[80vh] rounded-xl shadow-lg border">
         <div className="flex justify-between items-center p-4 border-b">
           <span className="font-semibold">Listado de items</span>
           <span className="cursor-pointer" onClick={() => setventanaEmergente(false)}>❌</span>
         </div>
 
-        <div className="p-4">
+        <div className="p-4 ">
           <input className="input w-full mb-3" placeholder="Buscar item" onChange={(e) => setbuscarItem(e.target.value)} />
 
-          <div className="overflow-x-auto">
-            <table className="table">
+          <div className=" overflow-auto max-h-96">
+            <table className="table ">
               <thead>
                 <tr>
                   <th>Item</th>
