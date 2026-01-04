@@ -196,6 +196,7 @@ const cargarInfoSolMaterial = async() =>{
   let imagenBase64 = null;
   if (imagen && imagen !== null) {
     imagenBase64 = await ConvertToBase64(imagen);
+    console.log(imagenBase64);
   }
 
   if(habilitarStockMin){
