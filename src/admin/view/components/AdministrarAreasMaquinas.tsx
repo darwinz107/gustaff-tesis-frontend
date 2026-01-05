@@ -221,6 +221,10 @@ console.log(areName);
     if (imagenEditada instanceof File) {
       imagenBase64 = await ConvertToBase64(imagenEditada);
     }
+
+    if(imagenBase64 instanceof File){
+    return;
+    }
     
     console.log(data.id,areaEditTemp);
     const res = await editarMaquina(data.id, areaEditTemp, maquinaEditTemp, imagenBase64);
@@ -423,7 +427,7 @@ const { tipo, data } = itemEnEdicion;
                                         </button>
                                         <button
                                           className="btn btn-xs btn-error"
-                                          onClick={() => {setitemEnEdicion({tipo:"maquina",data:maq}); dialog.current.showModal(); }}
+                                          onClick={() => {setitemEnEdicion({tipo:"maquina",data:maq});if(dialog.current) dialog.current.showModal(); }}
                                         >
                                           Eliminar
                                         </button>
@@ -460,7 +464,7 @@ const { tipo, data } = itemEnEdicion;
                       </button>
                       <button
                         className="btn btn-xs btn-error"
-                       onClick={() => {setitemEnEdicion({tipo:"area",data: area}); dialog.current.showModal(); }}
+                       onClick={() => {setitemEnEdicion({tipo:"area",data: area}); if(dialog.current) dialog.current.showModal(); }}
                       >
                         Eliminar
                       </button>
@@ -533,7 +537,7 @@ const { tipo, data } = itemEnEdicion;
                         )}
                         <button
                           type="button"
-                          className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-40 transition opacity-0 group-hover:opacity-100"
+                          className="cursor-pointer absolute inset-0 flex items-center justify-center bg-white bg-opacity-0 group-hover:bg-opacity-40 transition opacity-0 group-hover:opacity-40"
                           onClick={() => {
                             setimagenEditada(null);
                             if (fileInputRefModal.current) {

@@ -4,11 +4,13 @@ import { getInventario, filtrarInventarioAdvanced } from '../controller/inventar
 
 export const GestionInventario = () => {
   const [items, setItems] = useState<Inventarios[]>([]);
+  const [item, setitem] = useState<Inventarios | null>(null);
   const [filtroNombre, setFiltroNombre] = useState("");
   const [filtroBodega, setFiltroBodega] = useState<string>("");
   const [filtroStockMin, setFiltroStockMin] = useState<number | "">("");
   const [filtroStockMax, setFiltroStockMax] = useState<number | "">("");
   const [filtroActivo, setFiltroActivo] = useState<string>("");
+  const [ventanaEmergente, setventanaEmergente] = useState(false);
 
 const load = async () => {
       const res = await getInventario();
@@ -113,7 +115,7 @@ const load = async () => {
                   </td>
                       <td className="px-4 py-3 text-center">
                         <div className="flex gap-2 justify-center">
-                          <button className="btn btn-ghost btn-xs" disabled>Ver detalles</button>
+                          <button className="btn btn-ghost btn-xs" onClick={()=>{setventanaEmergente(true); setitem(u)}}>Ver detalles</button>
                           <button className="btn btn-ghost btn-xs" disabled>Eliminar</button>
                         </div>
                       </td>
@@ -130,6 +132,61 @@ const load = async () => {
           </div>
         </div>
       </div>
+
+      {item &&( <div className = {`fixed z-50 inset-0 transition-opacity duration-300 ${ventanaEmergente ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+       <div className='absolute inset-0 backdrop-blur-sm flex items-center justify-center'>
+        <div className='relative border border-gray-300 w-full max-w-6xl h-[85vh] rounded-md bg-white shadow-lg overflow-y-auto'>
+          <div className='w-full h-14 flex items-center justify-between border-b p-4'>
+            <h2 className='text-lg font-semibold text-gray-700'>Detalles del item</h2> 
+            <button className='btn btn-ghost btn-sm cursor-pointer ' onClick={()=>setventanaEmergente(false)}>Cerrar</button>
+          </div>
+          <div className='grid grid-cols-3 gap-4 p-4 '>
+            <div>
+              <label className='text-sm text-gray-500 block'>Item</label>
+              <input type="text" className='input input-sm' disabled value={item.nombre}/>
+            </div>
+             <div>
+              <label className='text-sm text-gray-500 block'>Stock</label>
+              <input type="text" className='input input-sm' disabled value={item.stock}/>
+            </div>
+             <div>
+              <label className='text-sm text-gray-500 block'>Costo</label>
+              <input type="text" className='input input-sm' disabled value={item.costo}/>
+            </div>
+             <div>
+              <label className='text-sm text-gray-500 block'>Bodega</label>
+              <input type="text" className='input input-sm' disabled value={item.bodega ? item.bodega.bodega:"N/A"}/>
+            </div>
+             <div>
+              <label className='text-sm text-gray-500 block'>Estado</label>
+              <input type="text" className='input input-sm' disabled value={item.estado ? "ACTIVO":"INACTIVO"}/>
+            </div>
+             <div>
+              <label className='text-sm text-gray-500 block'>Imagen</label>
+              {item.imagen ?(
+              <div  className='relative w-full h-60 overflow-hidden group'>
+                <img src={item.imagen} className='w-full h-full object-contain ' /> 
+               <button className='cursor-pointer absolute inset-0 flex items-center justify-center bg-white bg-opacity-0 group-hover:bg-opacity-50 transition opacity-0 group-hover:opacity-50'>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+              </button>
+              </div>
+              ):(
+<div>
+  <input type="file"
+  accept='image/*'
+  className='file-input'
+  />
+</div>
+              )}
+            
+            </div>
+
+          </div>
+        </div>
+       </div>
+      </div>)}
     </>
   );
 }
