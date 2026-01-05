@@ -92,6 +92,7 @@ const load = async () => {
                     <th className="px-4 py-3">Costo</th>
                     <th className="px-4 py-3">Estado</th>
                     <th className="px-4 py-3">Bodega</th>
+                    <th className="px-4 py-3">Imagen</th>
                     <th className="px-4 py-3 text-center">Acciones</th>
                   </tr>
                 </thead>
@@ -103,6 +104,13 @@ const load = async () => {
                       <td className="px-4 py-3">{u?.costo}</td>
                       <td className="px-4 py-3">{u?.estado ? "ACTIVO" : "INACTIVO"}</td>
                       <td className="px-4 py-3">{u?.bodega?.bodega}</td>
+                      <td className="flex justify-center">
+                    {u.imagen ? (
+                      <img src={u.imagen} alt="Imagen del item" className="w-12 h-12 object-cover rounded" />
+                    ) : (
+                      <span className="text-gray-500 text-sm">N/A</span>
+                    )}
+                  </td>
                       <td className="px-4 py-3 text-center">
                         <div className="flex gap-2 justify-center">
                           <button className="btn btn-ghost btn-xs" disabled>Ver detalles</button>

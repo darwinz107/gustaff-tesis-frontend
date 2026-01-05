@@ -51,7 +51,8 @@ export const crearNuevaArea = async (crearArea: CrearArea): Promise<{ msj: strin
   return data;
 }
 
-export const crearNuevaMaquina = async (createMaquina: CreateMaquina): Promise<{ msj: string }> => {
+export const crearNuevaMaquina = async (createMaquina: CreateMaquina): Promise<{ msj: string,validate:boolean }> => {
+  console.log("crearNuevaMaquina in front", createMaquina);
   const response: Response = await fetch(`${route}admin/create/maquina`, {
     method: "POST",
     headers: {
@@ -278,7 +279,7 @@ export const eliminarArea = async (id:number): Promise<{ msj:string,validate:boo
   return data;
 }
 
-export const editarMaquina = async (id:number,area: string,maquina:string): Promise<{ msj: string ,validate:boolean}> => {
+export const editarMaquina = async (id:number,area: string,maquina:string, imagen:string): Promise<{ msj: string ,validate:boolean}> => {
   try {
     const response: Response = await fetch(`${route}admin/maquina/edit/${id}`, {
       method: "PATCH",
