@@ -90,3 +90,19 @@ const route = "http://localhost:3000/";
     return [];
   }
 };
+
+export const updateInventario = async (id: number, updateData: any): Promise<{msj: string, validate: boolean}> => {
+  console.log("Update Data:", updateData); // Log the update data for debugging
+  try {
+    const response: Response = await fetch(`${route}inventario/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updateData)
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    return { msj: "Error al actualizar el inventario", validate: false };
+  }
+};

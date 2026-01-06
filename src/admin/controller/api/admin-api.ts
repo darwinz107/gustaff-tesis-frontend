@@ -484,3 +484,4 @@ export const eliminarCargo = async (id:number): Promise<{ msj:string,validate:bo
   return data;
 }
 
+
