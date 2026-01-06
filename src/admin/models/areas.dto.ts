@@ -1,6 +1,7 @@
 export interface Maquina {
   id: number;
   nombre: string;
+  imagen?: string;
 }
 
 export interface Codigo {

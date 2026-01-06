@@ -8,6 +8,8 @@ import type { AsignarInfoEntrada } from "../../inventario/models/AsignarInfoEntr
 import { createActaEntrada, findProovedorByNombre, getPerchasBySeccion, getSeccionesByBodega } from "../controller/actaEntrada-api";
 import { CrearProovedor } from "./CrearProovedor";
 import { getAllBodegas } from "../../admin/controller/api/admin-api";
+import { ConvertToBase64 } from "../controller/ConvertToBase64";
+import { Base64ToBlob } from "../controller/Base64ToBlob";
 
 
 
@@ -23,12 +25,12 @@ export const CrearActaEntrada = () => {
     const [item, setitem] = useState(null);
     const [cantidad, setcantidad] = useState(null);
     const [stockMin, setstockMin] = useState(null);
-    const [precioUni, setprecioUni] = useState(null);
+    const [precioUni, setprecioUni] = useState(0);
     const [descuento, setdescuento] = useState(null);
     const [iva, setiva] = useState(false);
-    const [bodega, setbodega] = useState("");
-    const [seccion, setseccion] = useState("");
-    const [percha, setpercha] = useState("");
+    const [bodega, setbodega] = useState("...");
+    const [seccion, setseccion] = useState("...");
+    const [percha, setpercha] = useState("...");
     const [bodegas, setbodegas] = useState<{id:number,bodega:string}[]>([]);
     const [secciones, setsecciones] = useState<{id:number,seccion:string}[]>([]);
     const [perchas, setperchas] = useState<{id:number,percha:string}[]>([]);
@@ -42,6 +44,8 @@ export const CrearActaEntrada = () => {
     const [showSuccess, setshowSuccess] = useState(false);
     const [showError, setshowError] = useState(false);
     const [mensajeError, setmensajeError] = useState("");
+    const [imagen, setimagen] = useState<File | null>(null);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
 
 const cargarInfoSolMaterial = async() =>{
@@ -55,23 +59,49 @@ const cargarInfoSolMaterial = async() =>{
   itemsSolicitados: prev.itemsSolicitados.map(item => ({
     ...item,
     subtotal: item.cantidad * (item.costo ?? 0),
-    total: (item.cantidad * (item.costo ?? 0))
+    total: (item.cantidad * (item.costo ?? 0)),
+    esActualizado: false
   }))
 }));
 
     }
 
- const asignarCampos = async(index:number,item:string,cantidad:number,preciU:number) => {
+ const asignarCampos = async(index:number, itemData: any) => {
+ console.log("itemData en asignarCampos:", itemData.costo);
+  // Validar que no haya campos ingresados
+  if (item !== "" ||  observacion !== "" || imagen !== null || bodega !== "..." || seccion !== "..." || percha !== "...") {
+    setmensajeError("No es posible editar mientras hay campos ingresados. Por favor, limpie los campos primero.");
+    setshowError(true);
+    setTimeout(() => setshowError(false), 3000);
+    return;
+  }
 
-  const validar = await existeItem(item);
+  const validar = await existeItem(itemData.nombre);
   sethabilitarStockMin(validar);
 
   console.log("index que llega", index);
   console.log("antes:", solicitudMaterial.itemsSolicitados);
 
-  setitem(item);
-  setprecioUni(preciU);
-  setcantidad(cantidad);
+  // Precarga todos los campos del item
+  setitem(itemData.nombre);
+  setprecioUni(itemData.costo);
+  setcantidad(itemData.cantidad);
+  setdescuento(itemData.descuento);
+  setstockMin(itemData.stockMin);
+  setiva(itemData.iva);
+  setobservacion(itemData.Observacion || "");
+
+  const imgBlob = itemData.imagen ? Base64ToBlob(itemData.imagen) : null; 
+  console.log("imgBlob", imgBlob);  
+  setimagen(imgBlob); 
+
+  
+  // Precarga los selectores si no es un item de stock mínimo
+  if (!validar && itemData.bodegaId) {
+    setbodega(itemData.bodegaId.toString());
+    setseccion(itemData.seccionId ? itemData.seccionId.toString() : "...");
+    setpercha(itemData.perchaId ? itemData.perchaId.toString() : "...");
+  }
 
   setsolicitudMaterial(prev => {
     const nuevo = prev.itemsSolicitados.filter((_, idx) => idx !== index);
@@ -120,7 +150,7 @@ const cargarInfoSolMaterial = async() =>{
      }, [solCompraId])
      
      
-  const agregarItemsActualizado = () => {
+  const agregarItemsActualizado = async () => {
   const errorItem = validarItem(item);
   const errorCantidad = validarCantidad(cantidad);
   const errorPrecio = validarPrecio(precioUni);
@@ -166,9 +196,15 @@ const cargarInfoSolMaterial = async() =>{
   const iva1 = (subtotal1 - descuento1) * ivaFinal;
   const calcTotal = subtotal1 - descuento1 + iva1;
 
-  let newItem = {};
+  let newItem: any = {};
 
-  
+  // Convertir imagen a base64 si existe
+  let imagenBase64 = null;
+  if (imagen && imagen !== null) {
+    imagenBase64 = await ConvertToBase64(imagen);
+    console.log(imagenBase64);
+  }
+
   if(habilitarStockMin){
  newItem = {
     nombre: item ?? "",
@@ -180,7 +216,9 @@ const cargarInfoSolMaterial = async() =>{
     subtotal: parseFloat(subtotal1.toString()),
     total: parseFloat(calcTotal.toString()),
     
-    Observacion: observacion ?? ""
+    Observacion: observacion ?? "",
+    esActualizado: true,
+    ...(imagenBase64 && { imagen: imagenBase64 })
   };
   }else{
 newItem = {
@@ -195,7 +233,9 @@ newItem = {
     bodegaId: Number(bodega),
     seccionId: Number(seccion),
     perchaId: Number(percha),
-    Observacion: observacion ?? ""
+    Observacion: observacion ?? "",
+    esActualizado: true,
+    ...(imagenBase64 && { imagen: imagenBase64 })
   };
   }
  
@@ -228,13 +268,17 @@ newItem = {
   setitem("");
   setcantidad(null);
   setstockMin(null);
-  setprecioUni(null);
-  setdescuento(null);
+  setprecioUni(0);
+  setdescuento(0);
   setiva(false);
   setobservacion("");
   setbodega("...");
   setseccion("...");
   setpercha("...");
+  setimagen(null);
+   if (fileInputRef.current) {
+    fileInputRef.current.value = "";
+  }
   
   seterroresItems({factura: "", item: "", cantidad: "", precioUni: "", descuento: "", stockMin: "", bodega: "", seccion: "", percha: ""});
 };
@@ -385,7 +429,8 @@ const validarPercha = (valor: string): string => {
     proovedor:proovedor,
     factura: factura,
     total:total,
-    itemsSolicitados:solicitudMaterial.itemsSolicitados
+    itemsSolicitados:solicitudMaterial.itemsSolicitados,
+    
    }
   console.log("registroEntradaFinal");
   console.log(registroEntradaFinal);
@@ -508,6 +553,32 @@ useEffect(() => {
  
 }, [seccion]);
 
+const limpiarCampos = () => {
+  setitem("");
+  setcantidad(null);
+  setstockMin(null);
+  setprecioUni(0);
+  setdescuento(0);
+  setiva(false);
+  setobservacion("");
+  setbodega("...");
+  setseccion("...");
+  setpercha("...");
+  setimagen(null);
+  if (fileInputRef.current) {
+    fileInputRef.current.value = "";
+  }
+  
+  seterroresItems({factura: "", item: "", cantidad: "", precioUni: "", descuento: "", stockMin: "", bodega: "", seccion: "", percha: ""});
+};
+
+const eliminarItem = (index: number) => {
+  setsolicitudMaterial(prev => {
+    const nuevo = prev.itemsSolicitados.filter((_, idx) => idx !== index);
+    return { ...prev, itemsSolicitados: nuevo };
+  });
+};
+
  return (
   <>
     {showSuccess && (
@@ -605,8 +676,8 @@ useEffect(() => {
       <div className="w-full bg-base-100 rounded-2xl shadow-md p-5">
         <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-3">Agregar ítems</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
-          <div className="md:col-span-6">
+        <div className="grid grid-cols-1 md:grid-cols-11 gap-3 items-end">
+          <div className="md:col-span-5">
             <label className="block text-sm text-gray-600 mb-1">Descripcion</label>
             <input
               className={`input input-bordered w-full ${erroresItems.item ? 'input-error' : ''}`}
@@ -637,7 +708,7 @@ useEffect(() => {
 
           <div className="md:col-span-2">
             <label className="block text-sm text-gray-600 mb-1">Precio U.</label>
-            <input className={`input input-bordered w-full ${erroresItems.precioUni ? 'input-error' : ''}`} placeholder="0.00" value={precioUni ?? ""} onChange={(e) => {setprecioUni(e.target.value); seterroresItems({...erroresItems, precioUni: validarPrecio(e.target.value)});}} />
+            <input className={`input input-bordered w-full ${erroresItems.precioUni ? 'input-error' : ''}`} placeholder="0.00" value={precioUni ?? 0} onChange={(e) => {setprecioUni(e.target.value); seterroresItems({...erroresItems, precioUni: validarPrecio(e.target.value)});}} />
             <div className="h-5">{erroresItems.precioUni && <p className="text-red-500 text-xs">{erroresItems.precioUni}</p>}</div>
           </div>
 
@@ -647,7 +718,7 @@ useEffect(() => {
             <div className="h-5">{erroresItems.descuento && <p className="text-red-500 text-xs">{erroresItems.descuento}</p>}</div>
           </div>
 
-          <div className="md:col-span-3 flex items-center gap-6">
+          <div className="md:col-span-4 flex items-center gap-6 ">
             <div className="flex items-center gap-2">
               <input id="iva-no" type="radio" name="iva" checked={iva === false} onChange={() => setiva(false)} className="radio" />
               <label htmlFor="iva-no" className="text-sm">Sin IVA</label>
@@ -658,9 +729,24 @@ useEffect(() => {
             </div>
           </div>
 
-          <div className="md:col-span-9">
+          <div className="md:col-span-8">
             <label className="block text-sm text-gray-600 mb-1">Observación</label>
             <input className="input input-bordered w-full" placeholder="Observación del ítem" value={observacion} onChange={(e) => setobservacion(e.target.value)}/>
+          </div>
+
+          <div className="md:col-span-3">
+            <label className="block text-sm text-gray-600 mb-1">Imagen</label>
+            <input 
+              type="file" 
+              className="file-input file-input-bordered w-full" 
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={(e) => {
+                const file = e.target.files?.[0] || null;
+                setimagen(file);
+              }}
+            />
+            {imagen && <p className="text-xs text-green-600 mt-1">Imagen seleccionado</p>}
           </div>
         </div>
       </div>
@@ -672,8 +758,8 @@ useEffect(() => {
         <div className="flex gap-4 flex-wrap">
           <div className="w-full md:w-1/4">
             <label className="block text-sm text-gray-600 mb-1">Bodega</label>
-            <select disabled={habilitarStockMin} className={`select select-bordered w-full ${erroresItems.bodega ? 'select-error' : ''}`} defaultValue={"..."} onChange={(e) => {setbodega(e.target.value); seterroresItems({...erroresItems, bodega: validarBodega(e.target.value)});}}>
-              <option value="..." disabled>Seleccione una bodega</option>
+            <select disabled={habilitarStockMin} className={`select select-bordered w-full ${erroresItems.bodega ? 'select-error' : ''}`} value={bodega} onChange={(e) => {setbodega(e.target.value); setseccion("..."); setpercha("...");  seterroresItems({...erroresItems, bodega: validarBodega(e.target.value)});}}>
+              <option value={"..."} disabled>Seleccione una bodega</option>
               {bodegas?.map(b => <option key={b.id} value={b.id}>{b.bodega}</option>)}
             </select>
             <div className="h-5">{erroresItems.bodega && <p className="text-red-500 text-xs">{erroresItems.bodega}</p>}</div>
@@ -681,7 +767,7 @@ useEffect(() => {
 
           <div className="w-full md:w-1/4">
             <label className="block text-sm text-gray-600 mb-1">Sección</label>
-            <select disabled={habilitarStockMin} className={`select select-bordered w-full ${erroresItems.seccion ? 'select-error' : ''}`} ref={selSecc} defaultValue={"..."} onChange={(e) => {setseccion(e.target.value); seterroresItems({...erroresItems, seccion: validarSeccion(e.target.value)});}}>
+            <select disabled={habilitarStockMin} className={`select select-bordered w-full ${erroresItems.seccion ? 'select-error' : ''}`} ref={selSecc} value={seccion} onChange={(e) => {setseccion(e.target.value); setpercha("..."); seterroresItems({...erroresItems, seccion: validarSeccion(e.target.value)});}}>
               <option value="..." disabled>Seleccione una sección</option>
               {secciones?.map(s => <option key={s.id} value={s.id}>{s.seccion}</option>)}
             </select>
@@ -690,7 +776,7 @@ useEffect(() => {
 
           <div className="w-full md:w-1/4">
             <label className="block text-sm text-gray-600 mb-1">Percha</label>
-            <select disabled={habilitarStockMin} className={`select select-bordered w-full ${erroresItems.percha ? 'select-error' : ''}`} defaultValue={"..."} onChange={(e) => {setpercha(e.target.value); seterroresItems({...erroresItems, percha: validarPercha(e.target.value)});}}>
+            <select disabled={habilitarStockMin} className={`select select-bordered w-full ${erroresItems.percha ? 'select-error' : ''}`} value={percha} onChange={(e) => {setpercha(e.target.value); seterroresItems({...erroresItems, percha: validarPercha(e.target.value)});}}>
               <option value="..." disabled>Seleccione una percha</option>
               {perchas?.map(p => <option key={p.id} value={p.id}>{p.percha}</option>)}
             </select>
@@ -702,8 +788,10 @@ useEffect(() => {
 
        
       </div>
- <div className="mt-4 flex justify-center">
+
+ <div className="mt-4 flex justify-center gap-3">
           <button type="button" className="btn btn-success" onClick={agregarItemsActualizado}>Agregar</button>
+          <button type="button" className="btn btn-outline" onClick={limpiarCampos}>Limpiar</button>
         </div>
       
       <div className="w-full bg-base-100 rounded-2xl shadow-md p-5">
@@ -725,13 +813,14 @@ useEffect(() => {
                 <th>Subtotal</th>
                 <th>IVA</th>
                 <th>Total</th>
+                <th>Imagen</th>
                 <th>Observación</th>
                 <th>Acción</th>
               </tr>
             </thead>
             <tbody>
               {solicitudMaterial?.itemsSolicitados?.map((s, i) =>
-                <tr key={i}>
+                <tr key={i} className={s.esActualizado ? "bg-green-100" : "bg-gray-100"}>
                   <td className="max-w-xs truncate">{s.nombre}</td>
                   <td>{s.cantidad}</td>
                   <td>{s.costo}</td>
@@ -739,14 +828,33 @@ useEffect(() => {
                   <td>{s.subtotal}</td>
                   <td>{s.iva ? "15%" : "0%"}</td>
                   <td>{s.total.toFixed(2)}</td>
+                  <td className="flex justify-center">
+                    {s.imagen ? (
+                      <img src={s.imagen} alt="Imagen del item" className="w-12 h-12 object-cover rounded" />
+                    ) : (
+                      <span className="text-gray-500 text-sm">N/A</span>
+                    )}
+                  </td>
                   <td className="max-w-sm truncate">{s.Observacion}</td>
                   <td>
-                    <button
-                      className="btn btn-ghost btn-xs"
-                      onClick={() => asignarCampos(i, s.nombre, s.cantidad, s.costo)}
-                    >
-                      Editar
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        className="btn btn-sm bg-blue-500 hover:bg-blue-600 text-white border-none"
+                        onClick={() => asignarCampos(i, s)}
+                        title="Editar"
+                      >
+                        ✏️ Editar
+                      </button>
+                      {!solCompraId && (
+                        <button
+                          className="btn btn-sm bg-red-500 hover:bg-red-600 text-white border-none"
+                          onClick={() => eliminarItem(i)}
+                          title="Eliminar"
+                        >
+                          🗑️ Eliminar
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               )}

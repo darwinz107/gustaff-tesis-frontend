@@ -5,5 +5,6 @@ export interface Inventarios {
     stock: number;
     costo: number;
     estado: boolean;
+    imagen: string;
     bodega: { id: number; bodega: string };
 }

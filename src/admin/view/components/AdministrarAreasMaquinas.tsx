@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { actualizarArea, crearNuevaArea, crearNuevaMaquina, editarMaquina, eliminarArea, eliminarMaquina, getAllInfoAreas } from '../../controller/api/admin-api';
 import type { Area } from '../../models/areas.dto';
+import { ConvertToBase64 } from '../../../acta-de-entrada/controller/ConvertToBase64';
+import { Base64ToBlob } from '../../../acta-de-entrada/controller/Base64ToBlob';
 
 /*interface Maquina {
   id: number;
@@ -48,6 +50,10 @@ export const AdministrarAreasMaquinas = () => {
   const [erroresMaquina, seterroresMaquina] = useState({ maquina: "", area: "" });
 
   const dialog = useRef<HTMLDialogElement>(null);
+  const [imagen, setimagen] = useState<File | null>(null);
+  const [imagenEditada, setimagenEditada] = useState<string | File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const fileInputRefModal = useRef<HTMLInputElement | null>(null);
 
   // Funciones de validación
   const validarNombre = (valor: string) => {
@@ -122,13 +128,35 @@ export const AdministrarAreasMaquinas = () => {
     }
 
     try {
-      const res = await crearNuevaMaquina({ maquina, area: selectArea });
+
+      const imagenBase64 =  imagen ? await ConvertToBase64(imagen) : null;
+      const payload: any = {
+  maquina,
+  area: selectArea,
+};
+
+if (imagenBase64) {
+  payload.imagen = imagenBase64;
+}
+
+const res = await crearNuevaMaquina(payload);
+      console.log(res);
+      if(!res.validate){
+        setmensajeError(res.msj);
+        setshowError(true);
+        setTimeout(() => setshowError(false), 3000);
+        return;
+      }
       setmensajeError(res.msj);
       setshowSuccess(true);
       setTimeout(() => setshowSuccess(false), 2000);
       setmaquina("");
       setselectArea("");
       seterroresMaquina({ maquina: "", area: "" });
+      setimagen(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
       cargarAreas();
     } catch (error) {
       console.error("Error al crear máquina:", error);
@@ -138,6 +166,7 @@ export const AdministrarAreasMaquinas = () => {
   // Abrir modal de edición
   const abrirEdicion = (tipo: "area" | "maquina", data: any) => {
     setitemEnEdicion({ tipo, data });
+    setimagenEditada(data.imagen || null);
     if (tipo === "area") {
       
       setareName(data.nombre);
@@ -157,7 +186,12 @@ export const AdministrarAreasMaquinas = () => {
     setitemEnEdicion({ tipo: null, data: null });
     setareaEditTemp("");
     setmaquinaEditTemp("");
+    setareName("");
     sethabilitarEdicion(true);
+    setimagenEditada(null);
+    if (fileInputRefModal.current) {
+      fileInputRefModal.current.value = "";
+    }
   };
 
 
@@ -181,8 +215,19 @@ console.log(areName);
   };
 
   if(tipo === "maquina"){
+    let imagenBase64 = imagenEditada;
+    
+    // Si la imagen es un archivo, convertirla a base64
+    if (imagenEditada instanceof File) {
+      imagenBase64 = await ConvertToBase64(imagenEditada);
+    }
+
+    if(imagenBase64 instanceof File){
+    return;
+    }
+    
     console.log(data.id,areaEditTemp);
-    const res = await editarMaquina(data.id, areaEditTemp, maquinaEditTemp);
+    const res = await editarMaquina(data.id, areaEditTemp, maquinaEditTemp, imagenBase64);
     if(res.validate){
      setmensajeError(res.msj);
       setshowSuccess(true);
@@ -326,6 +371,20 @@ const { tipo, data } = itemEnEdicion;
                 </select>
                 <div className="h-5">{erroresMaquina.area && <p className="text-red-500 text-sm">{erroresMaquina.area}</p>}</div>
               </div>
+              <div>
+                <label className="block text-sm">Imagen</label>
+            <input 
+              type="file" 
+              className="file-input file-input-bordered w-full" 
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={(e) => {
+                const file = e.target.files?.[0] || null;
+                setimagen(file);
+              }}
+            />
+             {imagen && <p className="text-xs text-green-600 mt-1">Imagen seleccionado</p>}
+              </div>
               <div className="flex justify-end">
                 <button className="btn btn-primary" onClick={crearMaquina}>Crear Máquina</button>
               </div>
@@ -356,6 +415,7 @@ const { tipo, data } = itemEnEdicion;
                               {cod.maquina && cod.maquina.length > 0 ? (
                                 <div className="mt-2 space-y-1 ml-3">
                                   {cod.maquina.map((maq) => (
+                                    <>
                                     <div key={maq.id} className="flex justify-between items-center">
                                       <p className="text-sm text-gray-700">⚙️ {maq.nombre}</p>
                                       <div className="flex gap-2">
@@ -367,12 +427,21 @@ const { tipo, data } = itemEnEdicion;
                                         </button>
                                         <button
                                           className="btn btn-xs btn-error"
-                                          onClick={() => {setitemEnEdicion({tipo:"maquina",data:maq}); dialog.current.showModal(); }}
+                                          onClick={() => {setitemEnEdicion({tipo:"maquina",data:maq});if(dialog.current) dialog.current.showModal(); }}
                                         >
                                           Eliminar
                                         </button>
                                       </div>
+                                     
                                     </div>
+                                     <div className='ml-10'>
+                                        {maq.imagen ? (
+                                          <img src={maq.imagen} alt="Imagen de la máquina" className="w-10 h-10 object-cover rounded" />
+                                        ) : (
+                                          <span className="text-gray-500 text-sm">N/A</span>
+                                        )}
+                                      </div>
+                                      </>
                                   ))}
                                 </div>
                               ) : (
@@ -395,7 +464,7 @@ const { tipo, data } = itemEnEdicion;
                       </button>
                       <button
                         className="btn btn-xs btn-error"
-                       onClick={() => {setitemEnEdicion({tipo:"area",data: area}); dialog.current.showModal(); }}
+                       onClick={() => {setitemEnEdicion({tipo:"area",data: area}); if(dialog.current) dialog.current.showModal(); }}
                       >
                         Eliminar
                       </button>
@@ -411,7 +480,7 @@ const { tipo, data } = itemEnEdicion;
       {/* MODAL DE EDICIÓN */}
       {modalEdicion && (
         <div className="fixed inset-0 bg-transparent bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-96">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-96 overflow-y-auto">
             <h3 className="text-lg font-bold mb-4">
               {itemEnEdicion.tipo === "area" ? "Editar Área" : "Editar Máquina"}
             </h3>
@@ -432,7 +501,7 @@ const { tipo, data } = itemEnEdicion;
               </>
             ) : (
               <>
-                <div className="mb-4">
+                <div className="mb-4 space-y-4">
                   <label className="label">
                     <span className="label-text">Nombre de la máquina</span>
                   </label>
@@ -455,6 +524,54 @@ const { tipo, data } = itemEnEdicion;
                       <option key={a.id} value={a.nombre} >{a.nombre}</option>
                     ))}
                   </select>
+                  <label className="label">
+                    <span className="label-text">Imagen</span>
+                  </label>
+                  <div className="w-full">
+                    {imagenEditada ? (
+                      <div className="relative w-full h-64 bg-gray-100 rounded-lg overflow-hidden group">
+                        {typeof imagenEditada === 'string' ? (
+                          <img src={imagenEditada} alt="Imagen de máquina" className="w-full h-full object-contain" />
+                        ) : (
+                          <img src={URL.createObjectURL(imagenEditada)} alt="Imagen de máquina" className="w-full h-full object-contain" />
+                        )}
+                        <button
+                          type="button"
+                          className="cursor-pointer absolute inset-0 flex items-center justify-center bg-white bg-opacity-0 group-hover:bg-opacity-40 transition opacity-0 group-hover:opacity-40"
+                          onClick={() => {
+                            setimagenEditada(null);
+                            if (fileInputRefModal.current) {
+                              fileInputRefModal.current.value = "";
+                            }
+                            sethabilitarEdicion(true);
+                          }}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="w-full">
+                        <input
+                          type="file"
+                          className="file-input file-input-bordered w-full"
+                          accept="image/*"
+                          ref={fileInputRefModal}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0] || null;
+                            if (file) {
+                              setimagenEditada(file);
+                              sethabilitarEdicion(false);
+                            }
+                          }}
+                        />
+                        {imagenEditada && typeof imagenEditada === 'string' && (
+                          <p className="text-xs text-green-600 mt-1">Imagen cargada</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </>
             )}
