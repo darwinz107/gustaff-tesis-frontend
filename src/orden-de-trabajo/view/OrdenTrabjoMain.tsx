@@ -4,7 +4,7 @@ import {NavBar} from './components/NavBar'
 import { logoutSession } from '../../Principal/controller/api/auth-api'
 import { CrearOrden } from './components/CrearOrden'
 import { HistorialOrdenes } from './components/HistorialOrdenes'
-import { VerDetalles } from './components/VerDetalles'
+
 import { useNavigate } from 'react-router-dom'
 
 
@@ -67,7 +67,7 @@ export const OrdenTrabjoMain = () => {
         
      </div>
 </div>
-<VerDetalles setventanaEmergente={setventanaEmergente} ventanaEmergente={ventanaEmergente}></VerDetalles>
+
     </>
   )
 }

@@ -3,10 +3,11 @@ export interface DetallesPrevioCompra {
     numOrden: string;
     fechaRemision: string;
     Autoriza: string;
-    Destino: string;
+   
     numOrdenTrabajo: {
         id:number;
            NumOrden: string;
+           DescripcionTrabajo:string| null;
         Area: string;
         Codigo: string;
         Maquina: string;

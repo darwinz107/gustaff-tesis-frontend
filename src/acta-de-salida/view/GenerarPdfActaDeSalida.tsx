@@ -19,9 +19,9 @@ const { id } = useParams<{ id?: string }>();
 
 useEffect(() => {
   const cargarSolicitud = async () => {
-    console.log(id.id);
+    console.log(id);
     const res = id
-      ? await actaDeSalidaByIdCompra(Number(id.id))
+      ? await actaDeSalidaByIdCompra(Number(id))
       : await actaDeSalidaByIdCompra(undefined as any);
 
     setnewSolicitud(res);
@@ -48,15 +48,15 @@ useEffect(() => {
             </View>
            <View style={styles.ocTercero}>
             <Text style={{textAlign:"right",fontWeight:"bold"}}>ACTA N°: {newSolicitud?.numActa}</Text>
-            <View><Text style={{textAlign:"left",fontWeight:"bold"}}>FECHA Y HORA DE RECEPCION: {newSolicitud?.fechaRemision.split("T")[0]}  {newSolicitud?.fechaRemision.split("T")[1].split(".")[0]}</Text> <Text style={{textAlign:"right",fontWeight:"bold"}}>SOLICITA: {newSolicitud?.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.name ?? newSolicitud?.recibeSinSM?.name}</Text></View>
+            <View><Text style={{textAlign:"left",fontWeight:"bold"}}>FECHA Y HORA DE RECEPCION: {newSolicitud?.fechaRemision.split("T")[0]}  {newSolicitud?.fechaRemision.split("T")[1].split(".")[0]}</Text> <Text style={{textAlign:"right",fontWeight:"bold"}}>SOLICITA: {newSolicitud?.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.name ?? "POR AGREGAR"}</Text></View>
            </View>
             <View style={{ margin:"10px",   width:"60%",height:"4%", display:"flex",flexDirection:"row",borderWidth:1,borderColor:"#000"}}>
             
              <View style={{  fontWeight:"bold",  textAlign:"center",width:"15%"}}>
-             <Text >DESTINO</Text>
+             <Text >Descripcion</Text>
             </View>
             <View style={{    textAlign:"center",width:"85%",height:"100%",borderLeftWidth:1,borderColor:"#000"}}>
-             <Text >{newSolicitud?.destino}</Text>
+             <Text >{newSolicitud?.numSolicitudCompra?.numOrdenTrabajo ? newSolicitud?.numSolicitudCompra?.numOrdenTrabajo.DescripcionTrabajo : newSolicitud?.descripcion ?newSolicitud?.descripcion :'N/A'}</Text>
             </View>
             </View>
             

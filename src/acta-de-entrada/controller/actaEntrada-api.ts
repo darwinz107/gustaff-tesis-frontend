@@ -119,7 +119,7 @@ const route = "http://localhost:3000/";
   }
 };
 
-        export const updateActaEntrada = async (id: number, updateData: { factura?: string; provedorId?: number; solicitudCompraId?: number }): Promise<{ msj: string; validate: boolean }> => {
+        export const updateActaEntrada = async (id: number, updateData: { factura?: string; provedorId?: number; solicitudCompraId?: number; recibe?: number }): Promise<{ msj: string; validate: boolean }> => {
   try {
     const response: Response = await fetch(`${route}inventario/acta-entrada/${id}`, {
       method: "PATCH",

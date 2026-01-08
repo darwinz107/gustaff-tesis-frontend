@@ -427,7 +427,7 @@ const ordenesTrabajoApi  = async() =>{
                           disabled={u?.estadoUso?.uso}
                           onClick={() => redirigirSolMaterial(u.id)}
                         >
-                          Crear Solicitud
+                          Solicitar material
                         </button>
                       </div>
                     </td>
@@ -540,7 +540,7 @@ const ordenesTrabajoApi  = async() =>{
 
             <div>
               <p className="text-xs text-gray-500">Descripcion</p>
-              <input type="text" disabled={!habilitarEdicion} className="input input-sm w-full mt-1" value={ordenTrabajoxUser.DescripcionTrabajo} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,DescripcionTrabajo:e.target.value})); setconfirmarCambio(true);}}/>
+              <input type="text" disabled={!habilitarEdicion} className="input input-sm w-full mt-1" value={ordenTrabajoxUser.DescripcionTrabajo ?? ""} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,DescripcionTrabajo:e.target.value})); setconfirmarCambio(true);}}/>
             </div>
 
             <div>

@@ -2,6 +2,8 @@ import React, { act, useEffect, useState, useRef } from 'react'
 import type { InfoPdfEntrada } from '../models/infoPdfEntrada';
 import { findAllRegistroEntrada, filtrarActasEntrada, findRegistroEntradaById, findProovedorByNombre, findProovedores, updateActaEntrada, deleteActaEntrada } from '../controller/actaEntrada-api';
 import { solMaterialShort } from '../../orden-de-compra/controller/ordenCompraApi';
+import type { Users } from '../../admin/models/users';
+import { getUsers } from '../../user/controller/api/user-api';
 
 export const GestionEntrada = () => {
   const [actas, setactas] = useState<InfoPdfEntrada[]>([]);
@@ -21,6 +23,8 @@ export const GestionEntrada = () => {
    const [showSuccess, setshowSuccess] = useState(false);
    const [showError, setshowError] = useState(false);
    const [mensajeError, setmensajeError] = useState("");
+   const [users, setusers] = useState<Users[]>([]);
+   const [recibe, setrecibe] = useState(0);
 
 const dialog = useRef<HTMLDialogElement>(null);
 
@@ -29,6 +33,12 @@ const llenarActas = async() => {
       console.log(res);
       setactas(res || []);
     }
+
+       const getAllUsers = async () => {
+                   const res = await getUsers();
+                   console.log(res);
+                   setusers(res);
+                 } ;
 
  const solicitudesMaterial = async()=>{
      const res = await solMaterialShort();
@@ -47,6 +57,7 @@ const llenarActas = async() => {
     llenarActas();
     solicitudesMaterial();
     metodoExecProovedores();
+    getAllUsers();
   }, []);
 
   const aplicarFiltros = async () => {
@@ -81,6 +92,7 @@ const llenarActas = async() => {
     console.log(res);
     if(res){
       setacta(res);
+       setrecibe(res.recibe?res.recibe.id :0);
       setfacturaEditada(res.factura);
       setprovedorIdEditada(res.proovedor?.id);
       setsolicitudCompraIdEditada(res.numSolicitudCompra?.id);
@@ -96,7 +108,7 @@ const llenarActas = async() => {
   const guardarCambios = async() => {
     if(!acta) return;
     try {
-      const updateData: { factura?: string; provedorId?: number; solicitudCompraId?: number } = {};
+      const updateData: { factura?: string; provedorId?: number; solicitudCompraId?: number; recibe:number } = {};
       
       if(facturaEditada !== acta.factura) {
         updateData.factura = facturaEditada;
@@ -108,6 +120,10 @@ const llenarActas = async() => {
         updateData.solicitudCompraId = solicitudCompraIdEditada;
       }
 
+      if(recibe !== acta.recibe.id && recibe !== 0) {
+        updateData.recibe = recibe;
+      }
+
       const res = await updateActaEntrada(acta.id, updateData);
       if(res.validate) {
         setshowSuccess(true);
@@ -117,6 +133,7 @@ const llenarActas = async() => {
           llenarActas();
           setventanaEmergente(false);
           setacta(null);
+          setrecibe(0);
         }, 1000);
       } else {
         setmensajeError("Error: " + res.msj);
@@ -235,8 +252,8 @@ const llenarActas = async() => {
                     <th className="px-4 py-3">N.Acta de entrada</th>
                     <th className="px-4 py-3">Fecha de remisión</th>
                     <th className="px-4 py-3">Factura</th>
-                    <th className="px-4 py-3">Recibe</th>
-                    <th className="px-4 py-3">Destino</th>
+                    <th className="px-4 py-3">Proovedor</th>
+                    <th className="px-4 py-3">Descripcion</th>
                     <th className="px-4 py-3 text-center">Acciones</th>
                   </tr>
                 </thead>
@@ -246,8 +263,8 @@ const llenarActas = async() => {
                       <td className="px-4 py-3">{u.numActa}</td>
                       <td className="px-4 py-3">{u.fechaRemision ? u.fechaRemision.split("T")[0] : ""}</td>
                       <td className="px-4 py-3">{u.factura}</td>
-                      <td className="px-4 py-3">{u.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.name}</td>
-                      <td className="px-4 py-3">{u.numSolicitudCompra?.Destino}</td>
+                      <td className="px-4 py-3">{u.proovedor.nombreComercial}</td>
+                      <td className="px-4 py-3">{u.numSolicitudCompra?.numOrdenTrabajo?.DescripcionTrabajo ?? "N/A"}</td>
                       <td className="px-4 py-3 text-center">
                         <div className="flex gap-2 justify-center">
                           <button className="btn btn-ghost btn-xs" onClick={()=>llenarActaById(u.id)}>Ver detalles</button>
@@ -276,7 +293,7 @@ const llenarActas = async() => {
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative border border-gray-300 w-11/12 max-w-6xl h-[85vh] rounded-md bg-white shadow-lg overflow-auto">
           <div className="w-full h-[12%] flex justify-between p-5 border-b">
-            <div className="font-medium text-gray-700">Detalle de orden de materiales</div>
+            <div className="font-medium text-gray-700">Detalle de acta de salidas</div>
             <div onClick={() => { setventanaEmergente(!ventanaEmergente); }} className="cursor-pointer">❌</div>
           </div>
 
@@ -306,12 +323,25 @@ const llenarActas = async() => {
                 </select>
               </div>
 
+   <div>
+                <p className="text-xs text-gray-500">Recibe</p>
+                <select disabled={!habilitarEdicion} value={recibe ?? 0} onChange={(e)=>setrecibe(Number(e.target.value))} className="select w-full mt-1"
+                  >
+                  <option value={0} disabled>...</option>
+                  {(users ?? []).map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+                </select>
+              </div>
               <div>
                 <p className="text-xs text-gray-500">N.Solicitud de material</p>
                 <select disabled={!habilitarEdicion} className="select w-full mt-1" value={solicitudCompraIdEditada ?? 0} onChange={(e)=>setsolicitudCompraIdEditada(Number(e.target.value))}>
                   <option disabled>...</option>
                   {(solMateriales ?? []).map((o) => <option key={o.id} value={o.id}>{o.numOrden}</option>)}
                 </select>
+              </div>
+
+               <div>
+                <p className="text-xs text-gray-500">Descripcion</p>
+                <input type="text" disabled={true}  className="input w-full mt-1" value={acta?.numSolicitudCompra?.numOrdenTrabajo?.DescripcionTrabajo ?? "N/A"} />
               </div>
 
            
@@ -352,7 +382,7 @@ const llenarActas = async() => {
             {habilitarEdicion ? (
               <>
                 <button className="btn btn-primary" onClick={guardarCambios}>Hecho</button>
-                <button className="btn" onClick={() => { sethabilitarEdicion(!habilitarEdicion); setfacturaEditada(acta?.factura ?? ""); setprovedorIdEditada(acta?.proovedor?.id); setsolicitudCompraIdEditada(acta?.numSolicitudCompra?.id); }}>Cancelar</button>
+                <button className="btn" onClick={() => { sethabilitarEdicion(!habilitarEdicion); setfacturaEditada(acta?.factura ?? ""); setprovedorIdEditada(acta?.proovedor?.id); setsolicitudCompraIdEditada(acta?.numSolicitudCompra?.id); setrecibe(acta.recibe.id); }}>Cancelar</button>
               </>
             ) : (
               <>

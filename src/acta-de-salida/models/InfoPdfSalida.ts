@@ -2,14 +2,16 @@ export interface InfoPdfSalida {
   id: number;
   numActa: string;
   fechaRemision: string;
-  destino:string;
+  observacion?: string | null;
+  descripcion?:string | null;
 
   
   numSolicitudCompra?: {
     id: number;
-    Destino: string;
+   numOrden: string;
     numOrdenTrabajo: {
       id: number;
+      DescripcionTrabajo: string;
       userSolicitante: {
         id: number;
         name: string;
@@ -24,6 +26,7 @@ export interface InfoPdfSalida {
   };
 
   entrega: {
+     id: number;
     name: string;
   };
 

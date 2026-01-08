@@ -44,12 +44,30 @@ export const AdminDashboard: React.FC = () => {
   
   const pieData = {
     labels: usersByCargo.map(u => u.cargo),
-    datasets: [{ data: usersByCargo.map(u => u.count) }]
+    datasets: [{ data: usersByCargo.map(u => u.count), backgroundColor: [
+                    'rgba(0, 70, 201, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                  ],
+                  borderColor: [
+                    'rgba(39, 89, 197, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                  ],borderWidth: 1 }]
   };
 
   const barData = {
     labels: maquinasPorArea.map(m => m.area),
-    datasets: [{ label: 'Máquinas', data: maquinasPorArea.map(m => m.count), borderWidth: 1 }]
+    datasets: [{ label: 'Máquinas', data: maquinasPorArea.map(m => m.count),  backgroundColor: [
+                    'rgba(241, 9, 67, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                  ],
+                  borderColor: [
+                    'rgba(241, 9, 67, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                  ],borderWidth: 1 }]
   };
 
   const commonOptions = { responsive: true, plugins: { legend: { display: false } } };
@@ -79,10 +97,10 @@ export const AdminDashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="card p-4 bg-base-100 border">
+      <div className="grid grid-cols-1  gap-6">
+        <div className="card p-4 h-130 bg-base-100 border flex items-center justify-center">
           <h3 className="font-medium mb-3">Usuarios por cargo</h3>
-          <Pie data={pieData} options={{ ...commonOptions }} />
+          <Pie data={pieData} options={{ ...commonOptions }} className='p-6' />
         </div>
 
         <div className="card p-4 bg-base-100 border">

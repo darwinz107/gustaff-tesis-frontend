@@ -33,3 +33,40 @@ export const getOneUser = async(id:number):Promise<Users>=>{
     return [];
   }
 };
+
+export const getUsersSupervisores = async (): Promise<Users[]> => {
+  try {
+    const response: Response = await fetch(`${route}users/supervisores`, {
+      method: "GET"
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al obtener supervisores");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("getUsersSupervisores error:", error);
+    return [];
+  }
+};
+
+
+export const getUsersGerenciaYCoordinacion = async (): Promise<Users[]> => {
+  try {
+    const response: Response = await fetch(`${route}users/gerencia-coordinacion`, {
+      method: "GET"
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al obtener usuarios de gerencia y coordinación");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("getUsersGerenciaYCoordinacion error:", error);
+    return [];
+  }
+};

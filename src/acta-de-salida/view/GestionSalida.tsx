@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, act } from 'react'
 import type { InfoPdfSalida } from '../models/InfoPdfSalida';
 import { findAllRegistroSalida, filtrarActasSalida, findRegistroSalidaById, updateActaSalida, deleteActaSalida } from '../controller/actaSalida-api';
 import { getUsers } from '../../user/controller/api/user-api';
@@ -22,6 +22,7 @@ export const GestionSalida = () => {
   const [recibeSinSMIdEditada, setrecibeSinSMIdEditada] = useState<number|undefined>();
   const [solicitanteIdEditada, setsolicitanteIdEditada] = useState<number|undefined>();
   const [destinoEditada, setdestinoEditada] = useState("");
+  const [entrega, setentrega] = useState(0);
 
   const dialog = useRef<HTMLDialogElement>(null);
 
@@ -78,7 +79,7 @@ export const GestionSalida = () => {
         setentregaIdEditada(res.entrega?.id);
         setrecibeSinSMIdEditada(res.recibeSinSM?.id);
         setsolicitanteIdEditada(res.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.id);
-        setdestinoEditada(res.destino ?? res.numSolicitudCompra?.Destino ?? "");
+        setdestinoEditada(res.numSolicitudCompra?.numOrdenTrabajo.DescripcionTrabajo ?? res.descripcion ?? "");
         setventanaEmergente(true);
       }else{
         setmensajeError("Fallo al cargar la acta de salida");
@@ -96,7 +97,7 @@ export const GestionSalida = () => {
   const guardarCambios = async() => {
     if(!acta) return;
     try {
-      const updateData: { entregaId?: number; observacion?: string; recibeSinSMId?: number; solicitanteId?: number; destino?: string } = {};
+      const updateData: { entregaId?: number; observacion?: string; recibeSinSMId?: number; /*solicitanteId?: number;*/ descripcion?: string } = {};
       
       if(observacionEditada !== acta.observacion) {
         updateData.observacion = observacionEditada;
@@ -104,20 +105,21 @@ export const GestionSalida = () => {
       if(entregaIdEditada !== acta.entrega?.id && entregaIdEditada !== undefined) {
         updateData.entregaId = entregaIdEditada;
       }
-      if(destinoEditada !== (acta.destino ?? acta.numSolicitudCompra?.Destino)) {
-        updateData.destino = destinoEditada;
+      console.log(acta.numSolicitudCompra);
+      if(acta.numSolicitudCompra === undefined || acta.numSolicitudCompra === null && destinoEditada !== "") {
+        updateData.descripcion = destinoEditada;
       }
 
-      if(acta.numSolicitudCompra) {
-        if(solicitanteIdEditada !== acta.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.id && solicitanteIdEditada !== undefined) {
-          updateData.solicitanteId = solicitanteIdEditada;
-        }
-      } else {
-        if(recibeSinSMIdEditada !== acta.recibeSinSM?.id && recibeSinSMIdEditada !== undefined) {
-          updateData.recibeSinSMId = recibeSinSMIdEditada;
-        }
+      if(recibeSinSMIdEditada !== acta.recibeSinSM?.id && recibeSinSMIdEditada !== undefined) {
+        updateData.recibeSinSMId = recibeSinSMIdEditada;
       }
 
+    /*  if(solicitanteIdEditada !== acta.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.id && solicitanteIdEditada !== undefined) {
+        updateData.solicitanteId = solicitanteIdEditada;
+      }*/
+
+
+      console.log("Datos a actualizar:", updateData);
       const res = await updateActaSalida(acta.id, updateData);
       if(res.validate) {
         setshowSuccess(true);
@@ -169,7 +171,7 @@ export const GestionSalida = () => {
   return (
     <>
       {showSuccess && (
-        <div className="fixed top-5 right-5 z-50">
+        <div className="fixed top-5 right-5 z-150">
           <div role="alert" className="alert alert-success shadow-lg">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -180,7 +182,7 @@ export const GestionSalida = () => {
       )}
 
       {showError && (
-        <div className="fixed top-5 right-5 z-50">
+        <div className="fixed top-5 right-5 z-150">
           <div role="alert" className="alert alert-error shadow-lg">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -227,7 +229,7 @@ export const GestionSalida = () => {
             <input className="input input-sm" value={filtroEntrega} onChange={(e)=>setFiltroEntrega(e.target.value)} />
           </div>
           <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Destino</label>
+            <label className="text-sm text-gray-600">Descripcion</label>
             <input className="input input-sm" value={filtroDestino} onChange={(e)=>setFiltroDestino(e.target.value)} />
           </div>
           <div className="flex items-center gap-2">
@@ -246,7 +248,7 @@ export const GestionSalida = () => {
                     <th className="px-4 py-3">Fecha de remisión</th>
                     <th className="px-4 py-3">Recibe</th>
                     <th className="px-4 py-3">Entrega</th>
-                    <th className="px-4 py-3">Destino</th>
+                    <th className="px-4 py-3">Descripcion</th>
                     <th className="px-4 py-3 text-center">Acciones</th>
                   </tr>
                 </thead>
@@ -255,9 +257,9 @@ export const GestionSalida = () => {
                     <tr key={i} className="hover:bg-gray-50">
                       <td className="px-4 py-3">{u.numActa}</td>
                       <td className="px-4 py-3">{u.fechaRemision ? u.fechaRemision.split("T")[0] : ""}</td>
-                      <td className="px-4 py-3">{u.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.name ?? u.recibeSinSM?.name}</td>
-                      <td className="px-4 py-3">{u.entrega?.name ?? ""}</td>
-                      <td className="px-4 py-3">{u.destino ?? "" }</td>
+                      <td className="px-4 py-3">{u.recibeSinSM?.name ?? "N/A"}</td>
+                      <td className="px-4 py-3">{u.entrega?.name ?? "N/A"}</td>
+                      <td className="px-4 py-3">{u.numSolicitudCompra?.numOrdenTrabajo.DescripcionTrabajo ??u.descripcion ?? "N/A" }</td>
                       <td className="px-4 py-3 text-center">
                         <div className="flex gap-2 justify-center">
                           <button className="btn btn-ghost btn-xs" onClick={()=>llenarActaById(u.id)}>Ver detalles</button>
@@ -305,11 +307,32 @@ export const GestionSalida = () => {
                 <input type="text" disabled={!habilitarEdicion} className="input w-full mt-1" value={observacionEditada} onChange={(e)=>setobservacionEditada(e.target.value)} />
               </div>
 
-              {acta?.numSolicitudCompra ? (
-                <>
+               <div>
+                <p className="text-xs text-gray-500">Descripcion</p>
+                <input type="text" disabled={acta.numSolicitudCompra ? true : !habilitarEdicion} className="input w-full mt-1" value={acta.numSolicitudCompra?.numOrdenTrabajo.DescripcionTrabajo ?? destinoEditada?? ""} onChange={(e)=>setdestinoEditada(e.target.value)} />
+              </div>
+
+               <div>
+                    <p className="text-xs text-gray-500">Recibe</p>
+                    <select disabled={!habilitarEdicion} value={recibeSinSMIdEditada ?? 0} onChange={(e)=>setrecibeSinSMIdEditada(Number(e.target.value))} className="select w-full mt-1">
+                      <option disabled>...</option>
+                      {(users ?? []).map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
+                    </select>
+                  </div>
+
+                   <div>
+                    <p className="text-xs text-gray-500">Entrega</p>
+                    <select disabled={!habilitarEdicion} value={entregaIdEditada ?? 0} onChange={(e)=>setentregaIdEditada(Number(e.target.value))} className="select w-full mt-1">
+                      <option value={0} disabled>...</option>
+                      {(users ?? []).map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
+                    </select>
+                  </div>
+
+              {acta?.numSolicitudCompra && 
+                (<>
                   <div>
                     <p className="text-xs text-gray-500">Solicitante</p>
-                    <select disabled={!habilitarEdicion} value={solicitanteIdEditada ?? 0} onChange={(e)=>setsolicitanteIdEditada(Number(e.target.value))} className="select w-full mt-1">
+                    <select disabled value={solicitanteIdEditada ?? 0} onChange={(e)=>setsolicitanteIdEditada(Number(e.target.value))} className="select w-full mt-1">
                       <option disabled>...</option>
                       {(users ?? []).map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
                     </select>
@@ -317,35 +340,11 @@ export const GestionSalida = () => {
 
                   <div>
                     <p className="text-xs text-gray-500">N.Solicitud de material</p>
-                    <input type="text" disabled className="input w-full mt-1" value={acta?.numSolicitudCompra?.numOrden ?? ""} />
+                    <input type="text" disabled className="input w-full mt-1" value={acta?.numSolicitudCompra?.numOrden} />
                   </div>
-                  <div>
-                <p className="text-xs text-gray-500">Destino</p>
-                <input type="text" disabled={!habilitarEdicion} className="input w-full mt-1" value={destinoEditada} onChange={(e)=>setdestinoEditada(e.target.value)} />
-              </div>
-                </>
-              ) : (
-                <>
-                  <div>
-                    <p className="text-xs text-gray-500">Recibe</p>
-                    <select disabled={!habilitarEdicion} value={recibeSinSMIdEditada ?? 0} onChange={(e)=>setrecibeSinSMIdEditada(Number(e.target.value))} className="select w-full mt-1">
-                      <option disabled>...</option>
-                      {(users ?? []).map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                <p className="text-xs text-gray-500">Destino</p>
-                <input type="text" disabled={!habilitarEdicion} className="input w-full mt-1" value={destinoEditada} onChange={(e)=>setdestinoEditada(e.target.value)} />
-              </div>
-                </>
-              )}
-
-              <div>
-                <p className="text-xs text-gray-500">Entrega</p>
-                <input type="text" disabled className="input w-full mt-1" value={acta?.entrega?.name ?? ""} />
-              </div>
-
-              
+                 </>
+                )
+              }
 
               <div>
                 <p className="text-xs text-gray-500">Total</p>

@@ -104,6 +104,16 @@ export const DbMantenimiento = () => {
                 {
                   label: "",
                   data: ordenesEstado.map((d) => d.count),
+                  backgroundColor: [
+                    'rgba(241, 9, 67, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                  ],
+                  borderColor: [
+                    'rgba(241, 9, 67, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                  ],
                   borderWidth: 1,
                 },
               ],
@@ -127,14 +137,18 @@ export const DbMantenimiento = () => {
                 }
               ],
             }}
-            options={{ responsive: true, plugins: { legend: { display: false } } },{scales:{
-              x:{
-                ticks:{
-                  maxRotation:50,
-                  minRotation:50
+            options={{
+              responsive: true,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: {
+                  ticks: {
+                    maxRotation: 50,
+                    minRotation: 50
+                  }
                 }
               }
-            }}}
+            }}
           />
         </div>
       </div>

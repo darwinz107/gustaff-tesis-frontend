@@ -3,7 +3,7 @@ import type { ItemsPorGuardar } from '../models/itemsPorGuardar';
 import { BuscarOrdenTrabajo } from './buscarOrdenTrabajo';
 import type { LllenarDestino } from '../models/llenarDestino';
 import { createItemsSolicitados, evaluarStock, filtrarInventario, getInventario } from '../../inventario/controller/inventario-api';
-import { getUsers } from '../../user/controller/api/user-api';
+import { getUsers, getUsersSupervisores } from '../../user/controller/api/user-api';
 import { crearOrdenCompra, getAllOrdenesTrabajoSinUso } from '../controller/ordenCompraApi';
 import type { Inventarios } from '../../inventario/models/inventarios';
 import type { CreateItemsSolicitados } from '../../inventario/models/createItemsSolocitados';
@@ -34,7 +34,6 @@ const infoDestinoInicial: LllenarDestino = {
   const [observacion, setobservacion] = useState("");
   const [users, setusers] = useState<{name:string}[]>([]);
   const [autoriza, setautoriza] = useState("");
-  const [destino, setdestino] = useState("");
   const [ventanaEmergente, setventanaEmergente] = useState(false); 
   const [inventarios, setinventarios] = useState<Inventarios[]>([])
   const [showSuccess, setshowSuccess] = useState(false);
@@ -52,7 +51,7 @@ const infoDestinoInicial: LllenarDestino = {
 
   useEffect(() => {
     const getAllUsers = async () => {
-        const res = await getUsers();
+        const res = await getUsersSupervisores();
         setusers(res);
       } ;
     getAllUsers(); 
@@ -177,7 +176,7 @@ useEffect(() => {
           item: item,
           caracteristica: caracteristica,
           Observacion: observacion,
-          estadoStock: "Por comprar",
+          estadoStock: "No disponible",
           validate: res?.validate ?? false
         }
       ]);
@@ -201,12 +200,7 @@ useEffect(() => {
  
  
 };
-    
-
  
-  
-
-  
   const funcionEliminarItems = (id:number) =>{
     const newArray = comprasPorGenerar.filter((item, index) => index !== id);
     setcomprasPorGenerar(newArray);
@@ -259,9 +253,6 @@ const errorAutoriza = validarAutoriza(autoriza);
       return;
     }
 
-    // Si hay error en autoriza
-  
-    // Si la tabla está vacía
     if (errorTabla) {
       setmensajeErrorOrdenCompra(errorTabla);
       setshowErrorOrdenCompra(true);
@@ -274,7 +265,6 @@ const errorAutoriza = validarAutoriza(autoriza);
        const resOrdenCompra = await crearOrdenCompra({
       Autoriza: autoriza,
       ordenTrabajoId: infoDestino.id,
-      Destino: destino,
       items:items
     });
     console.log("respuesta crearOrdenCompra:", resOrdenCompra);
@@ -291,7 +281,6 @@ setshowSuccess(false);
 
 setcomprasPorGenerar([]);
 setitems([]);
-setdestino("");
 setautoriza("");
 setbuscarItem("");
 setcantidad(0);
@@ -373,11 +362,25 @@ setinfoDestino(infoDestinoInicial);
             <label className="text-xs font-semibold text-gray-600 mb-1 block">Descripción</label>
             <input className="input input-sm w-full" disabled value={infoDestino.DescripcionTrabajo} />
           </div>
-          <div>
-            <label className="text-xs font-semibold text-gray-600 mb-1 block">Destino</label>
-            <input className="input input-sm w-full" value={destino} onChange={(e)=>setdestino(e.target.value)} />
+        
+<div>
+            <label className="text-xs font-semibold text-gray-600 mb-1 block">Máquina</label>
+            <input className="input input-sm w-full" disabled value={infoDestino.Maquina} />
           </div>
 
+          <div>
+            <label className="text-xs font-semibold text-gray-600 mb-1 block">Código</label>
+            <input className="input input-sm w-full" disabled value={infoDestino.Codigo} />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-gray-600 mb-1 block">Nº Orden</label>
+            <input className="input input-sm w-full" disabled value={infoDestino.NumOrden} />
+          </div>
+
+          
+
+          
           <div>
             <label className="text-xs font-semibold text-gray-600 mb-1 block">Autoriza</label>
             <select 
@@ -395,21 +398,6 @@ setinfoDestino(infoDestinoInicial);
             </select>
             <div className="h-5">{erroresDestino.autoriza && <p className="text-red-500 text-xs">{erroresDestino.autoriza}</p>}</div>
           </div>
-
-          <div>
-            <label className="text-xs font-semibold text-gray-600 mb-1 block">Código</label>
-            <input className="input input-sm w-full" disabled value={infoDestino.Codigo} />
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-gray-600 mb-1 block">Nº Orden</label>
-            <input className="input input-sm w-full" disabled value={infoDestino.NumOrden} />
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-gray-600 mb-1 block">Máquina</label>
-            <input className="input input-sm w-full" disabled value={infoDestino.Maquina} />
-          </div>
         </div>
       </div>
 
@@ -421,9 +409,9 @@ setinfoDestino(infoDestinoInicial);
         <div className="grid grid-cols-4 gap-4 mb-4">
           <div>
             <input 
-              className={`input ${erroresItems.cantidad ? 'input-error' : ''}`} 
+              className={`input placeholder:text-gray-400 ${erroresItems.cantidad ? 'input-error' : ''}`} 
               placeholder="Cantidad" 
-              value={cantidad} 
+              value={cantidad === 0 ? "" : cantidad} 
               onChange={(e) => setcantidad(e.target.value)} 
             />
             <div className="h-5">{erroresItems.cantidad && <p className="text-red-500 text-xs">{erroresItems.cantidad}</p>}</div>
@@ -432,7 +420,7 @@ setinfoDestino(infoDestinoInicial);
           <div>
             <div className="relative">
               <input
-                className={`input input-bordered w-full pr-10 ${erroresItems.item ? 'input-error' : ''}`}
+                className={`input placeholder:text-gray-400 input-bordered w-full pr-10 ${erroresItems.item ? 'input-error' : ''}`}
                 placeholder="Item"
                 value={item}
                 onChange={(e) => setitem(e.target.value)}
@@ -450,7 +438,7 @@ setinfoDestino(infoDestinoInicial);
 
           <div>
             <input 
-              className="input" 
+              className="input placeholder:text-gray-400" 
               placeholder="Característica" 
               value={caracteristica} 
               onChange={(e) => setcaracteristica(e.target.value)} 
@@ -459,7 +447,7 @@ setinfoDestino(infoDestinoInicial);
 
           <div>
             <input 
-              className="input" 
+              className="input placeholder:text-gray-400" 
               placeholder="Observación" 
               value={observacion} 
               onChange={(e) => setobservacion(e.target.value)} 
@@ -474,7 +462,7 @@ setinfoDestino(infoDestinoInicial);
 
       <div className="bg-white rounded-xl shadow-md p-6">
         <h2 className="text-lg font-semibold text-gray-700 border-b pb-2 mb-4">
-          Compras
+          Materiales
         </h2>
 
         <div className="overflow-auto max-h-54">

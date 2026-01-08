@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { BuscarOrdenCompra } from "./BuscarOrdenCompra";
 import type { InfoPdfCompra } from "../../orden-de-compra/models/infoPdfCompra";
 import { getAllSolicitudes, ordenCompraById } from "../../orden-de-compra/controller/ordenCompraApi";
-import { getUsers } from "../../user/controller/api/user-api";
+import { getUsers, getUsersGerenciaYCoordinacion } from "../../user/controller/api/user-api";
 import type { Users } from "../../admin/models/users";
 import { createActaSalidaApi, createActaSalidaSinOrdenApi } from "../controller/actaSalida-api";
 import type { BuscarSolMaterial } from "../../orden-de-compra/models/buscarSolMaterial";
@@ -20,6 +20,7 @@ export const CrearActaSalida = () => {
   const [solicitudMaterial, setsolicitudMaterial] = useState<InfoPdfCompra>({itemSolicitados:[]});
   const [agregarItems, setagregarItems] = useState<ItemSalidaSinSM[]>([])
   const [users, setusers] = useState<Users[]>([]);
+  const [entregan, setentregan] = useState<Users[]>([]);
   const [entrega, setentrega] = useState(0);
   const [observacion, setobservacion] = useState("");
   const [actaSalida, setactaSalida] = useState(false);
@@ -33,9 +34,10 @@ export const CrearActaSalida = () => {
   const [item, setitem] = useState("");
   const [caracteristica, setcaracteristica] = useState("");
   const [observacion2, setobservacion2] = useState("");
-  const [recibe, setrecibe] = useState("");
-  const [destino, setdestino] = useState("");
+  const [recibe, setrecibe] = useState(0);
+  const [descripcion, setdescripcion] = useState("");
   const [stockDis, setstockDis] = useState(0);
+  
   
   const [inventarios, setinventarios] = useState<Inventarios[]>([]);
 
@@ -96,15 +98,14 @@ export const CrearActaSalida = () => {
     recibeId:Number(recibe), 
     
     observacion:observacion2,
-    
-    destino:destino,
+    descripcion:descripcion,
      itemsSalida: agregarItems.map(it => ({
     item: it.item,
     cantidad: Number(it.cantidad),  
     Observacion: it.Observacion,
     caracteristica: it.caracteristica
   }))
-   // caracteristica:caracteristica
+   
       }
 
       const res = await createActaSalidaSinOrdenApi(info);
@@ -117,7 +118,7 @@ export const CrearActaSalida = () => {
 
         setsolicitudMaterial({
         
-          Destino:""
+          descripcion:""
         });
 
         setentrega(0);
@@ -149,7 +150,8 @@ export const CrearActaSalida = () => {
     const res = await createActaSalidaApi(
       solicitudMaterial.id,
       entrega,
-      observacion
+      observacion,
+      recibe
     );
 
     console.log(res);
@@ -169,7 +171,7 @@ export const CrearActaSalida = () => {
             Maquina: "",
             Codigo: ""
           },
-          Destino: "",
+          descripcion: "",
           itemSolicitados: []
         });
 
@@ -192,12 +194,18 @@ const metodoInventarios = async() =>{
       setinventarios(resInv);
     }
 
+ const allEntregan = async() =>{
+  const res = await getUsersGerenciaYCoordinacion();
+  setentregan(res);
+ }   
+
     useEffect(() => {
        const getAllUsers = async () => {
              const res = await getUsers();
              setusers(res);
            } ;
          getAllUsers(); 
+         allEntregan();
 
     const metodoSolicitudesMaterialesSalidas = async() =>{
     
@@ -268,15 +276,15 @@ const metodoInventarios = async() =>{
             <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.Area} disabled />
             <div className="max-h-1"></div>
 
-            <label className="text-sm text-gray-600 mt-2">Destino</label>
-            {conOrden ?(<input type="text" className="input input-bordered w-full" value={solicitudMaterial?.Destino} disabled />) :(<input type="text" className="input input-bordered w-full" value={destino} onChange={(e)=>setdestino(e.target.value)}  />)}
+            <label className="text-sm text-gray-600 mt-2">Descripcion</label>
+            {conOrden ?(<input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.DescripcionTrabajo ?? ""} disabled />) :(<input type="text" className="input input-bordered w-full" value={descripcion} onChange={(e)=>setdescripcion(e.target.value)}  />)}
           </div>
 
           <div className="space-y-3">
             <label className="text-sm text-gray-600">Entrega</label>
             <select value={entrega} className={`select select-bordered w-full ${erroresEntrega ? 'select-error' : ''}`} onChange={(e) => {setentrega(e.target.value); seterroresEntrega(validarEntrega(e.target.value));}}>
               <option value={0} disabled>...</option>
-              {users.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
+              {entregan.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
             </select>
             <div className="max-h-1">{erroresEntrega && <p className="text-red-500 text-xs">{erroresEntrega}</p>}</div>
 
@@ -285,16 +293,16 @@ const metodoInventarios = async() =>{
             <div ></div>
 
             <label className="text-sm text-gray-600 mt-2">Observación</label>
-            <input type="text" className="input input-bordered w-full" disabled={!conOrden} onChange={(e) => setobservacion(e.target.value)} />
+            <input type="text" className="input input-bordered w-full"  onChange={(e) => setobservacion(e.target.value)} />
           </div>
 
           <div className="space-y-3">
             <label className="text-sm text-gray-600">Recibe</label>
-            {conOrden ? (<input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.userSolicitante?.name} disabled />)
-                      :(<select value={recibe} className={`select select-bordered w-full`} onChange={(e) => {setrecibe(e.target.value);}}>
+           
+                      <select value={recibe} className={`select select-bordered w-full`} onChange={(e) => {setrecibe(e.target.value);}}>
               <option value={0} disabled>...</option>
               {users.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
-            </select>)}
+            </select>
             <div className="max-h-1"></div>
 
             <label className="text-sm text-gray-600 mt-2">Máquina</label>

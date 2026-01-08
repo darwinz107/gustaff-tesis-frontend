@@ -10,6 +10,8 @@ import { CrearProovedor } from "./CrearProovedor";
 import { getAllBodegas } from "../../admin/controller/api/admin-api";
 import { ConvertToBase64 } from "../controller/ConvertToBase64";
 import { Base64ToBlob } from "../controller/Base64ToBlob";
+import type { Users } from "../../admin/models/users";
+import { getUsers } from "../../user/controller/api/user-api";
 
 
 
@@ -46,6 +48,8 @@ export const CrearActaEntrada = () => {
     const [mensajeError, setmensajeError] = useState("");
     const [imagen, setimagen] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [recibe, setrecibe] = useState(0);
+    const [users, setusers] = useState<Users[]>([]);
 
 
 const cargarInfoSolMaterial = async() =>{
@@ -110,7 +114,17 @@ const cargarInfoSolMaterial = async() =>{
   });
 };
 
+     const getAllUsers = async () => {
+               const res = await getUsers();
+               console.log(res);
+               setusers(res);
+             } ;
+          
 
+    useEffect(() => {
+       getAllUsers(); 
+    }, []);
+    
 
     useEffect(() => {
 
@@ -125,6 +139,7 @@ const cargarInfoSolMaterial = async() =>{
       }
 
       asignarTotal();
+      
     }, [solicitudMaterial])
     
 
@@ -429,6 +444,7 @@ const validarPercha = (valor: string): string => {
     proovedor:proovedor,
     factura: factura,
     total:total,
+    recibe:recibe,
     itemsSolicitados:solicitudMaterial.itemsSolicitados,
     
    }
@@ -669,6 +685,14 @@ const eliminarItem = (index: number) => {
             <label className="block text-sm text-gray-600 mb-1">N. Solicitud</label>
             <input className="input input-bordered w-full bg-gray-50" value={solicitudMaterial?.numOrden} disabled />
           </div>
+           <div className="min-w-[220px] ">
+            <label className="block text-sm text-gray-600 mb-1">Recibe</label>
+            <select value={recibe} className={`select select-bordered w-full`} onChange={(e) => {setrecibe(e.target.value);}}>
+              <option value={0}>...</option>
+              {users.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
+            </select>
+          </div>
+          
         </div>
       </div>
 

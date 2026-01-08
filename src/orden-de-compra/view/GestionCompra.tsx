@@ -59,11 +59,12 @@ export const GestionCompra = () => {
   const actSolicitudMaterial = async () => {
     const res = await editarSolicitudMaterial(detalleSol.id, {
       Autoriza: detalleSol.Autoriza,
-      Destino: detalleSol.Destino,
+     
       ordenTrabajoId: nOrdenTrabajo,
       estadoCompra: detalleSol.estadoCompra.estado
     });
     alert(res.msj);
+    console.log(res);
     if (res.validate) {
       await ordenesTrabajoApi();
       await cargarSolicitud(detalleSol.id);
@@ -223,8 +224,8 @@ export const GestionCompra = () => {
               </div>
 
               <div>
-                <p className="text-xs text-gray-500">Destino</p>
-                <input type="text" disabled={!habilitarEdicion} className="input w-full mt-1" value={detalleSol?.Destino} onChange={(e) => { setdetalleSol((prev) => ({ ...prev, Destino: e.target.value } as any)); setconfirmarCambio(false); }} />
+                <p className="text-xs text-gray-500">Descripcion</p>
+                <input type="text" disabled={true} className="input w-full mt-1" value={detalleSol?.numOrdenTrabajo?.DescripcionTrabajo ?? "N/A"} onChange={(e) => { setdetalleSol((prev) => ({ ...prev, Destino: e.target.value } as any)); setconfirmarCambio(false); }} />
               </div>
 
               <div>

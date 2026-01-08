@@ -50,7 +50,7 @@ const id = useParams();
              <Table >
               <TR >
                 <TD style={{fontWeight:"bold",justifyContent:"flex-end"}}>DESTINO DEL USO DE MATERIALES Y/O REPUESTOS:  </TD>
-                <TD >{newSolicitud?.Destino ===""||newSolicitud?.Destino === null ? "N/A":newSolicitud?.Destino}</TD>
+                <TD >{newSolicitud?.numOrdenTrabajo.DescripcionTrabajo ?? "N/A"}</TD>
               </TR>
               <TR style={styles.tr}>
                 <TD style={styles.td}><Text style={{fontWeight:"bold"}}>AREA:</Text> {newSolicitud?.numOrdenTrabajo.Area}</TD>
