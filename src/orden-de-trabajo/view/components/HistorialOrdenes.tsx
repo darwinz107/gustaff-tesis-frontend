@@ -398,7 +398,7 @@ const ordenesTrabajoApi  = async() =>{
                   <tr key={u.id} className="even:bg-gray-50 hover:bg-gray-100">
                     <td className="px-4 py-3 align-top">{u.NumOrden}</td>
                     <td className="px-4 py-3 align-top">{u.fechaFinal}</td>
-                    <td className="px-4 py-3 align-top">{u.userSolicitante.name}</td>
+                    <td className="px-4 py-3 align-top">{u.userSolicitante ?? u.userSolicitante ?? "N/A"}</td>
                     <td className="px-4 py-3 align-top">{u.DescripcionTrabajo}</td>
                     <td className="px-4 py-3 align-top">{u.estadoTrabajo.estado}</td>
                     <td className="px-4 py-3 align-top"><div className="radial-progress cursor-pointer" onClick={() => handleAbrirModalFase(u.id)} style={{ "--value": u.progreso ?? 0 } as React.CSSProperties} 
@@ -545,7 +545,7 @@ const ordenesTrabajoApi  = async() =>{
 
             <div>
               <p className="text-xs text-gray-500">Solicitante</p>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.userSolicitante?.name ?? ""} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userSolicitante:{name: e.target.value}})); setconfirmarCambio(true);}}>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.userSolicitante ?? ordenTrabajoxUser.userSolicitante?.name ?? "..."} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userSolicitante:{name: e.target.value}})); setconfirmarCambio(true);}}>
                 <option disabled>...</option>
                 {users.map((u)=> <option key={u.id} value={u.name}>{u.name}</option>)}
               </select>
@@ -553,7 +553,7 @@ const ordenesTrabajoApi  = async() =>{
 
             <div>
               <p className="text-xs text-gray-500">Receptor</p>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.userReceptor?.name ?? ""} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userReceptor:{name: e.target.value}})); setconfirmarCambio(true);}}>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.userReceptor ?? ordenTrabajoxUser.userReceptor?.name ?? "..."} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userReceptor:{name: e.target.value}})); setconfirmarCambio(true);}}>
                 <option disabled>...</option>
                 {users.map((u)=> <option key={u.id} value={u.name}>{u.name}</option>)}
               </select>
@@ -561,7 +561,7 @@ const ordenesTrabajoApi  = async() =>{
 
             <div>
               <p className="text-xs text-gray-500">Tecnico</p>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.userTecnico?.name ?? ""} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userTecnico:{name: e.target.value}})); setconfirmarCambio(true);}}>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.userTecnic ?? ordenTrabajoxUser.userTecnico?.name ?? "..."} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userTecnico:{name: e.target.value}})); setconfirmarCambio(true);}}>
                 <option disabled>...</option>
                 {users.map((u)=> <option key={u.id} value={u.name}>{u.name}</option>)}
               </select>

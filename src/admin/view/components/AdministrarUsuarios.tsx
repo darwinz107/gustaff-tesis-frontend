@@ -13,8 +13,8 @@ export const AdministrarUsuarios = () => {
   const [email, setemail] = useState("");
   const [contrasenia, setcontrasenia] = useState("");
   const [selectCargo, setselectCargo] = useState(0);
-  const callyPpopover3 = useRef(null);
-  const [ventanaEmergente, setventanaEmergente] = useState(false);
+  const callyPpopover3 = useRef(null);  const dialogEliminar = useRef<HTMLDialogElement>(null);
+  const [usuarioAEliminar, setusuarioAEliminar] = useState<number | null>(null);  const [ventanaEmergente, setventanaEmergente] = useState(false);
   const [users, setusers] = useState<Users[]>([])
   const [habilitarEdicion, sethabilitarEdicion] = useState(false);
   const [ventanaCrearUsuario, setventanaCrearUsuario] = useState(false);
@@ -220,8 +220,10 @@ const obtenerUsers = async () =>{
     setusers(res);
   };
 
-  const metodoEliminarUser = async (id:number) => {
-   const res = await deleteUser(id);
+  const metodoEliminarUser = async () => {
+   if (usuarioAEliminar === null) return;
+   
+   const res = await deleteUser(usuarioAEliminar);
 
    if(res.validate === true){
     setmensajeError(res.msj ?? "Usuario eliminado correctamente");
@@ -230,6 +232,7 @@ const obtenerUsers = async () =>{
       setshowSuccess(false);
       
     }, 2000);
+    setusuarioAEliminar(null);
     obtenerUsers();
    } else {
     setmensajeError(res.msj);
@@ -237,6 +240,7 @@ const obtenerUsers = async () =>{
     setTimeout(() => {
       setshowError(false);
     }, 3000);
+    setusuarioAEliminar(null);
    }
   }
 
@@ -349,7 +353,7 @@ const obtenerUsers = async () =>{
                       <td className="px-4 py-3 align-top text-center">
                         <div className="flex items-center justify-center gap-2">
                           <button className="btn btn-outline btn-sm" onClick={() => { detalleUsuario(u.id); setventanaEmergente(true); }}>Detalles</button>
-                           <button className="btn btn-outline btn-sm" onClick={() => { metodoEliminarUser(u.id); }}>Eliminar</button>
+                           <button className="btn btn-outline btn-sm" onClick={() => { setusuarioAEliminar(u.id); if(dialogEliminar.current) dialogEliminar.current.showModal(); }}>Eliminar</button>
                         </div>
                       </td>
                     </tr>
@@ -430,6 +434,19 @@ const obtenerUsers = async () =>{
           </div>
         </div>
       </div>
+
+      <dialog ref={dialogEliminar} id="dialog_eliminar_usuario" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Advertencia!</h3>
+          <p className="py-4">¿Está seguro que desea eliminar este usuario?</p>
+          <div className="modal-action">
+            <form method="dialog" className="flex gap-2">
+              <button className="btn btn-primary" onClick={metodoEliminarUser}>Eliminar</button>
+              <button className="btn" onClick={() => setusuarioAEliminar(null)}>Cancelar</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
 
       <div className={`z-10 fixed inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaCrearUsuario ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
         <div className="absolute inset-0 bg-black/40" />

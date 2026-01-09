@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import type { Inventarios } from '../models/inventarios';
 import { getInventario, filtrarInventarioAdvanced, updateInventario } from '../controller/inventario-api';
 import { getAllBodegas} from '../../admin/controller/api/admin-api';
@@ -32,6 +32,8 @@ export const GestionInventario = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [mensajeError, setMensajeError] = useState("");
+  const [imagenEditada, setimagenEditada] = useState<string|File|null>(null);
+  const refImg = useRef<HTMLInputElement | null>(null);
 
 const load = async () => {
       const res = await getInventario();
@@ -110,6 +112,7 @@ const load = async () => {
       };
       cargarTodo();
       console.log(item);
+      setimagenEditada(item.imagen || null);
     }
   }, [ventanaEmergente, item]);
 
@@ -183,7 +186,7 @@ const load = async () => {
         bodegaId: Number(bodegaSeleccionada),
         seccionId: Number(seccionSeleccionada),
         perchaId: item.percha ? Number(item.percha.id) : undefined,
-        imagen: nuevaImagen ? await ConvertToBase64(nuevaImagen) : item.imagen
+        imagen: imagenEditada ? await ConvertToBase64(imagenEditada) : item.imagen
       };
 
       const res = await updateInventario(item.id, updateData);
@@ -373,10 +376,10 @@ const load = async () => {
             </div>
              <div>
               <label className='text-sm text-gray-500 block'>Imagen</label>
-              {item.imagen ?(
+              {imagenEditada && typeof imagenEditada ==='string' ?(
               <div  className='relative w-full h-60 overflow-hidden group'>
-                <img src={item.imagen} className='w-full h-full object-contain ' /> 
-               <button onClick={()=>{setitem((prev)=>prev?.imagen === undefined); console.log("Hice clic")}} className='cursor-pointer absolute inset-0 flex items-center justify-center bg-white bg-opacity-0 group-hover:bg-opacity-50 transition opacity-0 group-hover:opacity-50'>
+                <img src={typeof imagenEditada === 'string' ? imagenEditada : URL.createObjectURL(imagenEditada)} className='w-full h-full object-contain ' /> 
+               <button onClick={()=>{setimagenEditada(null); if(refImg.current) refImg.current.value = ""; console.log("Hice clic")}} className='cursor-pointer absolute inset-0 flex items-center justify-center bg-white bg-opacity-0 group-hover:bg-opacity-50 transition opacity-0 group-hover:opacity-50'>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
@@ -387,10 +390,14 @@ const load = async () => {
 <div>
   <input type="file"
   accept='image/*'
+  ref={refImg}
   className='file-input'
   disabled={habilitarEdicion}
-  onChange={(e)=> setnuevaImagen(e.target.files ? e.target.files[0] : null)}
+  onChange={(e)=> setimagenEditada(e.target.files ? e.target.files[0] : null)}
   />
+    {imagenEditada && (
+                          <p className="text-xs text-green-600 mt-1">Imagen cargada</p>
+                        )}
 </div>
               )}
             
