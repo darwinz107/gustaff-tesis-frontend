@@ -71,67 +71,82 @@ export const Rol1Main = () => {
 
   return (
     <>
-      <div className="flex min-h-screen w-auto bg-gray-50">
+      <div className="flex h-screen w-full bg-gray-50">
+        {/* Navbar */}
+        <div className="fixed top-0 left-0 right-0 bg-white shadow-md z-40 flex items-center justify-between px-6 py-3 border-b border-gray-200">
+          <div className="text-lg font-bold text-gray-800">Gestión de Órdenes</div>
+          <div className="dropdown dropdown-end">
+            <div tabIndex={0} className="avatar placeholder cursor-pointer">
+              <div className="bg-gradient-to-br from-green-400 to-green-600 text-white rounded-full w-10 flex items-center justify-center text-sm font-bold">
+                GT
+              </div>
+            </div>
+            <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+              <li><a>Mi Perfil</a></li>
+              <li><a onClick={logout}>Cerrar sesión</a></li>
+            </ul>
+          </div>
+        </div>
 
-        <div
-          className={`fixed inset-y-0 left-0 bg-white border-r border-gray-300 flex flex-col transition-all duration-300
-          ${collapsed ? "w-20" : "w-64"}`}
-        >
-          <div className="flex items-center justify-between px-4 py-6">
-            {!collapsed && (
-              <img
-                src="public/logo_alternativo.png"
-                className="cursor-pointer w-32"
-                onClick={() => setcargarComponente(0)}
-              />
-            )}
-            <button
-              className="btn btn-sm btn-ghost"
-              onClick={() => setCollapsed(!collapsed)}
-            >
-              {collapsed ? "➡️" : "⬅️"}
+        {/* Sidebar */}
+        <div className={`fixed inset-y-0 left-0 bg-white border-r border-gray-300 flex flex-col transition-all duration-300 mt-16 ${collapsed ? "w-20" : "w-64"}`}>
+          <div className="flex flex-col gap-2 px-2 py-4">
+            <div className="px-4 py-2">
+              <h3 className="text-xs font-bold text-gray-600 uppercase tracking-wider mb-3">Órdenes de Trabajo</h3>
+            </div>
+
+            <button className="btn btn-ghost justify-start hover:bg-green-100 hover:text-green-700" onClick={() => setcargarComponente(1)}>
+              <span className="text-lg">➕</span>
+              {!collapsed && <span className="text-sm">Nueva Orden</span>}
+            </button>
+
+            <button className="btn btn-ghost justify-start hover:bg-green-100 hover:text-green-700" onClick={() => setcargarComponente(2)}>
+              <span className="text-lg">📋</span>
+              {!collapsed && <span className="text-sm">Gestionar Órdenes</span>}
+            </button>
+
+            <button className="btn btn-ghost justify-start hover:bg-green-100 hover:text-green-700" onClick={() => setcargarComponente(5)}>
+              <span className="text-lg">📅</span>
+              {!collapsed && <span className="text-sm">Gestionar Jornadas</span>}
+            </button>
+
+            <div className="divider my-1"></div>
+
+            <div className="px-4 py-2">
+              <h3 className="text-xs font-bold text-gray-600 uppercase tracking-wider mb-3">Solicitudes</h3>
+            </div>
+
+            <button className="btn btn-ghost justify-start hover:bg-orange-100 hover:text-orange-700" onClick={() => setcargarComponente(3)}>
+              <span className="text-lg">📦</span>
+              {!collapsed && <span className="text-sm">Nueva Solicitud</span>}
+            </button>
+
+            <button className="btn btn-ghost justify-start hover:bg-orange-100 hover:text-orange-700" onClick={() => setcargarComponente(4)}>
+              <span className="text-lg">📑</span>
+              {!collapsed && <span className="text-sm">Gestionar Solicitudes</span>}
             </button>
           </div>
 
-          <div className="flex flex-col gap-1 px-2">
-
-                      <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(1)}>
-              🛠️ {!collapsed && "Nueva orden "}
-            </button>
-
-            <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(2)}>
-              📋 {!collapsed && "Gestión de órdenes "}
-            </button>
-
-             <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(5)}>
-              📅 {!collapsed && "Gestion de jornadas"}
-            </button>
-
-<div className="divider my-1"></div>
-            <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(3)}>
-              📦 {!collapsed && "Nueva solicitud"}
-            </button>
-
-            <button className="btn btn-ghost justify-start" onClick={() => setcargarComponente(4)}>
-              📑 {!collapsed && "Gestión solicitudes"}
-            </button>
-
-          </div>
-
-          <div className="mt-auto px-2 pb-4">
-            <button
-              className="btn btn-ghost w-full flex items-center gap-3 justify-start"
-              onClick={logout}
-            >
-              🚪 {!collapsed && "Cerrar sesión"}
+          <div className="mt-auto px-2 pb-4 border-t">
+            <button className="btn btn-ghost w-full flex items-center gap-3 justify-start hover:btn-error" onClick={logout}>
+              <span className="text-lg">🚪</span>
+              {!collapsed && <span className="text-sm">Cerrar sesión</span>}
             </button>
           </div>
         </div>
 
-        <div className={`${collapsed ? "ml-20" : "ml-64"} flex-1 bg-gray-50 flex items-center justify-center my-2  transition-all duration-300`}>
+        {/* Toggle Button */}
+        <button
+          className="fixed top-20 left-2 z-30 btn btn-sm btn-ghost"
+          onClick={() => setCollapsed(!collapsed)}
+        >
+          {collapsed ? "➡️" : "⬅️"}
+        </button>
+
+        {/* Main Content */}
+        <div className={`${collapsed ? "ml-20" : "ml-64"} mt-16 flex-1 bg-gray-50 flex items-center justify-center p-2 transition-all duration-300 overflow-auto`}>
           {componentes[cargarComponente]}
         </div>
-
       </div>
 
       <VerDetalles setventanaEmergente={setventanaEmergente} ventanaEmergente={ventanaEmergente} />

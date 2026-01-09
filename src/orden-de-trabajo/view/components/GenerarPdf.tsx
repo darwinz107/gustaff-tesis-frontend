@@ -118,7 +118,7 @@ const id = useParams();
             </View>
              <View style={styles.containerFirmas}>
               <View style={styles.childFirma}>  
-                <Text style={styles.childContenido}>{newSolicitud?.userSolicitante.name}</Text>
+                <Text style={styles.childContenido}>{newSolicitud?.userSolicitante?.name ?? "N/A"}</Text>
                 <Text >SOLICITA</Text>              
                 </View> 
                 <View style={styles.childFirma}>  
@@ -127,7 +127,7 @@ const id = useParams();
                 <Text>VERIFICACIÓN</Text>             
                 </View>
                 <View style={styles.childFirma}>  
-                <Text style={styles.childContenido}>{newSolicitud?.userReceptor.name}</Text>
+                <Text style={styles.childContenido}>{newSolicitud?.userReceptor?.name ?? "N/A"}</Text>
                 <Text >RECIBE</Text>              
                 </View>              
             </View>

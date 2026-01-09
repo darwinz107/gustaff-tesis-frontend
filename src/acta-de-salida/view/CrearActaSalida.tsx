@@ -248,25 +248,32 @@ const metodoInventarios = async() =>{
     )}
 
     <div className="w-full h-full p-6 space-y-6">
-
-      
-      <div className="w-full flex items-center justify-center">
-        <button
-          className="btn btn-primary"
-          disabled={!conOrden}
-          onClick={() => { setactaSalida(true); setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo); }}
-        >
-          Asignar solicitud de material
-        </button>
+      {/* Header */}
+      <div className="bg-gradient-to-r from-amber-500 to-orange-600 rounded-t-2xl p-6 shadow-lg border-t-4 border-amber-400">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-3xl">📤</span>
+            <div>
+              <h1 className="text-2xl font-bold text-white">Crear Acta de Salida</h1>
+              <p className="text-amber-100 text-sm">Registro de salida de materiales del inventario</p>
+            </div>
+          </div>
+          <button
+            className="btn btn-sm bg-amber-600 hover:bg-amber-700 text-white border-0 gap-2"
+            disabled={!conOrden}
+            onClick={() => { setactaSalida(true); setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo); }}
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/></svg>
+            Asignar Solicitud
+          </button>
+        </div>
       </div>
 
      
-      <div className="w-full bg-base-100 rounded-2xl shadow p-5">
-        <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-3">
-          Información
-        </h2>
+      <div className="w-full bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-700 mb-4 pb-3 border-b border-amber-200">📋 Información de Orden</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="space-y-3">
             <label className="text-sm text-gray-600">Solicitante</label>
             <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.userSolicitante?.name} disabled />
@@ -361,13 +368,20 @@ const metodoInventarios = async() =>{
 
           <div className="md:col-span-12 flex gap-3 mt-3">
             {conOrden ? (
-              <button className="btn btn-outline" onClick={() => { setconOrden(!conOrden); setsolicitudMaterial({ numOrden: "", numOrdenTrabajo: { Area: "", userSolicitante: { name: "" }, Maquina: "", Codigo: "" }, Destino: "", itemSolicitados: [] }); setentrega(0); }}>
-                Activar
+              <button className="btn btn-sm bg-amber-500 hover:bg-amber-600 text-white border-0 gap-2" onClick={() => { setconOrden(!conOrden); setsolicitudMaterial({ numOrden: "", numOrdenTrabajo: { Area: "", userSolicitante: { name: "" }, Maquina: "", Codigo: "" }, Destino: "", itemSolicitados: [] }); setentrega(0); }}>
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd"/></svg>
+                Activar Modo Sin Orden
               </button>
             ) : (
               <>
-                <button className="btn btn-primary" onClick={agregarCompras}>Agregar a compras</button>
-                <button className="btn" onClick={() => setconOrden(!conOrden)}>Cancelar</button>
+                <button className="btn btn-sm bg-amber-500 hover:bg-amber-600 text-white border-0 gap-2" onClick={agregarCompras}>
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"/></svg>
+                  Agregar a Salida
+                </button>
+                <button className="btn btn-sm btn-ghost gap-2" onClick={() => setconOrden(!conOrden)}>
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/></svg>
+                  Volver a Con Orden
+                </button>
               </>
             )}
           </div>
@@ -375,10 +389,10 @@ const metodoInventarios = async() =>{
       </div>
 
       
-      <div className="w-full bg-base-100 rounded-2xl shadow p-5">
-        <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-3">Salidas</h2>
+      <div className="w-full bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-700 mb-4 pb-3 border-b border-amber-200">📋 Salidas Registradas</h2>
 
-        <div className="overflow-auto max-h-72">
+        <div className="overflow-auto max-h-80 border border-gray-200 rounded-lg">
           <table className="table table-zebra w-full">
             <thead>
               <tr>
@@ -421,14 +435,37 @@ const metodoInventarios = async() =>{
       </div>
 
       
-      <div className="flex justify-center">
-        <button className="btn btn-success" onClick={generarActaSalida}>Generar acta de salida</button>
+      <div className="mt-6 flex justify-center gap-3">
+        <button className="btn btn-ghost btn-md gap-2" onClick={() => { setconOrden(!conOrden); setsolicitudMaterial({ numOrden: "", numOrdenTrabajo: { Area: "", userSolicitante: { name: "" }, Maquina: "", Codigo: "" }, Destino: "", itemSolicitados: [] }); setentrega(0); setagregarItems([]); }}>
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/></svg>
+          Cancelar
+        </button>
+        <button className="btn btn-md bg-amber-500 hover:bg-amber-600 text-white border-0 gap-2" onClick={generarActaSalida}>
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M5 13a3 3 0 105.119-1.023A5.822 5.822 0 1015.956 15H10a1 1 0 11-2 0v-3.379a1 1 0 00-1.823-.5A2.988 2.988 0 005 13z"/></svg>
+          Generar Acta de Salida
+        </button>
       </div>
 
       
       <div className={`fixed inset-0 z-40 flex items-center justify-center transition-opacity duration-300 ${ventanaBuscarOrdenTrabajo ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-        <div className="bg-white w-11/12 md:w-4/5 h-4/5 rounded-lg shadow-lg overflow-hidden border">
-          <BuscarOrdenCompra ordenes={ordenes} setidSolMaterial={cargarInfoSolMaterial} setventanaBuscarOrdenTrabajo={setventanaBuscarOrdenTrabajo} ventanaBuscarOrdenTrabajo={ventanaBuscarOrdenTrabajo} />
+        <div className="bg-white w-11/12 md:w-4/5 h-4/5 rounded-2xl shadow-2xl overflow-hidden border border-gray-200 flex flex-col">
+          <div className="bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-4 border-b border-amber-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">📋</span>
+                <div>
+                  <h2 className="text-lg font-bold text-white">Seleccionar Orden de Trabajo</h2>
+                  <p className="text-amber-100 text-xs">Elige una orden para asociar a la salida</p>
+                </div>
+              </div>
+              <button onClick={() => setventanaBuscarOrdenTrabajo(false)} className="btn btn-circle btn-sm btn-ghost text-white hover:bg-orange-700">
+                ✕
+              </button>
+            </div>
+          </div>
+          <div className="flex-1 overflow-y-auto">
+            <BuscarOrdenCompra ordenes={ordenes} setidSolMaterial={cargarInfoSolMaterial} setventanaBuscarOrdenTrabajo={setventanaBuscarOrdenTrabajo} ventanaBuscarOrdenTrabajo={ventanaBuscarOrdenTrabajo} />
+          </div>
         </div>
       </div>
 

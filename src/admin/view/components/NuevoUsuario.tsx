@@ -203,118 +203,122 @@ export const NuevoUsuario = ({showCrearUsuario,setshowCrearUsuario,setconfirmarC
         </div>
       )}
       
-      <div className="w-full h-[12%] flex items-center justify-between px-6 border-b">
-        <h2 className="text-lg font-semibold">Crear usuario</h2>
+      <div className="w-full flex items-center justify-between px-6 py-4 bg-gradient-to-r from-blue-500 to-cyan-600 border-b border-blue-200 rounded-t-2xl">
+        <div className="flex items-center gap-3">
+          <span className="text-2xl">👤</span>
+          <div>
+            <h2 className="text-lg font-bold text-white">Crear Nuevo Usuario</h2>
+            <p className="text-blue-100 text-xs">Completa los datos para registrar un nuevo usuario</p>
+          </div>
+        </div>
         <button
           onClick={() => {limpiarFormulario(); setshowCrearUsuario(!showCrearUsuario);}}
-          className="btn text-lg hover:text-red-500 transition"
+          className="btn btn-circle btn-sm btn-ghost text-white hover:bg-blue-700"
         >
-          ❌
+          ✕
         </button>
       </div>
 
       
-      <div className="w-full h-[76%] px-6 py-4 grid grid-cols-3 gap-6 overflow-y-auto">
+      <div className="w-full flex-1 px-8 py-6 grid grid-cols-1 lg:grid-cols-3 gap-8 overflow-y-auto bg-gradient-to-b from-white to-blue-50">
 
         
-        <div className="space-y-4">
+        <div className="space-y-5">
           <div>
-            <label className="label">Nombre</label>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">👤 Nombre</label>
             <input 
-              className={`input w-full ${errores.nombre ? 'input-error' : ''}`} 
+              className={`input input-sm input-bordered w-full rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-400 ${errores.nombre ? 'input-error' : ''}`} 
               onChange={handleNombreChange}
               value={nombre}
             />
-            <div className="h-5">{errores.nombre && <p className="text-red-500 text-sm">{errores.nombre}</p>}</div>
+            <div className="h-5">{errores.nombre && <p className="text-red-500 text-xs mt-1">{errores.nombre}</p>}</div>
           </div>
 
           <div>
-            <label className="label">Cédula</label>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">📌 Cédula</label>
             <input 
-              className={`input w-full ${errores.cedula ? 'input-error' : ''}`} 
+              className={`input input-sm input-bordered w-full rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-400 ${errores.cedula ? 'input-error' : ''}`} 
               onChange={handleCedulaChange}
               value={cedula}
               type="text"
             />
-            <div className="h-5">{errores.cedula && <p className="text-red-500 text-sm">{errores.cedula}</p>}</div>
+            <div className="h-5">{errores.cedula && <p className="text-red-500 text-xs mt-1">{errores.cedula}</p>}</div>
           </div>
 
           <div>
-            <label className="label">Celular</label>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">📱 Celular</label>
             <input 
-              className={`input w-full ${errores.celular ? 'input-error' : ''}`} 
+              className={`input input-sm input-bordered w-full rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-400 ${errores.celular ? 'input-error' : ''}`} 
               onChange={handleCelularChange}
               value={celular}
               type="text"
             />
-            <div className="h-5">{errores.celular && <p className="text-red-500 text-sm">{errores.celular}</p>}</div>
+            <div className="h-5">{errores.celular && <p className="text-red-500 text-xs mt-1">{errores.celular}</p>}</div>
           </div>
         </div>
 
         
-        <div className="space-y-4">
+        <div className="space-y-5">
           <div>
-            <label className="label">Fecha de nacimiento</label>
-            
-              <input 
-                type="date" 
-                className={`input input-sm ${errores.fecha ? 'input-error' : ''}`} 
-                value={selectFechaNac} 
-                onChange={handleFechaChange}
-              />
-              <div className="h-5">{errores.fecha && <p className="text-red-500 text-sm">{errores.fecha}</p>}</div>
-           
+            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">🗓️ Fecha de nacimiento</label>
+            <input 
+              type="date" 
+              className={`input input-sm input-bordered w-full rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-400 ${errores.fecha ? 'input-error' : ''}`} 
+              value={selectFechaNac} 
+              onChange={handleFechaChange}
+            />
+            <div className="h-5">{errores.fecha && <p className="text-red-500 text-xs mt-1">{errores.fecha}</p>}</div>
           </div>
 
           <div>
-            <label className="label">Email</label>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">✉️ Email</label>
             <input 
-              className={`input w-full ${errores.email ? 'input-error' : ''}`} 
+              className={`input input-sm input-bordered w-full rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-400 ${errores.email ? 'input-error' : ''}`} 
               onChange={handleEmailChange}
               value={email}
               type="email"
             />
-            <div className="h-5">{errores.email && <p className="text-red-500 text-sm">{errores.email}</p>}</div>
+            <div className="h-5">{errores.email && <p className="text-red-500 text-xs mt-1">{errores.email}</p>}</div>
           </div>
 
           <div>
-            <label className="label">Contraseña</label>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">🔐 Contraseña</label>
             <input 
-              className={`input w-full ${errores.contrasenia ? 'input-error' : ''}`} 
+              className={`input input-sm input-bordered w-full rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-400 ${errores.contrasenia ? 'input-error' : ''}`} 
               type="password" 
               onChange={handleContraseniaChange}
               value={contrasenia}
             />
-            <div className="h-5">{errores.contrasenia && <p className="text-red-500 text-sm">{errores.contrasenia}</p>}</div>
+            <div className="h-5">{errores.contrasenia && <p className="text-red-500 text-xs mt-1">{errores.contrasenia}</p>}</div>
           </div>
         </div>
 
         
-        <div className="space-y-4">
+        <div className="space-y-5">
           <div>
-            <label className="label">Cargo</label>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">🏷️ Cargo</label>
             <select 
-              className={`select w-full ${errores.cargo ? 'select-error' : ''}`} 
-              defaultValue={"..."} 
+              className={`select select-sm select-bordered w-full rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-400 ${errores.cargo ? 'select-error' : ''}`} 
+              defaultValue={0} 
               onChange={handleCargoChange}
             >
-              <option disabled>...</option>
+              <option value={0} disabled>Selecciona un cargo...</option>
               {cargos.map((a) => (
                 <option key={a.id} value={a.id}>{a.name}</option>
               ))}
             </select>
-            <div className="h-5">{errores.cargo && <p className="text-red-500 text-sm">{errores.cargo}</p>}</div>
+            <div className="h-5">{errores.cargo && <p className="text-red-500 text-xs mt-1">{errores.cargo}</p>}</div>
           </div>
         </div>
       </div>
 
       
-      <div className="w-full h-[12%] px-6 flex justify-end gap-3 border-t">
-        <button className="btn btn-outline" onClick={() => {limpiarFormulario(); setshowCrearUsuario(!showCrearUsuario);}}>
-          Cancelar
+      <div className="w-full px-8 py-4 flex justify-end gap-3 border-t border-blue-200 bg-gradient-to-r from-blue-50 to-transparent">
+        <button className="btn btn-ghost gap-2" onClick={() => {limpiarFormulario(); setshowCrearUsuario(!showCrearUsuario);}}>
+          ❌ Cancelar
         </button>
-        <button className="btn btn-primary" onClick={crearNuevoUsuario}>
-          Crear usuario
+        <button className="btn bg-gradient-to-r from-blue-500 to-cyan-600 text-white border-0 hover:from-blue-600 hover:to-cyan-700 gap-2" onClick={crearNuevoUsuario}>
+          ✓ Crear Usuario
         </button>
       </div>
     </>

@@ -44,14 +44,20 @@ preCargarOrdenes();
     
   return (
     <>
-     <div className='w-full h-[10%] flex justify-between p-5 '>
-          <div>Filtros</div>
-          <div onClick={() => { setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo);preCargarOrdenes(); }} className='cursor-pointer'>❌</div>
+     <div className='z-50 w-full bg-gradient-to-r from-purple-50 to-pink-50 border-b border-purple-200 px-6 py-4 flex justify-between items-center'>
+          <div className='flex items-center gap-2'>
+            <span className='text-lg font-semibold text-purple-900'>🔍 Filtros</span>
+            <span className='text-xs text-purple-600'>Busca órdenes de trabajo disponibles</span>
+          </div>
         </div>
-        <div className='w-full h-[20%] border-y border-gray-300 px-4 flex flex-row'>
-         <div className='h-full w-[33.33%]'><p>Solicitante</p><input type="text" className='input' onChange={(e)=>{setselectUserSolicitante(e.target.value);}}/></div>
-         <div className='h-full w-[33.33%]'><p>Fecha</p><button type="button" onClick={() => { callyPpopover.current?.showPopover() }} className="input input-border" id="cally" style={{ anchorName: "--cally" }}>
-                  Pick a date
+        <div className='w-full bg-gradient-to-r from-purple-50 to-pink-50 border-b border-purple-200 px-6 py-6 flex flex-row gap-4'>
+         <div className='flex-1 flex flex-col gap-1'>
+           <label className='text-sm font-semibold text-gray-700'>Solicitante</label>
+           <input type="text" className='input input-sm input-bordered rounded-lg focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400' onChange={(e)=>{setselectUserSolicitante(e.target.value);}}/></div>
+         <div className='flex-1 flex flex-col gap-1'>
+           <label className='text-sm font-semibold text-gray-700'>Fecha</label>
+           <button type="button" onClick={() => { callyPpopover.current?.showPopover() }} className="input input-sm input-bordered rounded-lg text-left focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400" id="cally" style={{ anchorName: "--cally" }}>
+                  📅 Pick a date
                 </button>
                 <div popover="auto" ref={callyPpopover} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally" }}>
                   <calendar-date className="cally" onchange={(e) =>{document.getElementById("cally").innerText = e.target.value; setselectFechaNac(e.target.value);}}>
@@ -60,41 +66,40 @@ preCargarOrdenes();
                     <calendar-month></calendar-month>
                   </calendar-date>
                 </div></div>
-         <div className='h-full w-[33.34%]'></div>
         </div>
         
-        <div className='w-full h-[70%] flex justify-between p-5'>
+        <div className='w-full flex-1 flex flex-col overflow-auto'>
  
-        <div className="overflow-x-auto w-full h-[100%] m-2">
-          <table className="table">
+        <div className="w-full flex-1   p-4">
+          <table className="table table-sm">
 
-            <thead >
+            <thead className='bg-gradient-to-r from-purple-100 to-pink-100 border-b-2 border-purple-300'>
               <tr>
 
-                <th>Area</th>
-                <th>Codigo</th>
-                <th>N.Orden de trabajo</th>
-                <th>Solicitante</th>
-                <th>Acciones</th>
+                <th className='text-purple-900'>Area</th>
+                <th className='text-purple-900'>Codigo</th>
+                <th className='text-purple-900'>N.Orden de trabajo</th>
+                <th className='text-purple-900'>Solicitante</th>
+                <th className='text-purple-900'>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {ordenes.map((u,i) =>
                 <>
-                  <tr>
+                  <tr className='hover:bg-purple-50 border-b border-gray-200'>
 
-                    <td>
+                    <td className='font-semibold text-purple-900'>
                       {u.Area}
                     </td>
-                    <td>
+                    <td className='text-gray-700'>
                       {u.Codigo}
 
                     </td>
-                    <td>{u.NumOrden}</td>
-                    <td>{u.userSolicitante.name}</td>
+                    <td className='text-gray-700'>{u.NumOrden}</td>
+                    <td className='text-gray-700'>{u.userSolicitante.name}</td>
                     <td>
                       
-                      <button className="btn btn-ghost btn-xs" onClick={()=>{setinfoDestino(u);setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo);}}>Seleccionar</button>
+                      <button className="btn btn-sm bg-gradient-to-r from-purple-500 to-pink-600 text-white border-none hover:from-purple-600 hover:to-pink-700 rounded-lg" onClick={()=>{setinfoDestino(u);setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo);}}>✓ Seleccionar</button>
                     </td>
                   </tr>
                 </>)}

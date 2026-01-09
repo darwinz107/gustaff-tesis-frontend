@@ -26,10 +26,22 @@ export interface SolicitudOrden{
     
     DescripcionTrabajo:string|null;
     
-    userSolicitante:string|object;
+    userSolicitante:UserSolicitante|null;
     
-    userReceptor:string|object;
+    userReceptor:UserReceptor|null;
     
-    userTecnico:string|null; 
+    userTecnico:UserTecnico|null; 
     estado:string;
+}
+
+interface UserSolicitante {
+  name: string;
+}
+
+interface UserReceptor {
+  name: string;
+}
+
+interface UserTecnico {
+  name: string;
 }

@@ -311,53 +311,66 @@ const { tipo, data } = itemEnEdicion;
       </div>
     </dialog>
 
-      <div className="w-full h-full p-6 space-y-6">
+      <div className="w-full h-full p-6 space-y-6 flex flex-col">
+        {/* HEADER */}
+        <div className="bg-gradient-to-r from-teal-500 to-cyan-600 rounded-2xl p-6 shadow-lg border-t-4 border-teal-400">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-3xl">⚙️</span>
+              <div>
+                <h1 className="text-2xl font-bold text-white">Áreas y Máquinas</h1>
+                <p className="text-teal-100 text-sm">Gestiona las áreas de trabajo y máquinas disponibles</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* SECCIÓN CREAR ÁREA Y MÁQUINA */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Crear Área */}
-          <div className="bg-gray-100 rounded-xl shadow-md p-4">
-            <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Nueva Área</h2>
-            <div className="flex flex-col gap-3">
+          <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl shadow-sm p-6 border border-teal-100">
+            <h2 className="text-lg font-bold text-teal-900 mb-4 pb-3 border-b-2 border-teal-300 flex items-center gap-2"><span>📍</span> Nueva Área</h2>
+            <div className="flex flex-col gap-4">
               <div>
-                <label className="block text-sm">Nombre del área</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Nombre del área</label>
                 <input
                   type="text"
-                  className={`input w-full ${erroresArea ? 'input-error' : ''}`}
+                  className={`input input-sm input-bordered w-full rounded-lg focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-400 ${erroresArea ? 'input-error' : ''}`}
                   onChange={(e) => {
                     setnewArea(e.target.value);
                     seterroresArea(validarNombre(e.target.value));
                   }}
                   value={newArea}
                 />
-                <div className="h-5">{erroresArea && <p className="text-red-500 text-sm">{erroresArea}</p>}</div>
+                <div className="h-5">{erroresArea && <p className="text-red-500 text-xs mt-1">{erroresArea}</p>}</div>
               </div>
               <div className="flex justify-end">
-                <button className="btn btn-primary" onClick={crearArea}>Crear Área</button>
+                <button className="btn btn-sm bg-gradient-to-r from-teal-500 to-cyan-600 text-white border-0 hover:from-teal-600 hover:to-cyan-700 gap-2" onClick={crearArea}>➕ Crear Área</button>
               </div>
             </div>
           </div>
 
           {/* Crear Máquina */}
-          <div className="bg-gray-100 rounded-xl shadow-md p-4">
-            <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Nueva Máquina</h2>
-            <div className="flex flex-col gap-3">
+          <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl shadow-sm p-6 border border-teal-100">
+            <h2 className="text-lg font-bold text-teal-900 mb-4 pb-3 border-b-2 border-teal-300 flex items-center gap-2"><span>⚙️</span> Nueva Máquina</h2>
+            <div className="flex flex-col gap-4">
               <div>
-                <label className="block text-sm">Nombre de la máquina</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Nombre de la máquina</label>
                 <input
                   type="text"
-                  className={`input w-full ${erroresMaquina.maquina ? 'input-error' : ''}`}
+                  className={`input input-sm input-bordered w-full rounded-lg focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-400 ${erroresMaquina.maquina ? 'input-error' : ''}`}
                   onChange={(e) => {
                     setmaquina(e.target.value);
                     seterroresMaquina({ ...erroresMaquina, maquina: validarNombreGeneral(e.target.value) });
                   }}
                   value={maquina}
                 />
-                <div className="h-5">{erroresMaquina.maquina && <p className="text-red-500 text-sm">{erroresMaquina.maquina}</p>}</div>
+                <div className="h-5">{erroresMaquina.maquina && <p className="text-red-500 text-xs mt-1">{erroresMaquina.maquina}</p>}</div>
               </div>
               <div>
-                <label className="block text-sm">Área</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Área</label>
                 <select
-                  className={`select w-full ${erroresMaquina.area ? 'select-error' : ''}`}
+                  className={`select select-sm select-bordered w-full rounded-lg focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-400 ${erroresMaquina.area ? 'select-error' : ''}`}
                   value={selectArea}
                   onChange={(e) => {
                     setselectArea(e.target.value);
@@ -369,13 +382,13 @@ const { tipo, data } = itemEnEdicion;
                     <option key={a.id} value={a.nombre}>{a.nombre}</option>
                   ))}
                 </select>
-                <div className="h-5">{erroresMaquina.area && <p className="text-red-500 text-sm">{erroresMaquina.area}</p>}</div>
+                <div className="h-5">{erroresMaquina.area && <p className="text-red-500 text-xs mt-1">{erroresMaquina.area}</p>}</div>
               </div>
               <div>
-                <label className="block text-sm">Imagen</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Imagen</label>
             <input 
               type="file" 
-              className="file-input file-input-bordered w-full" 
+              className="file-input file-input-sm file-input-bordered w-full rounded-lg focus:outline-none" 
               accept="image/*"
               ref={fileInputRef}
               onChange={(e) => {
@@ -383,18 +396,18 @@ const { tipo, data } = itemEnEdicion;
                 setimagen(file);
               }}
             />
-             {imagen && <p className="text-xs text-green-600 mt-1">Imagen seleccionado</p>}
+             {imagen && <p className="text-xs text-green-600 mt-1">✓ Imagen seleccionada</p>}
               </div>
               <div className="flex justify-end">
-                <button className="btn btn-primary" onClick={crearMaquina}>Crear Máquina</button>
+                <button className="btn btn-sm bg-gradient-to-r from-teal-500 to-cyan-600 text-white border-0 hover:from-teal-600 hover:to-cyan-700 gap-2" onClick={crearMaquina}>➕ Crear Máquina</button>
               </div>
             </div>
           </div>
         </div>
 
         {/* SECCIÓN TABLA DE ÁREAS CON CÓDIGOS Y MÁQUINAS */}
-        <div className="bg-white rounded-xl shadow-md p-4">
-          <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Áreas con Códigos y Máquinas</h2>
+        <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+          <h2 className="text-lg font-bold text-teal-900 mb-4 pb-3 border-b-2 border-teal-300 flex items-center gap-2"><span>📊</span> Áreas con Códigos y Máquinas</h2>
 
           {areas.length === 0 ? (
             <p className="text-gray-500 text-center py-4">No hay áreas registradas</p>

@@ -234,36 +234,31 @@ const load = async () => {
         </div>
       )}
 
-      <div className="min-w-[70%] min-h-[60%] rounded-xl border border-gray-200 m-4 bg-white shadow-sm">
-        <div className="bg-gray-100 w-full h-12 flex items-center justify-between rounded-t-lg border-b px-4">
-          <p className="font-semibold text-gray-700">Listado de Inventarios</p>
-          <div className="flex items-center gap-2">
-             <button className="btn btn-sm btn-ghost" onClick={() => load()}>Refrescar</button>
-            <button className="btn btn-sm btn-ghost" onClick={limpiarFiltros}>Limpiar</button>
-            <button className="btn btn-sm btn-outline" onClick={aplicarFiltros}>Aplicar filtros</button>
-          </div>
+      <div className="w-full h-full rounded-2xl border border-gray-200 bg-white shadow-lg">
+        <div className="bg-gradient-to-r from-cyan-500 to-cyan-600 w-full py-4 rounded-t-2xl border-b border-cyan-200 px-6">
+          <h2 className="font-bold text-white text-lg">📦 Gestión de Inventario</h2>
         </div>
 
-        <div className="p-4 grid grid-cols-1 lg:grid-cols-5 gap-3">
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Nombre</label>
-            <input className="input input-sm" value={filtroNombre} onChange={(e) => setFiltroNombre(e.target.value)} />
+        <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-4 bg-gray-50 border-b border-gray-200">
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-semibold text-gray-600">Nombre</label>
+            <input className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroNombre} onChange={(e) => setFiltroNombre(e.target.value)} />
           </div>
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Bodega</label>
-            <input className="input input-sm" value={filtroBodega} onChange={(e) => setFiltroBodega(e.target.value)} />
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-semibold text-gray-600">Bodega</label>
+            <input className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroBodega} onChange={(e) => setFiltroBodega(e.target.value)} />
           </div>
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Stock min</label>
-            <input type="number" className="input input-sm" value={filtroStockMin} onChange={(e) => setFiltroStockMin(e.target.value === "" ? "" : Number(e.target.value))} />
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-semibold text-gray-600">Stock Mín</label>
+            <input type="number" className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroStockMin} onChange={(e) => setFiltroStockMin(e.target.value === "" ? "" : Number(e.target.value))} />
           </div>
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Stock max</label>
-            <input type="number" className="input input-sm" value={filtroStockMax} onChange={(e) => setFiltroStockMax(e.target.value === "" ? "" : Number(e.target.value))} />
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-semibold text-gray-600">Stock Máx</label>
+            <input type="number" className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroStockMax} onChange={(e) => setFiltroStockMax(e.target.value === "" ? "" : Number(e.target.value))} />
           </div>
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Estado</label>
-            <select className="select select-sm" value={filtroActivo} onChange={(e) => setFiltroActivo(e.target.value)}>
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-semibold text-gray-600">Estado</label>
+            <select className="select select-sm select-bordered focus:select-primary rounded-lg" value={filtroActivo} onChange={(e) => setFiltroActivo(e.target.value)}>
               <option value="">Todos</option>
               <option value="true">ACTIVO</option>
               <option value="false">INACTIVO</option>
@@ -271,12 +266,18 @@ const load = async () => {
           </div>
         </div>
 
-        <div className="overflow-x-auto p-5">
-          <div className="overflow-hidden border rounded-lg">
+        <div className="px-6 py-3 flex items-center justify-end gap-2 bg-gray-50 border-b border-gray-200">
+          <button className="btn btn-sm btn-ghost hover:btn-primary gap-2" onClick={() => load()}>🔄 Refrescar</button>
+          <button className="btn btn-sm btn-ghost hover:btn-warning gap-2" onClick={limpiarFiltros}>✕ Limpiar</button>
+          <button className="btn btn-sm btn-primary gap-2" onClick={aplicarFiltros}>✓ Aplicar</button>
+        </div>
+
+        <div className="px-6 pb-6 pt-4">
+          <div className="overflow-hidden border border-gray-200 rounded-xl shadow-sm">
             <div className="max-h-[520px] overflow-auto">
               <table className="table w-full">
-                <thead className="bg-white sticky top-0">
-                  <tr className="text-sm text-left text-gray-600">
+                <thead className="bg-gradient-to-r from-cyan-50 to-cyan-100 sticky top-0 z-20">
+                  <tr className="text-sm text-left text-gray-700 font-semibold">
                     <th className="px-4 py-3">Nombre</th>
                     <th className="px-4 py-3">Stock</th>
                     <th className="px-4 py-3">Costo</th>
@@ -288,23 +289,23 @@ const load = async () => {
                 </thead>
                 <tbody>
                   {items.map((u, i) => (
-                    <tr key={u.id ?? i} className="hover:bg-gray-50">
-                      <td className="px-4 py-3">{u?.nombre}</td>
-                      <td className="px-4 py-3">{u?.stock}</td>
-                      <td className="px-4 py-3">{u?.costo}</td>
-                      <td className="px-4 py-3">{u?.estado ? "ACTIVO" : "INACTIVO"}</td>
-                      <td className="px-4 py-3">{u?.bodega?.bodega}</td>
-                      <td className="flex justify-center">
+                    <tr key={u.id ?? i} className="border-t border-gray-100 hover:bg-cyan-50 transition-colors">
+                      <td className="px-4 py-3 font-semibold text-gray-800">{u?.nombre}</td>
+                      <td className="px-4 py-3 text-gray-700">{u?.stock}</td>
+                      <td className="px-4 py-3 text-gray-700">{u?.costo?.toLocaleString()}</td>
+                      <td className="px-4 py-3"><span className={`badge ${u?.estado ? 'badge-success' : 'badge-error'} badge-sm`}>{u?.estado ? "ACTIVO" : "INACTIVO"}</span></td>
+                      <td className="px-4 py-3 text-gray-700">{u?.bodega?.bodega}</td>
+                      <td className="flex justify-center py-3">
                     {u.imagen ? (
-                      <img src={u.imagen} alt="Imagen del item" className="w-12 h-12 object-cover rounded" />
+                      <img src={u.imagen} alt="Imagen del item" className="w-12 h-12 object-cover rounded-lg border border-gray-200" />
                     ) : (
                       <span className="text-gray-500 text-sm">N/A</span>
                     )}
                   </td>
                       <td className="px-4 py-3 text-center">
-                        <div className="flex gap-2 justify-center">
-                          <button className="btn btn-ghost btn-xs" onClick={()=>{setventanaEmergente(true); setitem(u);}}>Ver detalles</button>
-                          <button className="btn btn-ghost btn-xs" disabled>Eliminar</button>
+                        <div className="flex gap-2 justify-center flex-wrap">
+                          <button className="btn btn-sm btn-info btn-outline gap-1" onClick={()=>{setventanaEmergente(true); setitem(u);}}>👁️ Ver</button>
+                          <button className="btn btn-sm btn-error btn-outline gap-1" disabled>🗑️</button>
                         </div>
                       </td>
                     </tr>
@@ -323,104 +324,105 @@ const load = async () => {
 
       {item &&( <div className = {`fixed z-50 inset-0 transition-opacity duration-300 ${ventanaEmergente ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
        <div className='absolute inset-0 backdrop-blur-sm flex items-center justify-center'>
-        <div className='relative border border-gray-300 w-full max-w-6xl h-[85vh] rounded-md bg-white shadow-lg overflow-y-auto flex flex-col'>
-          <div>
-          <div className='w-full h-14 flex items-center justify-between border-b p-4'>
-            <h2 className='text-lg font-semibold text-gray-700'>Detalles del item</h2> 
-            <button className='btn btn-ghost btn-sm cursor-pointer ' onClick={()=>{setventanaEmergente(false); sethabilitarEdicion(true);}}>Cerrar</button>
+        <div className='relative border border-gray-300 w-full max-w-6xl h-[85vh] rounded-2xl bg-white shadow-2xl overflow-hidden flex flex-col'>
+          {/* Header */}
+          <div className='bg-gradient-to-r from-cyan-500 to-cyan-600 w-full py-4 px-6 flex items-center justify-between border-b border-cyan-200'>
+            <h2 className='text-lg font-bold text-white'>📦 Detalles del Item</h2> 
+            <button className='btn btn-circle btn-ghost btn-sm text-white hover:bg-cyan-700' onClick={()=>{setventanaEmergente(false); sethabilitarEdicion(true);}}>✕</button>
           </div>
-          <div className='grid grid-cols-3 gap-4 p-4 '>
-            <div>
-              <label className='text-sm text-gray-500 block'>Item</label>
-              <input type="text" className='input input-sm' disabled={habilitarEdicion} value={nombre} onChange={(e) => setNombre(e.target.value)}/>
-            </div>
-             <div>
-              <label className='text-sm text-gray-500 block'>Stock</label>
-              <input type="number" className='input input-sm' disabled={habilitarEdicion} value={stock} onChange={(e) => setStock(e.target.value)}/>
-            </div>
-             <div>
-              <label className='text-sm text-gray-500 block'>Costo</label>
-              <input placeholder='0.00' className='input input-sm' disabled={habilitarEdicion} value={costo} onChange={(e) => setCosto(e.target.value)}/>
-            </div>
-             <div>
-              <label className='text-sm text-gray-500 block'>Stock Min</label>
-              <input type="number" className='input input-sm' disabled={habilitarEdicion} value={stockMin} onChange={(e) => setStockMin(Number(e.target.value))}/>
-            </div>
-             <div>
-              <label className='text-sm text-gray-500 block'>Bodega</label>
-              <select className='select select-sm' disabled={habilitarEdicion} value={bodegaSeleccionada} onChange={(e) => setBodegaSeleccionada(e.target.value)}>
-                <option value="">Seleccione una bodega</option>
-                {bodegas?.map(b => <option key={b.id} value={b.id}>{b.bodega}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className='text-sm text-gray-500 block'>Seccion</label>
-              <select className='select select-sm' disabled={habilitarEdicion} value={seccionSeleccionada} onChange={(e) => setSeccionSeleccionada(e.target.value)}>
-                <option value="">Seleccione una sección</option>
-                {secciones?.map(s => <option key={s.id} value={s.id}>{s.seccion}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className='text-sm text-gray-500 block'>Percha</label>
-              <select className='select select-sm' disabled={habilitarEdicion} value={ perchaSeleccionada} onChange={(e) => setperchaSeleccionada(e.target.value)}>
-                <option value="">Seleccione una percha</option>
-                {perchas?.map(p => <option key={p.id} value={p.id}>{p.percha}</option>)}
-              </select>
-            </div>
-             <div>
-              <label className='text-sm text-gray-500 block'>Estado</label>
-              <select className='select select-sm' disabled={habilitarEdicion} value={estado ? "true" : "false"} onChange={(e) => setEstado(e.target.value === "true")}>
-                <option value="true">ACTIVO</option>
-                <option value="false">INACTIVO</option>
-              </select>
-            </div>
-             <div>
-              <label className='text-sm text-gray-500 block'>Imagen</label>
-              {imagenEditada && typeof imagenEditada ==='string' ?(
-              <div  className='relative w-full h-60 overflow-hidden group'>
-                <img src={typeof imagenEditada === 'string' ? imagenEditada : URL.createObjectURL(imagenEditada)} className='w-full h-full object-contain ' /> 
-               <button onClick={()=>{setimagenEditada(null); if(refImg.current) refImg.current.value = ""; console.log("Hice clic")}} className='cursor-pointer absolute inset-0 flex items-center justify-center bg-white bg-opacity-0 group-hover:bg-opacity-50 transition opacity-0 group-hover:opacity-50'>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                          
-              </button>
+          
+          {/* Content */}
+          <div className='overflow-y-auto flex-1'>
+            <div className='grid grid-cols-1 lg:grid-cols-3 gap-6 p-6 bg-gray-50'>
+              <div className='flex flex-col gap-2'>
+                <label className='text-xs font-semibold text-gray-600 uppercase tracking-wider'>Nombre del Item</label>
+                <input type="text" className='input input-sm input-bordered focus:input-primary rounded-lg' disabled={habilitarEdicion} value={nombre} onChange={(e) => setNombre(e.target.value)}/>
               </div>
-              ):(
-<div>
-  <input type="file"
-  accept='image/*'
-  ref={refImg}
-  className='file-input'
-  disabled={habilitarEdicion}
-  onChange={(e)=> setimagenEditada(e.target.files ? e.target.files[0] : null)}
-  />
-    {imagenEditada && (
-                          <p className="text-xs text-green-600 mt-1">Imagen cargada</p>
-                        )}
-</div>
-              )}
-            
+              <div className='flex flex-col gap-2'>
+                <label className='text-xs font-semibold text-gray-600 uppercase tracking-wider'>Stock Actual</label>
+                <input type="number" className='input input-sm input-bordered focus:input-primary rounded-lg' disabled={habilitarEdicion} value={stock} onChange={(e) => setStock(e.target.value)}/>
+              </div>
+              <div className='flex flex-col gap-2'>
+                <label className='text-xs font-semibold text-gray-600 uppercase tracking-wider'>Costo Unitario</label>
+                <input placeholder='0.00' className='input input-sm input-bordered focus:input-primary rounded-lg' disabled={habilitarEdicion} value={costo} onChange={(e) => setCosto(e.target.value)}/>
+              </div>
+              <div className='flex flex-col gap-2'>
+                <label className='text-xs font-semibold text-gray-600 uppercase tracking-wider'>Stock Mínimo</label>
+                <input type="number" className='input input-sm input-bordered focus:input-primary rounded-lg' disabled={habilitarEdicion} value={stockMin} onChange={(e) => setStockMin(Number(e.target.value))}/>
+              </div>
+              <div className='flex flex-col gap-2'>
+                <label className='text-xs font-semibold text-gray-600 uppercase tracking-wider'>Bodega</label>
+                <select className='select select-sm select-bordered focus:select-primary rounded-lg' disabled={habilitarEdicion} value={bodegaSeleccionada} onChange={(e) => setBodegaSeleccionada(e.target.value)}>
+                  <option value="">Seleccione una bodega</option>
+                  {bodegas?.map(b => <option key={b.id} value={b.id}>{b.bodega}</option>)}
+                </select>
+              </div>
+              <div className='flex flex-col gap-2'>
+                <label className='text-xs font-semibold text-gray-600 uppercase tracking-wider'>Sección</label>
+                <select className='select select-sm select-bordered focus:select-primary rounded-lg' disabled={habilitarEdicion} value={seccionSeleccionada} onChange={(e) => setSeccionSeleccionada(e.target.value)}>
+                  <option value="">Seleccione una sección</option>
+                  {secciones?.map(s => <option key={s.id} value={s.id}>{s.seccion}</option>)}
+                </select>
+              </div>
+              <div className='flex flex-col gap-2'>
+                <label className='text-xs font-semibold text-gray-600 uppercase tracking-wider'>Percha</label>
+                <select className='select select-sm select-bordered focus:select-primary rounded-lg' disabled={habilitarEdicion} value={ perchaSeleccionada} onChange={(e) => setperchaSeleccionada(e.target.value)}>
+                  <option value="">Seleccione una percha</option>
+                  {perchas?.map(p => <option key={p.id} value={p.id}>{p.percha}</option>)}
+                </select>
+              </div>
+              <div className='flex flex-col gap-2'>
+                <label className='text-xs font-semibold text-gray-600 uppercase tracking-wider'>Estado</label>
+                <select className='select select-sm select-bordered focus:select-primary rounded-lg' disabled={habilitarEdicion} value={estado ? "true" : "false"} onChange={(e) => setEstado(e.target.value === "true")}>
+                  <option value="true">✓ ACTIVO</option>
+                  <option value="false">✕ INACTIVO</option>
+                </select>
+              </div>
+              <div className='flex flex-col gap-2 lg:col-span-3'>
+                <label className='text-xs font-semibold text-gray-600 uppercase tracking-wider'>Imagen del Item</label>
+                {imagenEditada && typeof imagenEditada ==='string' ?(
+                <div  className='relative w-full h-64 bg-gray-100 rounded-lg border-2 border-cyan-200 overflow-hidden group flex items-center justify-center'>
+                  <img src={typeof imagenEditada === 'string' ? imagenEditada : URL.createObjectURL(imagenEditada)} className='max-w-full max-h-full object-contain' /> 
+                  <div className='absolute inset-0 bg-transparent bg-opacity-0 group-hover:bg-opacity-40 transition flex items-center justify-center cursor-pointer' onClick={()=>{setimagenEditada(null); if(refImg.current) refImg.current.value = "";}}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-red-500 opacity-0 group-hover:opacity-100 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </div>
+                </div>
+                ):(
+                  <div className='border-2 border-dashed border-cyan-300 rounded-lg p-6 bg-cyan-50'>
+                    <input type="file"
+                      accept='image/*'
+                      ref={refImg}
+                      className='file-input file-input-bordered file-input-sm w-full'
+                      disabled={habilitarEdicion}
+                      onChange={(e)=> setimagenEditada(e.target.files ? e.target.files[0] : null)}
+                    />
+                    {imagenEditada && (
+                      <p className="text-xs text-success mt-2">✓ Imagen cargada correctamente</p>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
-
           </div>
-          </div>
-           <div className=" w-full p-4 flex justify-between items-center px-6 border-t mt-auto">
+          
+          {/* Footer */}
+          <div className="w-full p-6 flex justify-between items-center border-t border-gray-200 bg-gray-50">
             {!habilitarEdicion ? (
               <>
-                <button className="btn btn-primary" onClick={guardarCambios}>Hecho</button>
-                <button className="btn" onClick={() => { sethabilitarEdicion(true); }}>Cancelar</button>
+                <button className="btn btn-primary gap-2" onClick={guardarCambios}>💾 Guardar Cambios</button>
+                <button className="btn btn-ghost gap-2" onClick={() => { sethabilitarEdicion(true); }}>↶ Cancelar</button>
               </>
             ) : (
               <>
-                <button className="btn" onClick={() => { sethabilitarEdicion(!habilitarEdicion); }}>Editar</button>
-                <button className="btn btn-ghost" onClick={() => { setventanaEmergente(false); sethabilitarEdicion(true); setBodegaSeleccionada(""); setSeccionSeleccionada(""); }}>Cerrar</button>
+                <button className="btn btn-warning gap-2" onClick={() => { sethabilitarEdicion(!habilitarEdicion); }}>✏️ Editar</button>
+                <button className="btn btn-ghost gap-2" onClick={() => { setventanaEmergente(false); sethabilitarEdicion(true); setBodegaSeleccionada(""); setSeccionSeleccionada(""); }}>Cerrar</button>
               </>
             )}
           </div>
         </div>
        </div>
-       
       </div>)}
     </>
   );

@@ -620,23 +620,32 @@ const eliminarItem = (index: number) => {
     )}
 
     <div className="w-full h-full p-6 space-y-6">
-
-      
-      <div className="w-full flex items-center justify-center">
-        <button
-          type="button"
-          className="btn btn-primary btn-sm"
-          onClick={() => { setventanaBuscarSolicitudMaterial(!ventanaBuscarSolicitudMaterial); }}
-        >
-          Asignar solicitud de material
-        </button>
+      {/* Header */}
+      <div className="bg-gradient-to-r from-blue-500 to-cyan-600 rounded-t-2xl p-6 shadow-lg border-t-4 border-blue-400">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-3xl">📦</span>
+            <div>
+              <h1 className="text-2xl font-bold text-white">Crear Acta de Entrada</h1>
+              <p className="text-blue-100 text-sm">Registro de ingreso de materiales al inventario</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="btn btn-sm bg-blue-600 hover:bg-blue-700 text-white border-0 gap-2"
+            onClick={() => { setventanaBuscarSolicitudMaterial(!ventanaBuscarSolicitudMaterial); }}
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/></svg>
+            Asignar Solicitud
+          </button>
+        </div>
       </div>
 
       
-      <div className="w-full bg-base-100 rounded-2xl shadow-md p-5">
-        <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-3">Destino / Documento</h2>
+      <div className="w-full bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-700 mb-4 pb-3 border-b border-blue-200">📄 Destino / Documento</h2>
 
-        <div className="flex gap-4 flex-wrap">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           <div className="flex gap-2 items-start max-w-[220px]">
             <div className="w-full">
               <label className="block text-sm text-gray-600 mb-1">Proveedor</label>
@@ -887,15 +896,38 @@ const eliminarItem = (index: number) => {
         </div>
       </div>
 
-      <div className="mt-4 flex justify-center">
-        <button type="button" className="btn btn-primary" onClick={enviarygenerarActaDeEntrada}>Generar</button>
+      <div className="mt-6 flex justify-center gap-3">
+        <button type="button" className="btn btn-ghost btn-md gap-2" onClick={() => limpiarCampos()}>
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd"/></svg>
+          Limpiar
+        </button>
+        <button type="button" className="btn btn-md bg-blue-500 hover:bg-blue-600 text-white border-0 gap-2" onClick={enviarygenerarActaDeEntrada}>
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M5 13a3 3 0 105.119-1.023A5.822 5.822 0 1015.956 15H10a1 1 0 11-2 0v-3.379a1 1 0 00-1.823-.5A2.988 2.988 0 005 13z"/></svg>
+          Generar Acta
+        </button>
       </div>
     </div>
 
    
     <div className={`z-10 fixed inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaBuscarSolicitudMaterial ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-      <div className="border border-gray-200 w-11/12 md:w-4/5 h-4/5 rounded-lg fixed bg-white shadow-lg overflow-hidden">
-        <BuscarOrdenCompra ordenes={ordenes} setidSolMaterial={setsolCompraId} setventanaBuscarOrdenTrabajo={setventanaBuscarSolicitudMaterial} ventanaBuscarOrdenTrabajo={ventanaBuscarSolicitudMaterial} />
+      <div className="bg-white w-11/12 md:w-4/5 h-4/5 rounded-2xl shadow-2xl overflow-hidden border border-gray-200 flex flex-col">
+        <div className="bg-gradient-to-r from-blue-500 to-cyan-600 px-6 py-4 border-b border-blue-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">📋</span>
+              <div>
+                <h2 className="text-lg font-bold text-white">Seleccionar Solicitud</h2>
+                <p className="text-blue-100 text-xs">Elige una solicitud de material para asociar</p>
+              </div>
+            </div>
+            <button onClick={() => setventanaBuscarSolicitudMaterial(false)} className="btn btn-circle btn-sm btn-ghost text-white hover:bg-blue-700">
+              ✕
+            </button>
+          </div>
+        </div>
+        <div className="flex-1 overflow-y-auto">
+          <BuscarOrdenCompra ordenes={ordenes} setidSolMaterial={setsolCompraId} setventanaBuscarOrdenTrabajo={setventanaBuscarSolicitudMaterial} ventanaBuscarOrdenTrabajo={ventanaBuscarSolicitudMaterial} />
+        </div>
       </div>
     </div>
 

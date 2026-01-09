@@ -289,71 +289,91 @@ const obtenerUsers = async () =>{
           </div>
         </div>
       )}
-      <div className="min-w-[70%] min-h-[60%] rounded-xl border border-gray-200 bg-white shadow-sm m-4">
-        <div className="bg-gray-100 w-full h-12 flex items-center justify-between rounded-t-lg border-b px-4">
-          <p className="font-semibold text-gray-700">Listado de usuarios</p>
+      <div className="min-w-[70%] min-h-[60%] rounded-2xl border border-gray-200 bg-white shadow-lg m-4 flex flex-col overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-500 to-cyan-600 px-6 py-4 border-b border-blue-200 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">👥</span>
+            <div>
+              <p className="font-bold text-white text-lg">Gestión de Usuarios</p>
+              <p className="text-blue-100 text-xs">Administra usuarios y sus permisos</p>
+            </div>
+          </div>
           <div className="flex items-center gap-2">
-            <button className="btn btn-sm btn-ghost" onClick={() => setventanaCrearUsuario(!ventanaCrearUsuario)}>Nuevo usuario</button>
-            <button className="btn btn-sm btn-ghost" onClick={() => obtenerUsers()}>Refrescar</button>
-            <button className="btn btn-sm btn-outline" onClick={limpiarFiltros}>Limpiar</button>
-            <button className="btn btn-sm btn-primary" onClick={aplicarFiltros}>Aplicar</button>
+            <button className="btn btn-sm bg-blue-600 hover:bg-blue-700 text-white border-0 gap-2" onClick={() => setventanaCrearUsuario(!ventanaCrearUsuario)}>➕ Nuevo usuario</button>
+            <button className="btn btn-sm bg-blue-600 hover:bg-blue-700 text-white border-0 gap-2" onClick={() => obtenerUsers()}>🔄 Refrescar</button>
           </div>
         </div>
 
-        <div className="p-4 grid grid-cols-1 lg:grid-cols-5 gap-3">
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Nombre</label>
-            <input className="input input-sm" value={filtroNombre} onChange={(e)=>setFiltroNombre(e.target.value)} />
+        <div className="p-6 bg-gradient-to-b from-blue-50 to-white border-b border-blue-100">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-3">
+            <div className="flex items-end gap-2">
+              <div className="flex-1">
+                <label className="text-xs font-semibold uppercase tracking-wider text-gray-700 block mb-1">Nombre</label>
+                <input className="input input-sm input-bordered w-full rounded-lg focus:outline-none focus:border-blue-500" value={filtroNombre} onChange={(e)=>setFiltroNombre(e.target.value)} />
+              </div>
+            </div>
+            <div className="flex items-end gap-2">
+              <div className="flex-1">
+                <label className="text-xs font-semibold uppercase tracking-wider text-gray-700 block mb-1">Email</label>
+                <input className="input input-sm input-bordered w-full rounded-lg focus:outline-none focus:border-blue-500" value={filtroEmail} onChange={(e)=>setFiltroEmail(e.target.value)} />
+              </div>
+            </div>
+            <div className="flex items-end gap-2">
+              <div className="flex-1">
+                <label className="text-xs font-semibold uppercase tracking-wider text-gray-700 block mb-1">Cargo</label>
+                <select className="select select-sm select-bordered w-full rounded-lg focus:outline-none focus:border-blue-500" value={filtroCargoId} onChange={(e)=>setFiltroCargoId(e.target.value === "" ? "" : Number(e.target.value))}>
+                  <option value="">Todos</option>
+                  {cargos.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="flex items-end gap-2">
+              <div className="flex-1">
+                <label className="text-xs font-semibold uppercase tracking-wider text-gray-700 block mb-1">Cédula</label>
+                <input className="input input-sm input-bordered w-full rounded-lg focus:outline-none focus:border-blue-500" value={filtroIdentificacion} onChange={(e)=>setFiltroIdentificacion(e.target.value)} />
+              </div>
+            </div>
+            <div className="flex items-end gap-2">
+              <div className="flex-1">
+                <label className="text-xs font-semibold uppercase tracking-wider text-gray-700 block mb-1">Estado</label>
+                <select className="select select-sm select-bordered w-full rounded-lg focus:outline-none focus:border-blue-500" value={filtroActivo} onChange={(e)=>setFiltroActivo(e.target.value)}>
+                  <option value="">Todos</option>
+                  <option value="true">ACTIVO</option>
+                  <option value="false">INACTIVO</option>
+                </select>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Email</label>
-            <input className="input input-sm" value={filtroEmail} onChange={(e)=>setFiltroEmail(e.target.value)} />
-          </div>
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Cargo</label>
-            <select className="select select-sm" value={filtroCargoId} onChange={(e)=>setFiltroCargoId(e.target.value === "" ? "" : Number(e.target.value))}>
-              <option value="">Todos</option>
-              {cargos.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </select>
-          </div>
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Cédula</label>
-            <input className="input input-sm" value={filtroIdentificacion} onChange={(e)=>setFiltroIdentificacion(e.target.value)} />
-          </div>
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Estado</label>
-            <select className="select select-sm" value={filtroActivo} onChange={(e)=>setFiltroActivo(e.target.value)}>
-              <option value="">Todos</option>
-              <option value="true">ACTIVO</option>
-              <option value="false">INACTIVO</option>
-            </select>
+          <div className="flex justify-end gap-2 mt-4">
+            <button className="btn btn-sm btn-ghost gap-1" onClick={limpiarFiltros}>Limpiar</button>
+            <button className="btn btn-sm bg-gradient-to-r from-blue-500 to-cyan-600 text-white border-0 gap-2" onClick={aplicarFiltros}>Aplicar Filtros</button>
           </div>
         </div>
 
-        <div className="px-4 pb-4">
-          <div className="overflow-hidden border rounded-lg">
-            <div className="max-h-[520px] overflow-auto">
-              <table className="table w-full min-w-full">
-                <thead className="bg-white sticky top-0 z-10">
-                  <tr className="text-sm text-left text-gray-600">
-                    <th className="px-4 py-3">Nombre</th>
-                    <th className="px-4 py-3">Telefono</th>
-                    <th className="px-4 py-3">Email</th>
-                    <th className="px-4 py-3">Cargo</th>
-                    <th className="px-4 py-3 text-center">Acciones</th>
+        <div className="px-6 pb-6 flex-1 flex flex-col overflow-hidden">
+          <div className="overflow-hidden border border-gray-200 rounded-2xl shadow-sm flex flex-col flex-1">
+            <div className="max-h-[520px] overflow-y-auto overflow-x-auto flex-1">
+              <table className="table w-full">
+                <thead className="bg-gradient-to-r from-blue-100 to-cyan-100 sticky top-0 z-10 border-b-2 border-blue-300">
+                  <tr className="text-sm font-bold text-blue-900">
+                    <th className="px-6 py-4 text-left">👤 Nombre</th>
+                    <th className="px-6 py-4 text-left">📱 Teléfono</th>
+                    <th className="px-6 py-4 text-left">✉️ Email</th>
+                    <th className="px-6 py-4 text-left">🏷️ Cargo</th>
+                    <th className="px-6 py-4 text-center">⚡ Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   {users.map((u) => (
-                    <tr key={u.id} className="even:bg-gray-50 hover:bg-gray-100">
-                      <td className="px-4 py-3 align-top">{u.name}</td>
-                      <td className="px-4 py-3 align-top">{u.cellphone}</td>
-                      <td className="px-4 py-3 align-top">{u.email}</td>
-                      <td className="px-4 py-3 align-top">{u.cargoId?.name}</td>
-                      <td className="px-4 py-3 align-top text-center">
+                    <tr key={u.id} className="border-b border-gray-200 hover:bg-blue-50 transition-colors">
+                      <td className="px-6 py-4 align-middle font-semibold text-gray-900">{u.name}</td>
+                      <td className="px-6 py-4 align-middle text-gray-700">{u.cellphone}</td>
+                      <td className="px-6 py-4 align-middle text-gray-700">{u.email}</td>
+                      <td className="px-6 py-4 align-middle"><span className="badge badge-lg bg-gradient-to-r from-blue-200 to-cyan-200 text-blue-950 font-semibold shadow-sm">{u.cargoId?.name}</span></td>
+                      <td className="px-6 py-4 align-middle text-center">
                         <div className="flex items-center justify-center gap-2">
-                          <button className="btn btn-outline btn-sm" onClick={() => { detalleUsuario(u.id); setventanaEmergente(true); }}>Detalles</button>
-                           <button className="btn btn-outline btn-sm" onClick={() => { setusuarioAEliminar(u.id); if(dialogEliminar.current) dialogEliminar.current.showModal(); }}>Eliminar</button>
+                          <button className="btn btn-sm bg-gradient-to-r from-blue-500 to-cyan-600 text-white border-0 hover:from-blue-600 hover:to-cyan-700 gap-1" onClick={() => { detalleUsuario(u.id); setventanaEmergente(true); }}>📋 Detalles</button>
+                           <button className="btn btn-sm btn-error gap-1" onClick={() => { setusuarioAEliminar(u.id); if(dialogEliminar.current) dialogEliminar.current.showModal(); }}>🗑️ Eliminar</button>
                         </div>
                       </td>
                     </tr>
@@ -450,7 +470,7 @@ const obtenerUsers = async () =>{
 
       <div className={`z-10 fixed inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaCrearUsuario ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
         <div className="absolute inset-0 bg-black/40" />
-        <div className="relative border border-gray-300 w-11/12 max-w-4xl h-[85vh] rounded-md bg-white shadow-lg overflow-auto">
+        <div className="relative border border-gray-300 w-11/12 max-w-4xl h-[85vh] rounded-md bg-white shadow-lg overflow-auto mt-20">
           <NuevoUsuario cargos={cargos} setconfirmarCambio={setvalidarCambio} showCrearUsuario={ventanaCrearUsuario} setshowCrearUsuario={setventanaCrearUsuario} />
         </div>
       </div>

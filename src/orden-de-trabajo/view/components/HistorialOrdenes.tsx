@@ -313,81 +313,82 @@ const ordenesTrabajoApi  = async() =>{
      
   return (
   <>
-    <div className="min-w-[70%] min-h-[60%] rounded-xl border border-gray-200 bg-white shadow-sm">
-      <div className="bg-gray-100 w-full h-12 flex items-center justify-between rounded-t-lg border-b px-4">
-        <p className="font-semibold text-gray-700">Listado de ordenes de trabajo</p>
-        <div className="flex items-center gap-3">
-           <button className="btn btn-sm btn-ghost" onClick={() => ordenesTrabajoApi()}>Refrescar</button>
-          <button className="btn btn-sm btn-outline" onClick={clearFilters}>Limpiar filtros</button>
-          <button className="btn btn-sm btn-primary" onClick={applyFilters}>Aplicar filtros</button>
-        </div>
+    <div className="w-full h-full rounded-2xl border border-gray-200 bg-white shadow-lg">
+      <div className="bg-gradient-to-r from-green-500 to-green-600 w-full py-4 rounded-t-2xl border-b border-green-200 px-6">
+        <h2 className="font-bold text-white text-lg">📋 Órdenes de Trabajo</h2>
       </div>
 
-      <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-3">
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">NumOrden</label>
-          <input className="input input-sm" value={filtroNumOrden} onChange={(e)=>setFiltroNumOrden(e.target.value)} />
+      <div className="p-6 grid grid-cols-1 lg:grid-cols-4 gap-4 bg-gray-50 border-b border-gray-200">
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-semibold text-gray-600">N° Orden</label>
+          <input className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroNumOrden} onChange={(e)=>setFiltroNumOrden(e.target.value)} />
         </div>
 
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">Fecha final</label>
-          <input type="date" className="input input-sm" value={filtroFechaFinal} onChange={(e)=>setFiltroFechaFinal(e.target.value)} />
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-semibold text-gray-600">Fecha Final</label>
+          <input type="date" className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroFechaFinal} onChange={(e)=>setFiltroFechaFinal(e.target.value)} />
         </div>
 
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">Solicitante</label>
-          <input className="input input-sm" value={filtroSolicitante} onChange={(e)=>setFiltroSolicitante(e.target.value)} />
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-semibold text-gray-600">Solicitante</label>
+          <input className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroSolicitante} onChange={(e)=>setFiltroSolicitante(e.target.value)} />
         </div>
 
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">Descripcion</label>
-          <input className="input input-sm" value={filtroDescripcion} onChange={(e)=>setFiltroDescripcion(e.target.value)} />
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-semibold text-gray-600">Descripción</label>
+          <input className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroDescripcion} onChange={(e)=>setFiltroDescripcion(e.target.value)} />
         </div>
 
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">Estado</label>
-          <select className="select select-sm" value={filtroEstado} onChange={(e)=>setFiltroEstado(e.target.value)}>
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-semibold text-gray-600">Estado</label>
+          <select className="select select-sm select-bordered focus:select-primary rounded-lg" value={filtroEstado} onChange={(e)=>setFiltroEstado(e.target.value)}>
             <option value="">Todos</option>
             {estados.map((es)=> <option key={es.id} value={es.estado}>{es.estado}</option>)}
           </select>
         </div>
 
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">Area</label>
-          <input className="input input-sm" value={filtroArea} onChange={(e)=>setFiltroArea(e.target.value)} />
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-semibold text-gray-600">Área</label>
+          <input className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroArea} onChange={(e)=>setFiltroArea(e.target.value)} />
         </div>
 
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">Codigo</label>
-          <input className="input input-sm" value={filtroCodigo} onChange={(e)=>setFiltroCodigo(e.target.value)} />
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-semibold text-gray-600">Código</label>
+          <input className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroCodigo} onChange={(e)=>setFiltroCodigo(e.target.value)} />
         </div>
 
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">Maquina</label>
-          <input className="input input-sm" value={filtroMaquina} onChange={(e)=>setFiltroMaquina(e.target.value)} />
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-semibold text-gray-600">Máquina</label>
+          <input className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroMaquina} onChange={(e)=>setFiltroMaquina(e.target.value)} />
         </div>
 
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">Categoria</label>
-          <input className="input input-sm" value={filtroCategoria} onChange={(e)=>setFiltroCategoria(e.target.value)} />
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-semibold text-gray-600">Categoría</label>
+          <input className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroCategoria} onChange={(e)=>setFiltroCategoria(e.target.value)} />
         </div>
 
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">Tipo trabajo</label>
-          <input className="input input-sm" value={filtroTipoTrabajo} onChange={(e)=>setFiltroTipoTrabajo(e.target.value)} />
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-semibold text-gray-600">Tipo Trabajo</label>
+          <input className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroTipoTrabajo} onChange={(e)=>setFiltroTipoTrabajo(e.target.value)} />
         </div>
       </div>
 
-      <div className="px-4 pb-4">
-        <div className="overflow-hidden border rounded-lg">
-          <div className="max-h-[420px] overflow-auto">
-            <table className="table w-full min-w-full">
-              <thead className="bg-white sticky top-0 z-20">
-                <tr className="text-sm text-left text-gray-600">
-                  <th className="px-4 py-3">N.Orden</th>
-                  <th className="px-4 py-3">Fecha final</th>
+      <div className="px-6 py-3 flex items-center justify-end gap-2 bg-gray-50 border-b border-gray-200">
+        <button className="btn btn-sm btn-ghost hover:btn-primary gap-2" onClick={() => ordenesTrabajoApi()}>🔄 Refrescar</button>
+        <button className="btn btn-sm btn-ghost hover:btn-warning gap-2" onClick={clearFilters}>✕ Limpiar</button>
+        <button className="btn btn-sm btn-primary gap-2" onClick={applyFilters}>✓ Aplicar</button>
+      </div>
+
+      <div className="px-6 pb-6 pt-4">
+        <div className="overflow-hidden border border-gray-200 rounded-xl shadow-sm">
+          <div className="max-h-[520px] overflow-auto">
+            <table className="table w-full">
+              <thead className="bg-gradient-to-r from-green-50 to-green-100 sticky top-0 z-20">
+                <tr className="text-sm text-left text-gray-700 font-semibold">
+                  <th className="px-4 py-3">N° Orden</th>
+                  <th className="px-4 py-3">Fecha Final</th>
                   <th className="px-4 py-3">Solicitante</th>
-                  <th className="px-4 py-3">Descripcion</th>
+                  <th className="px-4 py-3">Descripción</th>
                   <th className="px-4 py-3">Estado</th>
                   <th className="px-4 py-3">Progreso</th>
                   <th className="px-4 py-3 text-center">Acciones</th>
@@ -395,18 +396,18 @@ const ordenesTrabajoApi  = async() =>{
               </thead>
               <tbody>
                 {ordenesConProgreso?.map((u) => (
-                  <tr key={u.id} className="even:bg-gray-50 hover:bg-gray-100">
-                    <td className="px-4 py-3 align-top">{u.NumOrden}</td>
-                    <td className="px-4 py-3 align-top">{u.fechaFinal}</td>
-                    <td className="px-4 py-3 align-top">{u.userSolicitante ?? u.userSolicitante ?? "N/A"}</td>
-                    <td className="px-4 py-3 align-top">{u.DescripcionTrabajo}</td>
-                    <td className="px-4 py-3 align-top">{u.estadoTrabajo.estado}</td>
+                  <tr key={u.id} className="border-t border-gray-100 hover:bg-green-50 transition-colors">
+                    <td className="px-4 py-3 font-semibold text-gray-800 align-top">{u.NumOrden}</td>
+                    <td className="px-4 py-3 text-gray-700 align-top">{u.fechaFinal}</td>
+                    <td className="px-4 py-3 text-gray-700 align-top">{u.userSolicitante?.name ?? "N/A"}</td>
+                    <td className="px-4 py-3 text-gray-700 text-sm align-top">{u.DescripcionTrabajo}</td>
+                    <td className="px-4 py-3 align-top"><span className="badge badge-success badge-sm">{u.estadoTrabajo.estado}</span></td>
                     <td className="px-4 py-3 align-top"><div className="radial-progress cursor-pointer" onClick={() => handleAbrirModalFase(u.id)} style={{ "--value": u.progreso ?? 0 } as React.CSSProperties} 
   aria-valuenow={u.progreso ?? 0} role="progressbar">{u.progreso ?? 0}%</div></td>
                     <td className="px-4 py-3 align-top text-center">
                       <div className="flex items-center justify-center flex-wrap gap-2">
                         <button
-                          className="btn btn-outline btn-sm"
+                          className="btn btn-sm btn-info btn-outline gap-1"
                           onClick={() => {
                             asignarSolicitantexOrden(u.id);
                             setventanaEmergente(!ventanaEmergente);
@@ -414,20 +415,21 @@ const ordenesTrabajoApi  = async() =>{
                             setselectCodigo(u.Codigo);
                           }}
                         >
-                          Detalles
+                          👁️ Ver
                         </button>
-                        <button className="btn btn-outline btn-sm" onClick={() => metodoEliminarOrdenTrabajo(u.id)}>
-                          Eliminar
+                        <button className="btn btn-sm btn-error btn-outline gap-1 tooltip" data-tip="Eliminar" onClick={() => metodoEliminarOrdenTrabajo(u.id)}>
+                          🗑️
                         </button>
-                        <button className="btn btn-outline btn-sm" onClick={() => cargarPdf(u.id)}>
-                          Ver pdf
+                        <button className="btn btn-sm btn-success btn-outline gap-1 tooltip" data-tip="Descargar PDF" onClick={() => cargarPdf(u.id)}>
+                          📄
                         </button>
                         <button
-                          className="btn btn-outline btn-sm"
+                          className="btn btn-sm btn-warning btn-outline gap-1 tooltip"
+                          data-tip="Solicitar Material"
                           disabled={u?.estadoUso?.uso}
                           onClick={() => redirigirSolMaterial(u.id)}
                         >
-                          Solicitar material
+                          📦
                         </button>
                       </div>
                     </td>
@@ -441,23 +443,33 @@ const ordenesTrabajoApi  = async() =>{
     </div>
 
     <div className={`z-50 fixed inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaEmergente ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
-      <div className="relative border border-gray-300 w-11/12 max-w-6xl h-[85vh] rounded-md bg-white shadow-lg overflow-hidden">
-        <div className="w-full h-14 flex items-center justify-between px-6 border-b">
-          <div className="font-medium text-gray-700">Detalle de ordenes</div>
-          <div onClick={() => { setventanaEmergente(!ventanaEmergente); setordenTrabajoxUser({}); sethabilitarEdicion(false);}} className="cursor-pointer text-xl">❌</div>
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+      <div className="relative w-full max-w-6xl h-[88vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-green-500 to-green-600 px-6 py-4 flex items-center justify-between border-b-4 border-green-200 text-white">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-white/20 rounded-lg">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1 4.5 4.5 0 1-4.384 5.98z"/></svg>
+            </div>
+            <div>
+              <h3 className="font-bold text-lg">Detalles de Orden de Trabajo</h3>
+              <p className="text-xs text-green-100">N° {ordenTrabajoxUser.NumOrden ?? "N/A"}</p>
+            </div>
+          </div>
+          <button onClick={() => { setventanaEmergente(!ventanaEmergente); setordenTrabajoxUser({}); sethabilitarEdicion(false);}} className="btn btn-circle btn-sm btn-ghost text-white hover:bg-white/20">✕</button>
         </div>
 
-        <div className="w-full h-[74%] px-6 py-4 grid grid-cols-4 gap-4 overflow-auto border-b">
-          <div className="flex flex-col gap-3">
+        {/* Content */}
+        <div className="flex-1 overflow-auto bg-gray-50 px-6 py-6">
+          <div className="bg-white rounded-xl shadow-sm p-6 grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
             <div>
-              <p className="text-xs text-gray-500">N.Orden</p>
-              <input type="text" disabled className="input input-sm w-full mt-1" value={ordenTrabajoxUser.NumOrden} onChange={(e)=>setordenTrabajoxUser((prev)=>({...prev,NumOrden:e.target.value}))}/>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">N° Orden</label>
+              <input type="text" disabled className="input input-sm input-bordered w-full mt-2 focus:input-success rounded-lg bg-gray-50" value={ordenTrabajoxUser.NumOrden} onChange={(e)=>setordenTrabajoxUser((prev)=>({...prev,NumOrden:e.target.value}))}/>
             </div>
 
             <div>
-              <p className="text-xs text-gray-500">Fecha de inicio</p>
-              <button disabled={!habilitarEdicion} type="button" onClick={()=>callyPpopover4.current?.showPopover()} className="input input-sm input-border w-full text-left mt-1" id="cally4" style={{ anchorName: "--cally4" }}>{ordenTrabajoxUser.fechaInicio}</button>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Fecha de Inicio</label>
+              <button disabled={!habilitarEdicion} type="button" onClick={()=>callyPpopover4.current?.showPopover()} className="input input-sm input-bordered w-full text-left mt-2 focus:input-success rounded-lg disabled:bg-gray-50" id="cally4" style={{ anchorName: "--cally4" }}>{ordenTrabajoxUser.fechaInicio}</button>
               <div popover="auto" ref={callyPpopover4} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally4" }}>
                 <calendar-date className="cally" onchange={(e)=>{document.getElementById("cally4").innerText = e.target.value; setordenTrabajoxUser((prev)=>({...prev,fechaInicio:e.target.value})); setconfirmarCambio(true);}}>
                   <svg aria-label="Previous" className="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
@@ -468,8 +480,8 @@ const ordenesTrabajoApi  = async() =>{
             </div>
 
             <div>
-              <p className="text-xs text-gray-500">Fecha de finalizacion</p>
-              <button disabled={!habilitarEdicion} type="button" onClick={()=>callyPpopover5.current?.showPopover()} className="input input-sm input-border w-full text-left mt-1" id="cally5" style={{ anchorName: "--cally5" }}>{ordenTrabajoxUser.fechaFinal}</button>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Fecha de Finalización</label>
+              <button disabled={!habilitarEdicion} type="button" onClick={()=>callyPpopover5.current?.showPopover()} className="input input-sm input-bordered w-full text-left mt-2 focus:input-success rounded-lg disabled:bg-gray-50" id="cally5" style={{ anchorName: "--cally5" }}>{ordenTrabajoxUser.fechaFinal}</button>
               <div popover="auto" ref={callyPpopover5} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally5" }}>
                 <calendar-date className="cally" onchange={(e)=>{document.getElementById("cally5").innerText = e.target.value; setordenTrabajoxUser((prev)=>({...prev,fechaFinal:e.target.value})); setconfirmarCambio(true);}}>
                   <svg aria-label="Previous" className="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
@@ -480,115 +492,125 @@ const ordenesTrabajoApi  = async() =>{
             </div>
 
             <div>
-              <p className="text-xs text-gray-500">Hora de inicio</p>
-              <input type="time" disabled={!habilitarEdicion} className="input input-sm w-full mt-1" value={ordenTrabajoxUser.HoraInicio} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,HoraInicio:e.target.value}));setconfirmarCambio(true);}}/>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Hora de Inicio</label>
+              <input type="time" disabled={!habilitarEdicion} className="input input-sm input-bordered w-full mt-2 focus:input-success rounded-lg disabled:bg-gray-50" value={ordenTrabajoxUser.HoraInicio} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,HoraInicio:e.target.value}));setconfirmarCambio(true);}}/>
             </div>
 
             <div>
-              <p className="text-xs text-gray-500">Hora de finalizacion</p>
-              <input type="time" disabled={!habilitarEdicion} className="input input-sm w-full mt-1" value={ordenTrabajoxUser.HoraFinal} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,HoraFinal:e.target.value}));setconfirmarCambio(true);}}/>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Hora de Finalización</label>
+              <input type="time" disabled={!habilitarEdicion} className="input input-sm input-bordered w-full mt-2 focus:input-success rounded-lg disabled:bg-gray-50" value={ordenTrabajoxUser.HoraFinal} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,HoraFinal:e.target.value}));setconfirmarCambio(true);}}/>
             </div>
-          </div>
 
-          <div className="flex flex-col gap-3">
             <div>
-              <p className="text-xs text-gray-500">Area</p>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.Area} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,Area:e.target.value}));setconfirmarCambio(true);}}>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Área</label>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.Area} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,Area:e.target.value}));setconfirmarCambio(true);}}>
                 <option disabled>...</option>
                 {areasAll.map((a)=> <option key={a.nombre} value={a.nombre}>{a.nombre}</option>)}
               </select>
             </div>
 
             <div>
-              <p className="text-xs text-gray-500">Codigo</p>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.Codigo} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,Codigo:e.target.value}));setconfirmarCambio(true);}}>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Código</label>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.Codigo} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,Codigo:e.target.value}));setconfirmarCambio(true);}}>
                 <option disabled>...</option>
                 {codigossAll.map((c)=> <option key={c.cod} value={c.cod}>{c.cod}</option>)}
               </select>
             </div>
 
             <div>
-              <p className="text-xs text-gray-500">Maquina</p>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.Maquina} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,Maquinaea:e.target.value})); setconfirmarCambio(true);}}>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Máquina</label>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.Maquina} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,Maquinaea:e.target.value})); setconfirmarCambio(true);}}>
                 <option disabled>...</option>
                 {maquinasAll.map((m)=> <option key={m.nombre} value={m.nombre}>{m.nombre}</option>)}
               </select>
             </div>
 
             <div>
-              <p className="text-xs text-gray-500">Especificacion</p>
-              <input type="text" disabled={!habilitarEdicion} className="input input-sm w-full mt-1" value={ordenTrabajoxUser.EspecificacionMaquina} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,HoraFinal:e.target.value})); setconfirmarCambio(true);}}/>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Especificación</label>
+              <input type="text" disabled={!habilitarEdicion} className="input input-sm input-bordered w-full mt-2 focus:input-success rounded-lg disabled:bg-gray-50" value={ordenTrabajoxUser.EspecificacionMaquina ?? "N/A"} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,HoraFinal:e.target.value})); setconfirmarCambio(true);}}/>
             </div>
 
             <div>
-              <p className="text-xs text-gray-500">Categoria</p>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.Categoria} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,Categoria:e.target.value})); setconfirmarCambio(true);}}>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Categoría</label>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.Categoria} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,Categoria:e.target.value})); setconfirmarCambio(true);}}>
                 <option disabled>...</option>
                 {categorias.map((ca)=> <option key={ca.nombre} value={ca.nombre}>{ca.nombre}</option>)}
               </select>
             </div>
-          </div>
 
-          <div className="flex flex-col gap-3">
             <div>
-              <p className="text-xs text-gray-500">Tipo de trabajo</p>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.TipoTrabajo} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,TipoTrabajo:e.target.value})); setconfirmarCambio(true);}}>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Tipo de Trabajo</label>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.TipoTrabajo} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,TipoTrabajo:e.target.value})); setconfirmarCambio(true);}}>
                 <option disabled>...</option>
                 {tiposTrabajo.map((tp)=> <option key={tp.tipo} value={tp.tipo}>{tp.tipo}</option>)}
               </select>
             </div>
 
             <div>
-              <p className="text-xs text-gray-500">Descripcion</p>
-              <input type="text" disabled={!habilitarEdicion} className="input input-sm w-full mt-1" value={ordenTrabajoxUser.DescripcionTrabajo ?? ""} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,DescripcionTrabajo:e.target.value})); setconfirmarCambio(true);}}/>
-            </div>
-
-            <div>
-              <p className="text-xs text-gray-500">Solicitante</p>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.userSolicitante ?? ordenTrabajoxUser.userSolicitante?.name ?? "..."} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userSolicitante:{name: e.target.value}})); setconfirmarCambio(true);}}>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Estado</label>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.estadoTrabajo?.estado} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,estadoTrabajo:{estado: e.target.value}})); setconfirmarCambio(true);}}>
                 <option disabled>...</option>
-                {users.map((u)=> <option key={u.id} value={u.name}>{u.name}</option>)}
+                {estados.map((ee)=>(ee.estado === "EN PROCESO" || ee.estado === "VENCIDO"? <option key={ee.estado} disabled={true} value={ee.estado}>{ee.estado}</option> : <option key={ee.estado} value={ee.estado}>{ee.estado}</option>))}
               </select>
             </div>
 
-            <div>
-              <p className="text-xs text-gray-500">Receptor</p>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.userReceptor ?? ordenTrabajoxUser.userReceptor?.name ?? "..."} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userReceptor:{name: e.target.value}})); setconfirmarCambio(true);}}>
-                <option disabled>...</option>
-                {users.map((u)=> <option key={u.id} value={u.name}>{u.name}</option>)}
-              </select>
-            </div>
-
-            <div>
-              <p className="text-xs text-gray-500">Tecnico</p>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.userTecnic ?? ordenTrabajoxUser.userTecnico?.name ?? "..."} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userTecnico:{name: e.target.value}})); setconfirmarCambio(true);}}>
-                <option disabled>...</option>
-                {users.map((u)=> <option key={u.id} value={u.name}>{u.name}</option>)}
-              </select>
+            <div className="lg:col-span-4">
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Descripción</label>
+              <input type="text" disabled={!habilitarEdicion} className="input input-sm input-bordered w-full mt-2 focus:input-success rounded-lg disabled:bg-gray-50" value={ordenTrabajoxUser.DescripcionTrabajo ?? ""} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,DescripcionTrabajo:e.target.value})); setconfirmarCambio(true);}}/>
             </div>
           </div>
 
-          <div className="flex flex-col gap-3">
+          {/* Usuarios */}
+          <div className="bg-white rounded-xl shadow-sm p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div>
-              <p className="text-xs text-gray-500">Estado</p>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.estadoTrabajo?.estado} className="select select-sm w-full mt-1" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,estadoTrabajo:{estado: e.target.value}})); setconfirmarCambio(true);}}>
-                <option disabled>...</option>
-                {estados.map((ee)=>(ee.estado === "EN PROCESO" || ee.estado === "VENCIDO"? <option key={ee.estado} disabled={true} value={ee.estado}>{ee.estado}</option> : <option key={ee.estado} value={ee.estado}>{ee.estado}</option>))}
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Solicitante</label>
+              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.userSolicitante?.name ?? "..."} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userSolicitante:{name: e.target.value}})); setconfirmarCambio(true);}}>
+                <option value={"..."} disabled>...</option>
+                {users.map((u)=> <option key={u.id} value={u.name}>{u.name}</option>)}
+              </select>
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Receptor</label>
+              <select disabled={!habilitarEdicion} value={ ordenTrabajoxUser.userReceptor?.name ?? "..."} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userReceptor:{name: e.target.value}})); setconfirmarCambio(true);}}>
+                <option value={"..."} disabled>...</option>
+                {users.map((u)=> <option key={u.id} value={u.name}>{u.name}</option>)}
+              </select>
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Técnico</label>
+              <select disabled={!habilitarEdicion} value={ ordenTrabajoxUser.userTecnico?.name ?? "..."} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userTecnico:{name: e.target.value}})); setconfirmarCambio(true);}}>
+                <option value={"..."} disabled>...</option>
+                {users.map((u)=> <option key={u.id} value={u.name}>{u.name}</option>)}
               </select>
             </div>
           </div>
         </div>
 
-        <div className="w-full h-14 flex items-center justify-between px-6">
+        {/* Footer */}
+        <div className="bg-gray-50 border-t border-gray-200 px-6 py-4 flex items-center justify-between">
           {habilitarEdicion ? (
             <>
-              <button className="btn btn-primary" disabled={!confirmarCambio} onClick={editarOrdenTrabajo}>Hecho</button>
-              <button className="btn btn-ghost" onClick={()=>{asignarSolicitantexOrden(ordenTrabajoxUser.id); sethabilitarEdicion(!habilitarEdicion); setconfirmarCambio(false);}}>Cancelar</button>
+              <button className="btn btn-sm bg-green-500 hover:bg-green-600 text-white border-0 gap-2" disabled={!confirmarCambio} onClick={editarOrdenTrabajo}>
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+                Guardar
+              </button>
+              <button className="btn btn-sm btn-ghost gap-2" onClick={()=>{asignarSolicitantexOrden(ordenTrabajoxUser.id); sethabilitarEdicion(!habilitarEdicion); setconfirmarCambio(false);}}>
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/></svg>
+                Cancelar
+              </button>
             </>
           ) : (
             <>
-              <button className="btn" onClick={()=>sethabilitarEdicion(!habilitarEdicion)}>Editar</button>
-              <button className="btn btn-ghost" onClick={()=>setventanaEmergente(!ventanaEmergente)}>Cerrar</button>
+              <button className="btn btn-sm bg-green-500 hover:bg-green-600 text-white border-0 gap-2" onClick={()=>sethabilitarEdicion(!habilitarEdicion)}>
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>
+                Editar
+              </button>
+              <button className="btn btn-sm btn-ghost gap-2" onClick={()=>setventanaEmergente(!ventanaEmergente)}>
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/></svg>
+                Cerrar
+              </button>
             </>
           )}
         </div>
@@ -599,6 +621,7 @@ const ordenesTrabajoApi  = async() =>{
       <div className="absolute inset-0 bg-black/30" />
       <div className="relative border border-gray-300 w-4/5 h-4/5 rounded-sm bg-white" />
     </div>
+    
 
     {showSuccessFase && (
       <div className="fixed top-5 right-5 z-100">
