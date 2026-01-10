@@ -98,13 +98,20 @@ export const getAllRoles = async (): Promise<Rol[]> => {
 
 export const logoutSession = async (): Promise<{ msj: string }> => {
 
-  const response: Response = await fetch(`${route}logout/token`, {
+  try {
+     const response: Response = await fetch(`${route}logout/token`, {
     method: "GET",
     credentials: 'include'
   });
 
   const data = await response.json();
   return data;
+  } catch (error) {
+    console.error("Error during logout:", error);
+    return { msj: "Error during logout" };
+  }
+
+ 
 }
 
 export const newTipoTrabajo = async (createTipoTrabajo:CreateTipoTrabajo): Promise<{ msj: string }> => {
@@ -484,4 +491,11 @@ export const eliminarCargo = async (id:number): Promise<{ msj:string,validate:bo
   return data;
 }
 
-
+export const decodeCookie = async (): Promise<{ id: number; rol: number; rolName: string; success: boolean }> => {
+  const response: Response = await fetch(`${route}auth/decode/cookie`, {
+    method: "GET",
+    credentials: 'include'
+  });
+  const data = await response.json();
+  return data;
+}

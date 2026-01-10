@@ -304,8 +304,8 @@ const load = async () => {
                   </td>
                       <td className="px-4 py-3 text-center">
                         <div className="flex gap-2 justify-center flex-wrap">
-                          <button className="btn btn-sm btn-info btn-outline gap-1" onClick={()=>{setventanaEmergente(true); setitem(u);}}>👁️ Ver</button>
-                          <button className="btn btn-sm btn-error btn-outline gap-1" disabled>🗑️</button>
+                          <button className="btn btn-sm btn-info btn-outline gap-1 tooltip" data-tip="Ver detalles" onClick={()=>{setventanaEmergente(true); setitem(u);}}>👁️</button>
+                          <button className="btn btn-sm btn-error btn-outline gap-1 tooltip" data-tip="Eliminar" disabled>🗑️</button>
                         </div>
                       </td>
                     </tr>

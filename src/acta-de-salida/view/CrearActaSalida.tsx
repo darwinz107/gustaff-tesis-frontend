@@ -424,7 +424,7 @@ const metodoInventarios = async() =>{
                     <td>{u.caracteristica}</td>
                     <td>{u.Observacion}</td>
                     <td>
-                      <button className="btn btn-ghost btn-xs" onClick={()=>funcionEliminarItems(i)}>Eliminar</button>
+                      <button className="btn btn-ghost btn-xs tooltip" data-tip="Eliminar" onClick={()=>funcionEliminarItems(i)}>🗑️</button>
                     </td>
                   </tr>
                 ))

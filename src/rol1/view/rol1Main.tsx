@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { logoutSession } from '../../Principal/controller/api/auth-api';
+import React, { useEffect, useState, useRef } from 'react'
+import { logoutSession, decodeCookie, actualizarUsuario, getAllCargos } from '../../admin/controller/api/admin-api';
+import { getOneUser } from '../../user/controller/api/user-api';
 import { CrearOrden } from '../../orden-de-trabajo/view/components/CrearOrden';
 import { HistorialOrdenes } from '../../orden-de-trabajo/view/components/HistorialOrdenes';
 import { VerDetalles } from '../../orden-de-trabajo/view/components/VerDetalles';
@@ -9,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { getLastSolicitud } from '../../orden-de-trabajo/controller/api/orden-api';
 import { DbMantenimiento } from '../../dashboards/DbMantenimiento';
 import { GestionJornadas } from '../../orden-de-trabajo/view/components/GestionJornadas';
+import type { Users } from '../../admin/models/users';
 
 
 export const Rol1Main = () => {
@@ -19,6 +21,12 @@ export const Rol1Main = () => {
   const [cargarComponente, setcargarComponente] = useState<number>(0);
   const [collapsed, setCollapsed] = useState(false);
   const [ventanaEmergente, setventanaEmergente] = useState(false);
+  const [usuario, setUsuario] = useState<Users | null>(null);
+  const [usuarioEnEdicion, setUsuarioEnEdicion] = useState<Users | null>(null);
+  const [showEdicion, setShowEdicion] = useState(false);
+  const [cargos, setCargos] = useState<any[]>([]);
+  const [contrasenaNueva, setContrasenaNueva] = useState("");
+  const [mostrarCambioPassword, setMostrarCambioPassword] = useState(false);
 
   useEffect(() => {
     if (cargarAuto && sendId === undefined) {
@@ -34,10 +42,72 @@ export const Rol1Main = () => {
     setcargarAuto(false);
   }, [cargarAuto, sendId]);
 
+  useEffect(() => {
+    const cargarUsuario = async () => {
+      try {
+        const decodedCookie = await decodeCookie();
+        if (decodedCookie.success && decodedCookie.id) {
+          const userData = await getOneUser(decodedCookie.id);
+          setUsuario(userData);
+          setUsuarioEnEdicion(userData);
+        }
+        const cargosList = await getAllCargos();
+        setCargos(cargosList);
+      } catch (error) {
+        console.error("Error al cargar usuario:", error);
+      }
+    };
+    cargarUsuario();
+  }, []);
+
+  const guardarEdicionPerfil = async () => {
+    if (!usuarioEnEdicion?.id) return;
+    
+    try {
+      const dataToUpdate = {
+        name: usuarioEnEdicion.name,
+        email: usuarioEnEdicion.email,
+        celular: usuarioEnEdicion.celular,
+        identificacion: usuarioEnEdicion.identificacion,
+        fecha_nacimiento: usuarioEnEdicion.fecha_nacimiento,
+        cargo: usuarioEnEdicion.cargoId?.id || usuarioEnEdicion.cargo
+      };
+      
+      const res = await actualizarUsuario(usuarioEnEdicion.id, dataToUpdate);
+      if (res.validate) {
+        alert("Perfil actualizado correctamente");
+        setShowEdicion(false);
+        setUsuario(usuarioEnEdicion);
+      }
+    } catch (error) {
+      console.error("Error al actualizar perfil:", error);
+      alert("Error al actualizar perfil");
+    }
+  }
+
+  const cambiarContraseña = async () => {
+    if (!contrasenaNueva.trim()) {
+      alert("Ingresa una nueva contraseña");
+      return;
+    }
+    
+    try {
+      const res = await actualizarUsuario(usuario?.id || 0, { password: contrasenaNueva });
+      if (res.validate) {
+        alert("Contraseña cambiada correctamente");
+        setMostrarCambioPassword(false);
+        setContrasenaNueva("");
+      }
+    } catch (error) {
+      console.error("Error al cambiar contraseña:", error);
+      alert("Error al cambiar contraseña");
+    }
+  }
+
   const logout = async () => {
     try {
       const res = await logoutSession();
-      alert(res.msj);
+      alert(res);
       navigate('/');
     } catch (error) {
       console.error(error);
@@ -73,83 +143,184 @@ export const Rol1Main = () => {
     <>
       <div className="flex h-screen w-full bg-gray-50">
         {/* Navbar */}
-        <div className="fixed top-0 left-0 right-0 bg-white shadow-md z-40 flex items-center justify-between px-6 py-3 border-b border-gray-200">
-          <div className="text-lg font-bold text-gray-800">Gestión de Órdenes</div>
-          <div className="dropdown dropdown-end">
-            <div tabIndex={0} className="avatar placeholder cursor-pointer">
-              <div className="bg-gradient-to-br from-green-400 to-green-600 text-white rounded-full w-10 flex items-center justify-center text-sm font-bold">
-                GT
-              </div>
+        <div className="fixed top-0 w-full bg-white shadow-md border-b border-gray-200 z-40">
+          <div className="flex items-center justify-between h-16 px-6">
+            <div className="flex items-center gap-4">
+              <img
+                src="public/logo_alternativo.png"
+                className="cursor-pointer h-10 w-auto"
+                alt="Gustaff S.A"
+              />
+              <h1 className="text-xl font-bold text-gray-800">Gustaff - Órdenes</h1>
             </div>
+            <div className="dropdown dropdown-end">
+            <button tabIndex={0} className="avatar placeholder cursor-pointer">
+              <div className="bg-gradient-to-br from-green-400 to-green-600 text-white rounded-full w-10 flex items-center justify-center text-sm font-bold">
+                {usuario?.name ? usuario.name.charAt(0).toUpperCase() : "GT"}
+              </div>
+            </button>
             <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-              <li><a>Mi Perfil</a></li>
-              <li><a onClick={logout}>Cerrar sesión</a></li>
+              <li><button onClick={() => setShowEdicion(true)} className="text-sm">👤 Ver/Editar Perfil</button></li>
+              <li><hr className="my-2" /></li>
+              <li><button onClick={logout} className="text-error text-sm">🚪 Cerrar sesión</button></li>
             </ul>
+            </div>
           </div>
         </div>
 
         {/* Sidebar */}
-        <div className={`fixed inset-y-0 left-0 bg-white border-r border-gray-300 flex flex-col transition-all duration-300 mt-16 ${collapsed ? "w-20" : "w-64"}`}>
-          <div className="flex flex-col gap-2 px-2 py-4">
-            <div className="px-4 py-2">
-              <h3 className="text-xs font-bold text-gray-600 uppercase tracking-wider mb-3">Órdenes de Trabajo</h3>
-            </div>
-
-            <button className="btn btn-ghost justify-start hover:bg-green-100 hover:text-green-700" onClick={() => setcargarComponente(1)}>
-              <span className="text-lg">➕</span>
-              {!collapsed && <span className="text-sm">Nueva Orden</span>}
-            </button>
-
-            <button className="btn btn-ghost justify-start hover:bg-green-100 hover:text-green-700" onClick={() => setcargarComponente(2)}>
-              <span className="text-lg">📋</span>
-              {!collapsed && <span className="text-sm">Gestionar Órdenes</span>}
-            </button>
-
-            <button className="btn btn-ghost justify-start hover:bg-green-100 hover:text-green-700" onClick={() => setcargarComponente(5)}>
-              <span className="text-lg">📅</span>
-              {!collapsed && <span className="text-sm">Gestionar Jornadas</span>}
-            </button>
-
-            <div className="divider my-1"></div>
-
-            <div className="px-4 py-2">
-              <h3 className="text-xs font-bold text-gray-600 uppercase tracking-wider mb-3">Solicitudes</h3>
-            </div>
-
-            <button className="btn btn-ghost justify-start hover:bg-orange-100 hover:text-orange-700" onClick={() => setcargarComponente(3)}>
-              <span className="text-lg">📦</span>
-              {!collapsed && <span className="text-sm">Nueva Solicitud</span>}
-            </button>
-
-            <button className="btn btn-ghost justify-start hover:bg-orange-100 hover:text-orange-700" onClick={() => setcargarComponente(4)}>
-              <span className="text-lg">📑</span>
-              {!collapsed && <span className="text-sm">Gestionar Solicitudes</span>}
+        <div
+          className={`fixed left-0 top-16 h-[calc(100vh-64px)] bg-white border-r border-gray-200 shadow-lg
+          transition-all duration-300 flex flex-col overflow-y-auto
+          ${collapsed ? "w-20" : "w-64"}`}
+        >
+          <div className="flex items-center justify-center py-4 px-2">
+            <button
+              className="btn btn-sm btn-ghost btn-circle"
+              onClick={() => setCollapsed(!collapsed)}
+              title={collapsed ? "Expandir" : "Contraer"}
+            >
+              {collapsed ? "▶" : "◀"}
             </button>
           </div>
 
-          <div className="mt-auto px-2 pb-4 border-t">
-            <button className="btn btn-ghost w-full flex items-center gap-3 justify-start hover:btn-error" onClick={logout}>
-              <span className="text-lg">🚪</span>
-              {!collapsed && <span className="text-sm">Cerrar sesión</span>}
+          <div className="flex flex-col gap-2 px-3 pb-4 flex-1">
+            {/* Dashboard */}
+            <button 
+              className="btn btn-ghost justify-start text-left rounded-lg hover:bg-green-100 hover:text-green-700 transition-colors" 
+              onClick={() => setcargarComponente(0)}
+              title="Dashboard"
+            >
+              <span className="text-lg">📊</span>
+              {!collapsed && <span className="text-sm font-medium">Dashboard</span>}
+            </button>
+
+            {/* Órdenes de Trabajo */}
+            {!collapsed && <div className="text-xs font-semibold text-gray-500 mt-4 mb-2 px-2">ÓRDENES DE TRABAJO</div>}
+            <button className="btn btn-ghost justify-start rounded-lg hover:bg-green-100 hover:text-green-700 transition-colors" onClick={() => setcargarComponente(1)}>
+              <span className="text-lg">➕</span> {!collapsed && <span className="text-sm">Nueva Orden</span>}
+            </button>
+
+            <button className="btn btn-ghost justify-start rounded-lg hover:bg-green-100 hover:text-green-700 transition-colors" onClick={() => setcargarComponente(2)}>
+              <span className="text-lg">📋</span> {!collapsed && <span className="text-sm">Gestionar Órdenes</span>}
+            </button>
+
+            <button className="btn btn-ghost justify-start rounded-lg hover:bg-green-100 hover:text-green-700 transition-colors" onClick={() => setcargarComponente(5)}>
+              <span className="text-lg">📅</span> {!collapsed && <span className="text-sm">Gestionar Jornadas</span>}
+            </button>
+
+            {/* Solicitudes */}
+            {!collapsed && <div className="text-xs font-semibold text-gray-500 mt-4 mb-2 px-2">SOLICITUDES</div>}
+            <button className="btn btn-ghost justify-start rounded-lg hover:bg-orange-100 hover:text-orange-700 transition-colors" onClick={() => setcargarComponente(3)}>
+              <span className="text-lg">📦</span> {!collapsed && <span className="text-sm">Nueva Solicitud</span>}
+            </button>
+
+            <button className="btn btn-ghost justify-start rounded-lg hover:bg-orange-100 hover:text-orange-700 transition-colors" onClick={() => setcargarComponente(4)}>
+              <span className="text-lg">📑</span> {!collapsed && <span className="text-sm">Gestionar Solicitudes</span>}
             </button>
           </div>
+
         </div>
 
-        {/* Toggle Button */}
-        <button
-          className="fixed top-20 left-2 z-30 btn btn-sm btn-ghost"
-          onClick={() => setCollapsed(!collapsed)}
-        >
-          {collapsed ? "➡️" : "⬅️"}
-        </button>
-
         {/* Main Content */}
-        <div className={`${collapsed ? "ml-20" : "ml-64"} mt-16 flex-1 bg-gray-50 flex items-center justify-center p-2 transition-all duration-300 overflow-auto`}>
-          {componentes[cargarComponente]}
+        <div className={`flex-1 transition-all duration-300 ${collapsed ? "ml-20" : "ml-64"} mt-16`}>
+          <div className="p-6 min-h-[calc(100vh-64px)]">
+            <div className="bg-white rounded-2xl shadow-lg p-6 min-h-full">
+              {componentes[cargarComponente]}
+            </div>
+          </div>
         </div>
       </div>
 
       <VerDetalles setventanaEmergente={setventanaEmergente} ventanaEmergente={ventanaEmergente} />
+
+      {/* MODAL EDICIÓN DE PERFIL */}
+      {showEdicion && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden max-h-[90vh] overflow-y-auto">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-green-500 to-green-600 px-6 py-4 flex justify-between items-center sticky top-0">
+              <div className="flex items-center gap-3">
+                <span className="text-3xl">👤</span>
+                <div>
+                  <h2 className="text-2xl font-bold text-white">Mi Perfil</h2>
+                  <p className="text-green-100 text-sm">Edita tu información</p>
+                </div>
+              </div>
+              <button onClick={() => setShowEdicion(false)} className="text-white hover:bg-green-700 p-2 rounded-lg transition">✕</button>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="form-control">
+                  <label className="label"><span className="label-text font-semibold text-green-700">Nombre</span></label>
+                  <input type="text" className="input input-bordered focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all" value={usuarioEnEdicion?.name || ""} onChange={(e) => setUsuarioEnEdicion({...usuarioEnEdicion, name: e.target.value} as Users)} />
+                </div>
+                <div className="form-control">
+                  <label className="label"><span className="label-text font-semibold text-green-700">Email</span></label>
+                  <input type="email" className="input input-bordered focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all" value={usuarioEnEdicion?.email || ""} onChange={(e) => setUsuarioEnEdicion({...usuarioEnEdicion, email: e.target.value} as Users)} />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="form-control">
+                  <label className="label"><span className="label-text font-semibold text-green-700">Cédula</span></label>
+                  <input type="text" className="input input-bordered focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all" value={usuarioEnEdicion?.identificacion || ""} onChange={(e) => setUsuarioEnEdicion({...usuarioEnEdicion, identificacion: e.target.value} as Users)} />
+                </div>
+                <div className="form-control">
+                  <label className="label"><span className="label-text font-semibold text-green-700">Celular</span></label>
+                  <input type="text" className="input input-bordered focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all" value={usuarioEnEdicion?.celular || ""} onChange={(e) => setUsuarioEnEdicion({...usuarioEnEdicion, celular: e.target.value} as Users)} />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="form-control">
+                  <label className="label"><span className="label-text font-semibold text-green-700">Fecha de Nacimiento</span></label>
+                  <input type="date" className="input input-bordered focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all" value={usuarioEnEdicion?.fecha_nacimiento?.split('T')[0] || ""} onChange={(e) => setUsuarioEnEdicion({...usuarioEnEdicion, fecha_nacimiento: e.target.value} as Users)} />
+                </div>
+                <div className="form-control">
+                  <label className="label"><span className="label-text font-semibold text-green-700">Cargo</span></label>
+                  <select className="select select-bordered focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all" value={usuarioEnEdicion?.cargoId?.id || usuarioEnEdicion?.cargo || ""} onChange={(e) => setUsuarioEnEdicion({...usuarioEnEdicion, cargo: e.target.value} as Users)}>
+                    <option value="">Selecciona cargo</option>
+                    {cargos.map((cargo) => <option key={cargo.id} value={cargo.id}>{cargo.name}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-control">
+                <label className="label"><span className="label-text font-semibold text-green-700">Estado</span></label>
+                <div className="flex items-center gap-2">
+                  <span className={`badge badge-lg ${usuarioEnEdicion?.estado === 'ACTIVO' ? 'badge-success' : 'badge-error'}`}>{usuarioEnEdicion?.estado || "INACTIVO"}</span>
+                </div>
+              </div>
+
+              <div className="divider">Cambiar Contraseña</div>
+              
+              {!mostrarCambioPassword ? (
+                <button onClick={() => setMostrarCambioPassword(true)} className="btn btn-outline btn-sm w-full">🔑 Cambiar Contraseña</button>
+              ) : (
+                <div className="space-y-3 border-t pt-4">
+                  <div className="form-control">
+                    <label className="label"><span className="label-text font-semibold text-green-700">Nueva Contraseña</span></label>
+                    <input type="password" placeholder="Ingresa nueva contraseña" className="input input-bordered focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all" value={contrasenaNueva} onChange={(e) => setContrasenaNueva(e.target.value)} />
+                  </div>
+                  <div className="flex gap-2">
+                    <button onClick={cambiarContraseña} className="btn btn-sm bg-gradient-to-r from-green-500 to-green-600 text-white border-0 hover:from-green-600 hover:to-green-700 flex-1">✓ Cambiar</button>
+                    <button onClick={() => { setMostrarCambioPassword(false); setContrasenaNueva(""); }} className="btn btn-sm btn-ghost flex-1">Cancelar</button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="bg-gray-50 px-6 py-4 flex gap-3 justify-end border-t sticky bottom-0">
+              <button onClick={() => setShowEdicion(false)} className="btn btn-ghost">Cancelar</button>
+              <button onClick={guardarEdicionPerfil} className="btn bg-gradient-to-r from-green-500 to-green-600 text-white border-0 hover:from-green-600 hover:to-green-700">✓ Guardar Cambios</button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }

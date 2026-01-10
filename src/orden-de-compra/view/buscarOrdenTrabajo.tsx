@@ -84,7 +84,7 @@ preCargarOrdenes();
               </tr>
             </thead>
             <tbody>
-              {ordenes.map((u,i) =>
+              {ordenes?.map((u,i) =>
                 <>
                   <tr className='hover:bg-purple-50 border-b border-gray-200'>
 
@@ -96,7 +96,7 @@ preCargarOrdenes();
 
                     </td>
                     <td className='text-gray-700'>{u.NumOrden}</td>
-                    <td className='text-gray-700'>{u.userSolicitante.name}</td>
+                    <td className='text-gray-700'>{u.userSolicitante ? u.userSolicitante.name : "N/A"}</td>
                     <td>
                       
                       <button className="btn btn-sm bg-gradient-to-r from-purple-500 to-pink-600 text-white border-none hover:from-purple-600 hover:to-pink-700 rounded-lg" onClick={()=>{setinfoDestino(u);setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo);}}>✓ Seleccionar</button>

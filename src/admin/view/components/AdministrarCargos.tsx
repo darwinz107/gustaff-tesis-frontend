@@ -198,27 +198,50 @@ export const AdministrarCargos = () => {
       </dialog>
 
       <div className="w-full h-full p-6">
-        <div className="grid grid-cols-1 gap-6 justify-items-center">
-          <div className="lg:col-span-1 bg-gray-100 rounded-xl shadow-md p-4 w-1/2 ">
-            <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Nuevo Cargo</h2>
-            <div className="flex flex-col gap-3">
-              <div>
-                <label className="block text-sm">Nombre del cargo</label>
+        {/* Header */}
+        <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-2xl p-6 shadow-lg mb-6">
+          <div className="flex items-center gap-3">
+            <span className="text-4xl">👔</span>
+            <div>
+              <h1 className="text-3xl font-bold text-white">Gestionar Cargos</h1>
+              <p className="text-indigo-100">Crea y administra los cargos y roles de la empresa</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Form Card */}
+        <div className="mb-6 bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 px-6 py-4">
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <span>➕</span>
+              Nuevo Cargo
+            </h2>
+          </div>
+
+          <div className="p-6">
+            <div className="max-w-md space-y-4">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-semibold text-indigo-700">Nombre del cargo</span>
+                </label>
                 <input 
                   type="text" 
-                  className={`input w-full ${errores.cargo ? 'input-error' : ''}`} 
+                  placeholder="Ej: Gerente, Supervisor, Técnico..."
+                  className="input input-bordered focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all" 
                   onChange={(e) => {
                     setcargo(e.target.value);
                     seterrores({...errores, cargo: validarCargo(e.target.value)});
                   }} 
                   value={cargo}
                 />
-                <div className="h-5">{errores.cargo && <p className="text-red-500 text-sm">{errores.cargo}</p>}</div>
+                {errores.cargo && <label className="label-text-alt text-error">{errores.cargo}</label>}
               </div>
-              <div>
-                <label className="block text-sm">Rol</label>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-semibold text-indigo-700">Rol</span>
+                </label>
                 <select 
-                  className={`select w-full ${errores.rol ? 'select-error' : ''}`} 
+                  className="select select-bordered focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all" 
                   value={selectRol}
                   onChange={(e) => {
                     setselectRol(e.target.value ? Number(e.target.value) : "");
@@ -228,98 +251,132 @@ export const AdministrarCargos = () => {
                   <option value="">Selecciona un rol</option>
                   {roles.map((r) => <option key={r.id} value={r.id}>{r.role}</option>)}
                 </select>
-                <div className="h-5">{errores.rol && <p className="text-red-500 text-sm">{errores.rol}</p>}</div>
+                {errores.rol && <label className="label-text-alt text-error">{errores.rol}</label>}
               </div>
-              <div className="flex justify-end">
-                <button className="btn btn-primary" onClick={crearCargoMetodo}>Crear Cargo</button>
-              </div>
+              <button 
+                className="btn bg-gradient-to-r from-indigo-500 to-indigo-600 text-white border-0 hover:from-indigo-600 hover:to-indigo-700 w-full mt-4 font-semibold" 
+                onClick={crearCargoMetodo}
+              >
+                ✓ Crear Cargo
+              </button>
             </div>
           </div>
+        </div>
 
-          <div className="lg:col-span-2 bg-white rounded-xl shadow-md p-4">
-            <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Listado de Cargos</h2>
-            <div className="overflow-x-auto">
-              <table className="table w-full text-sm">
-                <thead>
-                  <tr>
-                    <th>Nombre</th>
-                    <th>Rol</th>
-                    <th className="text-center">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {cargos.map((car) => (
-                    <tr key={car.id} className="hover:bg-gray-50">
-                      <td>{car.name}</td>
-                      <td>{car.rolId.role}</td>
-                      <td className="text-center">
-                        <div className="flex justify-center gap-2">
-                          <button className="btn btn-outline btn-xs" onClick={() => abrirEdicion(car)}>Editar</button>
-                          <button className="btn btn-outline btn-xs btn-error" onClick={() => abrirDialogoEliminar(car)}>Eliminar</button>
-                        </div>
-                      </td>
+        {/* List Card */}
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 px-6 py-4">
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <span>📋</span>
+              Listado de Cargos
+            </h2>
+          </div>
+
+          <div className="p-6">
+            {cargos.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-400 text-lg">📭 No hay cargos registrados</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="table w-full">
+                  <thead>
+                    <tr className="border-b-2 border-indigo-200">
+                      <th className="text-indigo-700 font-bold">Nombre</th>
+                      <th className="text-indigo-700 font-bold">Rol</th>
+                      <th className="text-center text-indigo-700 font-bold">Acciones</th>
                     </tr>
-                  ))}
-                  {cargos.length === 0 && (
-                    <tr>
-                      <td colSpan={3} className="text-center text-gray-500 py-4">No hay cargos registrados</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {cargos.map((car) => (
+                      <tr key={car.id} className="hover:bg-indigo-50 border-b border-indigo-100 transition-colors">
+                        <td className="text-gray-700 font-medium">{car.name}</td>
+                        <td className="text-gray-700"><span className="badge badge-outline badge-lg">{car.rolId.role}</span></td>
+                        <td className="text-center">
+                          <div className="flex justify-center gap-2">
+                            <button className="btn btn-xs btn-ghost tooltip" data-tip="Editar" onClick={() => abrirEdicion(car)}>✏️</button>
+                            <button className="btn btn-xs btn-ghost text-red-500 tooltip" data-tip="Eliminar" onClick={() => abrirDialogoEliminar(car)}>🗑️</button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       {/* MODAL EDICIÓN */}
       {ventanaEdicion && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-96">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold">Editar Cargo</h2>
-              <button onClick={cerrarEdicion} className="text-gray-500 hover:text-gray-700">❌</button>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 px-6 py-4 flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">✏️</span>
+                <h2 className="text-xl font-bold text-white">Editar Cargo</h2>
+              </div>
+              <button onClick={cerrarEdicion} className="text-white hover:bg-indigo-700 p-2 rounded-lg transition">✕</button>
             </div>
             
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm mb-2">Nombre del cargo</label>
-                <input 
-                  type="text" 
-                  className={`input w-full ${errores.cargo ? 'input-error' : ''}`}
-                  value={cargoEnEdicion?.name || ""}
-                  onChange={(e) => {
-                    const newValue = e.target.value;
-                    setcargoEnEdicion({...cargoEnEdicion, name: newValue} as Cargo);
-                    seterrores({...errores, cargo: validarCargo(newValue)});
-                    sethabilitarBotonGuardar(newValue.trim() === "");
-                  }}
-                />
-                <div className="h-5">{errores.cargo && <p className="text-red-500 text-sm">{errores.cargo}</p>}</div>
-              </div>
+            {/* Content */}
+            <div className="p-6">
+              <div className="space-y-4">
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text font-semibold text-indigo-700">Nombre del cargo</span>
+                  </label>
+                  <input 
+                    type="text" 
+                    placeholder="Ej: Gerente, Supervisor, Técnico..."
+                    className="input input-bordered focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all"
+                    value={cargoEnEdicion?.name || ""}
+                    onChange={(e) => {
+                      const newValue = e.target.value;
+                      setcargoEnEdicion({...cargoEnEdicion, name: newValue} as Cargo);
+                      seterrores({...errores, cargo: validarCargo(newValue)});
+                      sethabilitarBotonGuardar(newValue.trim() === "");
+                    }}
+                  />
+                  {errores.cargo && <label className="label-text-alt text-error">{errores.cargo}</label>}
+                </div>
 
-              <div>
-                <label className="block text-sm mb-2">Rol</label>
-                <select 
-                  className={`select w-full ${errores.rol ? 'select-error' : ''}`}
-                  value={cargoEnEdicion?.rolId.id || ""}
-                  onChange={(e) => {
-                    const newValue = e.target.value ? Number(e.target.value) : 0;
-                    setcargoEnEdicion({...cargoEnEdicion, rolId:{id: newValue}} as Cargo);
-                    seterrores({...errores, rol: validarRol(newValue)});
-                    sethabilitarBotonGuardar(newValue === 0);
-                  }}
-                >
-                  <option value="">Selecciona un rol</option>
-                  {roles.map((r) => <option key={r.id} value={r.id}>{r.role}</option>)}
-                </select>
-                <div className="h-5">{errores.rol && <p className="text-red-500 text-sm">{errores.rol}</p>}</div>
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text font-semibold text-indigo-700">Rol</span>
+                  </label>
+                  <select 
+                    className="select select-bordered focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all"
+                    value={cargoEnEdicion?.rolId.id || ""}
+                    onChange={(e) => {
+                      const newValue = e.target.value ? Number(e.target.value) : 0;
+                      setcargoEnEdicion({...cargoEnEdicion, rolId:{id: newValue}} as Cargo);
+                      seterrores({...errores, rol: validarRol(newValue)});
+                      sethabilitarBotonGuardar(newValue === 0);
+                    }}
+                  >
+                    <option value="">Selecciona un rol</option>
+                    {roles.map((r) => <option key={r.id} value={r.id}>{r.role}</option>)}
+                  </select>
+                  {errores.rol && <label className="label-text-alt text-error">{errores.rol}</label>}
+                </div>
               </div>
+            </div>
 
-              <div className="flex gap-2 justify-end">
-                <button className="btn btn-ghost" onClick={cerrarEdicion}>Cancelar</button>
-                <button className="btn btn-primary" disabled={habilitarBotonGuardar} onClick={guardarEdicion}>Guardar</button>
-              </div>
+            {/* Footer */}
+            <div className="bg-gray-50 px-6 py-4 flex gap-3 justify-end border-t">
+              <button className="btn btn-ghost hover:bg-gray-200" onClick={cerrarEdicion}>
+                Cancelar
+              </button>
+              <button 
+                className="btn bg-gradient-to-r from-indigo-500 to-indigo-600 text-white border-0 hover:from-indigo-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed" 
+                disabled={habilitarBotonGuardar} 
+                onClick={guardarEdicion}
+              >
+                ✓ Guardar
+              </button>
             </div>
           </div>
         </div>

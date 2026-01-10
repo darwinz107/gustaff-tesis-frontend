@@ -202,104 +202,124 @@ export const NuevoUsuario = ({showCrearUsuario,setshowCrearUsuario,setconfirmarC
           </div>
         </div>
       )}
-      
-      <div className="w-full flex items-center justify-between px-6 py-4 bg-gradient-to-r from-blue-500 to-cyan-600 border-b border-blue-200 rounded-t-2xl">
+
+      {/* Modal Header */}
+      <div className="w-full bg-gradient-to-r from-blue-500 to-blue-600 py-5 px-6 flex justify-between items-center border-b border-blue-200 rounded-t-2xl shadow-sm">
         <div className="flex items-center gap-3">
           <span className="text-2xl">👤</span>
           <div>
             <h2 className="text-lg font-bold text-white">Crear Nuevo Usuario</h2>
-            <p className="text-blue-100 text-xs">Completa los datos para registrar un nuevo usuario</p>
+            <p className="text-blue-100 text-sm">Completa los datos para registrar un nuevo usuario</p>
           </div>
         </div>
         <button
           onClick={() => {limpiarFormulario(); setshowCrearUsuario(!showCrearUsuario);}}
-          className="btn btn-circle btn-sm btn-ghost text-white hover:bg-blue-700"
+          className="btn btn-circle btn-sm btn-ghost text-white hover:bg-blue-700 transition"
         >
           ✕
         </button>
       </div>
 
-      
-      <div className="w-full flex-1 px-8 py-6 grid grid-cols-1 lg:grid-cols-3 gap-8 overflow-y-auto bg-gradient-to-b from-white to-blue-50">
-
-        
-        <div className="space-y-5">
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">👤 Nombre</label>
+      {/* Modal Content */}
+      <div className="w-full flex-1 px-8 py-8 overflow-y-auto bg-gradient-to-b from-gray-50 to-white">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Nombre */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-semibold text-gray-700">👤 Nombre</span>
+            </label>
             <input 
-              className={`input input-sm input-bordered w-full rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-400 ${errores.nombre ? 'input-error' : ''}`} 
+              type="text"
+              placeholder="Ingrese el nombre completo"
+              className={`input input-bordered w-full transition ${errores.nombre ? 'input-error border-red-500' : 'focus:border-blue-500'}`} 
               onChange={handleNombreChange}
               value={nombre}
             />
-            <div className="h-5">{errores.nombre && <p className="text-red-500 text-xs mt-1">{errores.nombre}</p>}</div>
+            {errores.nombre && <label className="label"><span className="label-text-alt text-error text-sm mt-1">{errores.nombre}</span></label>}
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">📌 Cédula</label>
+          {/* Cédula */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-semibold text-gray-700">📌 Cédula</span>
+            </label>
             <input 
-              className={`input input-sm input-bordered w-full rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-400 ${errores.cedula ? 'input-error' : ''}`} 
+              type="text"
+              placeholder="Ingrese la cédula"
+              className={`input input-bordered w-full transition ${errores.cedula ? 'input-error border-red-500' : 'focus:border-blue-500'}`} 
               onChange={handleCedulaChange}
               value={cedula}
-              type="text"
             />
-            <div className="h-5">{errores.cedula && <p className="text-red-500 text-xs mt-1">{errores.cedula}</p>}</div>
+            {errores.cedula && <label className="label"><span className="label-text-alt text-error text-sm mt-1">{errores.cedula}</span></label>}
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">📱 Celular</label>
+          {/* Celular */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-semibold text-gray-700">📱 Celular</span>
+            </label>
             <input 
-              className={`input input-sm input-bordered w-full rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-400 ${errores.celular ? 'input-error' : ''}`} 
+              type="text"
+              placeholder="Ingrese el celular"
+              className={`input input-bordered w-full transition ${errores.celular ? 'input-error border-red-500' : 'focus:border-blue-500'}`} 
               onChange={handleCelularChange}
               value={celular}
-              type="text"
             />
-            <div className="h-5">{errores.celular && <p className="text-red-500 text-xs mt-1">{errores.celular}</p>}</div>
+            {errores.celular && <label className="label"><span className="label-text-alt text-error text-sm mt-1">{errores.celular}</span></label>}
           </div>
-        </div>
 
-        
-        <div className="space-y-5">
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">🗓️ Fecha de nacimiento</label>
+          {/* Fecha de Nacimiento */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-semibold text-gray-700">🗓️ Fecha de Nacimiento</span>
+            </label>
             <input 
-              type="date" 
-              className={`input input-sm input-bordered w-full rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-400 ${errores.fecha ? 'input-error' : ''}`} 
+              type="date"
+              className={`input input-bordered w-full transition ${errores.fecha ? 'input-error border-red-500' : 'focus:border-blue-500'}`} 
               value={selectFechaNac} 
               onChange={handleFechaChange}
             />
-            <div className="h-5">{errores.fecha && <p className="text-red-500 text-xs mt-1">{errores.fecha}</p>}</div>
+            {errores.fecha && <label className="label"><span className="label-text-alt text-error text-sm mt-1">{errores.fecha}</span></label>}
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">✉️ Email</label>
+          {/* Email */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-semibold text-gray-700">✉️ Email</span>
+            </label>
             <input 
-              className={`input input-sm input-bordered w-full rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-400 ${errores.email ? 'input-error' : ''}`} 
+              type="email"
+              placeholder="Ingrese el email"
+              className={`input input-bordered w-full transition ${errores.email ? 'input-error border-red-500' : 'focus:border-blue-500'}`} 
               onChange={handleEmailChange}
               value={email}
-              type="email"
             />
-            <div className="h-5">{errores.email && <p className="text-red-500 text-xs mt-1">{errores.email}</p>}</div>
+            {errores.email && <label className="label"><span className="label-text-alt text-error text-sm mt-1">{errores.email}</span></label>}
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">🔐 Contraseña</label>
+          {/* Contraseña */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-semibold text-gray-700">🔐 Contraseña</span>
+            </label>
             <input 
-              className={`input input-sm input-bordered w-full rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-400 ${errores.contrasenia ? 'input-error' : ''}`} 
-              type="password" 
+              type="password"
+              placeholder="Ingrese la contraseña"
+              className={`input input-bordered w-full transition ${errores.contrasenia ? 'input-error border-red-500' : 'focus:border-blue-500'}`} 
               onChange={handleContraseniaChange}
               value={contrasenia}
             />
-            <div className="h-5">{errores.contrasenia && <p className="text-red-500 text-xs mt-1">{errores.contrasenia}</p>}</div>
+            {errores.contrasenia && <label className="label"><span className="label-text-alt text-error text-sm mt-1">{errores.contrasenia}</span></label>}
           </div>
-        </div>
 
-        
-        <div className="space-y-5">
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">🏷️ Cargo</label>
+          {/* Cargo */}
+          <div className="form-control md:col-span-2 lg:col-span-1">
+            <label className="label">
+              <span className="label-text font-semibold text-gray-700">🏷️ Cargo</span>
+            </label>
             <select 
-              className={`select select-sm select-bordered w-full rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-400 ${errores.cargo ? 'select-error' : ''}`} 
-              defaultValue={0} 
+              className={`select select-bordered w-full transition ${errores.cargo ? 'select-error border-red-500' : 'focus:border-blue-500'}`} 
+              value={selectCargo || 0}
               onChange={handleCargoChange}
             >
               <option value={0} disabled>Selecciona un cargo...</option>
@@ -307,17 +327,23 @@ export const NuevoUsuario = ({showCrearUsuario,setshowCrearUsuario,setconfirmarC
                 <option key={a.id} value={a.id}>{a.name}</option>
               ))}
             </select>
-            <div className="h-5">{errores.cargo && <p className="text-red-500 text-xs mt-1">{errores.cargo}</p>}</div>
+            {errores.cargo && <label className="label"><span className="label-text-alt text-error text-sm mt-1">{errores.cargo}</span></label>}
           </div>
         </div>
       </div>
 
-      
-      <div className="w-full px-8 py-4 flex justify-end gap-3 border-t border-blue-200 bg-gradient-to-r from-blue-50 to-transparent">
-        <button className="btn btn-ghost gap-2" onClick={() => {limpiarFormulario(); setshowCrearUsuario(!showCrearUsuario);}}>
-          ❌ Cancelar
+      {/* Modal Footer */}
+      <div className="w-full px-8 py-5 flex justify-end gap-3 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+        <button 
+          className="btn btn-ghost gap-2 hover:bg-gray-200 transition" 
+          onClick={() => {limpiarFormulario(); setshowCrearUsuario(!showCrearUsuario);}}
+        >
+          ✕ Cancelar
         </button>
-        <button className="btn bg-gradient-to-r from-blue-500 to-cyan-600 text-white border-0 hover:from-blue-600 hover:to-cyan-700 gap-2" onClick={crearNuevoUsuario}>
+        <button 
+          className="btn bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 hover:from-blue-600 hover:to-blue-700 gap-2 transition shadow-md hover:shadow-lg" 
+          onClick={crearNuevoUsuario}
+        >
           ✓ Crear Usuario
         </button>
       </div>

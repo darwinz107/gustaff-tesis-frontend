@@ -350,218 +350,308 @@ export const AdministrarBodegasSeccionesPerchas = () => {
       </dialog>
 
       <div className="w-full h-full p-6 space-y-6">
-        
+        {/* Header */}
+        <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl p-6 shadow-lg border-t-4 border-purple-400">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-3xl">🏢</span>
+              <div>
+                <h1 className="text-2xl font-bold text-white">Bodegas, Secciones y Perchas</h1>
+                <p className="text-purple-100 text-sm mt-1">Gestiona tu estructura de almacenamiento</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Formularios para crear */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          <div className="bg-gray-100 rounded-xl shadow-md p-4">
-            <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Nueva Bodega</h2>
-            <div className="flex flex-col gap-3">
-              <div>
-                <label className="block text-sm">Nombre de la bodega</label>
+          {/* Nueva Bodega */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
+            <div className="flex items-center gap-2 mb-4 pb-3 border-b-2 border-purple-300">
+              <span className="text-2xl">📦</span>
+              <h2 className="text-lg font-bold text-gray-800">Nueva Bodega</h2>
+            </div>
+            <div className="space-y-4">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-semibold text-gray-700">Nombre de la Bodega</span>
+                </label>
                 <input
                   type="text"
-                  className={`input w-full ${erroresBodega ? 'input-error' : ''}`}
+                  placeholder="Ingresa el nombre"
+                  className={`input input-bordered w-full focus:border-purple-500 transition ${erroresBodega ? 'input-error' : ''}`}
                   onChange={(e) => {
                     setnewBodega(e.target.value);
                     seterroresBodega(validarNombreGeneral(e.target.value));
                   }}
                   value={newBodega}
                 />
-                <div className="h-5">{erroresBodega && <p className="text-red-500 text-sm">{erroresBodega}</p>}</div>
+                {erroresBodega && <label className="label"><span className="label-text-alt text-error text-sm">{erroresBodega}</span></label>}
               </div>
-              <div className="flex justify-end">
-                <button className="btn btn-primary" onClick={crearBodegaFunc}>Crear Bodega</button>
-              </div>
+              <button className="btn bg-gradient-to-r from-purple-500 to-purple-600 text-white border-0 hover:from-purple-600 hover:to-purple-700 w-full gap-2 transition shadow-md" onClick={crearBodegaFunc}>
+                ➕ Crear Bodega
+              </button>
             </div>
           </div>
 
-          
-          <div className="bg-gray-100 rounded-xl shadow-md p-4">
-            <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Nueva Sección</h2>
-            <div className="flex flex-col gap-3">
-              <div>
-                <label className="block text-sm">Nombre de la sección</label>
+          {/* Nueva Sección */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
+            <div className="flex items-center gap-2 mb-4 pb-3 border-b-2 border-blue-300">
+              <span className="text-2xl">📂</span>
+              <h2 className="text-lg font-bold text-gray-800">Nueva Sección</h2>
+            </div>
+            <div className="space-y-4">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-semibold text-gray-700">Nombre de la Sección</span>
+                </label>
                 <input
                   type="text"
-                  className={`input w-full ${erroresSeccion.seccion ? 'input-error' : ''}`}
+                  placeholder="Ingresa el nombre"
+                  className={`input input-bordered w-full focus:border-blue-500 transition ${erroresSeccion.seccion ? 'input-error' : ''}`}
                   onChange={(e) => {
                     setseccion(e.target.value);
                     seterroresSeccion({ ...erroresSeccion, seccion: validarNombreGeneral(e.target.value) });
                   }}
                   value={seccion}
                 />
-                <div className="h-5">{erroresSeccion.seccion && <p className="text-red-500 text-sm">{erroresSeccion.seccion}</p>}</div>
+                {erroresSeccion.seccion && <label className="label"><span className="label-text-alt text-error text-sm">{erroresSeccion.seccion}</span></label>}
               </div>
-              <div>
-                <label className="block text-sm">Bodega</label>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-semibold text-gray-700">Selecciona Bodega</span>
+                </label>
                 <select
-                  className={`select w-full ${erroresSeccion.bodega ? 'select-error' : ''}`}
+                  className={`select select-bordered w-full focus:border-blue-500 transition ${erroresSeccion.bodega ? 'select-error' : ''}`}
                   value={selectBodega}
                   onChange={(e) => {
                     setselectBodega(e.target.value);
                     seterroresSeccion({ ...erroresSeccion, bodega: validarSeleccion(e.target.value) });
                   }}
                 >
-                  <option value="">Selecciona una bodega</option>
+                  <option value="">Selecciona una bodega...</option>
                   {bodegas.map((b) => (
                     <option key={b.id} value={b.id}>{b.bodega}</option>
                   ))}
                 </select>
-                <div className="h-5">{erroresSeccion.bodega && <p className="text-red-500 text-sm">{erroresSeccion.bodega}</p>}</div>
+                {erroresSeccion.bodega && <label className="label"><span className="label-text-alt text-error text-sm">{erroresSeccion.bodega}</span></label>}
               </div>
-              <div className="flex justify-end">
-                <button className="btn btn-primary" onClick={crearSeccionFunc}>Crear Sección</button>
-              </div>
+              <button className="btn bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 hover:from-blue-600 hover:to-blue-700 w-full gap-2 transition shadow-md" onClick={crearSeccionFunc}>
+                ➕ Crear Sección
+              </button>
             </div>
           </div>
 
-        
-          <div className="bg-gray-100 rounded-xl shadow-md p-4">
-            <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Nueva Percha</h2>
-            <div className="flex flex-col gap-3">
-              <div>
-                <label className="block text-sm">Nombre de la percha</label>
+          {/* Nueva Percha */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
+            <div className="flex items-center gap-2 mb-4 pb-3 border-b-2 border-green-300">
+              <span className="text-2xl">🔹</span>
+              <h2 className="text-lg font-bold text-gray-800">Nueva Percha</h2>
+            </div>
+            <div className="space-y-4">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-semibold text-gray-700">Nombre de la Percha</span>
+                </label>
                 <input
                   type="text"
-                  className={`input w-full ${erroresPercha.percha ? 'input-error' : ''}`}
+                  placeholder="Ingresa el nombre"
+                  className={`input input-bordered w-full focus:border-green-500 transition ${erroresPercha.percha ? 'input-error' : ''}`}
                   onChange={(e) => {
                     setpercha(e.target.value);
                     seterroresPercha({ ...erroresPercha, percha: validarNombreGeneral(e.target.value) });
                   }}
                   value={percha}
                 />
-                <div className="h-5">{erroresPercha.percha && <p className="text-red-500 text-sm">{erroresPercha.percha}</p>}</div>
+                {erroresPercha.percha && <label className="label"><span className="label-text-alt text-error text-sm">{erroresPercha.percha}</span></label>}
               </div>
-              <div>
-                <label className="block text-sm">Sección</label>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-semibold text-gray-700">Selecciona Sección</span>
+                </label>
                 <select
-                  className={`select w-full ${erroresPercha.seccion ? 'select-error' : ''}`}
+                  className={`select select-bordered w-full focus:border-green-500 transition ${erroresPercha.seccion ? 'select-error' : ''}`}
                   value={selectSeccion}
                   onChange={(e) => {
                     setselectSeccion(e.target.value);
                     seterroresPercha({ ...erroresPercha, seccion: validarSeleccion(e.target.value) });
                   }}
                 >
-                  <option value="">Selecciona una sección</option>
+                  <option value="">Selecciona una sección...</option>
                   {bodegas.map((b) =>
                     b.seccion.map((s) => (
                       <option key={s.id} value={s.id}>{s.seccion}</option>
                     ))
                   )}
                 </select>
-                <div className="h-5">{erroresPercha.seccion && <p className="text-red-500 text-sm">{erroresPercha.seccion}</p>}</div>
+                {erroresPercha.seccion && <label className="label"><span className="label-text-alt text-error text-sm">{erroresPercha.seccion}</span></label>}
               </div>
-              <div className="flex justify-end">
-                <button className="btn btn-primary" onClick={crearPerchaFunc}>Crear Percha</button>
-              </div>
+              <button className="btn bg-gradient-to-r from-green-500 to-green-600 text-white border-0 hover:from-green-600 hover:to-green-700 w-full gap-2 transition shadow-md" onClick={crearPerchaFunc}>
+                ➕ Crear Percha
+              </button>
             </div>
           </div>
         </div>
 
        
-        <div className="bg-white rounded-xl shadow-md p-4">
-       
-  <div className="bg-gray-100 w-full h-12 flex items-center justify-between rounded-t-lg border-b px-4">
-                    <p className="font-semibold text-gray-700">Bodegas con Secciones y Perchas</p>
-                    <div className="flex items-center gap-3">
-          
-          <button className="btn btn-sm btn-outline" onClick={clearFilters}>Limpiar filtros</button>
-          <button className="btn btn-sm btn-primary" onClick={applyFilters}>Aplicar filtros</button>
-        </div>
-        </div>
-        <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-3">
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600" >Bodega</label>
-          <input className="input input-sm"  value={filtroBodega} onChange={(e)=>setfiltroBodega(e.target.value)}/>
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+          {/* Filters Header */}
+          <div className="bg-gradient-to-r from-purple-600 to-purple-700 px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🔍</span>
+              <h3 className="text-white font-bold text-lg">Buscar Bodegas</h3>
+            </div>
+            <div className="flex items-center gap-2">
+              <button className="btn btn-sm bg-white text-purple-600 hover:bg-purple-50 border-0 font-semibold" onClick={clearFilters}>
+                ✕ Limpiar
+              </button>
+              <button className="btn btn-sm bg-gradient-to-r from-purple-500 to-purple-600 text-white border-0 hover:from-purple-600 hover:to-purple-700 font-semibold" onClick={applyFilters}>
+                ✓ Aplicar
+              </button>
+            </div>
+          </div>
+
+          {/* Filters Grid */}
+          <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-semibold text-purple-700">📦 Bodega</span>
+              </label>
+              <input 
+                className="input input-bordered focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all" 
+                placeholder="Buscar bodega..." 
+                value={filtroBodega} 
+                onChange={(e) => setfiltroBodega(e.target.value)}
+              />
+            </div>
+
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-semibold text-blue-700">📂 Sección</span>
+              </label>
+              <input 
+                className="input input-bordered focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" 
+                placeholder="Buscar sección..." 
+                value={filtroSeccion} 
+                onChange={(e) => setfiltroSeccion(e.target.value)}
+              />
+            </div>
+
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-semibold text-green-700">🔹 Percha</span>
+              </label>
+              <input 
+                className="input input-bordered focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all" 
+                placeholder="Buscar percha..." 
+                value={filtroPercha} 
+                onChange={(e) => setfiltroPercha(e.target.value)}
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">Seccion</label>
-          <input  className="input input-sm"  value={filtroSeccion} onChange={(e)=>setfiltroSeccion(e.target.value)}/>
-        </div>
+        {/* Warehouse Structure */}
+        <div className="mt-6 bg-white rounded-2xl shadow-2xl overflow-hidden p-6">
+          <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <span className="text-2xl">🏢</span>
+            Estructura de Almacén
+          </h3>
 
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">Percha</label>
-         <input className="input input-sm"  value={filtroPercha} onChange={(e)=>setfiltroPercha(e.target.value)}/>
-        </div>
-
-      </div>
           {bodegas.length === 0 ? (
-            <p className="text-gray-500 text-center py-4">No hay bodegas registradas</p>
+            <div className="text-center py-8">
+              <p className="text-gray-400 text-lg">📭 No hay bodegas registradas</p>
+            </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {bodegas.map((bodega) => (
-                <div key={bodega.id} className="border rounded-lg p-4 bg-gray-50">
+                <div key={bodega.id} className="border-2 border-purple-200 rounded-xl p-5 bg-gradient-to-br from-purple-50 to-white hover:shadow-lg transition-shadow">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <h3 className="font-bold text-gray-800 mb-3">📦 {bodega.bodega}</h3>
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-2xl">📦</span>
+                        <h4 className="font-bold text-gray-800 text-lg">{bodega.bodega}</h4>
+                      </div>
 
                       {bodega.seccion && bodega.seccion.length > 0 ? (
-                        <div className="space-y-3 ml-4">
+                        <div className="space-y-3 ml-6">
                           {bodega.seccion.map((sec) => (
-                            <div key={sec.id} className="border-l-2 border-blue-400 pl-3">
-                              <p className="text-sm font-semibold text-blue-700">📂 Sección: {sec.seccion}</p>
+                            <div key={sec.id} className="border-l-4 border-blue-400 pl-4 py-2 bg-blue-50 rounded-r-lg">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xl">📂</span>
+                                  <p className="font-semibold text-blue-800">{sec.seccion}</p>
+                                </div>
+                                <div className="flex gap-1">
+                                  <button
+                                    className="btn btn-xs btn-ghost tooltip"
+                                    data-tip="Editar Sección"
+                                    onClick={() => abrirEdicion("seccion", sec)}
+                                  >
+                                    ✏️
+                                  </button>
+                                  <button
+                                    className="btn btn-xs btn-ghost text-red-500 tooltip"
+                                    data-tip="Eliminar Sección"
+                                    onClick={() => { setitemEnEdicion({tipo:"seccion", data: sec}); dialog.current?.showModal(); }}
+                                  >
+                                    🗑️
+                                  </button>
+                                </div>
+                              </div>
 
                               {sec.percha && sec.percha.length > 0 ? (
-                                <div className="mt-2 space-y-1 ml-3">
+                                <div className="mt-3 space-y-2 ml-6">
                                   {sec.percha.map((per) => (
-                                    <div key={per.id} className="flex justify-between items-center">
-                                      <p className="text-sm text-gray-700">🔹 {per.percha}</p>
-                                      <div className="flex gap-2">
+                                    <div key={per.id} className="flex justify-between items-center bg-white p-2 rounded border border-green-200">
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-lg">🔹</span>
+                                        <p className="text-sm text-gray-700 font-medium">{per.percha}</p>
+                                      </div>
+                                      <div className="flex gap-1">
                                         <button
-                                          className="btn btn-xs btn-ghost"
+                                          className="btn btn-xs btn-ghost tooltip"
+                                          data-tip="Editar"
                                           onClick={() => abrirEdicion("percha", per)}
                                         >
-                                          Editar
+                                          ✏️
                                         </button>
                                         <button
-                                          className="btn btn-xs btn-error"
+                                          className="btn btn-xs btn-ghost text-red-500 tooltip"
+                                          data-tip="Eliminar"
                                           onClick={() => { setitemEnEdicion({tipo:"percha", data: per}); dialog.current?.showModal(); }}
                                         >
-                                          Eliminar
+                                          🗑️
                                         </button>
                                       </div>
                                     </div>
                                   ))}
                                 </div>
                               ) : (
-                                <p className="text-sm text-gray-500 italic ml-3">Sin perchas asignadas</p>
+                                <p className="text-sm text-gray-400 italic ml-6 mt-2">🔸 Sin perchas asignadas</p>
                               )}
-
-                              <div className="flex gap-2 ml-3 mt-2">
-                                <button
-                                  className="btn btn-xs btn-ghost"
-                                  onClick={() => abrirEdicion("seccion", sec)}
-                                >
-                                  Editar
-                                </button>
-                                <button
-                                  className="btn btn-xs btn-error"
-                                  onClick={() => { setitemEnEdicion({tipo:"seccion", data: sec}); dialog.current?.showModal(); }}
-                                >
-                                  Eliminar
-                                </button>
-                              </div>
                             </div>
                           ))}
                         </div>
                       ) : (
-                        <p className="text-sm text-gray-500 italic ml-4">Sin secciones asignadas</p>
+                        <p className="text-sm text-gray-400 italic ml-6">📂 Sin secciones asignadas</p>
                       )}
                     </div>
-
                     <div className="flex gap-2 ml-4">
                       <button
-                        className="btn btn-xs btn-ghost"
+                        className="btn btn-sm btn-ghost tooltip"
+                        data-tip="Editar Bodega"
                         onClick={() => abrirEdicion("bodega", bodega)}
                       >
-                        Editar
+                        ✏️
                       </button>
                       <button
-                        className="btn btn-xs btn-error"
+                        className="btn btn-sm btn-ghost text-red-500 tooltip"
+                        data-tip="Eliminar Bodega"
                         onClick={() => { setitemEnEdicion({tipo:"bodega", data: bodega}); dialog.current?.showModal(); }}
                       >
-                        Eliminar
+                        🗑️
                       </button>
                     </div>
                   </div>

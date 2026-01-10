@@ -402,12 +402,11 @@ const ordenesTrabajoApi  = async() =>{
                     <td className="px-4 py-3 text-gray-700 align-top">{u.userSolicitante?.name ?? "N/A"}</td>
                     <td className="px-4 py-3 text-gray-700 text-sm align-top">{u.DescripcionTrabajo}</td>
                     <td className="px-4 py-3 align-top"><span className="badge badge-success badge-sm">{u.estadoTrabajo.estado}</span></td>
-                    <td className="px-4 py-3 align-top"><div className="radial-progress cursor-pointer" onClick={() => handleAbrirModalFase(u.id)} style={{ "--value": u.progreso ?? 0 } as React.CSSProperties} 
-  aria-valuenow={u.progreso ?? 0} role="progressbar">{u.progreso ?? 0}%</div></td>
                     <td className="px-4 py-3 align-top text-center">
                       <div className="flex items-center justify-center flex-wrap gap-2">
                         <button
-                          className="btn btn-sm btn-info btn-outline gap-1"
+                          className="btn btn-sm btn-info btn-outline gap-1 tooltip"
+                          data-tip="Ver detalles"
                           onClick={() => {
                             asignarSolicitantexOrden(u.id);
                             setventanaEmergente(!ventanaEmergente);
@@ -415,7 +414,7 @@ const ordenesTrabajoApi  = async() =>{
                             setselectCodigo(u.Codigo);
                           }}
                         >
-                          👁️ Ver
+                          👁️
                         </button>
                         <button className="btn btn-sm btn-error btn-outline gap-1 tooltip" data-tip="Eliminar" onClick={() => metodoEliminarOrdenTrabajo(u.id)}>
                           🗑️

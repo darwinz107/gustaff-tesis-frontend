@@ -304,7 +304,7 @@ const obtenerUsers = async () =>{
           </div>
         </div>
 
-        <div className="p-6 bg-gradient-to-b from-blue-50 to-white border-b border-blue-100">
+        <div className="p-6 bg-gradient-to-b from-blue-50 to-white ">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-3">
             <div className="flex items-end gap-2">
               <div className="flex-1">
@@ -369,11 +369,11 @@ const obtenerUsers = async () =>{
                       <td className="px-6 py-4 align-middle font-semibold text-gray-900">{u.name}</td>
                       <td className="px-6 py-4 align-middle text-gray-700">{u.cellphone}</td>
                       <td className="px-6 py-4 align-middle text-gray-700">{u.email}</td>
-                      <td className="px-6 py-4 align-middle"><span className="badge badge-lg bg-gradient-to-r from-blue-200 to-cyan-200 text-blue-950 font-semibold shadow-sm">{u.cargoId?.name}</span></td>
+                      <td className="px-6 py-4 align-middle"><span className="">{u.cargoId?.name}</span></td>
                       <td className="px-6 py-4 align-middle text-center">
                         <div className="flex items-center justify-center gap-2">
-                          <button className="btn btn-sm bg-gradient-to-r from-blue-500 to-cyan-600 text-white border-0 hover:from-blue-600 hover:to-cyan-700 gap-1" onClick={() => { detalleUsuario(u.id); setventanaEmergente(true); }}>📋 Detalles</button>
-                           <button className="btn btn-sm btn-error gap-1" onClick={() => { setusuarioAEliminar(u.id); if(dialogEliminar.current) dialogEliminar.current.showModal(); }}>🗑️ Eliminar</button>
+                          <button className="btn btn-sm btn-ghost tooltip" data-tip="Ver detalles" onClick={() => { detalleUsuario(u.id); setventanaEmergente(true); }}>📋</button>
+                          <button className="btn btn-sm btn-error tooltip" data-tip="Eliminar" onClick={() => { setusuarioAEliminar(u.id); if(dialogEliminar.current) dialogEliminar.current.showModal(); }}>🗑️</button>
                         </div>
                       </td>
                     </tr>
@@ -391,64 +391,177 @@ const obtenerUsers = async () =>{
       </div>
 
       <div className={`z-50 fixed inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaEmergente ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="relative border border-gray-300 w-11/12 max-w-4xl h-[85vh] rounded-md bg-white shadow-lg overflow-auto">
-          <div className="w-full h-[12%] flex justify-between p-5 border-b">
-            <div className="font-medium text-gray-700">Detalle de usuario</div>
-            <div onClick={() => {limpiarErroresEdicion(); setventanaEmergente(!ventanaEmergente);}} className="cursor-pointer">❌</div>
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+        <div className="relative border border-gray-200 w-11/12 max-w-4xl min-h-1/2 rounded-2xl bg-white shadow-2xl overflow-hidden flex flex-col">
+          
+          {/* Header */}
+          <div className="w-full bg-gradient-to-r from-blue-500 to-blue-600 py-5 px-6 flex justify-between items-center border-b border-blue-200">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">👤</span>
+              <div>
+                <h2 className="text-lg font-bold text-white">Detalle de Usuario</h2>
+                <p className="text-blue-100 text-sm">{asignarDetalle.name ?? "Sin nombre"}</p>
+              </div>
+            </div>
+            <button 
+              onClick={() => {limpiarErroresEdicion(); setventanaEmergente(!ventanaEmergente);}} 
+              className="btn btn-circle btn-sm btn-ghost text-white hover:bg-blue-700 transition"
+            >
+              ✕
+            </button>
           </div>
 
-          <div className="w-full h-[76%] border-y border-gray-300 px-6 py-4 flex">
-            <div className="w-1/3">
-              <p className="text-xs text-gray-500">Nombre</p>
-              <input type="text" disabled={!habilitarEdicion} className={`input w-full mt-1 ${erroresEdicion.nombre ? 'input-error' : ''}`} value={asignarDetalle.name ?? ""} onChange={(e)=>{setasignarDetalle(prev=>({...prev, name: e.target.value})); seterroresEdicion({...erroresEdicion, nombre: validarNombre(e.target.value)});}} />
-              <div className="h-5">{erroresEdicion.nombre && <p className="text-red-500 text-sm">{erroresEdicion.nombre}</p>}</div>
+          {/* Content */}
+          <div className="w-full flex-1 overflow-auto px-8 py-8 bg-gradient-to-b from-gray-50 to-white">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               
-              <p className="text-xs text-gray-500 mt-4">Fecha de nacimiento</p>
-              <input type="date" className={`input input-sm ${erroresEdicion.fecha ? 'input-error' : ''}`} value={asignarDetalle.fechaNac ?? ""} disabled={!habilitarEdicion} onChange={(e)=>{ setasignarDetalle(prev=>({...prev, fechaNac: e.target.value})); seterroresEdicion({...erroresEdicion, fecha: validarFecha(e.target.value)});}} />
-              <div className="h-5">{erroresEdicion.fecha && <p className="text-red-500 text-sm">{erroresEdicion.fecha}</p>}</div>
-              
-              <p className="text-xs text-gray-500 mt-4">Cédula</p>
-              <input className={`input w-full mt-1 ${erroresEdicion.cedula ? 'input-error' : ''}`} value={asignarDetalle.identification ?? ""} onChange={(e)=>{setasignarDetalle(prev=>({...prev, identification: e.target.value})); seterroresEdicion({...erroresEdicion, cedula: validarCedula(e.target.value)});}} disabled={!habilitarEdicion} />
-              <div className="h-5">{erroresEdicion.cedula && <p className="text-red-500 text-sm">{erroresEdicion.cedula}</p>}</div>
-            </div>
+              {/* Nombre */}
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-semibold text-gray-700">👤 Nombre</span>
+                </label>
+                <input 
+                  type="text" 
+                  disabled={!habilitarEdicion} 
+                  className={`input input-bordered w-full transition ${erroresEdicion.nombre ? 'input-error' : ''} ${habilitarEdicion ? 'focus:border-blue-500' : 'bg-gray-100'}`} 
+                  value={asignarDetalle.name ?? ""} 
+                  onChange={(e)=>{setasignarDetalle(prev=>({...prev, name: e.target.value})); seterroresEdicion({...erroresEdicion, nombre: validarNombre(e.target.value)});}} 
+                />
+                {erroresEdicion.nombre && <label className="label"><span className="label-text-alt text-error text-sm">{erroresEdicion.nombre}</span></label>}
+              </div>
 
-            <div className="w-1/3 px-4">
-              <p className="text-xs text-gray-500">Celular</p>
-              <input className={`input w-full mt-1 ${erroresEdicion.celular ? 'input-error' : ''}`} value={asignarDetalle.cellphone ?? ""} onChange={(e)=>{setasignarDetalle(prev=>({...prev, cellphone: e.target.value})); seterroresEdicion({...erroresEdicion, celular: validarCelular(e.target.value)});}} disabled={!habilitarEdicion} />
-              <div className="h-5">{erroresEdicion.celular && <p className="text-red-500 text-sm">{erroresEdicion.celular}</p>}</div>
-              
-              <p className="text-xs text-gray-500 mt-4">Email</p>
-              <input className={`input w-full mt-1 ${erroresEdicion.email ? 'input-error' : ''}`} value={asignarDetalle.email ?? ""} onChange={(e)=>{setasignarDetalle(prev=>({...prev, email: e.target.value})); seterroresEdicion({...erroresEdicion, email: validarEmail(e.target.value)});}} disabled={!habilitarEdicion} />
-              <div className="h-5">{erroresEdicion.email && <p className="text-red-500 text-sm">{erroresEdicion.email}</p>}</div>
-              
-              <p className="text-xs text-gray-500 mt-4">Nueva contraseña</p>
-              <input className="input w-full mt-1" value={contrasenia} onChange={(e)=>setcontrasenia(e.target.value)} disabled={!habilitarEdicion} />
-            </div>
+              {/* Fecha de Nacimiento */}
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-semibold text-gray-700">🗓️ Fecha de Nacimiento</span>
+                </label>
+                <input 
+                  type="date" 
+                  disabled={!habilitarEdicion} 
+                  className={`input input-bordered w-full transition ${erroresEdicion.fecha ? 'input-error' : ''} ${habilitarEdicion ? 'focus:border-blue-500' : 'bg-gray-100'}`} 
+                  value={asignarDetalle.fechaNac ?? ""} 
+                  onChange={(e)=>{ setasignarDetalle(prev=>({...prev, fechaNac: e.target.value})); seterroresEdicion({...erroresEdicion, fecha: validarFecha(e.target.value)});}} 
+                />
+                {erroresEdicion.fecha && <label className="label"><span className="label-text-alt text-error text-sm">{erroresEdicion.fecha}</span></label>}
+              </div>
 
-            <div className="w-1/3">
-              <p className="text-xs text-gray-500">Cargo</p>
-              <select disabled={!habilitarEdicion} className={`select w-full mt-1 ${erroresEdicion.cargo ? 'select-error' : ''}`} value={selectCargo} onChange={(e)=>{setselectCargo(Number(e.target.value)); seterroresEdicion({...erroresEdicion, cargo: validarCargo(Number(e.target.value))});}}>
-                <option value={0}>...</option>
-                {cargos.map((a)=><option key={a.id} value={a.id}>{a.name}</option>)}
-              </select>
-              <div className="h-5">{erroresEdicion.cargo && <p className="text-red-500 text-sm">{erroresEdicion.cargo}</p>}</div>
-              
-              <p className="text-xs text-gray-500 mt-4">Estado</p>
-              <input className="input w-full mt-1" disabled={!habilitarEdicion} value={asignarDetalle?.estado ?"ACTIVO":"INACTIVO"} />
+              {/* Cédula */}
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-semibold text-gray-700">📌 Cédula</span>
+                </label>
+                <input 
+                  className={`input input-bordered w-full transition ${erroresEdicion.cedula ? 'input-error' : ''} ${habilitarEdicion ? 'focus:border-blue-500' : 'bg-gray-100'}`} 
+                  value={asignarDetalle.identification ?? ""} 
+                  onChange={(e)=>{setasignarDetalle(prev=>({...prev, identification: e.target.value})); seterroresEdicion({...erroresEdicion, cedula: validarCedula(e.target.value)});}} 
+                  disabled={!habilitarEdicion} 
+                />
+                {erroresEdicion.cedula && <label className="label"><span className="label-text-alt text-error text-sm">{erroresEdicion.cedula}</span></label>}
+              </div>
+
+              {/* Celular */}
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-semibold text-gray-700">📱 Celular</span>
+                </label>
+                <input 
+                  className={`input input-bordered w-full transition ${erroresEdicion.celular ? 'input-error' : ''} ${habilitarEdicion ? 'focus:border-blue-500' : 'bg-gray-100'}`} 
+                  value={asignarDetalle.cellphone ?? ""} 
+                  onChange={(e)=>{setasignarDetalle(prev=>({...prev, cellphone: e.target.value})); seterroresEdicion({...erroresEdicion, celular: validarCelular(e.target.value)});}} 
+                  disabled={!habilitarEdicion} 
+                />
+                {erroresEdicion.celular && <label className="label"><span className="label-text-alt text-error text-sm">{erroresEdicion.celular}</span></label>}
+              </div>
+
+              {/* Email */}
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-semibold text-gray-700">✉️ Email</span>
+                </label>
+                <input 
+                  className={`input input-bordered w-full transition ${erroresEdicion.email ? 'input-error' : ''} ${habilitarEdicion ? 'focus:border-blue-500' : 'bg-gray-100'}`} 
+                  value={asignarDetalle.email ?? ""} 
+                  onChange={(e)=>{setasignarDetalle(prev=>({...prev, email: e.target.value})); seterroresEdicion({...erroresEdicion, email: validarEmail(e.target.value)});}} 
+                  disabled={!habilitarEdicion} 
+                />
+                {erroresEdicion.email && <label className="label"><span className="label-text-alt text-error text-sm">{erroresEdicion.email}</span></label>}
+              </div>
+
+              {/* Nueva Contraseña */}
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-semibold text-gray-700">🔐 Nueva Contraseña</span>
+                </label>
+                <input 
+                  type="password"
+                  className={`input input-bordered w-full transition ${habilitarEdicion ? 'focus:border-blue-500' : 'bg-gray-100'}`} 
+                  value={contrasenia} 
+                  onChange={(e)=>setcontrasenia(e.target.value)} 
+                  disabled={!habilitarEdicion} 
+                  placeholder="Dejar en blanco para no cambiar"
+                />
+              </div>
+
+              {/* Cargo */}
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-semibold text-gray-700">🏷️ Cargo</span>
+                </label>
+                <select 
+                  disabled={!habilitarEdicion} 
+                  className={`select select-bordered w-full transition ${erroresEdicion.cargo ? 'select-error' : ''} ${habilitarEdicion ? 'focus:border-blue-500' : 'bg-gray-100'}`} 
+                  value={selectCargo} 
+                  onChange={(e)=>{setselectCargo(Number(e.target.value)); seterroresEdicion({...erroresEdicion, cargo: validarCargo(Number(e.target.value))});}}
+                >
+                  <option value={0}>Selecciona un cargo...</option>
+                  {cargos.map((a)=><option key={a.id} value={a.id}>{a.name}</option>)}
+                </select>
+                {erroresEdicion.cargo && <label className="label"><span className="label-text-alt text-error text-sm">{erroresEdicion.cargo}</span></label>}
+              </div>
+
+              {/* Estado */}
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-semibold text-gray-700">⭐ Estado</span>
+                </label>
+                <div className={`input input-bordered w-full bg-gray-100 flex items-center justify-center font-semibold ${asignarDetalle?.estado ? 'text-green-600' : 'text-red-600'}`}>
+                  {asignarDetalle?.estado ? "✓ ACTIVO" : "✗ INACTIVO"}
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="w-full h-[12%] flex justify-between items-center px-6 border-t">
+          {/* Footer */}
+          <div className="w-full px-8 py-5 flex justify-end gap-3 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
             {habilitarEdicion ? (
               <>
-                <button className="btn btn-primary" onClick={actualizarInfoUsuario}>Hecho</button>
-                <button className="btn" onClick={() => { limpiarErroresEdicion(); detalleUsuario(asignarDetalle.id); sethabilitarEdicion(!habilitarEdicion); }}>Cancelar</button>
+                <button 
+                  className="btn btn-ghost gap-2 hover:bg-gray-200 transition" 
+                  onClick={() => { limpiarErroresEdicion(); detalleUsuario(asignarDetalle.id); sethabilitarEdicion(!habilitarEdicion); }}
+                >
+                  ✕ Cancelar
+                </button>
+                <button 
+                  className="btn bg-gradient-to-r from-green-500 to-green-600 text-white border-0 hover:from-green-600 hover:to-green-700 gap-2 transition shadow-md hover:shadow-lg" 
+                  onClick={actualizarInfoUsuario}
+                >
+                  ✓ Guardar
+                </button>
               </>
             ) : (
               <>
-                <button className="btn" onClick={() => sethabilitarEdicion(!habilitarEdicion)}>Editar</button>
-                <button className="btn btn-ghost" onClick={() =>{ limpiarErroresEdicion(); setventanaEmergente(!ventanaEmergente);}}>Cerrar</button>
+                <button 
+                  className="btn btn-ghost gap-2 hover:bg-gray-200 transition" 
+                  onClick={() => {setventanaEmergente(!ventanaEmergente);}}
+                >
+                  ✕ Cerrar
+                </button>
+                <button 
+                  className="btn bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 hover:from-blue-600 hover:to-blue-700 gap-2 transition shadow-md hover:shadow-lg" 
+                  onClick={() => sethabilitarEdicion(!habilitarEdicion)}
+                >
+                  ✏️ Editar
+                </button>
               </>
             )}
           </div>
@@ -470,7 +583,7 @@ const obtenerUsers = async () =>{
 
       <div className={`z-10 fixed inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaCrearUsuario ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
         <div className="absolute inset-0 bg-black/40" />
-        <div className="relative border border-gray-300 w-11/12 max-w-4xl h-[85vh] rounded-md bg-white shadow-lg overflow-auto mt-20">
+        <div className="relative border border-gray-300 w-11/12 max-w-4xl min-h-1/2 rounded-md bg-white shadow-lg overflow-auto mt-20 rounded-t-2xl">
           <NuevoUsuario cargos={cargos} setconfirmarCambio={setvalidarCambio} showCrearUsuario={ventanaCrearUsuario} setshowCrearUsuario={setventanaCrearUsuario} />
         </div>
       </div>

@@ -513,8 +513,8 @@ setinfoDestino(infoDestinoInicial);
                   <td>{u.Observacion}</td>
                   <td><span className="badge badge-sm badge-info">{u.estadoStock}</span></td>
                   <td>
-                    <button className="btn btn-ghost btn-xs gap-1" onClick={() => funcionEliminarItems(i)}>
-                      🗑️ Eliminar
+                    <button className="btn btn-ghost btn-xs gap-1 tooltip" data-tip="Eliminar" onClick={() => funcionEliminarItems(i)}>
+                      🗑️
                     </button>
                   </td>
                 </tr>
