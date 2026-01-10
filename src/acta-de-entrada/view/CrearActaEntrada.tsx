@@ -24,7 +24,7 @@ export const CrearActaEntrada = () => {
     const [proovedores, setproovedores] = useState<{id:number,nombreComercial:string}[]>([]);
     const [proovedor, setproovedor] = useState("");
     const [factura, setfactura] = useState("");
-    const [item, setitem] = useState(null);
+    const [item, setitem] = useState("");
     const [cantidad, setcantidad] = useState(null);
     const [stockMin, setstockMin] = useState(null);
     const [precioUni, setprecioUni] = useState(0);
@@ -93,7 +93,7 @@ const cargarInfoSolMaterial = async() =>{
   setdescuento(itemData.descuento);
   setstockMin(itemData.stockMin);
   setiva(itemData.iva);
-  setobservacion(itemData.Observacion || "");
+  //setobservacion(itemData.Observacion || "");
 
   const imgBlob = itemData.imagen ? Base64ToBlob(itemData.imagen) : null; 
   console.log("imgBlob", imgBlob);  

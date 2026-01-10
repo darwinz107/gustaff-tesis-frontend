@@ -23,7 +23,7 @@ useEffect(() => {
     const res = id
       ? await actaDeSalidaByIdCompra(Number(id))
       : await actaDeSalidaByIdCompra(undefined as any);
-
+console.log(res);
     setnewSolicitud(res);
   };
 
@@ -56,7 +56,7 @@ useEffect(() => {
              <Text >Descripcion</Text>
             </View>
             <View style={{    textAlign:"center",width:"85%",height:"100%",borderLeftWidth:1,borderColor:"#000"}}>
-             <Text >{newSolicitud?.numSolicitudCompra?.numOrdenTrabajo ? newSolicitud?.numSolicitudCompra?.numOrdenTrabajo.DescripcionTrabajo : newSolicitud?.descripcion ?newSolicitud?.descripcion :'N/A'}</Text>
+             <Text >{ newSolicitud?.numSolicitudCompra?.numOrdenTrabajo.DescripcionTrabajo ?? newSolicitud?.descripcion ??'N/A'}</Text>
             </View>
             </View>
             
@@ -108,7 +108,7 @@ useEffect(() => {
 
 <View style={{ marginHorizontal: 10, marginTop: 18, width: "97%", flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" }}>
   <View style={{ width: "48%" }}>
-    <Text style={{ fontSize: 9, fontWeight: "bold" }}>RECIBE: <Text style={{ fontWeight: "bold" }}>{newSolicitud?.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.name ?? newSolicitud?.recibeSinSM?.name ?? "N/A"}</Text></Text>
+    <Text style={{ fontSize: 9, fontWeight: "bold" }}>RECIBE: <Text style={{ fontWeight: "bold" }}>{newSolicitud?.recibeSinSM?.name ?? "N/A"}</Text></Text>
     <View style={{ height: 24 }} />
     <Text style={{ borderTopWidth: 0.7, borderTopColor: "#000", width: "80%", paddingTop: 6 }}>FIRMA</Text>
   </View>

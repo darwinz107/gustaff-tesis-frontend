@@ -14,8 +14,6 @@ export const HistorialOrdenes = ({setcargaAuto,setsendId}) => {
    const [ordenesTrabajo, setordenesTrabajo] = useState<OrdenesTrabajo[]>([]);
    const [validarCambio, setvalidarCambio] = useState(false);
    const [habilitarEdicion, sethabilitarEdicion] = useState(false);
-   const callyPpopover4 = useRef(null);
-   const callyPpopover5 = useRef(null);
     const [ventanaEmergente, setventanaEmergente] = useState(false);   
      const [ventanaCrearUsuario, setventanaCrearUsuario] = useState(false);
     const [filtrarxSolicitante, setfiltrarxSolicitante] = useState("");
@@ -468,26 +466,30 @@ const ordenesTrabajoApi  = async() =>{
 
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Fecha de Inicio</label>
-              <button disabled={!habilitarEdicion} type="button" onClick={()=>callyPpopover4.current?.showPopover()} className="input input-sm input-bordered w-full text-left mt-2 focus:input-success rounded-lg disabled:bg-gray-50" id="cally4" style={{ anchorName: "--cally4" }}>{ordenTrabajoxUser.fechaInicio}</button>
-              <div popover="auto" ref={callyPpopover4} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally4" }}>
-                <calendar-date className="cally" onchange={(e)=>{document.getElementById("cally4").innerText = e.target.value; setordenTrabajoxUser((prev)=>({...prev,fechaInicio:e.target.value})); setconfirmarCambio(true);}}>
-                  <svg aria-label="Previous" className="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
-                  <svg aria-label="Next" className="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
-                  <calendar-month></calendar-month>
-                </calendar-date>
-              </div>
+              <input 
+                type="date" 
+                disabled={!habilitarEdicion} 
+                className="input input-sm input-bordered w-full mt-2 focus:input-success rounded-lg disabled:bg-gray-50"
+                value={ordenTrabajoxUser.fechaInicio || ''}
+                onChange={(e) => {
+                  setordenTrabajoxUser((prev) => ({ ...prev, fechaInicio: e.target.value }));
+                  setconfirmarCambio(true);
+                }}
+              />
             </div>
 
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Fecha de Finalización</label>
-              <button disabled={!habilitarEdicion} type="button" onClick={()=>callyPpopover5.current?.showPopover()} className="input input-sm input-bordered w-full text-left mt-2 focus:input-success rounded-lg disabled:bg-gray-50" id="cally5" style={{ anchorName: "--cally5" }}>{ordenTrabajoxUser.fechaFinal}</button>
-              <div popover="auto" ref={callyPpopover5} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally5" }}>
-                <calendar-date className="cally" onchange={(e)=>{document.getElementById("cally5").innerText = e.target.value; setordenTrabajoxUser((prev)=>({...prev,fechaFinal:e.target.value})); setconfirmarCambio(true);}}>
-                  <svg aria-label="Previous" className="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
-                  <svg aria-label="Next" className="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
-                  <calendar-month></calendar-month>
-                </calendar-date>
-              </div>
+              <input 
+                type="date" 
+                disabled={!habilitarEdicion} 
+                className="input input-sm input-bordered w-full mt-2 focus:input-success rounded-lg disabled:bg-gray-50"
+                value={ordenTrabajoxUser.fechaFinal || ''}
+                onChange={(e) => {
+                  setordenTrabajoxUser((prev) => ({ ...prev, fechaFinal: e.target.value }));
+                  setconfirmarCambio(true);
+                }}
+              />
             </div>
 
             <div>

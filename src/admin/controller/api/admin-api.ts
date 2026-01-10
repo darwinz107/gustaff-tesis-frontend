@@ -99,7 +99,7 @@ export const getAllRoles = async (): Promise<Rol[]> => {
 export const logoutSession = async (): Promise<{ msj: string }> => {
 
   try {
-     const response: Response = await fetch(`${route}logout/token`, {
+     const response: Response = await fetch(`${route}auth/logout/token`, {
     method: "GET",
     credentials: 'include'
   });

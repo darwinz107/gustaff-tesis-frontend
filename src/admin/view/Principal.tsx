@@ -43,7 +43,9 @@ export const Principal = () => {
   const [contrasenaNueva, setContrasenaNueva] = useState("");
   const [mostrarCambioPassword, setMostrarCambioPassword] = useState(false);
   const [errores, setErrores] = useState<any>({});
+  const [mostrarLogoutSuccess, setMostrarLogoutSuccess] = useState(false);
   const dialogPerfil = useRef<HTMLDialogElement>(null);
+  const dialogLogout = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
     if (cargarAuto && sendId === undefined) {
@@ -77,14 +79,26 @@ export const Principal = () => {
     cargarUsuario();
   }, []);
 
-  const terminarSesion = async () => {
+  const terminarSesion = () => {
+    dialogLogout.current?.showModal();
+  }
+
+  const confirmarLogout = async () => {
     try {
-      const res = await logoutSession();
-      alert(res.msj);
-      navigate('/');
+    const res =  await logoutSession();
+    console.log(res);
+      setMostrarLogoutSuccess(true);
+      dialogLogout.current?.close();
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
     } catch (error) {
       console.error("Error al cargar la api: ", error);
     }
+  }
+
+  const cancelarLogout = () => {
+    dialogLogout.current?.close();
   }
 
   const guardarEdicionPerfil = async () => {
@@ -486,6 +500,44 @@ export const Principal = () => {
                 ✓ Guardar Cambios
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Dialog de confirmación de logout */}
+      <dialog ref={dialogLogout} className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Confirmar cierre de sesión</h3>
+          <p className="py-4">¿Está seguro que desea cerrar sesión?</p>
+          <div className="modal-action">
+            <form method="dialog" className="flex gap-2">
+              <button
+                type="button"
+                className="btn btn-error"
+                onClick={confirmarLogout}
+              >
+                Cerrar sesión
+              </button>
+              <button
+                type="button"
+                className="btn"
+                onClick={cancelarLogout}
+              >
+                Cancelar
+              </button>
+            </form>
+          </div>
+        </div>
+      </dialog>
+
+      {/* Toast de éxito de logout */}
+      {mostrarLogoutSuccess && (
+        <div className="fixed top-5 right-5 z-50">
+          <div role="alert" className="alert alert-success shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Sesión cerrada correctamente</span>
           </div>
         </div>
       )}
