@@ -778,6 +778,7 @@ const eliminarItem = (index: number) => {
                 const file = e.target.files?.[0] || null;
                 setimagen(file);
               }}
+              disabled={habilitarStockMin}
             />
             {imagen && <p className="text-xs text-green-600 mt-1">Imagen seleccionado</p>}
           </div>

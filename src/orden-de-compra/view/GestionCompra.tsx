@@ -57,6 +57,24 @@ export const GestionCompra = () => {
     setitemsEditables(res.itemSolicitados || []);
   };
 
+  const isItemEditable = (id: number, itemName: string): boolean => {
+    // Buscar todos los items con el mismo nombre de item
+    const itemsConMismoNombre = itemsEditables.filter((item) => item.item === itemName);
+    
+    // Si hay solo un item con este nombre, es editable
+    if (itemsConMismoNombre.length === 1) {
+      return true;
+    }
+    
+    // Si hay más de uno, solo es editable si tiene existencia true
+    if (itemsConMismoNombre.length > 1) {
+      const itemActual = itemsEditables.find((item) => item.id === id);
+      return itemActual?.existencia === true;
+    }
+    
+    return true;
+  };
+
   const handleItemChange = (id: number, field: string, value: any) => {
     setitemsEditables((prev) =>
       prev.map((item) =>
@@ -67,13 +85,31 @@ export const GestionCompra = () => {
   };
 
   const actSolicitudMaterial = async () => {
-    const itemsParaEnviar = itemsEditables.map((item) => ({
-      id: item.id,
-      cantidad: item.cantidad,
-      caracteristica: item.caracteristica,
-      Observacion: item.Observacion,
-      item: item.item,
-    }));
+    // Filtrar items para enviar según la lógica: 
+    // - Si solo hay un item con ese nombre, enviarlo
+    // - Si hay 2+ items con el mismo nombre, enviar solo el que tenga existencia true
+    const itemsParaEnviar = itemsEditables
+      .filter((item) => {
+        const itemsConMismoNombre = itemsEditables.filter(
+          (i) => i.item === item.item
+        );
+
+        if (itemsConMismoNombre.length === 1) {
+          return true; // Si es único, enviarlo
+        }
+
+        if (itemsConMismoNombre.length > 1) {
+          return item.existencia === true; // Si hay duplicados, solo enviar el que tenga existencia true
+        }
+
+        return false;
+      })
+      .map((item) => ({
+        id: item.id,
+        cantidad: item.cantidad,
+        caracteristica: item.caracteristica,
+        Observacion: item.Observacion,
+      }));
 
     const res = await editarSolicitudMaterial(detalleSol.id, {
       Autoriza: detalleSol.Autoriza,
@@ -186,7 +222,7 @@ export const GestionCompra = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {ordenesCompra.map((u) => (
+                  {ordenesCompra.map((u,idx) => (
                     <tr key={u.id} className="border-t border-gray-100 hover:bg-orange-50 transition-colors">
                       <td className="px-4 py-3 align-top font-semibold text-gray-800">{u.numOrden}</td>
                       <td className="px-4 py-3 align-top text-gray-700">{u.fechaRemision ? u.fechaRemision.split("T")[0] : ""}</td>
@@ -195,7 +231,7 @@ export const GestionCompra = () => {
                       <td className="px-4 py-3 align-top"><span className="badge badge-warning gap-2">{u.estadoCompra?.estado}</span></td>
                       <td className="px-4 py-3 align-top text-center">
                         <div className="flex items-center justify-center gap-2 flex-wrap">
-                          <button className="btn btn-sm btn-info btn-outline gap-1 tooltip" data-tip="Ver detalles" onClick={() => { setventanaEmergente(true); cargarSolicitud(u.id); }}>👁️</button>
+                          <button className={`btn btn-sm btn-info btn-outline gap-1 tooltip ${idx === 0 ? "tooltip-bottom" : ""}`} data-tip="Ver detalles" onClick={() => { setventanaEmergente(true); cargarSolicitud(u.id); }}>👁️</button>
                           <button className="btn btn-sm btn-error btn-outline gap-1 tooltip" data-tip="Eliminar" onClick={() => metodoEliminarSolMateriales(u.id)}>🗑️</button>
                           <button className="btn btn-sm btn-success btn-outline gap-1 tooltip" data-tip="Descargar PDF" onClick={() => cargarPdf(u.numOrdenTrabajo?.id)}>📄</button>
                         </div>
@@ -286,73 +322,71 @@ export const GestionCompra = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {itemsEditables?.map((is, idx) => (
-                      <tr key={idx} className="border-t border-gray-100 hover:bg-orange-50 transition-colors">
-                        {habilitarEdicion ? (
-                          <>
-                            <td className="px-3 py-3">
-                              <input
-                                type="text"
-                                className="input input-sm input-bordered w-full"
-                                value={is.item}
-                                onChange={(e) => handleItemChange(is.id, "item", e.target.value)}
-                                placeholder="Nombre del item"
-                              />
-                            </td>
-                            <td className="px-3 py-3">
-                              <input
-                                type="number"
-                                className="input input-sm input-bordered w-full text-right"
-                                value={is.cantidad}
-                                onChange={(e) =>
-                                  handleItemChange(is.id, "cantidad", parseInt(e.target.value) || 0)
-                                }
-                                placeholder="0"
-                              />
-                            </td>
-                            <td className="px-3 py-3">
-                              <input
-                                type="text"
-                                className="input input-sm input-bordered w-full"
-                                value={is.caracteristica || ""}
-                                onChange={(e) =>
-                                  handleItemChange(is.id, "caracteristica", e.target.value)
-                                }
-                                placeholder="Características"
-                              />
-                            </td>
-                            <td className="px-3 py-3">
-                              <textarea
-                                className="textarea textarea-sm textarea-bordered w-full resize-none"
-                                rows={1}
-                                value={is.Observacion || ""}
-                                onChange={(e) =>
-                                  handleItemChange(is.id, "Observacion", e.target.value)
-                                }
-                                placeholder="Observaciones"
-                              />
-                            </td>
-                            <td className="px-3 py-3 text-center">
-                              <span className={`badge badge-sm ${is.existencia ? "badge-success" : "badge-error"}`}>
-                                {is.existencia ? "✓ EN STOCK" : "✕ NO DISP."}
-                              </span>
-                            </td>
-                          </>
-                        ) : (
-                          <>
-                            <td className="px-3 py-3 font-medium text-gray-800">{is.item}</td>
-                            <td className="px-3 py-3 text-right text-gray-700">{is.cantidad}</td>
-                            <td className="px-3 py-3 text-gray-700">{is.caracteristica ?? "N/A"}</td>
-                            <td className="px-3 py-3 text-gray-700 text-xs">{is.Observacion ?? "N/A"}</td>
-                            <td className="px-3 py-3 text-center">
-                              <span className={`badge badge-sm ${is.existencia ? "badge-success" : "badge-error"}`}>
-                                {is.existencia ? "✓ EN STOCK" : "✕ NO DISP."}
-                              </span>
-                            </td>
-                          </>
-                        )}
-                      </tr>
-                    ))}
+                    {itemsEditables?.map((is, idx) => {
+                      const esEditable = isItemEditable(is.id, is.item);
+                      return (
+                        <tr key={idx} className="border-t border-gray-100 hover:bg-orange-50 transition-colors">
+                          {habilitarEdicion ? (
+                            <>
+                              <td className="px-3 py-3 font-medium text-gray-800">{is.item}</td>
+                              <td className="px-3 py-3">
+                                <input
+                                  type="number"
+                                  disabled={!esEditable && detalleSol.estadoCompra?.estado !== "ENTREGADO" }
+                                  className="input input-sm input-bordered w-full text-right"
+                                  value={is.cantidad}
+                                  onChange={(e) =>
+                                    handleItemChange(is.id, "cantidad", parseInt(e.target.value) || 0)
+                                  }
+                                  placeholder="0"
+                                />
+                              </td>
+                              <td className="px-3 py-3">
+                                <input
+                                  type="text"
+                                  disabled={!esEditable}
+                                  className="input input-sm input-bordered w-full"
+                                  value={is.caracteristica || ""}
+                                  onChange={(e) =>
+                                    handleItemChange(is.id, "caracteristica", e.target.value)
+                                  }
+                                  placeholder="Características"
+                                />
+                              </td>
+                              <td className="px-3 py-3">
+                                <textarea
+                                  disabled={!esEditable}
+                                  className="textarea textarea-sm textarea-bordered w-full resize-none"
+                                  rows={1}
+                                  value={is.Observacion || ""}
+                                  onChange={(e) =>
+                                    handleItemChange(is.id, "Observacion", e.target.value)
+                                  }
+                                  placeholder="Observaciones"
+                                />
+                              </td>
+                              <td className="px-3 py-3 text-center">
+                                <span className={`badge badge-sm ${is.existencia ? "badge-success" : "badge-error"}`}>
+                                  {is.existencia ? "✓ EN STOCK" : "✕ NO DISP."}
+                                </span>
+                              </td>
+                            </>
+                          ) : (
+                            <>
+                              <td className="px-3 py-3 font-medium text-gray-800">{is.item}</td>
+                              <td className="px-3 py-3 text-right text-gray-700">{is.cantidad}</td>
+                              <td className="px-3 py-3 text-gray-700">{is.caracteristica ?? "N/A"}</td>
+                              <td className="px-3 py-3 text-gray-700 text-xs">{is.Observacion ?? "N/A"}</td>
+                              <td className="px-3 py-3 text-center">
+                                <span className={`badge badge-sm ${is.existencia ? "badge-success" : "badge-error"}`}>
+                                  {is.existencia ? "✓ EN STOCK" : "✕ NO DISP."}
+                                </span>
+                              </td>
+                            </>
+                          )}
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
