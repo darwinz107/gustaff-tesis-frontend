@@ -19,7 +19,7 @@ export const GestionCompra = () => {
   const [ordenesTrabajo, setordenesTrabajo] = useState<{ NumOrden: string }[]>([]);
   const [nOrdenTrabajo, setnOrdenTrabajo] = useState("");
   const [estados, setestados] = useState<{ id: number; estado: string }[]>([]);
-
+  const [itemsEditables, setitemsEditables] = useState<any[]>([]);
 
   const [filtroNumOrden, setFiltroNumOrden] = useState("");
   const [filtroSolicitante, setFiltroSolicitante] = useState("");
@@ -54,14 +54,32 @@ export const GestionCompra = () => {
     const res = await ordenCompraById(id);
     setdetalleSol(res);
     setnOrdenTrabajo(res.numOrdenTrabajo?.NumOrden ?? "");
+    setitemsEditables(res.itemSolicitados || []);
+  };
+
+  const handleItemChange = (id: number, field: string, value: any) => {
+    setitemsEditables((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, [field]: value } : item
+      )
+    );
+    setconfirmarCambio(false);
   };
 
   const actSolicitudMaterial = async () => {
+    const itemsParaEnviar = itemsEditables.map((item) => ({
+      id: item.id,
+      cantidad: item.cantidad,
+      caracteristica: item.caracteristica,
+      Observacion: item.Observacion,
+      item: item.item,
+    }));
+
     const res = await editarSolicitudMaterial(detalleSol.id, {
       Autoriza: detalleSol.Autoriza,
-     
       ordenTrabajoId: nOrdenTrabajo,
-      estadoCompra: detalleSol.estadoCompra.estado
+      estadoCompra: detalleSol.estadoCompra.estado,
+      itemsSolicitados: itemsParaEnviar,
     });
     alert(res.msj);
     console.log(res);
@@ -268,13 +286,71 @@ export const GestionCompra = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {detalleSol?.itemSolicitados?.map((is, idx) => (
+                    {itemsEditables?.map((is, idx) => (
                       <tr key={idx} className="border-t border-gray-100 hover:bg-orange-50 transition-colors">
-                        <td className="px-3 py-3 font-medium text-gray-800">{is.item}</td>
-                        <td className="px-3 py-3 text-right text-gray-700">{is.cantidad}</td>
-                        <td className="px-3 py-3 text-gray-700">{is.caracteristica ?? "N/A"}</td>
-                        <td className="px-3 py-3 text-gray-700 text-xs">{is.Observacion ?? "N/A"}</td>
-                        <td className="px-3 py-3 text-center"><span className={`badge badge-sm ${is.existencia ? 'badge-success' : 'badge-error'}`}>{is.existencia ? "✓ EN STOCK" : "✕ NO DISP."}</span></td>
+                        {habilitarEdicion ? (
+                          <>
+                            <td className="px-3 py-3">
+                              <input
+                                type="text"
+                                className="input input-sm input-bordered w-full"
+                                value={is.item}
+                                onChange={(e) => handleItemChange(is.id, "item", e.target.value)}
+                                placeholder="Nombre del item"
+                              />
+                            </td>
+                            <td className="px-3 py-3">
+                              <input
+                                type="number"
+                                className="input input-sm input-bordered w-full text-right"
+                                value={is.cantidad}
+                                onChange={(e) =>
+                                  handleItemChange(is.id, "cantidad", parseInt(e.target.value) || 0)
+                                }
+                                placeholder="0"
+                              />
+                            </td>
+                            <td className="px-3 py-3">
+                              <input
+                                type="text"
+                                className="input input-sm input-bordered w-full"
+                                value={is.caracteristica || ""}
+                                onChange={(e) =>
+                                  handleItemChange(is.id, "caracteristica", e.target.value)
+                                }
+                                placeholder="Características"
+                              />
+                            </td>
+                            <td className="px-3 py-3">
+                              <textarea
+                                className="textarea textarea-sm textarea-bordered w-full resize-none"
+                                rows={1}
+                                value={is.Observacion || ""}
+                                onChange={(e) =>
+                                  handleItemChange(is.id, "Observacion", e.target.value)
+                                }
+                                placeholder="Observaciones"
+                              />
+                            </td>
+                            <td className="px-3 py-3 text-center">
+                              <span className={`badge badge-sm ${is.existencia ? "badge-success" : "badge-error"}`}>
+                                {is.existencia ? "✓ EN STOCK" : "✕ NO DISP."}
+                              </span>
+                            </td>
+                          </>
+                        ) : (
+                          <>
+                            <td className="px-3 py-3 font-medium text-gray-800">{is.item}</td>
+                            <td className="px-3 py-3 text-right text-gray-700">{is.cantidad}</td>
+                            <td className="px-3 py-3 text-gray-700">{is.caracteristica ?? "N/A"}</td>
+                            <td className="px-3 py-3 text-gray-700 text-xs">{is.Observacion ?? "N/A"}</td>
+                            <td className="px-3 py-3 text-center">
+                              <span className={`badge badge-sm ${is.existencia ? "badge-success" : "badge-error"}`}>
+                                {is.existencia ? "✓ EN STOCK" : "✕ NO DISP."}
+                              </span>
+                            </td>
+                          </>
+                        )}
                       </tr>
                     ))}
                   </tbody>
