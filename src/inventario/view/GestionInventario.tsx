@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import type { Inventarios } from '../models/inventarios';
-import { getInventario, filtrarInventarioAdvanced, updateInventario } from '../controller/inventario-api';
+import { getInventario, filtrarInventarioAdvanced, updateInventario, deleteInventario } from '../controller/inventario-api';
 import { getAllBodegas} from '../../admin/controller/api/admin-api';
 import { getPerchasBySeccion, getSeccionesByBodega } from '../../acta-de-entrada/controller/actaEntrada-api';
 import { ConvertToBase64 } from '../../acta-de-entrada/controller/ConvertToBase64';
@@ -34,12 +34,41 @@ export const GestionInventario = () => {
   const [mensajeError, setMensajeError] = useState("");
   const [imagenEditada, setimagenEditada] = useState<string|File|null>(null);
   const refImg = useRef<HTMLInputElement | null>(null);
+  const dialogEliminarRef = useRef<HTMLDialogElement>(null);
+  const [idAEliminar, setidAEliminar] = useState<number | null>(null);
+  const [mensajeAlerta, setmensajeAlerta] = useState("");
+  const [tipoAlerta, settipoAlerta] = useState<"success" | "error" | null>(null);
 
 const load = async () => {
       const res = await getInventario();
       
       setItems(res || []);
     }
+
+  const metodoEliminarInventario = async (id: number) => {
+    const res = await deleteInventario(id);
+    if (res.validate) {
+      setmensajeAlerta(res.msj);
+      settipoAlerta("success");
+      await load();
+    } else {
+      setmensajeAlerta(res.msj || "Error al eliminar el inventario");
+      settipoAlerta("error");
+    }
+    setTimeout(() => {
+      settipoAlerta(null);
+    }, 4000);
+  };
+
+  const abrirDialogoEliminar = (id: number) => {
+    setidAEliminar(id);
+    dialogEliminarRef.current?.showModal();
+  };
+
+  const cerrarDialogoEliminar = () => {
+    dialogEliminarRef.current?.close();
+    setidAEliminar(null);
+  };
 
   useEffect(() => {
     
@@ -305,7 +334,7 @@ const load = async () => {
                       <td className="px-4 py-3 text-center">
                         <div className="flex gap-2 justify-center flex-wrap">
                           <button className="btn btn-sm btn-info btn-outline gap-1 tooltip" data-tip="Ver detalles" onClick={()=>{setventanaEmergente(true); setitem(u);}}>👁️</button>
-                          <button className="btn btn-sm btn-error btn-outline gap-1 tooltip" data-tip="Eliminar" disabled>🗑️</button>
+                          <button className="btn btn-sm btn-error btn-outline gap-1 tooltip" data-tip="Eliminar" onClick={() => abrirDialogoEliminar(u.id)}>🗑️</button>
                         </div>
                       </td>
                     </tr>
@@ -424,6 +453,76 @@ const load = async () => {
         </div>
        </div>
       </div>)}
+
+    {/* Modal de confirmación de eliminación */}
+    <dialog ref={dialogEliminarRef} className="modal modal-bottom sm:modal-middle">
+      <div className="modal-box bg-white rounded-xl">
+        <h3 className="text-lg font-bold text-gray-800 mb-2">⚠️ Confirmar eliminación</h3>
+        <p className="text-gray-600 text-sm mb-6">¿Estás seguro de que deseas eliminar este item del inventario? Esta acción no se puede deshacer.</p>
+        <div className="modal-action">
+          <button className="btn btn-sm btn-ghost" onClick={cerrarDialogoEliminar}>Cancelar</button>
+          <button className="btn btn-sm btn-error gap-2" onClick={() => { 
+            if (idAEliminar !== null) {
+              metodoEliminarInventario(idAEliminar);
+            }
+            cerrarDialogoEliminar();
+          }}>🗑️ Eliminar</button>
+        </div>
+      </div>
+      <form method="dialog" className="modal-backdrop">
+        <button onClick={cerrarDialogoEliminar}>close</button>
+      </form>
+    </dialog>
+
+    {/* Alert de éxito/error */}
+    {tipoAlerta && (
+      <div className="fixed bottom-6 right-6 z-50">
+        <div role="alert" className={`alert ${tipoAlerta === 'success' ? 'alert-success' : 'alert-error'}`}>
+          <svg
+            className="h-6 w-6 shrink-0 stroke-current"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24">
+            {tipoAlerta === 'success' ? (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            ) : (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 9v2m0 4v2m0-10a4 4 0 110 8 4 4 0 010-8z" />
+            )}
+          </svg>
+          <span>{mensajeAlerta}</span>
+        </div>
+      </div>
+    )}
+    
+    {/* 
+    // Diseño alternativo comentado (más personalizado):
+    {tipoAlerta && (
+      <div className="fixed bottom-6 right-6 z-50">
+        <div className={`shadow-lg rounded-xl border-2 p-4 flex items-center gap-3 ${tipoAlerta === 'success' ? 'bg-emerald-50 border-emerald-500' : 'bg-red-50 border-red-500'}`}>
+          {tipoAlerta === 'success' ? (
+            <svg className="w-6 h-6 text-emerald-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+          ) : (
+            <svg className="w-6 h-6 text-red-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            </svg>
+          )}
+          <span className={`text-sm font-semibold ${tipoAlerta === 'success' ? 'text-emerald-800' : 'text-red-800'}`}>
+            {mensajeAlerta}
+          </span>
+        </div>
+      </div>
+    )}
+    */}
     </>
   );
 }

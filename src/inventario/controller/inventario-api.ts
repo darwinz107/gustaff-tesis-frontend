@@ -106,3 +106,17 @@ export const updateInventario = async (id: number, updateData: any): Promise<{ms
     return { msj: "Error al actualizar el inventario", validate: false };
   }
 };
+
+export const deleteInventario = async (id: number): Promise<{msj: string, validate: boolean}> => {
+  try {
+    const response: Response = await fetch(`${route}inventario/${id}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" }
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    return { msj: "Error al eliminar el inventario", validate: false };
+  }
+};

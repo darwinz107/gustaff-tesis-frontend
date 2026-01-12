@@ -26,6 +26,11 @@ export const GestionCompra = () => {
   const [filtroEstado, setFiltroEstado] = useState("");
   const [filtroFechaRemision, setFiltroFechaRemision] = useState("");
   const [filtroNumOrdenTrabajo, setFiltroNumOrdenTrabajo] = useState("");
+  
+  const dialogEliminarRef = useRef<HTMLDialogElement>(null);
+  const [idAEliminar, setidAEliminar] = useState<number | null>(null);
+  const [mensajeAlerta, setmensajeAlerta] = useState("");
+  const [tipoAlerta, settipoAlerta] = useState<"success" | "error" | null>(null);
 
   const ordenesTrabajoApi = async () => {
     const res = await findAllSolicitudesCompra();
@@ -129,8 +134,27 @@ export const GestionCompra = () => {
 
   const metodoEliminarSolMateriales = async (id: number) => {
     const res = await eliminarSolMaterial(id);
-    await ordenesTrabajoApi();
-    alert(res.msj);
+    if (res.validate) {
+      setmensajeAlerta(res.msj);
+      settipoAlerta("success");
+      await ordenesTrabajoApi();
+    } else {
+      setmensajeAlerta(res.msj || "Error al eliminar la solicitud");
+      settipoAlerta("error");
+    }
+    setTimeout(() => {
+      settipoAlerta(null);
+    }, 4000);
+  };
+
+  const abrirDialogoEliminar = (id: number) => {
+    setidAEliminar(id);
+    dialogEliminarRef.current?.showModal();
+  };
+
+  const cerrarDialogoEliminar = () => {
+    dialogEliminarRef.current?.close();
+    setidAEliminar(null);
   };
 
   const cargarPdf = (id: number) => {
@@ -232,7 +256,7 @@ export const GestionCompra = () => {
                       <td className="px-4 py-3 align-top text-center">
                         <div className="flex items-center justify-center gap-2 flex-wrap">
                           <button className={`btn btn-sm btn-info btn-outline gap-1 tooltip ${idx === 0 ? "tooltip-bottom" : ""}`} data-tip="Ver detalles" onClick={() => { setventanaEmergente(true); cargarSolicitud(u.id); }}>👁️</button>
-                          <button className="btn btn-sm btn-error btn-outline gap-1 tooltip" data-tip="Eliminar" onClick={() => metodoEliminarSolMateriales(u.id)}>🗑️</button>
+                          <button className="btn btn-sm btn-error btn-outline gap-1 tooltip" data-tip="Eliminar" onClick={() => abrirDialogoEliminar(u.id)}>🗑️</button>
                           <button className="btn btn-sm btn-success btn-outline gap-1 tooltip" data-tip="Descargar PDF" onClick={() => cargarPdf(u.numOrdenTrabajo?.id)}>📄</button>
                         </div>
                       </td>
@@ -409,6 +433,48 @@ export const GestionCompra = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal de confirmación de eliminación */}
+      <dialog ref={dialogEliminarRef} className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box bg-white rounded-xl">
+          <h3 className="text-lg font-bold text-gray-800 mb-2">⚠️ Confirmar eliminación</h3>
+          <p className="text-gray-600 text-sm mb-6">¿Estás seguro de que deseas eliminar esta solicitud de material? Esta acción no se puede deshacer.</p>
+          <div className="modal-action">
+            <button className="btn btn-sm btn-ghost" onClick={cerrarDialogoEliminar}>Cancelar</button>
+            <button className="btn btn-sm btn-error gap-2" onClick={() => { 
+              if (idAEliminar !== null) {
+                metodoEliminarSolMateriales(idAEliminar);
+              }
+              cerrarDialogoEliminar();
+            }}>🗑️ Eliminar</button>
+          </div>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button onClick={cerrarDialogoEliminar}>close</button>
+        </form>
+      </dialog>
+
+      {/* Alert de éxito/error */}
+      {tipoAlerta && (
+        <div className="fixed bottom-6 right-6 z-50 animate-pulse">
+          <div className={`alert alert-${tipoAlerta} shadow-lg rounded-lg border-2 ${tipoAlerta === 'success' ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'}`}>
+            <div className="flex items-center gap-3">
+              {tipoAlerta === 'success' ? (
+                <svg className="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              ) : (
+                <svg className="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+              )}
+              <span className={`text-sm font-semibold ${tipoAlerta === 'success' ? 'text-green-800' : 'text-red-800'}`}>
+                {mensajeAlerta}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
