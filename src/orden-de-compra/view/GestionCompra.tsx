@@ -252,7 +252,7 @@ export const GestionCompra = () => {
                       <td className="px-4 py-3 align-top text-gray-700">{u.fechaRemision ? u.fechaRemision.split("T")[0] : ""}</td>
                       <td className="px-4 py-3 align-top text-gray-700">{u.numOrdenTrabajo?.userSolicitante?.name ?? "N/A"}</td>
                       <td className="px-4 py-3 align-top text-gray-700 text-sm">{u.numOrdenTrabajo?.DescripcionTrabajo}</td>
-                      <td className="px-4 py-3 align-top"><span className="badge badge-warning gap-2">{u.estadoCompra?.estado}</span></td>
+                      <td className="px-4 py-3 align-top "><span className="badge badge-warning gap-2 w-full whitespace-nowrap px-4">{u.estadoCompra?.estado}</span></td>
                       <td className="px-4 py-3 align-top text-center">
                         <div className="flex items-center justify-center gap-2 flex-wrap">
                           <button className={`btn btn-sm btn-info btn-outline gap-1 tooltip ${idx === 0 ? "tooltip-bottom" : ""}`} data-tip="Ver detalles" onClick={() => { setventanaEmergente(true); cargarSolicitud(u.id); }}>👁️</button>
