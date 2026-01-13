@@ -4,6 +4,27 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { Line, Pie } from 'react-chartjs-2';
 
+const MATERIAL_COLORS = [
+  { bg: 'rgba(233, 30, 99, 0.7)', border: 'rgba(233, 30, 99, 1)' },      // Pink (vibrante)
+  { bg: 'rgba(156, 39, 176, 0.7)', border: 'rgba(156, 39, 176, 1)' },    // Purple
+  { bg: 'rgba(63, 81, 181, 0.7)', border: 'rgba(63, 81, 181, 1)' },      // Indigo
+  { bg: 'rgba(33, 150, 243, 0.7)', border: 'rgba(33, 150, 243, 1)' },    // Blue
+  { bg: 'rgba(0, 188, 212, 0.7)', border: 'rgba(0, 188, 212, 1)' },      // Cyan
+  { bg: 'rgba(0, 150, 136, 0.7)', border: 'rgba(0, 150, 136, 1)' },      // Teal
+  { bg: 'rgba(76, 175, 80, 0.7)', border: 'rgba(76, 175, 80, 1)' },      // Green
+  { bg: 'rgba(255, 193, 7, 0.7)', border: 'rgba(255, 193, 7, 1)' },      // Amber
+  { bg: 'rgba(255, 87, 34, 0.7)', border: 'rgba(255, 87, 34, 1)' },      // Deep Orange
+  { bg: 'rgba(244, 67, 54, 0.7)', border: 'rgba(244, 67, 54, 1)' },      // Red
+];
+
+const getColorsByLength = (length: number) => {
+  const colors = [];
+  for (let i = 0; i < length; i++) {
+    colors.push(MATERIAL_COLORS[i % MATERIAL_COLORS.length]);
+  }
+  return colors;
+};
+
 export const DbLogistica = () => {
 const API = "http://localhost:3000/dashboard"; 
 const [loading, setloading] = useState(true);
@@ -125,20 +146,30 @@ setloading(false);
        <div className='card p-4 bg-base-100 border mb-4'>
         <div className='font-medium mb-4'>Historial items ingresados y salientes</div>
         <div className='h-100 w-full flex justify-center'>
-        <Pie
-        data={{
-          labels: ['Entrada','Salida'],
-          datasets:[
-            {data:[logistica?.totalItemsEntrada?.cantidad ??0,logistica?.totalItemsSalida?.cantidad ?? 0],
-              backgroundColor:[
-                'rgba(47, 157, 247, 0.2)',
-                'rgba(221, 5, 250, 0.2)'
+        {(() => {
+          const colors = getColorsByLength(2);
+          return (
+            <Pie
+            data={{
+              labels: ['Entrada','Salida'],
+              datasets:[
+                {data:[logistica?.totalItemsEntrada?.cantidad ??0,logistica?.totalItemsSalida?.cantidad ?? 0],
+                  backgroundColor:[
+                    colors[0].bg,
+                    colors[1].bg
+                  ],
+                  borderColor:[
+                    colors[0].border,
+                    colors[1].border
+                  ],
+                  borderWidth: 2
+                }
               ]
-            }
-          ]
-        }}
-        options={{maintainAspectRatio:false}}
-        />
+            }}
+            options={{maintainAspectRatio:false}}
+            />
+          );
+        })()}
         </div>
        </div>
       </div>

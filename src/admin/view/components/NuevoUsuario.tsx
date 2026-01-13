@@ -182,7 +182,7 @@ export const NuevoUsuario = ({showCrearUsuario,setshowCrearUsuario,setconfirmarC
   return (
     <>
       {showSuccess && (
-        <div className="fixed top-5 right-5 z-50">
+        <div className="fixed top-20 right-5 z-50">
           <div role="alert" className="alert alert-success shadow-lg">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -204,7 +204,7 @@ export const NuevoUsuario = ({showCrearUsuario,setshowCrearUsuario,setconfirmarC
       )}
 
       {/* Modal Header */}
-      <div className="w-full bg-gradient-to-r from-blue-500 to-blue-600 py-5 px-6 flex justify-between items-center border-b border-blue-200 rounded-t-2xl shadow-sm">
+      <div className="w-full z-60 bg-gradient-to-r from-blue-500 to-blue-600 py-5 px-6 flex justify-between items-center border-b border-blue-200 rounded-t-2xl shadow-sm">
         <div className="flex items-center gap-3">
           <span className="text-2xl">👤</span>
           <div>

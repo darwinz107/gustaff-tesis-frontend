@@ -318,7 +318,7 @@ const load = async () => {
                 </thead>
                 <tbody>
                   {items.map((u, i) => (
-                    <tr key={u.id ?? i} className="border-t border-gray-100 hover:bg-cyan-50 transition-colors">
+                    <tr key={u.id ?? i} className="border-t border-gray-100 hover:bg-cyan-50 transition-colors ">
                       <td className="px-4 py-3 font-semibold text-gray-800">{u?.nombre}</td>
                       <td className="px-4 py-3 text-gray-700">{u?.stock}</td>
                       <td className="px-4 py-3 text-gray-700">{u?.costo?.toLocaleString()}</td>
@@ -326,7 +326,7 @@ const load = async () => {
                       <td className="px-4 py-3 text-gray-700">{u?.bodega?.bodega}</td>
                       <td className="flex justify-center py-3">
                     {u.imagen ? (
-                      <img src={u.imagen} alt="Imagen del item" className="w-12 h-12 object-cover rounded-lg border border-gray-200" />
+                      <img src={u.imagen} alt="Imagen del item" className="w-12 h-12 object-cover rounded-lg border border-gray-200 " />
                     ) : (
                       <span className="text-gray-500 text-sm">N/A</span>
                     )}
@@ -412,11 +412,13 @@ const load = async () => {
                 {imagenEditada && typeof imagenEditada ==='string' ?(
                 <div  className='relative w-full h-64 bg-gray-100 rounded-lg border-2 border-cyan-200 overflow-hidden group flex items-center justify-center'>
                   <img src={typeof imagenEditada === 'string' ? imagenEditada : URL.createObjectURL(imagenEditada)} className='max-w-full max-h-full object-contain' /> 
-                  <div className='absolute inset-0 bg-transparent bg-opacity-0 group-hover:bg-opacity-40 transition flex items-center justify-center cursor-pointer' onClick={()=>{setimagenEditada(null); if(refImg.current) refImg.current.value = "";}}>
+                 {!habilitarEdicion && (
+                   <div className='absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center cursor-pointer' onClick={()=>{setimagenEditada(null); if(refImg.current) refImg.current.value = "";}}>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-red-500 opacity-0 group-hover:opacity-100 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
                   </div>
+                 )}
                 </div>
                 ):(
                   <div className='border-2 border-dashed border-cyan-300 rounded-lg p-6 bg-cyan-50'>
