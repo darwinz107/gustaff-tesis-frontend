@@ -5,7 +5,7 @@ import { Bar, Line } from "react-chartjs-2";
 
 
 export const DbMantenimiento = () => {
-  const API = "http://localhost:3000/dashboard"; 
+  const API = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}dashboard` : "http://localhost:3000/dashboard"; 
 
   const [kpis, setKpis] = useState(null);
   const [solicitudes, setsolicitudes] = useState<{totalSol:number,enProceso:number,parcial:number,entregado:number}|null>(null);

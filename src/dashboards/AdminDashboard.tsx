@@ -27,7 +27,7 @@ const getColorsByLength = (length: number) => {
 };
 
 export const AdminDashboard: React.FC = () => {
-  const API = 'http://localhost:3000/dashboard';
+  const API = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}dashboard` : 'http://localhost:3000/dashboard';
   const [kpis, setKpis] = useState<any>(null);
   const [usersByCargo, setUsersByCargo] = useState<{cargo:string, count:number}[]>([]);
   const [maquinasPorArea, setMaquinasPorArea] = useState<{area:string, count:number}[]>([]);

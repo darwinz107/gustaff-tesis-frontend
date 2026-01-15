@@ -513,7 +513,7 @@ const obtenerUsers = async () =>{
                   value={selectCargo} 
                   onChange={(e)=>{setselectCargo(Number(e.target.value)); seterroresEdicion({...erroresEdicion, cargo: validarCargo(Number(e.target.value))});}}
                 >
-                  <option value={0}>Selecciona un cargo...</option>
+                  <option value={0} disabled>Selecciona un cargo...</option>
                   {cargos.map((a)=><option key={a.id} value={a.id}>{a.name}</option>)}
                 </select>
                 {erroresEdicion.cargo && <label className="label"><span className="label-text-alt text-error text-sm">{erroresEdicion.cargo}</span></label>}

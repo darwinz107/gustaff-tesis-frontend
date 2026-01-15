@@ -22,9 +22,7 @@ export const styles = StyleSheet.create({
         fontWeight:"bold"
     },
    
-    table:{
-
-    },
+  
     image:{
       width:"60px",
       margin:"5px"
@@ -80,9 +78,7 @@ export const styles = StyleSheet.create({
       display:"flex",
       flexDirection:"row"
     },
-    table:{
-     
-    },
+  
     th:{
      textAlign:"center",
      backgroundColor:"#bdbdbdff"

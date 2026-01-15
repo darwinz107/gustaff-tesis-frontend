@@ -4,7 +4,7 @@ import type { CreateProovedor } from "../models/create-proovedor";
 import type { FiltrarActaEntradaDto } from "../models/filtrarActaEntrada";
 import type { InfoPdfEntrada } from "../models/infoPdfEntrada";
 
-const route = "http://localhost:3000/";
+const route = import.meta.env.VITE_API_URL || "http://localhost:3000/";
 
 
         export const createActaEntrada = async (id:number,createActaEntradaDto:CreateActaEntradaDto): Promise<{msj:string, validate:boolean}> => {

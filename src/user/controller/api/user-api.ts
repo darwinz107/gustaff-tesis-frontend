@@ -1,7 +1,7 @@
 import type { Users } from "../../../admin/models/users";
 import type { FiltrarUserDto } from "../../models/filtrarUser";
 
-const route = "http://localhost:3000/";
+const route = import.meta.env.VITE_API_URL || "http://localhost:3000/";
 
 export const getUsers = async():Promise<Users[]>=>{
       const response:Response = await fetch(`${route}users/users/all`,{

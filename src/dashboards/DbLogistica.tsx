@@ -26,7 +26,7 @@ const getColorsByLength = (length: number) => {
 };
 
 export const DbLogistica = () => {
-const API = "http://localhost:3000/dashboard"; 
+const API = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}dashboard` : "http://localhost:3000/dashboard"; 
 const [loading, setloading] = useState(true);
     const [logistica, setlogistica] = useState<{totalStock:{total:number},
         totalRegEntrada:number,

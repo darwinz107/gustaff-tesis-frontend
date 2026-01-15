@@ -1,7 +1,7 @@
 import type { FiltrarActaSalidaDto } from "../models/filtrarActaSalida";
 import type { InfoPdfSalida } from "../models/InfoPdfSalida";
 
-const route = "http://localhost:3000/";
+const route = import.meta.env.VITE_API_URL || "http://localhost:3000/";
 
   export const createActaSalidaApi = async(id:number,entregaId:number,observacion:string,recibe:number):Promise<{msj:string, validate:boolean}> => {
     try {

@@ -6,7 +6,7 @@ import { getOneUser } from "../../user/controller/api/user-api";
 import { CrearOrden } from "../../orden-de-trabajo/view/components/CrearOrden";
 import { HistorialOrdenes } from "../../orden-de-trabajo/view/components/HistorialOrdenes";
 import { VerDetalles } from "../../orden-de-trabajo/view/components/VerDetalles";
-import { AdministrarUsuarios } from "./components/administrarUsuarios";
+import { AdministrarUsuarios } from "./components/AdministrarUsuarios";
 import { OrdenCompra } from "../../orden-de-compra/view/ordenCompra";
 import { GestionCompra } from "../../orden-de-compra/view/GestionCompra";
 import { CrearActaSalida } from "../../acta-de-salida/view/CrearActaSalida";
@@ -200,7 +200,7 @@ export const Principal = () => {
                 </button>
                 <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
                   <li><button onClick={() => { setShowEdicion(true); }} className="text-sm">👤 Ver/Editar Perfil</button></li>
-                  <li><hr className="my-2" /></li>
+                  
                   <li><button onClick={terminarSesion} className="text-error text-sm">🚪 Cerrar sesión</button></li>
                 </ul>
               </div>

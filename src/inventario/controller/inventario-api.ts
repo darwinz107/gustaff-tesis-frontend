@@ -5,7 +5,7 @@ import type { Inventarios } from "../models/inventarios";
 import type { ItemsXagregar } from "../models/ItemsXagregar";
 import type { Stock } from "../models/Stock";
 
-const route = "http://localhost:3000/";
+const route = import.meta.env.VITE_API_URL || "http://localhost:3000/";
 
   export const filtrarInventario = async(item:string):Promise<Inventarios[]>=>{
         const response:Response = await fetch(`${route}inventario/filtrar`,{

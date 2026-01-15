@@ -1,7 +1,7 @@
 import type { login } from "../../models/login";
 import type { user } from "../../models/user";
 
-const route:string = "http://localhost:3000/"
+const route:string = import.meta.env.VITE_API_URL || "http://localhost:3000/";
 
 export const createUser =async(user:user):Promise<{msj:string}>=>{
 

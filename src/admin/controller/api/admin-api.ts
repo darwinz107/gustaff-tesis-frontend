@@ -11,7 +11,7 @@ import type { CreateSeccion } from "../../models/create-seccion";
 import type { CreateTipoTrabajo } from "../../models/create-tipo-trabajo";
 import type { CrearUser } from "../../models/create-user";
 
-const route: string = "http://localhost:3000/"
+const route: string = import.meta.env.VITE_API_URL || "http://localhost:3000/";
 
 export const crearUsuario = async (crearUser: CrearUser): Promise<{ msj: string ,validate:boolean}> => {
   console.log("crearUsuario in front", crearUser);  

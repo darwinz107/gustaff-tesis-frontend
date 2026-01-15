@@ -9,7 +9,7 @@ import type { InfoOrdenTrabajo } from "../models/infoOrdenTrabajo";
 import type { InfoPdfCompra } from "../models/infoPdfCompra";
 import type { LllenarDestino } from "../models/llenarDestino";
 
-const route: string = "http://localhost:3000/"
+const route: string = import.meta.env.VITE_API_URL || "http://localhost:3000/";
 
 export const filtrarOrdenTrabajo = async (filtrarOrdenTrabajo: FiltrarOrdenTrabajo): Promise<LllenarDestino[]> => {
   

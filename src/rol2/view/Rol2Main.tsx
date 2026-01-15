@@ -50,10 +50,10 @@ export const Rol2Main = () => {
       const dataToUpdate = {
         name: usuarioEnEdicion.name,
         email: usuarioEnEdicion.email,
-        celular: usuarioEnEdicion.celular,
-        identificacion: usuarioEnEdicion.identificacion,
-        fecha_nacimiento: usuarioEnEdicion.fecha_nacimiento,
-        cargo: usuarioEnEdicion.cargoId?.id || usuarioEnEdicion.cargo
+        cellphone: usuarioEnEdicion.cellphone,
+        identification: usuarioEnEdicion.identification,
+        fechaNac: usuarioEnEdicion.fechaNac,
+        cargo: usuarioEnEdicion.cargoId?.id
       };
       
       const res = await actualizarUsuario(usuarioEnEdicion.id, dataToUpdate);
@@ -148,7 +148,7 @@ export const Rol2Main = () => {
             </button>
             <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
               <li><button onClick={() => setShowEdicion(true)} className="text-sm">👤 Ver/Editar Perfil</button></li>
-              <li><hr className="my-2" /></li>
+              
               <li><button onClick={logout} className="text-error text-sm">🚪 Cerrar sesión</button></li>
             </ul>
             </div>

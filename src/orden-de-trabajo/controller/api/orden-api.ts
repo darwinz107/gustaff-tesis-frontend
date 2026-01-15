@@ -3,7 +3,7 @@ import type { OrdenTrabajo } from "../../models/jornadasFases";
 import type { OrdenesTrabajo } from "../../models/ordenesTrabajo";
 import type { SolicitudOrden } from "../../models/solicitudOrden";
 
-const route = "http://localhost:3000/";
+const route = import.meta.env.VITE_API_URL || "http://localhost:3000/";
 
 
 export const areas = async ():Promise<{nombre:string}> => {

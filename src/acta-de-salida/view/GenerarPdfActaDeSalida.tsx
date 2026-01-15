@@ -1,7 +1,7 @@
 import { Document, Image, Page, PDFViewer, Text, View } from "@react-pdf/renderer"
 import {Table, TR, TH, TD} from '@ag-media/react-pdf-table';
 import { useEffect, useState } from "react";
-import { getLastSolicitud } from "../../controller/api/orden-api";
+
 import type { SolicitudOrden } from "../../models/solicitudOrden";
 import type { DetallesPrevioCompra } from "../models/DetallesPrevioCompra";
 import { styles } from "../../styles";
