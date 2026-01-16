@@ -24,6 +24,9 @@ import { AdministrarCargos } from "./components/AdministrarCargos";
 import { GestionJornadas } from "../../orden-de-trabajo/view/components/GestionJornadas";
 import { getUsers } from "../../user/controller/api/user-api";
 import type { Users } from "../../admin/models/users";
+import { CrearCronograma } from "../../cronograma/view/CrearCronograma";
+import { CalendarioCronograma } from "../../cronograma/view/CalendarioCronograma";
+import type { MaquinaInfo } from "../../cronograma/controller/cronograma-api";
 
 export const Principal = () => {
 
@@ -33,6 +36,7 @@ export const Principal = () => {
   const [cargarAuto, setcargarAuto] = useState(false);
   const navigate = useNavigate();
   const [sendId, setsendId] = useState<Number | null | undefined>(null);
+  const [sendMaquina, setsendMaquina] = useState<MaquinaInfo | null>(null);
   const [collapsed, setCollapsed] = useState(false);
   const [usuario, setUsuario] = useState<Users | null>(null);
   const [usuarioEnEdicion, setUsuarioEnEdicion] = useState<Users | null>(null);
@@ -46,6 +50,7 @@ export const Principal = () => {
   const [mostrarLogoutSuccess, setMostrarLogoutSuccess] = useState(false);
   const dialogPerfil = useRef<HTMLDialogElement>(null);
   const dialogLogout = useRef<HTMLDialogElement>(null);
+   const [cargarComponente, setcargarComponente] = useState(0);
 
   useEffect(() => {
     if (cargarAuto && sendId === undefined) {
@@ -165,13 +170,21 @@ export const Principal = () => {
     15: <AdministrarTiposTrabajo />,
     16: <AdministrarCargos />,
     17: <GestionJornadas></GestionJornadas>,
+    18:<CrearCronograma maquinaId={sendMaquina}></CrearCronograma>,
+    19:<CalendarioCronograma setSendMaquina={setsendMaquina} setcargarComponente={setcargarComponente}></CalendarioCronograma>
   }
 
-  const [cargarComponente, setcargarComponente] = useState(0);
+ 
 
   useEffect(() => {
     if (cargarComponente !== 5) {
       setsendId(0);
+    }
+  }, [cargarComponente]);
+
+  useEffect(() => {
+    if (cargarComponente !== 18) {
+      setsendMaquina(null);
     }
   }, [cargarComponente]);
 
@@ -210,7 +223,7 @@ export const Principal = () => {
 
         {/* Sidebar */}
         <div
-          className={`fixed left-0 top-16 h-[calc(100vh-64px)] bg-white border-r border-gray-200 shadow-lg
+          className={`z-100 fixed left-0 top-16 h-[calc(100vh-64px)] bg-white border-r border-gray-200 shadow-lg
           transition-all duration-300 flex flex-col overflow-y-auto
           ${collapsed ? "w-20" : "w-64"}`}
         >
@@ -259,6 +272,15 @@ export const Principal = () => {
 
             <button className="btn btn-ghost justify-start rounded-lg hover:bg-purple-100 hover:text-purple-700 transition-colors" onClick={() => setcargarComponente(16)}>
               <span className="text-lg">💼</span> {!collapsed && <span className="text-sm">Cargos</span>}
+            </button>
+
+              {/* Cronograma */}
+            {!collapsed && <div className="text-xs font-semibold text-gray-500 mt-4 mb-2 px-2">CRONOGRAMA</div>}
+            <button className="btn btn-ghost justify-start rounded-lg hover:bg-cyan-100 hover:text-cyan-700 transition-colors" onClick={() => setcargarComponente(18)}>
+              <span className="text-lg">📊</span> {!collapsed && <span className="text-sm">Programar mantenimiento</span>}
+            </button>
+            <button className="btn btn-ghost justify-start rounded-lg hover:bg-cyan-100 hover:text-cyan-700 transition-colors" onClick={() => setcargarComponente(19)}>
+              <span className="text-lg">📊</span> {!collapsed && <span className="text-sm">Gestion Cronograma</span>}
             </button>
 
             {/* Órdenes de Trabajo */}

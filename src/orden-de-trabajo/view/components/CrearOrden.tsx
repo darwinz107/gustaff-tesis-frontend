@@ -493,7 +493,7 @@ const getCodigos = async () => {
             </div>
 
             <div>
-              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Receptor (Técnico 1)</label>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Técnico 1</label>
               <select className={`select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg ${erroresCrearOrden.receptor ? 'select-error' : ''}`} defaultValue={"..."} onChange={(e) => {setreceptor(e.target.value); seterroresCrearOrden({...erroresCrearOrden, receptor: validarReceptor(e.target.value)})}}>
                 <option defaultChecked={true}>...</option>
                 {users.map((u) => <option key={u.name} value={u.name}>{u.name}</option>)}
@@ -502,7 +502,7 @@ const getCodigos = async () => {
             </div>
 
             <div>
-              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Técnico 2 (Asignado)</label>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Técnico 2</label>
               <select className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg" defaultValue={"..."} onChange={(e) => settecnico(e.target.value)}>
                 <option defaultChecked={true}>...</option>
                 {users.map((u) => <option key={u.name} value={u.name}>{u.name}</option>)}
@@ -513,14 +513,7 @@ const getCodigos = async () => {
 
         {/* Botón de envío */}
         <div className="flex justify-end gap-3">
-          <button
-            type="button"
-            className="btn btn-ghost btn-md gap-2"
-            onClick={() => navigate('/rol1')}
-          >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/></svg>
-            Cancelar
-          </button>
+       
           <button
             type="submit"
             className="btn btn-md bg-green-500 hover:bg-green-600 text-white border-0 gap-2"
