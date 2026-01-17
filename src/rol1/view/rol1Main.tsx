@@ -165,7 +165,10 @@ export const Rol1Main = () => {
               />
               <h1 className="text-xl font-bold text-gray-800">Gustaff - Órdenes</h1>
             </div>
-            <div className="dropdown dropdown-end">
+             
+             <div className="flex items-center gap-4">
+              <div>{usuario?.name ?? ""}</div>
+               <div className="dropdown dropdown-end">
             <button tabIndex={0} className="avatar placeholder cursor-pointer">
               <div className="bg-gradient-to-br from-green-400 to-green-600 text-white rounded-full w-10 flex items-center justify-center text-sm font-bold">
                 {usuario?.name ? usuario.name.charAt(0).toUpperCase() : "GT"}
@@ -177,6 +180,8 @@ export const Rol1Main = () => {
               <li><button onClick={logout} className="text-error text-sm">🚪 Cerrar sesión</button></li>
             </ul>
             </div>
+             </div>
+           
           </div>
         </div>
 

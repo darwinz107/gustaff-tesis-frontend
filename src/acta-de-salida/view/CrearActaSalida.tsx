@@ -37,6 +37,7 @@ export const CrearActaSalida = () => {
   const [recibe, setrecibe] = useState(0);
   const [descripcion, setdescripcion] = useState("");
   const [stockDis, setstockDis] = useState(0);
+  const [isPending, setisPending] = useState(false);
   
   
   const [inventarios, setinventarios] = useState<Inventarios[]>([]);
@@ -89,7 +90,7 @@ export const CrearActaSalida = () => {
     setshowError(true);
     setTimeout(() => setshowError(false), 3000);*/
  console.log("entro aqui");
-
+  setisPending(true);
     try {
       
       const info ={
@@ -116,14 +117,15 @@ export const CrearActaSalida = () => {
         setshowSuccess(false);
         window.open(`/pdf-salida/${undefined}`, "_blank");
 
-        setsolicitudMaterial({
+       /* setsolicitudMaterial({
         
           descripcion:""
-        });
+        });*/
 
         setentrega(0);
         setobservacion2("");
-        setrecibe("");
+        setdescripcion("");
+        setrecibe(0);
         setagregarItems([]);
       }, 1000);
     } else {
@@ -135,6 +137,8 @@ export const CrearActaSalida = () => {
 
   } catch (error) {
     console.error("Error generando acta de salida:", error);
+  }finally{
+    setisPending(false);
   }
     
   }
@@ -146,6 +150,7 @@ export const CrearActaSalida = () => {
     return;
   }
 
+  setisPending(true);
   try {
     const res = await createActaSalidaApi(
       solicitudMaterial.id,
@@ -174,9 +179,10 @@ export const CrearActaSalida = () => {
           descripcion: "",
           itemSolicitados: []
         });
-
+        setrecibe(0);
         setentrega(0);
         setobservacion("");
+        setobservacion2("");
       }, 1000);
     } else {
       setmensajeError(res?.msj || "Error al generar acta de salida");
@@ -186,6 +192,8 @@ export const CrearActaSalida = () => {
 
   } catch (error) {
     console.error("Error generando acta de salida:", error);
+  }finally{
+    setisPending(false);
   }
 };
 const metodoInventarios = async() =>{
@@ -436,13 +444,18 @@ const metodoInventarios = async() =>{
 
       
       <div className="mt-6 flex justify-center gap-3">
-        <button className="btn btn-ghost btn-md gap-2" onClick={() => { setconOrden(!conOrden); setsolicitudMaterial({ numOrden: "", numOrdenTrabajo: { Area: "", userSolicitante: { name: "" }, Maquina: "", Codigo: "" }, Destino: "", itemSolicitados: [] }); setentrega(0); setagregarItems([]); }}>
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/></svg>
-          Cancelar
-        </button>
+       
         <button className="btn btn-md bg-amber-500 hover:bg-amber-600 text-white border-0 gap-2" onClick={generarActaSalida}>
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M5 13a3 3 0 105.119-1.023A5.822 5.822 0 1015.956 15H10a1 1 0 11-2 0v-3.379a1 1 0 00-1.823-.5A2.988 2.988 0 005 13z"/></svg>
-          Generar Acta de Salida
+                 {isPending ? (
+    
+    <span className="loading loading-spinner loading-sm"></span>
+  ) : (
+    // Icono original
+    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+      <path d="M5 13a3 3 0 105.119-1.023A5.822 5.822 0 1015.956 15H10a1 1 0 11-2 0v-3.379a1 1 0 00-1.823-.5A2.988 2.988 0 005 13z"/>
+      </svg>
+  )}
+  {isPending ? "Procesando..." : "Generar Acta"}
         </button>
       </div>
 

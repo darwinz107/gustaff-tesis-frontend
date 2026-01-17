@@ -36,6 +36,7 @@ export const CrearOrden = ({setcargarAuto,setsendId}) => {
   const [receptor, setreceptor] = useState("");
   const [tecnico, settecnico] = useState(null);
   const [showSuccess, setshowSuccess] = useState(false);
+  const [isPending, setisPending] = useState(false);
   
   // Estados para validaciones y alertas
   const [erroresCrearOrden, seterroresCrearOrden] = useState({});
@@ -183,6 +184,7 @@ const getCodigos = async () => {
       return;
     }
 
+    setisPending(true);
     try {
        const infoSolicitud:SolicitudOrden ={
       fechaInicio:tiempos[0],
@@ -203,6 +205,7 @@ const getCodigos = async () => {
     console.log(infoSolicitud);
     const res = await registerSolicitudOrden(infoSolicitud);
     
+
     if(res.validate){
      
       
@@ -234,6 +237,8 @@ const getCodigos = async () => {
       setTimeout(() => {
         setshowErrorCrearOrden(false);
       }, 3000);
+    }finally{
+      setisPending(false);
     }
 
   }
@@ -518,8 +523,17 @@ const getCodigos = async () => {
             type="submit"
             className="btn btn-md bg-green-500 hover:bg-green-600 text-white border-0 gap-2"
           >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
-            Crear Orden
+           {isPending ? (
+    // Spinner de DaisyUI
+    <span className="loading loading-spinner loading-sm"></span>
+  ) : (
+    // Icono original
+    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+      <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+    </svg>
+  )}
+  {isPending ? "Procesando..." : "Crear Orden"}
+           
           </button>
         </div>
       </form>

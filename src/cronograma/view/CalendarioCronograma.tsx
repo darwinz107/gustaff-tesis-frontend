@@ -58,22 +58,22 @@ export const CalendarioCronograma = ({ setSendMaquina, setcargarComponente }: { 
   }
 
   return (
-    <div className="w-full rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
+    <div className="w-full rounded-2xl border border-gray-200 shadow-lg overflow-hidden ">
       <div className="bg-gradient-to-r from-blue-500 to-blue-600 w-full py-4 rounded-t-2xl border-b border-blue-200 px-6">
         <h2 className="font-bold text-white text-lg">📅 Cronograma de Mantenimiento</h2>
       </div>
 
-      <div className="overflow-auto p-6 max-h-[600px]">
-        <table className="w-full border-collapse border border-gray-300">
+      <div className="overflow-auto p-6 max-h-[600px] ">
+        <table className="w-full border-collapse border border-gray-300 ">
           <thead>
             <tr className="bg-gray-100">
-              <th className="border border-gray-300 p-3 text-left font-semibold text-sm sticky left-0 bg-gray-100 z-10 min-w-40">
+              <th className="border border-gray-300 p-3 text-left font-semibold text-sm sticky left-0 bg-gray-100  min-w-40">
                 ÁREA
               </th>
-              <th className="border border-gray-300 p-3 text-left font-semibold text-sm sticky left-40 bg-gray-100 z-10 min-w-32">
+              <th className="border border-gray-300 p-3 text-left font-semibold text-sm sticky left-40 bg-gray-100  min-w-32">
                 COD
               </th>
-              <th className="border border-gray-300 p-3 text-left font-semibold text-sm sticky left-72 bg-gray-100 z-10 min-w-44">
+              <th className="border border-gray-300 p-3 text-left font-semibold text-sm sticky left-72 bg-gray-100  min-w-44">
                 MÁQUINA
               </th>
               {meses.map((mes) => (
@@ -84,7 +84,7 @@ export const CalendarioCronograma = ({ setSendMaquina, setcargarComponente }: { 
                   {mes}
                 </th>
               ))}
-              <th className="border border-gray-300 p-3 text-center font-semibold text-sm sticky right-0 bg-gray-100 z-10 min-w-40">
+              <th className="border border-gray-300 p-3 text-center font-semibold text-sm sticky right-0 bg-gray-100  min-w-40">
                 ACCIONES
               </th>
             </tr>
@@ -92,13 +92,13 @@ export const CalendarioCronograma = ({ setSendMaquina, setcargarComponente }: { 
           <tbody>
             {maquinas.map((maquina, idx) => (
               <tr key={maquina.id} className={idx % 2 === 0 ? 'bg-white hover:bg-blue-50' : 'bg-gray-50 hover:bg-blue-50'}>
-                <td className="border border-gray-300 p-3 text-xs font-medium sticky left-0 bg-inherit z-10 truncate">
+                <td className="border border-gray-300 p-3 text-xs font-medium sticky left-0 bg-inherit  truncate">
                   {maquina.area}
                 </td>
-                <td className="border border-gray-300 p-3 text-xs font-medium sticky left-40 bg-inherit z-10 truncate">
+                <td className="border border-gray-300 p-3 text-xs font-medium sticky left-40 bg-inherit  truncate">
                   {maquina.codigo}
                 </td>
-                <td className="border border-gray-300 p-3 text-xs font-medium sticky left-72 bg-inherit z-10 truncate">
+                <td className="border border-gray-300 p-3 text-xs font-medium sticky left-72 bg-inherit  truncate">
                   {maquina.nombre}
                 </td>
 
@@ -112,7 +112,7 @@ export const CalendarioCronograma = ({ setSendMaquina, setcargarComponente }: { 
                   </td>
                 ))}
 
-                <td className="border border-gray-300 p-3 text-center sticky right-0 bg-inherit z-10">
+                <td className="border border-gray-300 p-3 text-center sticky right-0 bg-inherit z-5">
                   <div className="flex gap-2 justify-center flex-wrap">
                     <button
                       onClick={() => handleCrearOrden(maquina)}

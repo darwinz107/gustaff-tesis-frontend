@@ -205,6 +205,7 @@ export const Principal = () => {
             </div>
 
             <div className="flex items-center gap-4">
+              <div>{usuario?.name ?? ""}</div>
               <div className="dropdown dropdown-end">
                 <button tabIndex={0} className="btn btn-ghost btn-circle avatar">
                   <div className="w-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold">
@@ -223,7 +224,7 @@ export const Principal = () => {
 
         {/* Sidebar */}
         <div
-          className={`z-100 fixed left-0 top-16 h-[calc(100vh-64px)] bg-white border-r border-gray-200 shadow-lg
+          className={`z-1 fixed left-0 top-16 h-[calc(100vh-64px)] bg-white border-r border-gray-200 shadow-lg
           transition-all duration-300 flex flex-col overflow-y-auto
           ${collapsed ? "w-20" : "w-64"}`}
         >

@@ -17,6 +17,7 @@ import { getUsers } from "../../user/controller/api/user-api";
 
 export const CrearActaEntrada = () => {
 
+    const [isPending, setisPending] = useState(false);
     const [ventanaBuscarSolicitudMaterial, setventanaBuscarSolicitudMaterial] = useState(false);
     const [solicitudMaterial, setsolicitudMaterial] = useState<AsignarInfoEntrada>({itemsSolicitados:[]});
     const [solCompraId, setsolCompraId] = useState<number>(0);
@@ -448,17 +449,20 @@ const validarPercha = (valor: string): string => {
     itemsSolicitados:solicitudMaterial.itemsSolicitados,
     
    }
-  console.log("registroEntradaFinal");
-  console.log(registroEntradaFinal);
-   const res = await createActaEntrada(solCompraId,registroEntradaFinal);
+    setisPending(true);
+  try {
+       const res = await createActaEntrada(solCompraId,registroEntradaFinal);
 
+      
    if(res.validate){
    setshowSuccess(true);
    setTimeout(() => {
      setshowSuccess(false);
-     setsolicitudMaterial({numOrden:"",numOrdenTrabajo:"",itemsSolicitados:[],id:0});
+     setsolicitudMaterial({numOrden:"",numOrdenTrabajo:{NumOrden:""},itemsSolicitados:[],id:0});
      setproovedor("");
      setfactura("");
+     setsolCompraId(0);
+     setrecibe(0);
      window.open(`/pdf-entrada/${undefined}`,"_blank");
    }, 1000);
    }else{
@@ -466,6 +470,15 @@ const validarPercha = (valor: string): string => {
     setshowError(true);
     setTimeout(() => setshowError(false), 3000);
    }
+  } catch (error) {
+    setmensajeError("Error en la conexión con el servidor");
+    setshowError(true);
+    setTimeout(() => setshowError(false), 3000);
+  }finally{
+setisPending(false);
+  }
+
+
   
 
  }
@@ -570,6 +583,7 @@ useEffect(() => {
 }, [seccion]);
 
 const limpiarCampos = () => {
+  
   setitem("");
   setcantidad(null);
   setstockMin(null);
@@ -581,6 +595,9 @@ const limpiarCampos = () => {
   setseccion("...");
   setpercha("...");
   setimagen(null);
+  setsolCompraId(0);
+  setrecibe(0);
+    setsolicitudMaterial({numOrden:"",numOrdenTrabajo:{NumOrden:""},itemsSolicitados:[],id:0});
   if (fileInputRef.current) {
     fileInputRef.current.value = "";
   }
@@ -825,7 +842,10 @@ const eliminarItem = (index: number) => {
 
  <div className="mt-4 flex justify-center gap-3">
           <button type="button" className="btn btn-success" onClick={agregarItemsActualizado}>Agregar</button>
-          <button type="button" className="btn btn-outline" onClick={limpiarCampos}>Limpiar</button>
+          <button type="button" className="btn btn-ghost" onClick={limpiarCampos}>
+             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd"/></svg>
+          Limpiar
+          </button>
         </div>
       
       <div className="w-full bg-base-100 rounded-2xl shadow-md p-5">
@@ -898,13 +918,18 @@ const eliminarItem = (index: number) => {
       </div>
 
       <div className="mt-6 flex justify-center gap-3">
-        <button type="button" className="btn btn-ghost btn-md gap-2" onClick={() => limpiarCampos()}>
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd"/></svg>
-          Limpiar
-        </button>
+       
         <button type="button" className="btn btn-md bg-blue-500 hover:bg-blue-600 text-white border-0 gap-2" onClick={enviarygenerarActaDeEntrada}>
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M5 13a3 3 0 105.119-1.023A5.822 5.822 0 1015.956 15H10a1 1 0 11-2 0v-3.379a1 1 0 00-1.823-.5A2.988 2.988 0 005 13z"/></svg>
-          Generar Acta
+              {isPending ? (
+    
+    <span className="loading loading-spinner loading-sm"></span>
+  ) : (
+    // Icono original
+    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+      <path d="M5 13a3 3 0 105.119-1.023A5.822 5.822 0 1015.956 15H10a1 1 0 11-2 0v-3.379a1 1 0 00-1.823-.5A2.988 2.988 0 005 13z"/>
+      </svg>
+  )}
+  {isPending ? "Procesando..." : "Generar Acta"}
         </button>
       </div>
     </div>

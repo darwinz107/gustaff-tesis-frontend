@@ -42,7 +42,7 @@ const infoDestinoInicial: LllenarDestino = {
   const [erroresDestino, seterroresDestino] = useState({autoriza: ""});
   const [mensajeErrorOrdenCompra, setmensajeErrorOrdenCompra] = useState("");
   const [showErrorOrdenCompra, setshowErrorOrdenCompra] = useState(false);
-  
+  const [isPending, setisPending] = useState(false);
 
    const metodoInventarios = async() =>{
       const resInv = await getInventario();
@@ -260,7 +260,7 @@ const errorAutoriza = validarAutoriza(autoriza);
       return;
     }
  
-
+    setisPending(true);
     try {
        const resOrdenCompra = await crearOrdenCompra({
       Autoriza: autoriza,
@@ -302,6 +302,8 @@ setinfoDestino(infoDestinoInicial);
       setmensajeErrorOrdenCompra("Error al generar la orden de compra");
       setshowErrorOrdenCompra(true);
       setTimeout(() => setshowErrorOrdenCompra(false), 3000);
+    }finally{
+      setisPending(false);
     }
   }
   
@@ -524,13 +526,19 @@ setinfoDestino(infoDestinoInicial);
         </div>
 
         <div className="flex justify-end gap-3 mt-6">
-          <button className="btn btn-ghost btn-md gap-2" onClick={() => setcomprasPorGenerar([])}>
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/></svg>
-            Limpiar
-          </button>
+         
           <button className="btn btn-md bg-purple-500 hover:bg-purple-600 text-white border-0 gap-2" onClick={crearYGenerarOrdenCompra}>
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M5 13a3 3 0 105.119-1.023A5.822 5.822 0 1015.956 15H10a1 1 0 11-2 0v-3.379a1 1 0 00-1.823-.5A2.988 2.988 0 005 13z"/></svg>
-            Generar Solicitud
+            
+                      {isPending ? (
+    
+    <span className="loading loading-spinner loading-sm"></span>
+  ) : (
+    // Icono original
+    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+      <path d="M5 13a3 3 0 105.119-1.023A5.822 5.822 0 1015.956 15H10a1 1 0 11-2 0v-3.379a1 1 0 00-1.823-.5A2.988 2.988 0 005 13z"/>
+      </svg>
+  )}
+  {isPending ? "Procesando..." : "Generar Solicitud"}
           </button>
         </div>
       </div>
