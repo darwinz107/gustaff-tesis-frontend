@@ -257,7 +257,7 @@ export const GestionCompra = () => {
                         <div className="flex items-center justify-center gap-2 flex-wrap">
                           <button className={`btn btn-sm btn-info btn-outline gap-1 tooltip ${idx === 0 ? "tooltip-bottom" : ""}`} data-tip="Ver detalles" onClick={() => { setventanaEmergente(true); cargarSolicitud(u.id); }}>👁️</button>
                           <button className="btn btn-sm btn-error btn-outline gap-1 tooltip" data-tip="Eliminar" onClick={() => abrirDialogoEliminar(u.id)}>🗑️</button>
-                          <button className="btn btn-sm btn-success btn-outline gap-1 tooltip" data-tip="Descargar PDF" onClick={() => cargarPdf(u.numOrdenTrabajo?.id)}>📄</button>
+                          <button className="btn btn-sm btn-success btn-outline gap-1 tooltip" data-tip="Descargar PDF" onClick={() => cargarPdf( u.id)}>📄</button>
                         </div>
                       </td>
                     </tr>

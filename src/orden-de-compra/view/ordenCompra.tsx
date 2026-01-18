@@ -19,7 +19,8 @@ const infoDestinoInicial: LllenarDestino = {
   NumOrden: "",
   Area: "",
   Codigo: "",
-  Maquina: ""
+  Maquina: "",
+  DescripcionTrabajo: ""
 };
 
 
@@ -33,7 +34,7 @@ const infoDestinoInicial: LllenarDestino = {
   const [caracteristica, setcaracteristica] = useState("");
   const [observacion, setobservacion] = useState("");
   const [users, setusers] = useState<{name:string}[]>([]);
-  const [autoriza, setautoriza] = useState("");
+  const [autoriza, setautoriza] = useState("...");
   const [ventanaEmergente, setventanaEmergente] = useState(false); 
   const [inventarios, setinventarios] = useState<Inventarios[]>([])
   const [showSuccess, setshowSuccess] = useState(false);
@@ -275,18 +276,19 @@ const errorAutoriza = validarAutoriza(autoriza);
 
       setTimeout(() => {
 setshowSuccess(false);
-       window.open(`/pdf-compra/${infoDestino.id}`,"_blank");
+       window.open(`/pdf-compra/${undefined}`,"_blank");
 
       }, 1000);
 
 setcomprasPorGenerar([]);
 setitems([]);
-setautoriza("");
+
 setbuscarItem("");
 setcantidad(0);
 setitem("");
 setcaracteristica("");
 setobservacion("");
+setautoriza("...");
 setventanaBuscarOrdenTrabajo(false);
 setventanaEmergente(false);
 setinfoDestino(infoDestinoInicial);
@@ -372,7 +374,7 @@ setinfoDestino(infoDestinoInicial);
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div>
             <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Solicitante</label>
-            <input className="input input-sm input-bordered w-full mt-2 focus:input-primary rounded-lg bg-gray-50" disabled value={infoDestino.userSolicitante.name} />
+            <input className="input input-sm input-bordered w-full mt-2 focus:input-primary rounded-lg bg-gray-50" disabled value={infoDestino?.userSolicitante?.name ?? "N/A"} />
           </div>
 
           <div>
@@ -407,14 +409,14 @@ setinfoDestino(infoDestinoInicial);
             <div className="w-full">
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Autoriza</label>
               <select 
-                defaultValue="Seleccionar..." 
+                value={autoriza} 
                 className={`select select-sm select-bordered w-full mt-2 focus:select-primary rounded-lg ${erroresDestino.autoriza ? 'select-error' : ''}`} 
                 onChange={(e) => {
                   setautoriza(e.target.value); 
                   seterroresDestino({...erroresDestino, autoriza: validarAutoriza(e.target.value)});
                 }}
               >
-                <option disabled>Seleccionar...</option>
+                <option disabled value={"..."}>Seleccionar...</option>
                 {users.map((m,i) => (
                   <option key={i} value={m.name}>{m.name}</option>
                 ))}
@@ -513,7 +515,7 @@ setinfoDestino(infoDestinoInicial);
                   <td>{u.item}</td>
                   <td>{u.caracteristica}</td>
                   <td>{u.Observacion}</td>
-                  <td><span className="badge badge-sm badge-info">{u.estadoStock}</span></td>
+                  <td><span className="badge badge-sm badge-info gap-2  whitespace-nowrap ">{u.estadoStock}</span></td>
                   <td>
                     <button className="btn btn-ghost btn-xs gap-1 tooltip" data-tip="Eliminar" onClick={() => funcionEliminarItems(i)}>
                       🗑️

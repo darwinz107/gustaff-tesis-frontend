@@ -42,22 +42,22 @@ const id = useParams();
             
             </View>
            <View style={styles.ocTercero}>
-            <Text style={{textAlign:"right",fontWeight:"bold"}}>ORDEN DE TRABAJO N°: {newSolicitud?.numOrdenTrabajo?.NumOrden}</Text>
+            <Text style={{textAlign:"right",fontWeight:"bold"}}>ORDEN DE TRABAJO N°: {newSolicitud?.numOrdenTrabajo?.NumOrden ?? "N/A"}</Text>
             <View><Text style={{textAlign:"left",fontWeight:"bold"}}>FECHA Y HORA DE RECEPCION: {newSolicitud?.fechaRemision.split("T")[0]}  {newSolicitud?.fechaRemision.split("T")[1].split(".")[0]}</Text> <Text style={{textAlign:"right",fontWeight:"bold"}}>SOLICITUD N°: {newSolicitud?.numOrden}</Text></View>
            </View>
             <View style={{ margin:"10px",   width:"97%"}}>
              <Table >
               <TR >
                 <TD style={{fontWeight:"bold",justifyContent:"flex-end"}}>DESTINO DEL USO DE MATERIALES Y/O REPUESTOS:  </TD>
-                <TD >{newSolicitud?.numOrdenTrabajo.DescripcionTrabajo ?? "N/A"}</TD>
+                <TD >{newSolicitud?.numOrdenTrabajo?.DescripcionTrabajo ?? "N/A"}</TD>
               </TR>
               <TR style={styles.tr}>
-                <TD style={styles.td}><Text style={{fontWeight:"bold"}}>AREA:</Text> {newSolicitud?.numOrdenTrabajo.Area}</TD>
+                <TD style={styles.td}><Text style={{fontWeight:"bold"}}>AREA:</Text> {newSolicitud?.numOrdenTrabajo?.Area ?? "N/A"}</TD>
                 <TD style={{padding:"2px", justifyContent:"center"}}></TD>
               </TR>
                <TR style={styles.tr}>
-                <TD style={styles.td}><Text style={{fontWeight:"bold"}}>MAQUINA:</Text> {newSolicitud?.numOrdenTrabajo.Maquina}</TD>
-                <TD style={styles.td}><Text style={{fontWeight:"bold"}}>CODIGO:</Text>{newSolicitud?.numOrdenTrabajo.Codigo}</TD>
+                <TD style={styles.td}><Text style={{fontWeight:"bold"}}>MAQUINA:</Text> {newSolicitud?.numOrdenTrabajo?.Maquina ?? "N/A"}</TD>
+                <TD style={styles.td}><Text style={{fontWeight:"bold"}}>CODIGO:</Text>{newSolicitud?.numOrdenTrabajo?.Codigo ?? "N/A"}</TD>
               </TR>
              </Table>
              
