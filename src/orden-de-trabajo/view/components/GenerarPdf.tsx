@@ -122,7 +122,7 @@ const id = useParams();
                 <Text >SOLICITA</Text>              
                 </View> 
                 <View style={styles.childFirma}>  
-                <Text style={styles.childContenido}>             </Text>
+                <Text style={styles.childContenido}>ING. JOSEPH SOLEDISPA</Text>
                 <Text >COOR. DE MANTENIMIENTO</Text> 
                 <Text>VERIFICACIÓN</Text>             
                 </View>

@@ -218,7 +218,7 @@ useEffect(() => {
   };
 
   const validarAutoriza = (valor: string): string => {
-    if (!valor || valor === "" || valor === "Seleccionar...") {
+    if (!valor || valor === "" || valor === "...") {
       return "Campo obligatorio";
     }
     return "";

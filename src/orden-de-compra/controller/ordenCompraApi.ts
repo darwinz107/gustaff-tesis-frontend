@@ -24,6 +24,26 @@ export const filtrarOrdenTrabajo = async (filtrarOrdenTrabajo: FiltrarOrdenTraba
     return data;
 };
 
+ export const filtrarOrdenSinUso = async(numOrden:string,userSolicitante:string,Area:string):Promise<LllenarDestino[]>=>{
+       try {
+        const response:Response = await fetch(`${route}orden-de-trabajo/filtrar-ordenes/sin-uso`,{
+         method:"PATCH",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({numOrden,userSolicitante,Area})
+        });
+
+        const data = await response.json();
+       return data;
+        
+
+    } catch (error) {
+        console.log("Error en filtrarOrdenSinUso:", error);
+        return { error: true, msj: "Error en la conexión con el servidor" };
+    }
+    }
+
 export const getAllOrdenesTrabajoSinUso = async (): Promise<LllenarDestino[]> => {
   
   const response: Response = await fetch(`${route}orden-de-trabajo/all-ordenes-sin-uso`, {
@@ -33,6 +53,8 @@ export const getAllOrdenesTrabajoSinUso = async (): Promise<LllenarDestino[]> =>
     const data = await response.json();
     return data;
 };
+
+
 
 export const crearOrdenCompra = async (guardarSolicitudCompra: GuardarSolicitudCompra):Promise<{msj:string,validate:boolean}> => {
   try {

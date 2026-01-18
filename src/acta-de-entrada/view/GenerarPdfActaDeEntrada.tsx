@@ -87,7 +87,7 @@ const id = useParams();
     }}
   >
     <Text style={{ width: "15%", fontSize: 9, textAlign: "center" }}>{i.cantidad} UNDS</Text>
-    <Text style={{ width: "40%", fontSize: 9, paddingLeft: 4 }}>{i.item.nombre}</Text>
+    <Text style={{ width: "40%", fontSize: 9, paddingLeft: 4 }}>{i.item?.nombre ?? "N/A"}</Text>
     <Text style={{ width: "15%", fontSize: 9, paddingLeft: 4 }}>{i.costo}</Text>
     <Text style={{ width: "15%", fontSize: 9, paddingLeft: 4 }}>{i.descuento}%</Text>
     <Text style={{ width: "15%", fontSize: 9, paddingLeft: 4 }}>{i.iva ? 15:0}%</Text>

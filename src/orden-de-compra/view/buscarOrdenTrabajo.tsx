@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import type { InfoOrdenTrabajo } from '../models/infoOrdenTrabajo';
-import { filtrarOrdenTrabajo, getAllOrdenesTrabajoSinUso } from '../controller/ordenCompraApi';
+import { filtrarOrdenSinUso, filtrarOrdenTrabajo, getAllOrdenesTrabajoSinUso } from '../controller/ordenCompraApi';
 import type { LllenarDestino } from '../models/llenarDestino';
 
 export const BuscarOrdenTrabajo = ({ventanaBuscarOrdenTrabajo,setventanaBuscarOrdenTrabajo,setinfoDestino}) => {
@@ -9,6 +9,9 @@ export const BuscarOrdenTrabajo = ({ventanaBuscarOrdenTrabajo,setventanaBuscarOr
     const callyPpopover = useRef(null);
     const [selectFechaNac, setselectFechaNac] = useState<string>('');
     const [selectUserSolicitante, setselectUserSolicitante] = useState<string>('');
+    const [filtroSolicitante, setfiltroSolicitante] = useState("");
+    const [filtroNOrden, setfiltroNOrden] = useState("");
+    const [filtroArea, setfiltroArea] = useState("");
 
 const preCargarOrdenes = async() =>{
         const ordenesApi = await getAllOrdenesTrabajoSinUso();
@@ -41,6 +44,19 @@ preCargarOrdenes();
     };
     ordenTrabajoFiltrar();
     }, [selectFechaNac,selectUserSolicitante]);
+
+    const aplicarFiltros = async() =>{
+      const res = await filtrarOrdenSinUso(filtroNOrden,filtroSolicitante,filtroArea);
+      setordenes(res);
+      console.log(res);
+    }
+
+    const limpiarFiltros = async() =>{
+      setfiltroArea("");
+      setfiltroNOrden("");
+      setfiltroSolicitante("");
+      preCargarOrdenes();
+    }
     
   return (
     <>
@@ -50,22 +66,25 @@ preCargarOrdenes();
             <span className='text-xs text-purple-600'>Busca órdenes de trabajo disponibles</span>
           </div>
         </div>
-        <div className='w-full bg-gradient-to-r from-purple-50 to-pink-50 border-b border-purple-200 px-6 py-6 flex flex-row gap-4'>
-         <div className='flex-1 flex flex-col gap-1'>
+        <div className='w-full bg-gradient-to-r from-purple-50 to-pink-50 border-b border-purple-200 px-6 py-6 '>
+        <div className='flex flex-row gap-4'>
+          <div className='flex-1 flex flex-col gap-1'>
            <label className='text-sm font-semibold text-gray-700'>Solicitante</label>
-           <input type="text" className='input input-sm input-bordered rounded-lg focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400' onChange={(e)=>{setselectUserSolicitante(e.target.value);}}/></div>
+           <input type="text" className='input input-sm input-bordered rounded-lg focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400' value={filtroSolicitante} onChange={(e)=>setfiltroSolicitante(e.target.value)} /></div>
          <div className='flex-1 flex flex-col gap-1'>
-           <label className='text-sm font-semibold text-gray-700'>Fecha</label>
-           <button type="button" onClick={() => { callyPpopover.current?.showPopover() }} className="input input-sm input-bordered rounded-lg text-left focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400" id="cally" style={{ anchorName: "--cally" }}>
-                  📅 Pick a date
-                </button>
-                <div popover="auto" ref={callyPpopover} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally" }}>
-                  <calendar-date className="cally" onchange={(e) =>{document.getElementById("cally").innerText = e.target.value; setselectFechaNac(e.target.value);}}>
-                    <svg aria-label="Previous" className="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
-                    <svg aria-label="Next" className="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
-                    <calendar-month></calendar-month>
-                  </calendar-date>
-                </div></div>
+          <label className='text-sm font-semibold text-gray-700'>N.Orden de trabajo</label>
+           <input type="text" className='input input-sm input-bordered rounded-lg focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400' value={filtroNOrden} onChange={(e)=>setfiltroNOrden(e.target.value)} />
+          </div>
+           <div className='flex-1 flex flex-col gap-1'>
+            <label className='text-sm font-semibold text-gray-700'>Area</label>
+           <input type="text" className='input input-sm input-bordered rounded-lg focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-400' value={filtroArea} onChange={(e)=>setfiltroArea(e.target.value)} />
+          </div>
+          </div> 
+           <div className="px-6 py-3 flex items-center justify-end gap-2 bg-gray-50 border-b border-gray-200">
+          <button className="btn btn-sm btn-ghost hover:btn-primary gap-2" onClick={preCargarOrdenes}>🔄 Refrescar</button>
+          <button className="btn btn-sm btn-ghost hover:btn-warning gap-2" onClick={limpiarFiltros}>✕ Limpiar</button>
+          <button className="btn btn-sm btn-primary gap-2" onClick={aplicarFiltros}>✓ Aplicar</button>
+        </div>
         </div>
         
         <div className='w-full flex-1 flex flex-col overflow-auto'>
