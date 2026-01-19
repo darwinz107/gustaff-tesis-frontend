@@ -249,8 +249,7 @@ const errorAutoriza = validarAutoriza(autoriza);
 
     if (errorAutoriza) {
      seterroresDestino({ autoriza: errorAutoriza });
-     console.log("Items", items);
-     
+   
       return;
     }
 

@@ -27,6 +27,7 @@ export const CrearActaSalida = () => {
   //const [idSolMaterial, setidSolMaterial] = useState<number>(0);
   const [ordenes, setordenes] = useState<BuscarSolMaterial[]>([]);
   const [erroresEntrega, seterroresEntrega] = useState("");
+  const [erroresRecibe, seterroresRecibe] = useState("");
   const [showSuccess, setshowSuccess] = useState(false);
   const [showError, setshowError] = useState(false);
   const [mensajeError, setmensajeError] = useState("");
@@ -38,6 +39,7 @@ export const CrearActaSalida = () => {
   const [descripcion, setdescripcion] = useState("");
   const [stockDis, setstockDis] = useState(0);
   const [isPending, setisPending] = useState(false);
+  const [erroresCantidad, seterroresCantidad] = useState("");
   
   
   const [inventarios, setinventarios] = useState<Inventarios[]>([]);
@@ -48,8 +50,14 @@ export const CrearActaSalida = () => {
         setmensajeError( "Cantidar mayor al stock disponible");
       setshowError(true);
       setTimeout(() => setshowError(false), 3000);
-      return;
     }
+
+    const errorCantidad = validarCantidad(Number(cantidad));
+    if(errorCantidad || stockDis  < Number(cantidad)){
+      seterroresCantidad(errorCantidad);
+        return;
+    }
+
      setagregarItems(prev => [...prev,{cantidad:cantidad,item:item,Observacion:observacion2,caracteristica:caracteristica}]);
      setcantidad("");
      setitem("");
@@ -71,13 +79,43 @@ export const CrearActaSalida = () => {
   return "";
 };
 
+const validarRecibe = (valor:number):string=>{
+  if (!valor || valor === 0 || valor === null) {
+    return "Debe seleccionar una persona que reciba";
+  }
+  return "";
+}
+
+const validarCantidad = (valor:number):string=>{
+ 
+ if(isNaN(valor)){
+    return "La cantidad debe ser un número válido";
+ }
+  if (valor <= 0) {
+    return "La cantidad debe ser mayor que cero";
+  }
+  if(!valor || valor === null || valor === undefined || valor === 0){
+    return "La cantidad es obligatoria";
+  }
+  return "";
+}
+
    const generarActaSalida = async () => {
 
   const errorEntrega = validarEntrega(entrega);
+  const errorRecibe = validarRecibe(recibe);
   seterroresEntrega(errorEntrega);
+  seterroresRecibe(errorRecibe);
+  
+  if (errorEntrega || errorRecibe) {
+    setmensajeError("Debe llenar correctamente los campos obligatorios");
+    setshowError(true);
+    setTimeout(() => setshowError(false), 3000);
+    return;
+  }
 
-  if (errorEntrega) {
-    setmensajeError("Debe seleccionar una persona para entrega");
+  if(agregarItems.length === 0){
+    setmensajeError("Debe agregar al menos un item a la orden de salida");
     setshowError(true);
     setTimeout(() => setshowError(false), 3000);
     return;
@@ -295,37 +333,44 @@ const metodoInventarios = async() =>{
             {conOrden ?(<input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.DescripcionTrabajo ?? ""} disabled />) :(<input type="text" className="input input-bordered w-full" value={descripcion} onChange={(e)=>setdescripcion(e.target.value)}  />)}
           </div>
 
-          <div className="space-y-3">
-            <label className="text-sm text-gray-600">Entrega</label>
-            <select value={entrega} className={`select select-bordered w-full ${erroresEntrega ? 'select-error' : ''}`} onChange={(e) => {setentrega(e.target.value); seterroresEntrega(validarEntrega(e.target.value));}}>
+          <div className="space-y-6">
+            <div className="relative"> 
+              <label className="text-sm text-gray-600">Entrega</label>
+            <select value={entrega} className={`select select-bordered w-full ${erroresEntrega ? 'select-error' : ''}`} onChange={(e) => {setentrega(Number(e.target.value)); seterroresEntrega(validarEntrega(Number(e.target.value)));}}>
               <option value={0} disabled>...</option>
               {entregan.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
             </select>
-            <div className="max-h-1">{erroresEntrega && <p className="text-red-500 text-xs">{erroresEntrega}</p>}</div>
+            <div className="absolute max-h-1">{erroresEntrega && <p className="text-red-500 text-xs">{erroresEntrega}</p>}</div>
+              </div>
+           <div> <label className="text-sm text-gray-600 mt-2">Código</label>
+            <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.Codigo} disabled /></div>  
+           
+            <div>
+             <label className="text-sm text-gray-600 mt-2">Observación</label>
+            <input type="text" className="input input-bordered w-full"  onChange={(e) => setobservacion(e.target.value)} /> 
+            </div>
 
-            <label className="text-sm text-gray-600 mt-2">Código</label>
-            <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.Codigo} disabled />
-            <div ></div>
-
-            <label className="text-sm text-gray-600 mt-2">Observación</label>
-            <input type="text" className="input input-bordered w-full"  onChange={(e) => setobservacion(e.target.value)} />
           </div>
 
-          <div className="space-y-3">
-            <label className="text-sm text-gray-600">Recibe</label>
+          <div className="space-y-6">
+            <div className="relative">
+              <label className="text-sm text-gray-600">Recibe</label>
            
-                      <select value={recibe} className={`select select-bordered w-full`} onChange={(e) => {setrecibe(e.target.value);}}>
+                      <select value={recibe} className={`select select-bordered w-full ${erroresRecibe ? 'select-error':''}`} onChange={(e) => {setrecibe(Number(e.target.value)); seterroresRecibe(validarRecibe(Number(e.target.value)))}}>
               <option value={0} disabled>...</option>
               {users.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
             </select>
-            <div className="max-h-1"></div>
-
-            <label className="text-sm text-gray-600 mt-2">Máquina</label>
-            <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.Maquina} disabled />
-            <div className="max-h-1"></div>
-
-            <label className="text-sm text-gray-600 mt-2">N.Orden</label>
+            <div className="absolute max-h-1">{erroresRecibe && <p className="text-red-500 text-xs">{erroresRecibe}</p>}</div>
+            
+              </div>
+          <div><label className="text-sm text-gray-600 mt-2">Máquina</label>
+            <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.Maquina} disabled /></div>
+                    
+<div>
+   <label className="text-sm text-gray-600 mt-2">N.Orden</label>
             <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrden} disabled />
+</div>
+           
           </div>
         </div>
       </div>
@@ -334,20 +379,21 @@ const metodoInventarios = async() =>{
       <div className="w-full bg-base-100 rounded-2xl shadow p-5">
         <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-3">Agregar ítems (Solo para salida de items sin orden)</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
-          <div className="md:col-span-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-end space-y-2">
+          <div className="relative">
             <label className="text-sm text-gray-600">Cantidad</label>
-            <input disabled={conOrden} type="text" className="input input-bordered w-full" value={cantidad} onChange={(e)=>setcantidad(e.target.value)}/>
+            <input disabled={conOrden} type="text" className="input input-bordered w-full" value={cantidad} onChange={(e)=>{setcantidad(e.target.value); seterroresCantidad(validarCantidad(Number(e.target.value)))}}/>
+            <div className="absolute max-h-1">{erroresCantidad  && <p className="text-red-500 text-xs">{erroresCantidad}</p>}</div>
           </div>
 
-          <div className="md:col-span-4">
+          <div className="md:col-span-3">
             <label className="text-sm text-gray-600">Item</label>
             <div className="relative">
               <input
                 disabled={conOrden}
                 type="text"
                 className="input input-bordered w-full pr-10"
-                value={item} onChange={(e)=>setitem(e.target.value)}
+                value={item}
               />
               <button
                 disabled={conOrden}
@@ -360,7 +406,7 @@ const metodoInventarios = async() =>{
             </div>
           </div>
 
-         <div className="md:col-span-4">
+         <div className="md:col-span-8">
             <label className="text-sm text-gray-600">Característica</label>
             <input disabled={conOrden} type="text" className="input input-bordered w-full" 
             value={caracteristica} onChange={(e)=>setcaracteristica(e.target.value)}
@@ -386,7 +432,7 @@ const metodoInventarios = async() =>{
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"/></svg>
                   Agregar a Salida
                 </button>
-                <button className="btn btn-sm btn-ghost gap-2" onClick={() => setconOrden(!conOrden)}>
+                <button className="btn btn-sm btn-ghost gap-2" onClick={() => {setconOrden(!conOrden); seterroresCantidad(""); setcantidad(""); setitem(""); setcaracteristica(""); setobservacion2(""); setagregarItems([]);}}>
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/></svg>
                   Volver a Con Orden
                 </button>

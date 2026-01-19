@@ -43,7 +43,7 @@ export const CrearActaEntrada = () => {
     const [ordenes, setordenes] = useState<BuscarSolMaterial[]>([]);
     const [habilitarStockMin, sethabilitarStockMin] = useState(false);
     const [erroresProovedor, seterroresProovedor] = useState("");
-    const [erroresItems, seterroresItems] = useState({factura: "", item: "", cantidad: "", precioUni: "", descuento: "", stockMin: "", bodega: "", seccion: "", percha: ""});
+    const [erroresItems, seterroresItems] = useState({factura: "", item: "", cantidad: "", precioUni: "", descuento: "", stockMin: "", bodega: "", seccion: "", percha: "",recibe:""});
     const [showSuccess, setshowSuccess] = useState(false);
     const [showError, setshowError] = useState(false);
     const [mensajeError, setmensajeError] = useState("");
@@ -313,6 +313,14 @@ const validarProovedor = (valor: string): string => {
   return "";
 };
 
+const validarRecibe = (valor:number):string =>{
+  if(valor === 0){
+    return "Debe seleccionar una persona que reciba";
+  }
+
+  return "";
+ }
+
 const validarFactura = (valor: string): string => {
   if (!valor || valor.trim() === "") {
     return "El campo no puede estar vacío";
@@ -416,11 +424,12 @@ const validarPercha = (valor: string): string => {
  const enviarygenerarActaDeEntrada = async() =>{
  const errorProovedor = validarProovedor(proovedor);
  const errorFactura = validarFactura(factura);
+ const errorRecibe = validarRecibe(recibe);
  
  seterroresProovedor(errorProovedor);
- seterroresItems({...erroresItems, factura: errorFactura});
+ seterroresItems({...erroresItems, factura: errorFactura, recibe: errorRecibe});
 
- if (errorProovedor || errorFactura) {
+ if (errorProovedor || errorFactura || errorRecibe) {
    setmensajeError("Debe llenar correctamente los campos obligatorios");
    setshowError(true);
    setTimeout(() => setshowError(false), 3000);
@@ -713,10 +722,11 @@ const eliminarItem = (index: number) => {
           </div>
            <div className="min-w-[220px] ">
             <label className="block text-sm text-gray-600 mb-1">Recibe</label>
-            <select value={recibe} className={`select select-bordered w-full`} onChange={(e) => {setrecibe(e.target.value);}}>
-              <option value={0}>...</option>
+            <select value={recibe} className={`select select-bordered w-full`} onChange={(e) => {setrecibe(e.target.value); seterroresItems({...erroresItems, recibe: validarRecibe(Number(e.target.value))});}}>
+              <option disabled value={0}>...</option>
               {users.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
             </select>
+            <div>{erroresItems.recibe && <p className="text-red-500 text-xs">{erroresItems.recibe}</p>}</div>
           </div>
           
         </div>
