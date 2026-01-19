@@ -135,7 +135,7 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{nombre:string}[]>
         return data;
     }
 
-    export const editarOrdenTrabajoApi = async(id:number,ordenTrabajo:SolicitudOrden):Promise<{msj:string}>=>{
+    export const editarOrdenTrabajoApi = async(id:number,ordenTrabajo:SolicitudOrden):Promise<{msj:string,validate:boolean}>=>{
        try {
         const response:Response = await fetch(`${route}orden-de-trabajo/${id}`,{
          method:"PATCH",

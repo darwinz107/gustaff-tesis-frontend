@@ -54,11 +54,14 @@ const [promedios, setpromedios] = useState<{otId:number,promedio:number}[]>([]);
    const [showSuccessFase, setshowSuccessFase] = useState(false);
    const [mensajeFase, setmensajeFase] = useState("");
    const [idOrdenTrabajoActual, setidOrdenTrabajoActual] = useState<number>(0);
+   const [isPending, setisPending] = useState(false);
    
    const dialogEliminarRef = useRef<HTMLDialogElement>(null);
    const [idAEliminar, setidAEliminar] = useState<number | null>(null);
    const [mensajeAlerta, setmensajeAlerta] = useState("");
    const [tipoAlerta, settipoAlerta] = useState<"success" | "error" | null>(null);
+   const [showSuccessCrearOrden, setshowSuccessCrearOrden] = useState(false);
+    const [showErrorCrearOrden, setshowErrorCrearOrden] = useState(false);
 
 
 const applyFilters = async () => {
@@ -158,18 +161,23 @@ const ordenesTrabajoApi  = async() =>{
            const res = await getAllCodByArea(selectArea);
            console.log("res codigos by area: ",res);
            setcodigossAll(res);
-
+           if(res.length === 0){
+            setmaquinasAll([]);
+            return;
+           }
            
          }
 
           getCodigosApi();
 
           const getMaquinasApi = async() =>{
+          
            const res = await getAllMaquinasByCod(selectCodigo);
            console.log("res maquinas by cod: ",res);
-           setmaquinasAll(res);
+            setmaquinasAll(res);
           }
           getMaquinasApi();
+
       }
        
      }, [selectArea,selectCodigo,ventanaEmergente])
@@ -208,9 +216,9 @@ const ordenesTrabajoApi  = async() =>{
         fechaFinal:ordenTrabajoxUser.fechaFinal,
         HoraInicio:ordenTrabajoxUser.HoraInicio,  
         HoraFinal:ordenTrabajoxUser.HoraFinal,
-        Area:ordenTrabajoxUser.Area,
-        Codigo:ordenTrabajoxUser.Codigo,
-        Maquina:ordenTrabajoxUser.Maquina,
+        Area:selectArea,
+        Codigo:selectCodigo,
+       
         EspecificacionMaquina:ordenTrabajoxUser.EspecificacionMaquina,
         Categoria:ordenTrabajoxUser.Categoria,
         TipoTrabajo:ordenTrabajoxUser.TipoTrabajo,
@@ -221,13 +229,39 @@ const ordenesTrabajoApi  = async() =>{
         estado:ordenTrabajoxUser.estadoTrabajo?.estado
       };
 
-      const res = await editarOrdenTrabajoApi(ordenTrabajoxUser.id,ordenEditada);
-    
-      alert(res.msj);
-      console.log(res);
+      if(selectMaquina.trim() !== ""){
+        ordenEditada.Maquina = selectMaquina;
+      }
+    setisPending(true);
+      try {
+            const res = await editarOrdenTrabajoApi(ordenTrabajoxUser.id,ordenEditada);
+ 
+      if(res.validate){
+      setshowSuccessCrearOrden(true);     
+      ordenesTrabajoApi(); 
+       setisPending(false);
+       setventanaEmergente(false);
+        setTimeout(() => {
+           setshowSuccessCrearOrden(false);
+
+        }, 2000);
+       ordenesTrabajoApi();  
+      }else{
+        setshowErrorCrearOrden(true);
+        setTimeout(() => {
+            setshowErrorCrearOrden(false);
+        }, 2000);
+      }
+      
       setconfirmarCambio(false);
       sethabilitarEdicion(!habilitarEdicion);
-      ordenesTrabajoApi();
+      
+      } catch (error) {
+        
+      }finally{
+        setisPending(false);
+      }
+
      }
 
      const metodoEliminarOrdenTrabajo = async(id:number)=>{
@@ -278,9 +312,9 @@ const ordenesTrabajoApi  = async() =>{
       setidOrdenTrabajoActual(idOrdenTrabajo);
     } catch (error) {
       console.log("Error al cargar fases:", error);
-      setmensajeFase("Error al cargar las fases");
-      setshowErrorFase(true);
-      setTimeout(() => setshowErrorFase(false), 3000);
+    /*  setmensajeFase("Error al cargar las fases");
+      setshowErrorFase(true);*/
+    //  setTimeout(() => setshowErrorFase(false), 3000);
     }
   }
 
@@ -335,6 +369,27 @@ const ordenesTrabajoApi  = async() =>{
      
   return (
   <>
+   {showSuccessCrearOrden && (
+      <div className="fixed top-5 right-5 z-100">
+        <div role="alert" className="alert alert-success shadow-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{ "¡Editado correctamente!"}</span>
+        </div>
+      </div>
+    )}
+
+    {showErrorCrearOrden && (
+      <div className="fixed top-5 right-5 z-100">
+        <div role="alert" className="alert alert-error shadow-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{"Fallo al editar"}</span>
+        </div>
+      </div>
+    )}
     <div className="w-full h-full rounded-2xl border border-gray-200 bg-white shadow-lg">
       <div className="bg-gradient-to-r from-green-500 to-green-600 w-full py-4 rounded-t-2xl border-b border-green-200 px-6">
         <h2 className="font-bold text-white text-lg">📋 Órdenes de Trabajo</h2>
@@ -423,7 +478,7 @@ const ordenesTrabajoApi  = async() =>{
                     <td className="px-4 py-3 text-gray-700 align-top">{u.fechaFinal}</td>
                     <td className="px-4 py-3 text-gray-700 align-top">{u.userSolicitante?.name ?? "N/A"}</td>
                     <td className="px-4 py-3 text-gray-700 text-sm align-top">{u.DescripcionTrabajo}</td>
-                    <td className="px-4 py-3 align-top"><span className="badge badge-success badge-sm">{u.estadoTrabajo.estado}</span></td>
+                    <td className="px-4 py-3 align-top whitespace-nowrap"><span className="badge badge-success badge-sm">{u.estadoTrabajo.estado}</span></td>
                     <td className="px-4 py-3 align-top"><div className="radial-progress cursor-pointer" onClick={() => handleAbrirModalFase(u.id)} style={{ "--value": u.progreso ?? 0 } as React.CSSProperties} 
   aria-valuenow={u.progreso ?? 0} role="progressbar">{u.progreso ?? 0}%</div></td>
                     <td className="px-4 py-3 align-top text-center">
@@ -530,7 +585,7 @@ const ordenesTrabajoApi  = async() =>{
 
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Área</label>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.Area} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,Area:e.target.value}));setconfirmarCambio(true);}}>
+              <select disabled={!habilitarEdicion} value={selectArea} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setselectArea(e.target.value);setconfirmarCambio(true);}}>
                 <option disabled>...</option>
                 {areasAll.map((a)=> <option key={a.nombre} value={a.nombre}>{a.nombre}</option>)}
               </select>
@@ -538,7 +593,7 @@ const ordenesTrabajoApi  = async() =>{
 
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Código</label>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.Codigo} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,Codigo:e.target.value}));setconfirmarCambio(true);}}>
+              <select disabled={!habilitarEdicion} value={selectCodigo} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setselectCodigo(e.target.value);setconfirmarCambio(true);}}>
                 <option disabled>...</option>
                 {codigossAll.map((c)=> <option key={c.cod} value={c.cod}>{c.cod}</option>)}
               </select>
@@ -546,7 +601,7 @@ const ordenesTrabajoApi  = async() =>{
 
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Máquina</label>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.Maquina} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,Maquinaea:e.target.value})); setconfirmarCambio(true);}}>
+              <select disabled={!habilitarEdicion} value={selectMaquina} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setselectMaquina(e.target.value); setconfirmarCambio(true);}}>
                 <option disabled>...</option>
                 {maquinasAll.map((m)=> <option key={m.nombre} value={m.nombre}>{m.nombre}</option>)}
               </select>
@@ -554,7 +609,7 @@ const ordenesTrabajoApi  = async() =>{
 
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Especificación</label>
-              <input type="text" disabled={!habilitarEdicion} className="input input-sm input-bordered w-full mt-2 focus:input-success rounded-lg disabled:bg-gray-50" value={ordenTrabajoxUser.EspecificacionMaquina ?? "N/A"} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,HoraFinal:e.target.value})); setconfirmarCambio(true);}}/>
+              <input type="text" disabled={!habilitarEdicion} className="input input-sm input-bordered w-full mt-2 focus:input-success rounded-lg disabled:bg-gray-50" value={ordenTrabajoxUser.EspecificacionMaquina ?? "N/A"} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,EspecificacionMaquina:e.target.value})); setconfirmarCambio(true);}}/>
             </div>
 
             <div>
@@ -619,9 +674,15 @@ const ordenesTrabajoApi  = async() =>{
         <div className="bg-gray-50 border-t border-gray-200 px-6 py-4 flex items-center justify-between">
           {habilitarEdicion ? (
             <>
-              <button className="btn btn-sm bg-green-500 hover:bg-green-600 text-white border-0 gap-2" disabled={!confirmarCambio} onClick={editarOrdenTrabajo}>
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
-                Guardar
+              <button className="btn btn-sm bg-green-500 hover:bg-green-600 text-white border-0 gap-2" disabled={!confirmarCambio} onClick={editarOrdenTrabajo}>                       
+                 {isPending ? (
+    // Spinner de DaisyUI
+    <span className="loading loading-spinner loading-sm"></span>
+  ) : (
+    // Icono original
+     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
+  )}
+  {isPending ? "Procesando..." : "Guardar"}
               </button>
               <button className="btn btn-sm btn-ghost gap-2" onClick={()=>{asignarSolicitantexOrden(ordenTrabajoxUser.id); sethabilitarEdicion(!habilitarEdicion); setconfirmarCambio(false);}}>
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/></svg>
