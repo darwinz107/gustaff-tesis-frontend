@@ -390,7 +390,7 @@ const metodoInventarios = async() =>{
             <label className="text-sm text-gray-600">Item</label>
             <div className="relative">
               <input
-                disabled={conOrden}
+                disabled={true}
                 type="text"
                 className="input input-bordered w-full pr-10"
                 value={item}
