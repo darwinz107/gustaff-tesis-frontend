@@ -112,16 +112,7 @@ const validarCantidad = (valor:number):string=>{
     setshowError(true);
     setTimeout(() => setshowError(false), 3000);
     return;
-  }
-
-  if(agregarItems.length === 0){
-    setmensajeError("Debe agregar al menos un item a la orden de salida");
-    setshowError(true);
-    setTimeout(() => setshowError(false), 3000);
-    return;
-  }
-
-    
+  }    
 
   if (!conOrden && solicitudMaterial.id == null) {
    /* setmensajeError("Debe seleccionar una solicitud de material!");
