@@ -119,6 +119,8 @@ export const Rol1Main = () => {
       }, 2000);
     } catch (error) {
       console.error(error);
+    }finally{
+      cancelarLogout();
     }
   }
 

@@ -36,7 +36,7 @@ export const Principal = () => {
   const [cargarAuto, setcargarAuto] = useState(false);
   const navigate = useNavigate();
   const [sendId, setsendId] = useState<Number | null | undefined>(null);
-  const [sendMaquina, setsendMaquina] = useState<MaquinaInfo | null>(null);
+ // const [sendMaquina, setsendMaquina] = useState<MaquinaInfo | null>(null);
   const [collapsed, setCollapsed] = useState(false);
   const [usuario, setUsuario] = useState<Users | null>(null);
   const [usuarioEnEdicion, setUsuarioEnEdicion] = useState<Users | null>(null);
@@ -170,8 +170,8 @@ export const Principal = () => {
     15: <AdministrarTiposTrabajo />,
     16: <AdministrarCargos />,
     17: <GestionJornadas></GestionJornadas>,
-    18:<CrearCronograma maquinaId={sendMaquina}></CrearCronograma>,
-    19:<CalendarioCronograma setSendMaquina={setsendMaquina} setcargarComponente={setcargarComponente}></CalendarioCronograma>
+   // 18:<CrearCronograma maquinaId={sendMaquina}></CrearCronograma>,
+   // 19:<CalendarioCronograma setSendMaquina={setsendMaquina} setcargarComponente={setcargarComponente}></CalendarioCronograma>
   }
 
  
@@ -182,11 +182,11 @@ export const Principal = () => {
     }
   }, [cargarComponente]);
 
-  useEffect(() => {
+ /* useEffect(() => {
     if (cargarComponente !== 18) {
       setsendMaquina(null);
     }
-  }, [cargarComponente]);
+  }, [cargarComponente]);*/
 
   return (
     <>
@@ -275,14 +275,6 @@ export const Principal = () => {
               <span className="text-lg">💼</span> {!collapsed && <span className="text-sm">Cargos</span>}
             </button>
 
-              {/* Cronograma */}
-            {!collapsed && <div className="text-xs font-semibold text-gray-500 mt-4 mb-2 px-2">CRONOGRAMA</div>}
-            <button className="btn btn-ghost justify-start rounded-lg hover:bg-cyan-100 hover:text-cyan-700 transition-colors" onClick={() => setcargarComponente(18)}>
-              <span className="text-lg">📊</span> {!collapsed && <span className="text-sm">Programar mantenimiento</span>}
-            </button>
-            <button className="btn btn-ghost justify-start rounded-lg hover:bg-cyan-100 hover:text-cyan-700 transition-colors" onClick={() => setcargarComponente(19)}>
-              <span className="text-lg">📊</span> {!collapsed && <span className="text-sm">Gestion Cronograma</span>}
-            </button>
 
             {/* Órdenes de Trabajo */}
             {!collapsed && <div className="text-xs font-semibold text-gray-500 mt-4 mb-2 px-2">ÓRDENES DE TRABAJO</div>}

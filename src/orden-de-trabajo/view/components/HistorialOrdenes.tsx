@@ -304,7 +304,7 @@ const ordenesTrabajoApi  = async() =>{
     try {
       const res = await getFasesByOrdenTrabajo(idOrdenTrabajo);
      // setfases(res);
-      
+      console.log(res);
       const proximaFase = res.find((f: any) => f.agotado === false );
       setfaseActual(proximaFase || null);
       console.log(proximaFase);
@@ -323,6 +323,16 @@ const ordenesTrabajoApi  = async() =>{
     setventanaFase(true);
     //setdescripcionFase("");
     setfaseHabilitada(false);
+  }
+
+  const validarFaseCompletada = async(proceso:number) => {
+    if (proceso === 100) {
+      setmensajeFase("Todas las fases han sido completadas");
+      setshowSuccessFase(true);
+      setTimeout(() => setshowSuccessFase(false), 3000);
+      return true;
+    }
+    return false;
   }
 
   const enviarFaseCompletada = async() => {
@@ -479,7 +489,7 @@ const ordenesTrabajoApi  = async() =>{
                     <td className="px-4 py-3 text-gray-700 align-top">{u.userSolicitante?.name ?? "N/A"}</td>
                     <td className="px-4 py-3 text-gray-700 text-sm align-top">{u.DescripcionTrabajo}</td>
                     <td className="px-4 py-3 align-top whitespace-nowrap"><span className="badge badge-success badge-sm">{u.estadoTrabajo.estado}</span></td>
-                    <td className="px-4 py-3 align-top"><div className="radial-progress text-primary cursor-pointer" onClick={() => handleAbrirModalFase(u.id)} style={{ "--value": u.progreso ?? 0 } as React.CSSProperties} 
+                    <td className="px-4 py-3 align-top"><div className="radial-progress text-primary cursor-pointer" onClick={() =>{ handleAbrirModalFase(u.id);}} style={{ "--value": u.progreso ?? 0 } as React.CSSProperties} 
   aria-valuenow={u.progreso ?? 0} role="progressbar">{u.progreso ?? 0}%</div></td>
                     <td className="px-4 py-3 align-top text-center">
                       <div className="flex items-center justify-center flex-wrap gap-2">
@@ -791,7 +801,7 @@ const ordenesTrabajoApi  = async() =>{
           </div>
         ) : (
           <div className="text-center py-8">
-            <p className="text-gray-500">No hay fases pendientes para completar</p>
+            <p className="text-gray-500"> No hay fases pendientes para completar</p>
           </div>
         )}
       </div>

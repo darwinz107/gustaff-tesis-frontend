@@ -100,6 +100,8 @@ export const Rol2Main = () => {
       }, 2000);
     } catch (error) {
       console.error(error);
+    }finally{
+      cancelarLogout();
     }
   }
 
