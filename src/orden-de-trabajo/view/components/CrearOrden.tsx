@@ -7,10 +7,11 @@ import type { Codigo } from "../../models/codigos";
 import type { Maquina } from "../../models/maquinas";
 import type { SolicitudOrden } from "../../models/solicitudOrden";
 import { useNavigate } from "react-router-dom";
-import { getUsers } from "../../../user/controller/api/user-api";
+import { getUsers, getUsersSupervisores } from "../../../user/controller/api/user-api";
 
 export const CrearOrden = ({setcargarAuto,setsendId}) => {
 
+  const [usersSol, setusersSol] = useState<{name:string}[]>([])
   const [area, setarea] = useState<Area[]>([]);
   const [codigos, setcodigos] = useState<Codigo[]>([]);
   const [maquinas, setmaquinas] = useState<Maquina[]>([]);
@@ -98,6 +99,9 @@ export const CrearOrden = ({setcargarAuto,setsendId}) => {
     const getAllUsers = async () => {
       const res = await getUsers();
       setusers(res);
+
+      const resSol = await getUsersSupervisores();
+      setusersSol(resSol);
     }  
     
     getAreas();
@@ -492,7 +496,7 @@ const getCodigos = async () => {
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Solicitante</label>
               <select className={`select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg ${erroresCrearOrden.solicitante ? 'select-error' : ''}`} defaultValue={"..."} onChange={(e) => {setsolicitante(e.target.value); seterroresCrearOrden({...erroresCrearOrden, solicitante: validarSolicitante(e.target.value)})}}>
                 <option defaultChecked={true}>...</option>
-                {users.map((u) => <option key={u.name} value={u.name}>{u.name}</option>)}
+                {usersSol.map((u) => <option key={u.name} value={u.name}>{u.name}</option>)}
               </select>
               {erroresCrearOrden.solicitante && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.solicitante}</p>}
             </div>
