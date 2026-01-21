@@ -155,6 +155,7 @@ const obtenerUsers = async () =>{
         detalleUsuario(asignarDetalle.id);
        
         }, 2000);
+        obtenerUsers();
        sethabilitarEdicion(!habilitarEdicion);
       }else{
         const newInfoUsuario = {
@@ -280,7 +281,7 @@ const obtenerUsers = async () =>{
       )}
 
       {showErrorEdicion && (
-        <div className="fixed bottom-5 right-5 z-50">
+        <div className="fixed bottom-5 right-5 z-100">
           <div role="alert" className="alert alert-error shadow-lg">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -416,7 +417,7 @@ const obtenerUsers = async () =>{
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               
               {/* Nombre */}
-              <div className="form-control">
+              <div className="form-control relative flex flex-col">
                 <label className="label">
                   <span className="label-text font-semibold text-gray-700">👤 Nombre</span>
                 </label>
@@ -427,11 +428,11 @@ const obtenerUsers = async () =>{
                   value={asignarDetalle.name ?? ""} 
                   onChange={(e)=>{setasignarDetalle(prev=>({...prev, name: e.target.value})); seterroresEdicion({...erroresEdicion, nombre: validarNombre(e.target.value)});}} 
                 />
-                {erroresEdicion.nombre && <label className="label"><span className="label-text-alt text-error text-sm">{erroresEdicion.nombre}</span></label>}
+                {erroresEdicion.nombre &&<div className='absolute max-h-1 bottom-0'> <label className="label absolute"><span className="label-text-alt text-error text-sm">{erroresEdicion.nombre}</span></label> </div> }
               </div>
 
               {/* Fecha de Nacimiento */}
-              <div className="form-control">
+              <div className="form-control relative flex flex-col">
                 <label className="label">
                   <span className="label-text font-semibold text-gray-700">🗓️ Fecha de Nacimiento</span>
                 </label>
@@ -442,11 +443,11 @@ const obtenerUsers = async () =>{
                   value={asignarDetalle.fechaNac ?? ""} 
                   onChange={(e)=>{ setasignarDetalle(prev=>({...prev, fechaNac: e.target.value})); seterroresEdicion({...erroresEdicion, fecha: validarFecha(e.target.value)});}} 
                 />
-                {erroresEdicion.fecha && <label className="label"><span className="label-text-alt text-error text-sm">{erroresEdicion.fecha}</span></label>}
+                {erroresEdicion.fecha && <div className='absolute max-h-1 bottom-0'> <label className="label"><span className="label-text-alt text-error text-sm">{erroresEdicion.fecha}</span></label> </div> }
               </div>
 
               {/* Cédula */}
-              <div className="form-control">
+              <div className="form-control relative flex flex-col">
                 <label className="label">
                   <span className="label-text font-semibold text-gray-700">📌 Cédula</span>
                 </label>
@@ -456,11 +457,13 @@ const obtenerUsers = async () =>{
                   onChange={(e)=>{setasignarDetalle(prev=>({...prev, identification: e.target.value})); seterroresEdicion({...erroresEdicion, cedula: validarCedula(e.target.value)});}} 
                   disabled={!habilitarEdicion} 
                 />
-                {erroresEdicion.cedula && <label className="label"><span className="label-text-alt text-error text-sm">{erroresEdicion.cedula}</span></label>}
+               
+                {erroresEdicion.cedula &&<div className='absolute max-h-1 bottom-0'>  <label className="label"><span className="label-text-alt text-error text-sm">{erroresEdicion.cedula}</span></label></div> }
+                
               </div>
 
               {/* Celular */}
-              <div className="form-control">
+              <div className="form-control relative flex flex-col">
                 <label className="label">
                   <span className="label-text font-semibold text-gray-700">📱 Celular</span>
                 </label>
@@ -470,11 +473,11 @@ const obtenerUsers = async () =>{
                   onChange={(e)=>{setasignarDetalle(prev=>({...prev, cellphone: e.target.value})); seterroresEdicion({...erroresEdicion, celular: validarCelular(e.target.value)});}} 
                   disabled={!habilitarEdicion} 
                 />
-                {erroresEdicion.celular && <label className="label"><span className="label-text-alt text-error text-sm">{erroresEdicion.celular}</span></label>}
+                {erroresEdicion.celular &&<div className='absolute max-h-1 bottom-0'> <label className="label"><span className="label-text-alt text-error text-sm">{erroresEdicion.celular}</span></label></div> }
               </div>
 
               {/* Email */}
-              <div className="form-control">
+              <div className="form-control relative flex flex-col">
                 <label className="label">
                   <span className="label-text font-semibold text-gray-700">✉️ Email</span>
                 </label>
@@ -484,7 +487,7 @@ const obtenerUsers = async () =>{
                   onChange={(e)=>{setasignarDetalle(prev=>({...prev, email: e.target.value})); seterroresEdicion({...erroresEdicion, email: validarEmail(e.target.value)});}} 
                   disabled={!habilitarEdicion} 
                 />
-                {erroresEdicion.email && <label className="label"><span className="label-text-alt text-error text-sm">{erroresEdicion.email}</span></label>}
+                {erroresEdicion.email && <div className='absolute max-h-1 bottom-0'> <label className="label"><span className="label-text-alt text-error text-sm">{erroresEdicion.email}</span></label> </div> }
               </div>
 
               {/* Nueva Contraseña */}
@@ -503,7 +506,7 @@ const obtenerUsers = async () =>{
               </div>
 
               {/* Cargo */}
-              <div className="form-control">
+              <div className="form-control relative flex flex-col">
                 <label className="label">
                   <span className="label-text font-semibold text-gray-700">🏷️ Cargo</span>
                 </label>
@@ -516,7 +519,7 @@ const obtenerUsers = async () =>{
                   <option value={0} disabled>Selecciona un cargo...</option>
                   {cargos.map((a)=><option key={a.id} value={a.id}>{a.name}</option>)}
                 </select>
-                {erroresEdicion.cargo && <label className="label"><span className="label-text-alt text-error text-sm">{erroresEdicion.cargo}</span></label>}
+                {erroresEdicion.cargo && <div className='absolute max-h-1 bottom-0'> <label className="label"><span className="label-text-alt text-error text-sm">{erroresEdicion.cargo}</span></label> </div> }
               </div>
 
               {/* Estado */}

@@ -72,12 +72,17 @@ const [filtroEstado, setFiltroEstado] = useState("");
           setshowSuccessFase(true);
           setTimeout(() => {
             setshowSuccessFase(false);
-            setventanaFase(false);
-            setdescripcionFase("");
-            setfaseHabilitada(false);
-           
+           // setventanaFase(false);
+           // setdescripcionFase("");
+  
           }, 2000);
-          cargarJornadas();
+           setfaseHabilitada(false);
+          //cargarJornadas();
+          if(filtroNumOrden || filtroFechaInicial || filtroEstado){
+            applyFilters();
+          }else{
+            cargarJornadas();
+          }
         } catch (error) {
           setmensajeFase("Error al completar la fase");
           setshowErrorFase(true);
