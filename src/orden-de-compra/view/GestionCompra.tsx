@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import Select from 'react-select';
 import type { DetallesPrevioCompra } from '../models/DetallesPrevioCompra';
 import { editarSolicitudMaterial, eliminarSolMaterial, findAllSolicitudesCompra, getAllEstadosCompra, ordenCompraById, filtrarSolicitudesCompra } from '../controller/ordenCompraApi';
 import type { InfoPdfCompra } from '../models/infoPdfCompra';
@@ -298,19 +299,42 @@ export const GestionCompra = () => {
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Estado</label>
-                <select disabled={!habilitarEdicion} value={detalleSol?.estadoCompra?.estado} className="select select-sm select-bordered focus:select-primary rounded-lg"
-                  onChange={(e) => { setdetalleSol((prev) => ({ ...prev, estadoCompra: { estado: e.target.value } } as any)); setconfirmarCambio(false); }}>
-                  <option disabled>Seleccionar...</option>
-                  {estados.map((s) => <option key={s.id} value={s.estado}>{s.estado}</option>)}
-                </select>
+                <Select
+                  isDisabled={!habilitarEdicion}
+                  options={estados.map(s => ({ value: s.estado, label: s.estado }))}
+                  value={detalleSol?.estadoCompra?.estado ? { value: detalleSol.estadoCompra.estado, label: detalleSol.estadoCompra.estado } : null}
+                  onChange={(opt) => {
+                    setdetalleSol((prev) => ({ ...prev, estadoCompra: { estado: opt?.value || "" } } as any));
+                    setconfirmarCambio(false);
+                  }}
+                  placeholder="Seleccionar..."
+                  isClearable
+                  isSearchable
+                  className="text-sm"
+                  styles={{
+                    control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                  }}
+                />
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Nº Orden de Trabajo</label>
-                <select disabled={!habilitarEdicion} className="select select-sm select-bordered focus:select-primary rounded-lg" value={nOrdenTrabajo} onChange={(e) => { setnOrdenTrabajo(e.target.value); setconfirmarCambio(false); }}>
-                  <option disabled value="">Seleccionar...</option>
-                  {ordenesTrabajo.map((o) => <option key={o.NumOrden} value={o.NumOrden}>{o.NumOrden}</option>)}
-                </select>
+                <Select
+                  isDisabled={!habilitarEdicion}
+                  options={ordenesTrabajo.map(o => ({ value: o.NumOrden, label: o.NumOrden }))}
+                  value={nOrdenTrabajo ? { value: nOrdenTrabajo, label: nOrdenTrabajo } : null}
+                  onChange={(opt) => {
+                    setnOrdenTrabajo(opt?.value || "");
+                    setconfirmarCambio(false);
+                  }}
+                  placeholder="Seleccionar..."
+                  isClearable
+                  isSearchable
+                  className="text-sm"
+                  styles={{
+                    control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                  }}
+                />
               </div>
 
               <div className="flex flex-col gap-2">
@@ -320,10 +344,22 @@ export const GestionCompra = () => {
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Autoriza</label>
-                <select disabled={!habilitarEdicion} className="select select-sm select-bordered focus:select-primary rounded-lg" value={detalleSol?.Autoriza ?? ""} onChange={(e) => { setdetalleSol((prev) => ({ ...prev, Autoriza: e.target.value } as any)); setconfirmarCambio(false); }}>
-                  <option value="" disabled>Seleccionar...</option>
-                  {users.map((u) => <option key={u.id} value={u.name}>{u.name}</option>)}
-                </select>
+                <Select
+                  isDisabled={!habilitarEdicion}
+                  options={users.map(u => ({ value: u.name, label: u.name }))}
+                  value={detalleSol?.Autoriza ? { value: detalleSol.Autoriza, label: detalleSol.Autoriza } : null}
+                  onChange={(opt) => {
+                    setdetalleSol((prev) => ({ ...prev, Autoriza: opt?.value || "" } as any));
+                    setconfirmarCambio(false);
+                  }}
+                  placeholder="Seleccionar..."
+                  isClearable
+                  isSearchable
+                  className="text-sm"
+                  styles={{
+                    control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                  }}
+                />
               </div>
 
               <div className="flex flex-col gap-2 lg:col-span-3">

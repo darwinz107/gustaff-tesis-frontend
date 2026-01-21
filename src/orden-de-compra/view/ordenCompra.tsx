@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import Select from 'react-select';
 import type { ItemsPorGuardar } from '../models/itemsPorGuardar';
 import { BuscarOrdenTrabajo } from './buscarOrdenTrabajo';
 import type { LllenarDestino } from '../models/llenarDestino';
@@ -407,19 +408,21 @@ setinfoDestino(infoDestinoInicial);
           <div className="lg:col-span-1 flex items-end">
             <div className="w-full">
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Autoriza</label>
-              <select 
-                value={autoriza} 
-                className={`select select-sm select-bordered w-full mt-2 focus:select-primary rounded-lg ${erroresDestino.autoriza ? 'select-error' : ''}`} 
-                onChange={(e) => {
-                  setautoriza(e.target.value); 
-                  seterroresDestino({...erroresDestino, autoriza: validarAutoriza(e.target.value)});
+              <Select
+                options={Array.isArray(users) ? users.map(m => ({ value: m.name, label: m.name })) : []}
+                value={autoriza !== "..." ? { value: autoriza, label: autoriza } : null}
+                onChange={(opt) => {
+                  setautoriza(opt?.value || "...");
+                  seterroresDestino({...erroresDestino, autoriza: validarAutoriza(opt?.value || "...")});
                 }}
-              >
-                <option disabled value={"..."}>Seleccionar...</option>
-                {users.map((m,i) => (
-                  <option key={i} value={m.name}>{m.name}</option>
-                ))}
-              </select>
+                placeholder="Seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
               {erroresDestino.autoriza && <p className="text-red-500 text-xs mt-1">{erroresDestino.autoriza}</p>}
             </div>
           </div>
@@ -432,17 +435,6 @@ setinfoDestino(infoDestinoInicial);
         </h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-4">
-          <div>
-            <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Cantidad</label>
-            <input 
-              className={`input input-sm input-bordered w-full mt-2 focus:input-primary rounded-lg ${erroresItems.cantidad ? 'input-error' : ''}`} 
-              placeholder="0" 
-              value={cantidad === 0 ? "" : cantidad} 
-              onChange={(e) => setcantidad(e.target.value)} 
-            />
-            {erroresItems.cantidad && <p className="text-red-500 text-xs mt-1">{erroresItems.cantidad}</p>}
-          </div>
-
           <div>
             <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Item</label>
             <div className="relative mt-2">
@@ -461,6 +453,17 @@ setinfoDestino(infoDestinoInicial);
               </button>
             </div>
             {erroresItems.item && <p className="text-red-500 text-xs mt-1">{erroresItems.item}</p>}
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Cantidad</label>
+            <input 
+              className={`input input-sm input-bordered w-full mt-2 focus:input-primary rounded-lg ${erroresItems.cantidad ? 'input-error' : ''}`} 
+              placeholder="0" 
+              value={cantidad === 0 ? "" : cantidad} 
+              onChange={(e) => setcantidad(e.target.value)} 
+            />
+            {erroresItems.cantidad && <p className="text-red-500 text-xs mt-1">{erroresItems.cantidad}</p>}
           </div>
 
           <div>
@@ -499,8 +502,8 @@ setinfoDestino(infoDestinoInicial);
           <table className="table w-full">
             <thead>
               <tr className="bg-gray-50">
-                <th>Cantidad</th>
                 <th>Item</th>
+                <th>Cantidad</th>
                 <th>Característica</th>
                 <th>Observación</th>
                 <th>Estado</th>
@@ -510,8 +513,8 @@ setinfoDestino(infoDestinoInicial);
             <tbody>
               {comprasPorGenerar?.map((u, i) => (
                 <tr key={i} className="hover:bg-gray-50">
-                  <td><span className="badge badge-sm">{u.cantidad}</span></td>
                   <td>{u.item}</td>
+                  <td><span className="badge badge-sm">{u.cantidad}</span></td>
                   <td>{u.caracteristica}</td>
                   <td>{u.Observacion}</td>
                   <td><span className="badge badge-sm badge-info gap-2  whitespace-nowrap ">{u.estadoStock}</span></td>

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import Select from 'react-select';
 import { BuscarOrdenCompra } from "../../acta-de-salida/view/BuscarOrdenCompra";
 import type { InfoPdfCompra } from "../../orden-de-compra/models/infoPdfCompra";
 import { getAllSolicitudesParciales, ordenCompraById } from "../../orden-de-compra/controller/ordenCompraApi";
@@ -722,10 +723,18 @@ const eliminarItem = (index: number) => {
           </div>
            <div className="min-w-[220px] ">
             <label className="block text-sm text-gray-600 mb-1">Recibe</label>
-            <select value={recibe} className={`select select-bordered w-full`} onChange={(e) => {setrecibe(e.target.value); seterroresItems({...erroresItems, recibe: validarRecibe(Number(e.target.value))});}}>
-              <option disabled value={0}>...</option>
-              {users.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
-            </select>
+            <Select
+              options={Array.isArray(users) ? users.map(m => ({ value: m.id, label: m.name })) : []}
+              value={recibe ? { value: recibe, label: users.find(u => u.id === recibe)?.name || "" } : null}
+              onChange={(opt) => {setrecibe(opt?.value || 0); seterroresItems({...erroresItems, recibe: validarRecibe(opt?.value || 0)});}}
+              placeholder="Seleccionar..."
+              isClearable
+              isSearchable
+              className="text-sm"
+              styles={{
+                control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+              }}
+            />
             <div>{erroresItems.recibe && <p className="text-red-500 text-xs">{erroresItems.recibe}</p>}</div>
           </div>
           
@@ -819,28 +828,55 @@ const eliminarItem = (index: number) => {
         <div className="flex gap-4 flex-wrap">
           <div className="w-full md:w-1/4">
             <label className="block text-sm text-gray-600 mb-1">Bodega</label>
-            <select disabled={habilitarStockMin} className={`select select-bordered w-full ${erroresItems.bodega ? 'select-error' : ''}`} value={bodega} onChange={(e) => {setbodega(e.target.value); setseccion("..."); setpercha("...");  seterroresItems({...erroresItems, bodega: validarBodega(e.target.value)});}}>
-              <option value={"..."} disabled>Seleccione una bodega</option>
-              {bodegas?.map(b => <option key={b.id} value={b.id}>{b.bodega}</option>)}
-            </select>
+            <Select
+              isDisabled={habilitarStockMin}
+              options={Array.isArray(bodegas) ? bodegas.map(b => ({ value: b.id, label: b.bodega })) : []}
+              value={bodega !== "..." ? { value: bodega, label: bodegas?.find(b => b.id === bodega)?.bodega || "" } : null}
+              onChange={(opt) => {setbodega(opt?.value || "..."); setseccion("..."); setpercha("...");  seterroresItems({...erroresItems, bodega: validarBodega(opt?.value || "...")});}}
+              placeholder="Seleccionar bodega..."
+              isClearable
+              isSearchable
+              className="text-sm"
+              styles={{
+                control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+              }}
+            />
             <div className="h-5">{erroresItems.bodega && <p className="text-red-500 text-xs">{erroresItems.bodega}</p>}</div>
           </div>
 
           <div className="w-full md:w-1/4">
             <label className="block text-sm text-gray-600 mb-1">Sección</label>
-            <select disabled={habilitarStockMin} className={`select select-bordered w-full ${erroresItems.seccion ? 'select-error' : ''}`} ref={selSecc} value={seccion} onChange={(e) => {setseccion(e.target.value); setpercha("..."); seterroresItems({...erroresItems, seccion: validarSeccion(e.target.value)});}}>
-              <option value="..." disabled>Seleccione una sección</option>
-              {secciones?.map(s => <option key={s.id} value={s.id}>{s.seccion}</option>)}
-            </select>
+            <Select
+              isDisabled={habilitarStockMin}
+              options={Array.isArray(secciones) ? secciones.map(s => ({ value: s.id, label: s.seccion })) : []}
+              value={seccion !== "..." ? { value: seccion, label: secciones?.find(s => s.id === seccion)?.seccion || "" } : null}
+              onChange={(opt) => {setseccion(opt?.value || "..."); setpercha("..."); seterroresItems({...erroresItems, seccion: validarSeccion(opt?.value || "...")});}}
+              placeholder="Seleccionar sección..."
+              isClearable
+              isSearchable
+              className="text-sm"
+              styles={{
+                control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+              }}
+            />
             <div className="h-5">{erroresItems.seccion && <p className="text-red-500 text-xs">{erroresItems.seccion}</p>}</div>
           </div>
 
           <div className="w-full md:w-1/4">
             <label className="block text-sm text-gray-600 mb-1">Percha</label>
-            <select disabled={habilitarStockMin} className={`select select-bordered w-full ${erroresItems.percha ? 'select-error' : ''}`} value={percha} onChange={(e) => {setpercha(e.target.value); seterroresItems({...erroresItems, percha: validarPercha(e.target.value)});}}>
-              <option value="..." disabled>Seleccione una percha</option>
-              {perchas?.map(p => <option key={p.id} value={p.id}>{p.percha}</option>)}
-            </select>
+            <Select
+              isDisabled={habilitarStockMin}
+              options={Array.isArray(perchas) ? perchas.map(p => ({ value: p.id, label: p.percha })) : []}
+              value={percha !== "..." ? { value: percha, label: perchas?.find(p => p.id === percha)?.percha || "" } : null}
+              onChange={(opt) => {setpercha(opt?.value || "..."); seterroresItems({...erroresItems, percha: validarPercha(opt?.value || "...")});}}
+              placeholder="Seleccionar percha..."
+              isClearable
+              isSearchable
+              className="text-sm"
+              styles={{
+                control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+              }}
+            />
             <div className="h-5">{erroresItems.percha && <p className="text-red-500 text-xs">{erroresItems.percha}</p>}</div>
           </div>
 

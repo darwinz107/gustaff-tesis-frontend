@@ -1,5 +1,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
+import Select from 'react-select';
+import { Combobox } from '@headlessui/react';
 import { areas, editarOrdenTrabajoApi, eliminarOrdenTrabajo, faseCompletada, getAllCategorias, getAllCodByArea, getAllMaquinasByCod, getAllOrdenesTrabajo, getAllTipoTrabajo, getEstados, getFasesByOrdenTrabajo, getOrdenTrabajoById, getOrdenTrabajoBySolicitante, getPromedioFasesByOrdenTrabajo } from '../../controller/api/orden-api';
 import type { OrdenesTrabajo } from '../../models/ordenesTrabajo';
 import type { Maquina } from '../../models/maquinas';
@@ -18,6 +20,10 @@ export const HistorialOrdenes = ({setcargaAuto,setsendId}) => {
      const [ventanaCrearUsuario, setventanaCrearUsuario] = useState(false);
     const [filtrarxSolicitante, setfiltrarxSolicitante] = useState("");
     const [ordenTrabajoxUser, setordenTrabajoxUser] = useState<OrdenesTrabajo>({});
+    const [ordenTrabajoxUserOriginal, setordenTrabajoxUserOriginal] = useState<OrdenesTrabajo>({});
+    const [selectAreaOriginal, setselectAreaOriginal] = useState("");
+    const [selectCodigoOriginal, setselectCodigoOriginal] = useState("");
+    const [selectMaquinaOriginal, setselectMaquinaOriginal] = useState("");
     const [areasAll, setareasAll] = useState<{
     nombre: string;}[]>([]);
     const [codigossAll, setcodigossAll] = useState<{
@@ -175,6 +181,12 @@ const ordenesTrabajoApi  = async() =>{
            const res = await getAllMaquinasByCod(selectCodigo);
            console.log("res maquinas by cod: ",res);
             setmaquinasAll(res);
+            // Si hay solo una máquina, asignarla automáticamente
+            if (res && res.length === 1) {
+              setselectMaquina(res[0]?.nombre || "");
+            } else {
+              setselectMaquina("");
+            }
           }
           getMaquinasApi();
 
@@ -204,6 +216,11 @@ const ordenesTrabajoApi  = async() =>{
       const res = await getOrdenTrabajoById(id);
       console.log("res orden trabajo by id: ",res); 
       setordenTrabajoxUser(res);
+      // Guardar el estado original para poder restaurar en cancelar
+      setordenTrabajoxUserOriginal(JSON.parse(JSON.stringify(res)));
+     /* setselectAreaOriginal("");
+      setselectCodigoOriginal("");
+      setselectMaquinaOriginal("");*/
      }
 
      const editarOrdenTrabajo = async() =>{
@@ -434,10 +451,18 @@ const ordenesTrabajoApi  = async() =>{
 
         <div className="flex flex-col gap-1">
           <label className="text-xs font-semibold text-gray-600">Estado</label>
-          <select className="select select-sm select-bordered focus:select-primary rounded-lg" value={filtroEstado} onChange={(e)=>setFiltroEstado(e.target.value)}>
-            <option value="">Todos</option>
-            {estados.map((es)=> <option key={es.id} value={es.estado}>{es.estado}</option>)}
-          </select>
+          <Select
+            options={estados.map(es => ({ value: es.estado, label: es.estado }))}
+            value={filtroEstado ? { value: filtroEstado, label: filtroEstado } : null}
+            onChange={(opt) => setFiltroEstado(opt?.value || "")}
+            placeholder="Buscar o seleccionar..."
+            isClearable
+            isSearchable
+            className="text-sm"
+            styles={{
+              control: (base) => ({...base, minHeight: '34px', fontSize: '14px' })
+            }}
+          />
         </div>
 
         <div className="flex flex-col gap-1">
@@ -506,7 +531,9 @@ const ordenesTrabajoApi  = async() =>{
                             asignarSolicitantexOrden(u.id);
                             setventanaEmergente(!ventanaEmergente);
                             setselectArea(u.Area);
+                            setselectAreaOriginal(u.Area);
                             setselectCodigo(u.Codigo);
+                            setselectCodigoOriginal(u.Codigo);
                           }}
                         >
                           👁️
@@ -601,26 +628,61 @@ const ordenesTrabajoApi  = async() =>{
 
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Área</label>
-              <select disabled={!habilitarEdicion} value={selectArea} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setselectArea(e.target.value);setconfirmarCambio(true);}}>
-                <option disabled>...</option>
-                {areasAll.map((a)=> <option key={a.nombre} value={a.nombre}>{a.nombre}</option>)}
-              </select>
+              <Select
+                isDisabled={!habilitarEdicion}
+                options={Array.isArray(areasAll) ? areasAll.map(a => ({ value: a.nombre, label: a.nombre })) : []}
+                value={selectArea ? { value: selectArea, label: selectArea } : null}
+                onChange={(opt) => {
+                  setselectArea(opt?.value || "");
+                  // Limpiar código y máquina cuando se limpia el área
+                  if (!opt?.value) {
+                    setselectCodigo("");
+                    setselectMaquina("");
+                  } else {
+                    setselectMaquina(""); // Limpiar máquina cuando se selecciona nueva área
+                  }
+                  setconfirmarCambio(true);
+                }}
+                placeholder="Buscar o seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
             </div>
 
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Código</label>
-              <select disabled={!habilitarEdicion} value={selectCodigo} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setselectCodigo(e.target.value);setconfirmarCambio(true);}}>
-                <option disabled>...</option>
-                {codigossAll.map((c)=> <option key={c.cod} value={c.cod}>{c.cod}</option>)}
-              </select>
+              <Select
+                isDisabled={!habilitarEdicion || !selectArea}
+                options={Array.isArray(codigossAll) ? codigossAll.map(c => ({ value: c.cod, label: c.cod })) : []}
+                value={selectCodigo ? { value: selectCodigo, label: selectCodigo } : null}
+                onChange={(opt) => {
+                  setselectCodigo(opt?.value || "");
+                  // Limpiar máquina cuando se cambia el código
+                  setselectMaquina("");
+                  setconfirmarCambio(true);
+                }}
+                placeholder="Buscar o seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
             </div>
 
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Máquina</label>
-              <select disabled={!habilitarEdicion} value={selectMaquina} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setselectMaquina(e.target.value); setconfirmarCambio(true);}}>
-                <option disabled>...</option>
-                {maquinasAll.map((m)=> <option key={m.nombre} value={m.nombre}>{m.nombre}</option>)}
-              </select>
+              <input
+                type="text"
+                disabled={true}
+                value={selectMaquina}
+                className="input input-sm input-bordered w-full mt-2 focus:input-success rounded-lg disabled:bg-gray-50"
+              />
             </div>
 
             <div>
@@ -630,26 +692,53 @@ const ordenesTrabajoApi  = async() =>{
 
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Categoría</label>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.Categoria} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,Categoria:e.target.value})); setconfirmarCambio(true);}}>
-                <option disabled>...</option>
-                {categorias.map((ca)=> <option key={ca.nombre} value={ca.nombre}>{ca.nombre}</option>)}
-              </select>
+              <Select
+                isDisabled={!habilitarEdicion}
+                options={Array.isArray(categorias) ? categorias.map(ca => ({ value: ca.nombre, label: ca.nombre })) : []}
+                value={ordenTrabajoxUser.Categoria ? { value: ordenTrabajoxUser.Categoria, label: ordenTrabajoxUser.Categoria } : null}
+                onChange={(opt) => {setordenTrabajoxUser((prev)=>({...prev,Categoria:opt?.value || ""})); setconfirmarCambio(true);}}
+                placeholder="Buscar o seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
             </div>
 
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Tipo de Trabajo</label>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.TipoTrabajo} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,TipoTrabajo:e.target.value})); setconfirmarCambio(true);}}>
-                <option disabled>...</option>
-                {tiposTrabajo.map((tp)=> <option key={tp.tipo} value={tp.tipo}>{tp.tipo}</option>)}
-              </select>
+              <Select
+                isDisabled={!habilitarEdicion}
+                options={Array.isArray(tiposTrabajo) ? tiposTrabajo.map(tp => ({ value: tp.tipo, label: tp.tipo })) : []}
+                value={ordenTrabajoxUser.TipoTrabajo ? { value: ordenTrabajoxUser.TipoTrabajo, label: ordenTrabajoxUser.TipoTrabajo } : null}
+                onChange={(opt) => {setordenTrabajoxUser((prev)=>({...prev,TipoTrabajo:opt?.value || ""})); setconfirmarCambio(true);}}
+                placeholder="Buscar o seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
             </div>
 
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Estado</label>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.estadoTrabajo?.estado} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,estadoTrabajo:{estado: e.target.value}})); setconfirmarCambio(true);}}>
-                <option disabled>...</option>
-                {estados.map((ee)=>(ee.estado === "EN PROCESO" || ee.estado === "VENCIDO"? <option key={ee.estado} disabled={true} value={ee.estado}>{ee.estado}</option> : <option key={ee.estado} value={ee.estado}>{ee.estado}</option>))}
-              </select>
+              <Select
+                isDisabled={!habilitarEdicion}
+                options={estados.filter(ee => ee.estado !== "EN PROCESO" && ee.estado !== "VENCIDO").map(ee => ({ value: ee.estado, label: ee.estado }))}
+                value={ordenTrabajoxUser.estadoTrabajo?.estado ? { value: ordenTrabajoxUser.estadoTrabajo.estado, label: ordenTrabajoxUser.estadoTrabajo.estado } : null}
+                onChange={(opt) => {setordenTrabajoxUser((prev)=>({...prev,estadoTrabajo:{estado: opt?.value || ""}})); setconfirmarCambio(true);}}
+                placeholder="Buscar o seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
             </div>
 
             <div className="lg:col-span-4">
@@ -662,26 +751,53 @@ const ordenesTrabajoApi  = async() =>{
           <div className="bg-white rounded-xl shadow-sm p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Solicitante</label>
-              <select disabled={!habilitarEdicion} value={ordenTrabajoxUser.userSolicitante?.name ?? "..."} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userSolicitante:{name: e.target.value}})); setconfirmarCambio(true);}}>
-                <option value={"..."} disabled>...</option>
-                {users.map((u)=> <option key={u.id} value={u.name}>{u.name}</option>)}
-              </select>
+              <Select
+                isDisabled={!habilitarEdicion}
+                options={Array.isArray(users) ? users.map(u => ({ value: u.name, label: u.name })) : []}
+                value={ordenTrabajoxUser.userSolicitante?.name ? { value: ordenTrabajoxUser.userSolicitante.name, label: ordenTrabajoxUser.userSolicitante.name } : null}
+                onChange={(opt) => {setordenTrabajoxUser((prev)=>({...prev,userSolicitante:{name: opt?.value || ""}})); setconfirmarCambio(true);}}
+                placeholder="Buscar o seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
             </div>
 
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Receptor</label>
-              <select disabled={!habilitarEdicion} value={ ordenTrabajoxUser.userReceptor?.name ?? "..."} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userReceptor:{name: e.target.value}})); setconfirmarCambio(true);}}>
-                <option value={"..."} disabled>...</option>
-                {users.map((u)=> <option key={u.id} value={u.name}>{u.name}</option>)}
-              </select>
+              <Select
+                isDisabled={!habilitarEdicion}
+                options={Array.isArray(users) ? users.map(u => ({ value: u.name, label: u.name })) : []}
+                value={ordenTrabajoxUser.userReceptor?.name ? { value: ordenTrabajoxUser.userReceptor.name, label: ordenTrabajoxUser.userReceptor.name } : null}
+                onChange={(opt) => {setordenTrabajoxUser((prev)=>({...prev,userReceptor:{name: opt?.value || ""}})); setconfirmarCambio(true);}}
+                placeholder="Buscar o seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
             </div>
 
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Técnico</label>
-              <select disabled={!habilitarEdicion} value={ ordenTrabajoxUser.userTecnico?.name ?? "..."} className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg disabled:bg-gray-50" onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,userTecnico:{name: e.target.value}})); setconfirmarCambio(true);}}>
-                <option value={"..."} disabled>...</option>
-                {users.map((u)=> <option key={u.id} value={u.name}>{u.name}</option>)}
-              </select>
+              <Select
+                isDisabled={!habilitarEdicion}
+                options={Array.isArray(users) ? users.map(u => ({ value: u.name, label: u.name })) : []}
+                value={ordenTrabajoxUser.userTecnico?.name ? { value: ordenTrabajoxUser.userTecnico.name, label: ordenTrabajoxUser.userTecnico.name } : null}
+                onChange={(opt) => {setordenTrabajoxUser((prev)=>({...prev,userTecnico:{name: opt?.value || ""}})); setconfirmarCambio(true);}}
+                placeholder="Buscar o seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
             </div>
           </div>
         </div>
@@ -700,7 +816,15 @@ const ordenesTrabajoApi  = async() =>{
   )}
   {isPending ? "Procesando..." : "Guardar"}
               </button>
-              <button className="btn btn-sm btn-ghost gap-2" onClick={()=>{asignarSolicitantexOrden(ordenTrabajoxUser.id); sethabilitarEdicion(!habilitarEdicion); setconfirmarCambio(false);}}>
+              <button className="btn btn-sm btn-ghost gap-2" onClick={()=>{
+                // Restaurar los datos originales
+                setordenTrabajoxUser(ordenTrabajoxUserOriginal);
+                setselectArea(selectAreaOriginal);
+                setselectCodigo(selectCodigoOriginal);
+                setselectMaquina(selectMaquinaOriginal);
+                sethabilitarEdicion(!habilitarEdicion);
+                setconfirmarCambio(false);
+              }}>
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/></svg>
                 Cancelar
               </button>

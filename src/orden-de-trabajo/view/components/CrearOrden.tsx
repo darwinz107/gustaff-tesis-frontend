@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import Select from 'react-select';
 import { CalendarDate, CalendarMonth } from "cally";
 import "cally";
 import { areas, getAllCategorias, getAllCodByArea, getAllMaquinasByCod, getAllTipoTrabajo, getAllTipoTrabajoByCategoria, getLastSolicitud, registerSolicitudOrden } from "../../controller/api/orden-api";
@@ -138,6 +139,12 @@ const getCodigos = async () => {
       const data = await getAllMaquinasByCod(selectCodigo);
        
         setmaquinas(data);
+        // Si hay solo una máquina, asignarla automáticamente
+        if (data && data.length === 1) {
+          setselectMaquina(data[0]?.nombre || "");
+        } else {
+          setselectMaquina("");
+        }
       }
       getMaquinas();
   }, [selectCodigo])
@@ -378,42 +385,62 @@ const getCodigos = async () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Área</label>
-              <select
-                defaultValue={'...'}
-                className={`select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg ${erroresCrearOrden.area ? 'select-error' : ''}`}
-                onChange={(e) => {setselectArea(e.target.value); seterroresCrearOrden({...erroresCrearOrden, area: validarArea(e.target.value)});}}
-              >
-                <option disabled={true}>...</option>
-                {area?.map((a) => <option key={a?.nombre} value={a?.nombre}>{a?.nombre}</option>)}
-              </select>
+              <Select
+                options={Array.isArray(area) ? area.map(a => ({ value: a?.nombre, label: a?.nombre })) : []}
+                value={selectArea ? { value: selectArea, label: selectArea } : null}
+                onChange={(opt) => {
+                  setselectArea(opt?.value || "");
+                  // Limpiar código y máquina cuando se limpia el área
+                  if (!opt?.value) {
+                    setselectCodigo("");
+                    setselectMaquina("");
+                  } else {
+                    setselectMaquina(""); // Limpiar máquina cuando se selecciona nueva área
+                  }
+                  seterroresCrearOrden({...erroresCrearOrden, area: validarArea(opt?.value || "")});
+                }}
+                placeholder="Seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
               {erroresCrearOrden.area && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.area}</p>}
             </div>
 
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Código</label>
-              <select
-                ref={select1}
-                defaultValue={'...'}
-                className={`select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg ${erroresCrearOrden.codigo ? 'select-error' : ''}`}
-                onChange={(e) => {setselectCodigo(e.target.value); seterroresCrearOrden({...erroresCrearOrden, codigo: validarCodigo(e.target.value)});}}
-              >
-                <option disabled={true}>...</option>
-                {codigos?.map((c) => <option key={c?.cod} value={c?.cod}>{c?.cod}</option>)}
-              </select>
+              <Select
+                isDisabled={!selectArea}
+                options={Array.isArray(codigos) ? codigos.map(c => ({ value: c?.cod, label: c?.cod })) : []}
+                value={selectCodigo ? { value: selectCodigo, label: selectCodigo } : null}
+                onChange={(opt) => {
+                  setselectCodigo(opt?.value || "");
+                  // Limpiar máquina cuando se cambia el código
+                  setselectMaquina("");
+                  seterroresCrearOrden({...erroresCrearOrden, codigo: validarCodigo(opt?.value || "")});
+                }}
+                placeholder="Seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
               {erroresCrearOrden.codigo && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.codigo}</p>}
             </div>
 
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Máquina</label>
-              <select
-                defaultValue={'...'}
-                className={`select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg ${erroresCrearOrden.maquina ? 'select-error' : ''}`}
-                onChange={(e) => {setselectMaquina(e.target.value); seterroresCrearOrden({...erroresCrearOrden, maquina: validarMaquina(e.target.value)});}}
-              >
-                <option disabled={true}>...</option>
-                {maquinas?.map((m) => <option key={m?.nombre} value={m?.nombre}>{m?.nombre}</option>)}
-              </select>
-              {erroresCrearOrden.maquina && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.maquina}</p>}
+              <input
+                type="text"
+                disabled
+                value={selectMaquina}
+                className="input input-sm input-bordered w-full mt-2 focus:input-success rounded-lg bg-gray-50"
+              />
             </div>
           </div>
 
@@ -435,37 +462,45 @@ const getCodigos = async () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Categoría</label>
-              <select
-                defaultValue={'...'}
-                className={`select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg ${erroresCrearOrden.categoria ? 'select-error' : ''}`}
-                onChange={(e) => {
+              <Select
+                options={Array.isArray(categorias) ? categorias.map(c => ({ value: c?.nombre, label: c?.nombre })) : []}
+                value={especificacion[0] ? { value: especificacion[0], label: especificacion[0] } : null}
+                onChange={(opt) => {
                   const nueva = [...especificacion];
-                  nueva[0] = e.target.value;
+                  nueva[0] = opt?.value || "";
                   setespecificacion(nueva);
-                  seterroresCrearOrden({...erroresCrearOrden, categoria: validarCategoria(e.target.value)});
+                  seterroresCrearOrden({...erroresCrearOrden, categoria: validarCategoria(opt?.value || "")});
                 }}
-              >
-                <option disabled={true}>...</option>
-                {categorias?.map((c) => <option key={c?.nombre} value={c?.nombre}>{c?.nombre}</option>)}
-              </select>
+                placeholder="Seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
               {erroresCrearOrden.categoria && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.categoria}</p>}
             </div>
 
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Tipo de Trabajo</label>
-              <select
-                defaultValue={'...'}
-                className={`select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg ${erroresCrearOrden.tipoTrabajo ? 'select-error' : ''}`}
-                onChange={(e) => {
+              <Select
+                options={Array.isArray(tipoTrabajos) ? tipoTrabajos.map(t => ({ value: t?.tipo, label: t?.tipo })) : []}
+                value={especificacion[1] ? { value: especificacion[1], label: especificacion[1] } : null}
+                onChange={(opt) => {
                   const nueva = [...especificacion];
-                  nueva[1] = e.target.value;
+                  nueva[1] = opt?.value || "";
                   setespecificacion(nueva);
-                  seterroresCrearOrden({...erroresCrearOrden, tipoTrabajo: validarTipoTrabajo(e.target.value)});
+                  seterroresCrearOrden({...erroresCrearOrden, tipoTrabajo: validarTipoTrabajo(opt?.value || "")});
                 }}
-              >
-                <option disabled={true}>...</option>
-                {tipoTrabajos?.map((t) => <option key={t?.tipo} value={t?.tipo}>{t?.tipo}</option>)}
-              </select>
+                placeholder="Seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
               {erroresCrearOrden.tipoTrabajo && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.tipoTrabajo}</p>}
             </div>
 
@@ -494,28 +529,52 @@ const getCodigos = async () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Solicitante</label>
-              <select className={`select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg ${erroresCrearOrden.solicitante ? 'select-error' : ''}`} defaultValue={"..."} onChange={(e) => {setsolicitante(e.target.value); seterroresCrearOrden({...erroresCrearOrden, solicitante: validarSolicitante(e.target.value)})}}>
-                <option defaultChecked={true}>...</option>
-                {usersSol.map((u) => <option key={u.name} value={u.name}>{u.name}</option>)}
-              </select>
+              <Select
+                options={Array.isArray(usersSol) ? usersSol.map(u => ({ value: u.name, label: u.name })) : []}
+                value={solicitante ? { value: solicitante, label: solicitante } : null}
+                onChange={(opt) => {setsolicitante(opt?.value || ""); seterroresCrearOrden({...erroresCrearOrden, solicitante: validarSolicitante(opt?.value || "")})}}
+                placeholder="Seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
               {erroresCrearOrden.solicitante && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.solicitante}</p>}
             </div>
 
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Técnico 1</label>
-              <select className={`select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg ${erroresCrearOrden.receptor ? 'select-error' : ''}`} defaultValue={"..."} onChange={(e) => {setreceptor(e.target.value); seterroresCrearOrden({...erroresCrearOrden, receptor: validarReceptor(e.target.value)})}}>
-                <option defaultChecked={true}>...</option>
-                {users.map((u) => <option key={u.name} value={u.name}>{u.name}</option>)}
-              </select>
+              <Select
+                options={Array.isArray(users) ? users.map(u => ({ value: u.name, label: u.name })) : []}
+                value={receptor ? { value: receptor, label: receptor } : null}
+                onChange={(opt) => {setreceptor(opt?.value || ""); seterroresCrearOrden({...erroresCrearOrden, receptor: validarReceptor(opt?.value || "")})}}
+                placeholder="Seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
               {erroresCrearOrden.receptor && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.receptor}</p>}
             </div>
 
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Técnico 2</label>
-              <select className="select select-sm select-bordered w-full mt-2 focus:select-success rounded-lg" defaultValue={"..."} onChange={(e) => settecnico(e.target.value)}>
-                <option defaultChecked={true}>...</option>
-                {users.map((u) => <option key={u.name} value={u.name}>{u.name}</option>)}
-              </select>
+              <Select
+                options={Array.isArray(users) ? users.map(u => ({ value: u.name, label: u.name })) : []}
+                value={tecnico ? { value: tecnico, label: tecnico } : null}
+                onChange={(opt) => settecnico(opt?.value || "")}
+                placeholder="Seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
             </div>
           </div>
         </div>

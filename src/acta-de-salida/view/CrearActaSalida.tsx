@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import Select from 'react-select';
 import { BuscarOrdenCompra } from "./BuscarOrdenCompra";
 import type { InfoPdfCompra } from "../../orden-de-compra/models/infoPdfCompra";
 import { getAllSolicitudes, ordenCompraById } from "../../orden-de-compra/controller/ordenCompraApi";
@@ -327,10 +328,18 @@ const metodoInventarios = async() =>{
           <div className="space-y-6">
             <div className="relative"> 
               <label className="text-sm text-gray-600">Entrega</label>
-            <select value={entrega} className={`select select-bordered w-full ${erroresEntrega ? 'select-error' : ''}`} onChange={(e) => {setentrega(Number(e.target.value)); seterroresEntrega(validarEntrega(Number(e.target.value)));}}>
-              <option value={0} disabled>...</option>
-              {entregan.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
-            </select>
+            <Select
+              options={Array.isArray(entregan) ? entregan.map(m => ({ value: m.id, label: m.name })) : []}
+              value={entrega ? { value: entrega, label: entregan.find(e => e.id === entrega)?.name || "" } : null}
+              onChange={(opt) => {setentrega(opt?.value || 0); seterroresEntrega(validarEntrega(opt?.value || 0));}}
+              placeholder="Seleccionar..."
+              isClearable
+              isSearchable
+              className="text-sm"
+              styles={{
+                control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+              }}
+            />
             <div className="absolute max-h-1">{erroresEntrega && <p className="text-red-500 text-xs">{erroresEntrega}</p>}</div>
               </div>
            <div> <label className="text-sm text-gray-600 mt-2">Código</label>
@@ -346,14 +355,20 @@ const metodoInventarios = async() =>{
           <div className="space-y-6">
             <div className="relative">
               <label className="text-sm text-gray-600">Recibe</label>
-           
-                      <select value={recibe} className={`select select-bordered w-full ${erroresRecibe ? 'select-error':''}`} onChange={(e) => {setrecibe(Number(e.target.value)); seterroresRecibe(validarRecibe(Number(e.target.value)))}}>
-              <option value={0} disabled>...</option>
-              {users.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
-            </select>
+              <Select
+                options={Array.isArray(users) ? users.map(m => ({ value: m.id, label: m.name })) : []}
+                value={recibe ? { value: recibe, label: users.find(u => u.id === recibe)?.name || "" } : null}
+                onChange={(opt) => {setrecibe(opt?.value || 0); seterroresRecibe(validarRecibe(opt?.value || 0))}}
+                placeholder="Seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
             <div className="absolute max-h-1">{erroresRecibe && <p className="text-red-500 text-xs">{erroresRecibe}</p>}</div>
-            
-              </div>
+            </div>
           <div><label className="text-sm text-gray-600 mt-2">Máquina</label>
             <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.Maquina} disabled /></div>
                     
