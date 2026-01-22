@@ -686,7 +686,7 @@ const ordenesTrabajoApi  = async() =>{
             </div>
 
             <div>
-              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Especificación</label>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">EQUIPO O PIEZA</label>
               <input type="text" disabled={!habilitarEdicion} className="input input-sm input-bordered w-full mt-2 focus:input-success rounded-lg disabled:bg-gray-50" value={ordenTrabajoxUser.EspecificacionMaquina ?? "N/A"} onChange={(e)=>{setordenTrabajoxUser((prev)=>({...prev,EspecificacionMaquina:e.target.value})); setconfirmarCambio(true);}}/>
             </div>
 

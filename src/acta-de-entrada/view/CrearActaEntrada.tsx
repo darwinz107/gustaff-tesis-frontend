@@ -6,7 +6,7 @@ import { getAllSolicitudesParciales, ordenCompraById } from "../../orden-de-comp
 import type { BuscarSolMaterial } from "../../orden-de-compra/models/buscarSolMaterial";
 import { asignarInfoActaEntrada, existeItem, filtrarInventario } from "../../inventario/controller/inventario-api";
 import type { AsignarInfoEntrada } from "../../inventario/models/AsignarInfoEntrada";
-import { createActaEntrada, findProovedorByNombre, getPerchasBySeccion, getSeccionesByBodega } from "../controller/actaEntrada-api";
+import { createActaEntrada, findProovedorByNombre, getPerchasBySeccion, getSeccionesByBodega, findProovedores } from "../controller/actaEntrada-api";
 import { CrearProovedor } from "./CrearProovedor";
 import { getAllBodegas } from "../../admin/controller/api/admin-api";
 import { ConvertToBase64 } from "../controller/ConvertToBase64";
@@ -24,7 +24,7 @@ export const CrearActaEntrada = () => {
     const [solCompraId, setsolCompraId] = useState<number>(0);
     const [total, settotal] = useState<number>(0.00);
     const [proovedores, setproovedores] = useState<{id:number,nombreComercial:string}[]>([]);
-    const [proovedor, setproovedor] = useState("");
+    const [proovedor, setproovedor] = useState<{id:number,nombreComercial:string}|null>(null);
     const [factura, setfactura] = useState("");
     const [item, setitem] = useState("");
     const [cantidad, setcantidad] = useState(null);
@@ -300,16 +300,9 @@ newItem = {
   seterroresItems({factura: "", item: "", cantidad: "", precioUni: "", descuento: "", stockMin: "", bodega: "", seccion: "", percha: ""});
 };
 
-const validarProovedor = (valor: string): string => {
-  if (!valor || valor.trim() === "") {
-    return "El campo no puede estar vacío";
-  }
-  if (!/^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(valor)) {
-    return "El proveedor solo puede contener letras";
-  }
-  const existe = proovedores.some(p => p.nombreComercial.toLowerCase() === valor.toLowerCase());
-  if (!existe) {
-    return "Debe digitar un proveedor existente";
+const validarProovedor = (valor: {id:number,nombreComercial:string}|null): string => {
+  if (!valor) {
+    return "Debe seleccionar un proveedor";
   }
   return "";
 };
@@ -452,7 +445,7 @@ const validarPercha = (valor: string): string => {
  }
 
    const registroEntradaFinal = {
-    proovedor:proovedor,
+    proovedor: proovedor?.nombreComercial || "",
     factura: factura,
     total:total,
     recibe:recibe,
@@ -494,20 +487,6 @@ setisPending(false);
  }
 
 useEffect(() => {
-  if(proovedor != ""){
-      const metodoExecProovedores = async()=>{
-    const res = await findProovedorByNombre(proovedor);
-    setproovedores(res);
-    console.log(res);
-  }
-metodoExecProovedores();
-  }else{
-    setproovedores([]);
-  }
-
-}, [proovedor]);
-
-useEffect(() => {
   if(item != ""){
       const metodoExecProovedores = async()=>{
     const res = await filtrarInventario(item);
@@ -542,6 +521,12 @@ useEffect(() => {
    setbodegas(res);
  }
  asignarBodegas();
+
+ const metodoExecProovedores = async()=>{
+   const res = await findProovedores();
+   setproovedores(res);
+ }
+ metodoExecProovedores();
   } catch (error) {
     console.error(error);
   }
@@ -607,6 +592,8 @@ const limpiarCampos = () => {
   setimagen(null);
   setsolCompraId(0);
   setrecibe(0);
+  setproovedor(null);
+  setfactura("");
     setsolicitudMaterial({numOrden:"",numOrdenTrabajo:{NumOrden:""},itemsSolicitados:[],id:0});
   if (fileInputRef.current) {
     fileInputRef.current.value = "";
@@ -676,23 +663,22 @@ const eliminarItem = (index: number) => {
           <div className="flex gap-2 items-start max-w-[220px]">
             <div className="w-full">
               <label className="block text-sm text-gray-600 mb-1">Proveedor</label>
-              <div className="relative">
-                <input
-                  className={`input input-bordered w-full ${erroresProovedor ? 'input-error' : ''}`}
-                  list="browsers"
-                  value={proovedor}
-                  onChange={(e) => {
-                    setproovedor(e.target.value);
-                    seterroresProovedor(validarProovedor(e.target.value));
-                  }}
-                  placeholder="Buscar proveedor..."
-                />
-                <datalist id="browsers">
-                  {proovedores?.map((p) =>
-                    <option key={p.id} value={p.nombreComercial} />
-                  )}
-                </datalist>
-              </div>
+              <Select
+                options={Array.isArray(proovedores) ? proovedores.map(p => ({ value: p.id, label: p.nombreComercial })) : []}
+                value={proovedor ? { value: proovedor.id, label: proovedor.nombreComercial } : null}
+                onChange={(opt) => {
+                  const selectedProovedor = opt ? proovedores.find(p => p.id === opt.value) || null : null;
+                  setproovedor(selectedProovedor);
+                  seterroresProovedor(validarProovedor(selectedProovedor));
+                }}
+                placeholder="Seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '40px', fontSize: '14px', borderColor: erroresProovedor ? '#ef4444' : base.borderColor })
+                }}
+              />
               <div className="h-5">{erroresProovedor && <p className="text-red-500 text-xs">{erroresProovedor}</p>}</div>
             </div>
 

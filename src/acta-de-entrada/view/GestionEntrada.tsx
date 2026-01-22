@@ -1,4 +1,5 @@
 import React, { act, useEffect, useState, useRef } from 'react'
+import Select from 'react-select';
 import type { InfoPdfEntrada } from '../models/infoPdfEntrada';
 import { findAllRegistroEntrada, filtrarActasEntrada, findRegistroEntradaById, findProovedorByNombre, findProovedores, updateActaEntrada, deleteActaEntrada } from '../controller/actaEntrada-api';
 import { solMaterialShort } from '../../orden-de-compra/controller/ordenCompraApi';
@@ -324,26 +325,53 @@ const llenarActas = async() => {
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Proveedor</label>
-                <select disabled={!habilitarEdicion} value={provedorIdEditada ?? 0} onChange={(e)=>setprovedorIdEditada(Number(e.target.value))} className="select select-sm select-bordered focus:select-primary rounded-lg">
-                  <option disabled value={0}>Seleccionar...</option>
-                  {(proovedores ?? []).map((s) => <option key={s.id} value={s.id}>{s.nombreComercial}</option>)}
-                </select>
+                <Select
+                  isDisabled={!habilitarEdicion}
+                  options={Array.isArray(proovedores) ? proovedores.map(s => ({ value: s.id, label: s.nombreComercial })) : []}
+                  value={provedorIdEditada ? { value: provedorIdEditada, label: proovedores?.find(p => p.id === provedorIdEditada)?.nombreComercial || "" } : null}
+                  onChange={(opt) => setprovedorIdEditada(opt?.value || undefined)}
+                  placeholder="Seleccionar..."
+                  isClearable
+                  isSearchable
+                  className="text-sm"
+                  styles={{
+                    control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                  }}
+                />
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Recibe</label>
-                <select disabled={!habilitarEdicion} value={recibe ?? 0} onChange={(e)=>setrecibe(Number(e.target.value))} className="select select-sm select-bordered focus:select-primary rounded-lg">
-                  <option value={0} disabled>Seleccionar...</option>
-                  {(users ?? []).map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
-                </select>
+                <Select
+                  isDisabled={!habilitarEdicion}
+                  options={Array.isArray(users) ? users.map(s => ({ value: s.id, label: s.name })) : []}
+                  value={recibe ? { value: recibe, label: users?.find(u => u.id === recibe)?.name || "" } : null}
+                  onChange={(opt) => setrecibe(opt?.value || 0)}
+                  placeholder="Seleccionar..."
+                  isClearable
+                  isSearchable
+                  className="text-sm"
+                  styles={{
+                    control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                  }}
+                />
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Nº Solicitud Material</label>
-                <select disabled={!habilitarEdicion} className="select select-sm select-bordered focus:select-primary rounded-lg" value={solicitudCompraIdEditada ?? 0} onChange={(e)=>setsolicitudCompraIdEditada(Number(e.target.value))}>
-                  <option value={0} disabled>Seleccionar...</option>
-                  {(solMateriales ?? []).map((o) => <option key={o.id} value={o.id}>{o.numOrden}</option>)}
-                </select>
+                <Select
+                  isDisabled={!habilitarEdicion}
+                  options={Array.isArray(solMateriales) ? solMateriales.map(o => ({ value: o.id, label: o.numOrden })) : []}
+                  value={solicitudCompraIdEditada ? { value: solicitudCompraIdEditada, label: solMateriales?.find(s => s.id === solicitudCompraIdEditada)?.numOrden || "" } : null}
+                  onChange={(opt) => setsolicitudCompraIdEditada(opt?.value || undefined)}
+                  placeholder="Seleccionar..."
+                  isClearable
+                  isSearchable
+                  className="text-sm"
+                  styles={{
+                    control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                  }}
+                />
               </div>
 
               <div className="flex flex-col gap-2">

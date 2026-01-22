@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, act } from 'react'
+import Select from 'react-select';
 import type { InfoPdfSalida } from '../models/InfoPdfSalida';
 import { findAllRegistroSalida, filtrarActasSalida, findRegistroSalidaById, updateActaSalida, deleteActaSalida } from '../controller/actaSalida-api';
 import { getUsers } from '../../user/controller/api/user-api';
@@ -322,18 +323,36 @@ export const GestionSalida = () => {
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Recibe</label>
-                <select disabled={!habilitarEdicion} value={recibeSinSMIdEditada ?? 0} onChange={(e)=>setrecibeSinSMIdEditada(Number(e.target.value))} className="select select-sm select-bordered focus:select-primary rounded-lg">
-                  <option value={0} disabled>Seleccionar...</option>
-                  {(users ?? []).map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
-                </select>
+                <Select
+                  isDisabled={!habilitarEdicion}
+                  options={Array.isArray(users) ? users.map(u => ({ value: u.id, label: u.name })) : []}
+                  value={recibeSinSMIdEditada ? { value: recibeSinSMIdEditada, label: users?.find(u => u.id === recibeSinSMIdEditada)?.name || "" } : null}
+                  onChange={(opt) => setrecibeSinSMIdEditada(opt?.value || undefined)}
+                  placeholder="Seleccionar..."
+                  isClearable
+                  isSearchable
+                  className="text-sm"
+                  styles={{
+                    control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                  }}
+                />
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Entrega</label>
-                <select disabled={!habilitarEdicion} value={entregaIdEditada ?? 0} onChange={(e)=>setentregaIdEditada(Number(e.target.value))} className="select select-sm select-bordered focus:select-primary rounded-lg">
-                  <option value={0} disabled>Seleccionar...</option>
-                  {(users ?? []).map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
-                </select>
+                <Select
+                  isDisabled={!habilitarEdicion}
+                  options={Array.isArray(users) ? users.map(u => ({ value: u.id, label: u.name })) : []}
+                  value={entregaIdEditada ? { value: entregaIdEditada, label: users?.find(u => u.id === entregaIdEditada)?.name || "" } : null}
+                  onChange={(opt) => setentregaIdEditada(opt?.value || undefined)}
+                  placeholder="Seleccionar..."
+                  isClearable
+                  isSearchable
+                  className="text-sm"
+                  styles={{
+                    control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                  }}
+                />
               </div>
 
               {acta?.numSolicitudCompra && 

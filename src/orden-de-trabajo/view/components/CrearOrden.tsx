@@ -56,6 +56,7 @@ export const CrearOrden = ({setcargarAuto,setsendId}) => {
   const validarTipoTrabajo = (valor) => !valor || valor === "..." ? "El tipo de trabajo es requerido" : "";
   const validarSolicitante = (valor) => !valor || valor === "..." ? "El solicitante es requerido" : "";
   const validarReceptor = (valor) => !valor || valor === "..." ? "El técnico 1 (receptor) es requerido" : "";
+  const validarDescripcion = (valor) => !valor || valor.trim() === "" ? "La descripción del trabajo es requerida" : "";
 
   // Validaciones de fechas y horas
   const validarFechaInicio = (valor) => !valor ? "La fecha de inicio es requerida" : "";
@@ -174,6 +175,7 @@ const getCodigos = async () => {
       maquina: validarMaquina(selectMaquina),
       categoria: validarCategoria(especificacion[0]),
       tipoTrabajo: validarTipoTrabajo(especificacion[1]),
+      descripcion: validarDescripcion(especificacion[2]),
       solicitante: validarSolicitante(solicitante),
       receptor: validarReceptor(receptor),
       fechaInicio: validarFechaInicio(tiempos[0]),
@@ -354,17 +356,6 @@ const getCodigos = async () => {
             </div>
 
             <div>
-              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Hora Fin Estimada</label>
-              <input
-                onChange={(e) => { const arr = tiempos; arr[2] = e.target.value; settiempos(arr); seterroresCrearOrden({...erroresCrearOrden, horaFin: validarHoraFin(e.target.value), coherenciaFechas: validarCoherenciaFechas(tiempos[0], tiempos[1], e.target.value, tiempos[3])}); }}
-                type="time"
-                className={`input input-sm input-bordered w-full mt-2 focus:input-success rounded-lg ${erroresCrearOrden.horaFin ? 'input-error' : ''}`}
-                value={tiempos[2] || ''}
-              />
-              {erroresCrearOrden.horaFin && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.horaFin}</p>}
-            </div>
-
-            <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Fecha Finalización</label>
               <input 
                 type="date" 
@@ -373,6 +364,17 @@ const getCodigos = async () => {
                 onChange={(e)=>{const arr = tiempos; arr[3] = e.target.value; settiempos(arr); seterroresCrearOrden({...erroresCrearOrden, fechaFin: validarFechaFin(e.target.value), coherenciaFechas: validarCoherenciaFechas(tiempos[0], tiempos[1], tiempos[2], e.target.value)});}} 
               />
               {erroresCrearOrden.fechaFin && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.fechaFin}</p>}
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Hora Fin Estimada</label>
+              <input
+                onChange={(e) => { const arr = tiempos; arr[2] = e.target.value; settiempos(arr); seterroresCrearOrden({...erroresCrearOrden, horaFin: validarHoraFin(e.target.value), coherenciaFechas: validarCoherenciaFechas(tiempos[0], tiempos[1], e.target.value, tiempos[3])}); }}
+                type="time"
+                className={`input input-sm input-bordered w-full mt-2 focus:input-success rounded-lg ${erroresCrearOrden.horaFin ? 'input-error' : ''}`}
+                value={tiempos[2] || ''}
+              />
+              {erroresCrearOrden.horaFin && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.horaFin}</p>}
             </div>
           </div>
           {erroresCrearOrden.coherenciaFechas && <p className="text-red-500 text-xs mt-2">{erroresCrearOrden.coherenciaFechas}</p>}
@@ -518,7 +520,9 @@ const getCodigos = async () => {
                 nueva[2] = e.target.value;
                 setespecificacion(nueva);
               }}
+              value={especificacion[2]}
             />
+            {erroresCrearOrden.descripcion && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.descripcion}</p>}
           </div>
         </div>
 
