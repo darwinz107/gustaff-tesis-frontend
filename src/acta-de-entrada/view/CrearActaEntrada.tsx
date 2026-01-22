@@ -700,12 +700,12 @@ const eliminarItem = (index: number) => {
 
           <div className="min-w-[180px] flex-1">
             <label className="block text-sm text-gray-600 mb-1">N. Orden</label>
-            <input className="input input-bordered w-full bg-gray-50" value={solicitudMaterial?.numOrdenTrabajo?.NumOrden} disabled />
+            <input className="input input-bordered w-full bg-gray-100 text-gray-700" value={solicitudMaterial?.numOrdenTrabajo?.NumOrden} disabled />
           </div>
 
           <div className="min-w-[220px] flex-1">
             <label className="block text-sm text-gray-600 mb-1">N. Solicitud</label>
-            <input className="input input-bordered w-full bg-gray-50" value={solicitudMaterial?.numOrden} disabled />
+            <input className="input input-bordered w-full bg-gray-100 text-gray-700" value={solicitudMaterial?.numOrden} disabled />
           </div>
            <div className="min-w-[220px] ">
             <label className="block text-sm text-gray-600 mb-1">Recibe</label>
@@ -757,7 +757,7 @@ const eliminarItem = (index: number) => {
 
           <div className="md:col-span-2">
             <label className="block text-sm text-gray-600 mb-1">Stock Min.</label>
-            <input className={`input input-bordered w-full ${erroresItems.stockMin && habilitarStockMin ? 'input-error' : ''}`} disabled={habilitarStockMin} value={stockMin ?? ""} onChange={(e) => {setstockMin(e.target.value); seterroresItems({...erroresItems, stockMin: validarStockMin(e.target.value, habilitarStockMin)});}} />
+            <input className={`input input-bordered w-full disabled:bg-gray-100 disabled:text-gray-700 ${erroresItems.stockMin && habilitarStockMin ? 'input-error' : ''}`} disabled={habilitarStockMin} value={stockMin ?? ""} onChange={(e) => {setstockMin(e.target.value); seterroresItems({...erroresItems, stockMin: validarStockMin(e.target.value, habilitarStockMin)});}} />
             <div className="h-5">{erroresItems.stockMin && !habilitarStockMin && <p className="text-red-500 text-xs">{erroresItems.stockMin}</p>}</div>
           </div>
 

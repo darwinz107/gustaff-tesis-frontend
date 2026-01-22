@@ -313,16 +313,21 @@ const metodoInventarios = async() =>{
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="space-y-3">
-            <label className="text-sm text-gray-600">Solicitante</label>
-            <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.userSolicitante?.name} disabled />
+          <div>
+   <label className="text-sm text-gray-600 mt-2">N.Orden</label>
+            <input type="text" className="input input-bordered w-full bg-gray-100 text-gray-700" value={solicitudMaterial?.numOrden} disabled />
+</div> 
             <div className="max-h-1"></div>
 
             <label className="text-sm text-gray-600 mt-2">Área</label>
-            <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.Area} disabled />
+            <input type="text" className="input input-bordered w-full bg-gray-100 text-gray-700" value={solicitudMaterial?.numOrdenTrabajo?.Area} disabled />
             <div className="max-h-1"></div>
 
-            <label className="text-sm text-gray-600 mt-2">Descripcion</label>
-            {conOrden ?(<input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.DescripcionTrabajo ?? ""} disabled />) :(<input type="text" className="input input-bordered w-full" value={descripcion} onChange={(e)=>setdescripcion(e.target.value)}  />)}
+
+
+ <label className="text-sm text-gray-600">Solicitante</label>
+            <input type="text" className="input input-bordered w-full bg-gray-100 text-gray-700" value={solicitudMaterial?.numOrdenTrabajo?.userSolicitante?.name} disabled />
+          
           </div>
 
           <div className="space-y-6">
@@ -343,7 +348,7 @@ const metodoInventarios = async() =>{
             <div className="absolute max-h-1">{erroresEntrega && <p className="text-red-500 text-xs">{erroresEntrega}</p>}</div>
               </div>
            <div> <label className="text-sm text-gray-600 mt-2">Código</label>
-            <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.Codigo} disabled /></div>  
+            <input type="text" className="input input-bordered w-full bg-gray-100 text-gray-700" value={solicitudMaterial?.numOrdenTrabajo?.Codigo} disabled /></div>  
            
             <div>
              <label className="text-sm text-gray-600 mt-2">Observación</label>
@@ -370,13 +375,14 @@ const metodoInventarios = async() =>{
             <div className="absolute max-h-1">{erroresRecibe && <p className="text-red-500 text-xs">{erroresRecibe}</p>}</div>
             </div>
           <div><label className="text-sm text-gray-600 mt-2">Máquina</label>
-            <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrdenTrabajo?.Maquina} disabled /></div>
+            <input type="text" className="input input-bordered w-full bg-gray-100 text-gray-700" value={solicitudMaterial?.numOrdenTrabajo?.Maquina} disabled /></div>
                     
-<div>
-   <label className="text-sm text-gray-600 mt-2">N.Orden</label>
-            <input type="text" className="input input-bordered w-full" value={solicitudMaterial?.numOrden} disabled />
-</div>
+  
            
+          </div>
+          <div>
+              <label className="text-sm text-gray-600 mt-2">Descripcion</label>
+            {conOrden ?(<textarea className="textarea textarea-bordered w-full resize-none bg-gray-100 text-gray-700" rows={3} value={solicitudMaterial?.numOrdenTrabajo?.DescripcionTrabajo ?? ""} disabled />) :(<textarea className="textarea textarea-bordered w-full resize-none" rows={3} value={descripcion} onChange={(e)=>setdescripcion(e.target.value)}  />)}
           </div>
         </div>
       </div>
@@ -388,7 +394,7 @@ const metodoInventarios = async() =>{
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-end space-y-2">
           <div className="relative">
             <label className="text-sm text-gray-600">Cantidad</label>
-            <input disabled={conOrden} type="text" className="input input-bordered w-full" value={cantidad} onChange={(e)=>{setcantidad(e.target.value); seterroresCantidad(validarCantidad(Number(e.target.value)))}}/>
+            <input disabled={conOrden} type="text" className="input input-bordered w-full disabled:bg-gray-100 disabled:text-gray-700" value={cantidad} onChange={(e)=>{setcantidad(e.target.value); seterroresCantidad(validarCantidad(Number(e.target.value)))}}/>
             <div className="absolute max-h-1">{erroresCantidad  && <p className="text-red-500 text-xs">{erroresCantidad}</p>}</div>
           </div>
 
@@ -398,7 +404,7 @@ const metodoInventarios = async() =>{
               <input
                 disabled={true}
                 type="text"
-                className="input input-bordered w-full pr-10"
+                className="input input-bordered w-full pr-10 disabled:bg-gray-100 disabled:text-gray-700"
                 value={item}
               />
               <button
@@ -414,14 +420,14 @@ const metodoInventarios = async() =>{
 
          <div className="md:col-span-8">
             <label className="text-sm text-gray-600">Característica</label>
-            <input disabled={conOrden} type="text" className="input input-bordered w-full" 
+            <input disabled={conOrden} type="text" className="input input-bordered w-full disabled:bg-gray-100 disabled:text-gray-700" 
             value={caracteristica} onChange={(e)=>setcaracteristica(e.target.value)}
             />
           </div>
 
           <div className="md:col-span-12">
             <label className="text-sm text-gray-600 mt-2">Observación</label>
-            <input disabled={conOrden} type="text" className="input input-bordered w-full" 
+            <input disabled={conOrden} type="text" className="input input-bordered w-full disabled:bg-gray-100 disabled:text-gray-700" 
             value={observacion2} onChange={(e)=>setobservacion2(e.target.value)}
             />
           </div>

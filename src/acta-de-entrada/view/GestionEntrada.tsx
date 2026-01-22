@@ -310,17 +310,17 @@ const llenarActas = async() => {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6 bg-white p-6 rounded-xl border border-gray-200">
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Nº Acta</label>
-                <input type="text" disabled className="input input-sm input-bordered rounded-lg bg-gray-100" value={acta?.numActa} />
+                <input type="text" disabled className="input input-sm input-bordered rounded-lg bg-gray-100 text-gray-700" value={acta?.numActa} />
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Fecha de Remisión</label>
-                <input type="date" disabled className="input input-sm input-bordered rounded-lg bg-gray-100" value={acta?.fechaRemision ? acta.fechaRemision.split("T")[0] : ""}/>
+                <input type="date" disabled className="input input-sm input-bordered rounded-lg bg-gray-100 text-gray-700" value={acta?.fechaRemision ? acta.fechaRemision.split("T")[0] : ""}/>
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Factura</label>
-                <input type="text" disabled={!habilitarEdicion} className="input input-sm input-bordered focus:input-primary rounded-lg" value={facturaEditada} onChange={(e)=>setfacturaEditada(e.target.value)} />
+                <input type="text" disabled={!habilitarEdicion} className="input input-sm input-bordered focus:input-primary rounded-lg disabled:bg-gray-100 disabled:text-gray-700" value={facturaEditada} onChange={(e)=>setfacturaEditada(e.target.value)} />
               </div>
 
               <div className="flex flex-col gap-2">
@@ -376,7 +376,7 @@ const llenarActas = async() => {
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Descripción</label>
-                <input type="text" disabled className="input input-sm input-bordered rounded-lg bg-gray-100" value={acta?.numSolicitudCompra?.numOrdenTrabajo?.DescripcionTrabajo ?? "N/A"} />
+                <input type="text" disabled className="input input-sm input-bordered rounded-lg bg-gray-100 text-gray-700" value={acta?.numSolicitudCompra?.numOrdenTrabajo?.DescripcionTrabajo ?? "N/A"} />
               </div>
             </div>
 

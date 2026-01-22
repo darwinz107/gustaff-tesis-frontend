@@ -444,10 +444,7 @@ const ordenesTrabajoApi  = async() =>{
           <input className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroSolicitante} onChange={(e)=>setFiltroSolicitante(e.target.value)} />
         </div>
 
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold text-gray-600">Descripción</label>
-          <input className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroDescripcion} onChange={(e)=>setFiltroDescripcion(e.target.value)} />
-        </div>
+       
 
         <div className="flex flex-col gap-1">
           <label className="text-xs font-semibold text-gray-600">Estado</label>

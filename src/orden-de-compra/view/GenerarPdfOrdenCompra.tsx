@@ -13,6 +13,24 @@ export const GenerarPdfOrdenCompra = () => {
 
 const [newSolicitud, setnewSolicitud] = useState<InfoPdfCompra>();
 const id = useParams();
+
+const formatearFechaEcuador = (fechaString: string | undefined) => {
+  if (!fechaString) return "N/A";
+  try {
+    const fecha = new Date(fechaString);
+    const fechaFormato = fecha.toLocaleDateString('es-ES');
+    const horaFormato = fecha.toLocaleTimeString('es-ES', { 
+      timeZone: 'America/Guayaquil',
+      hour: '2-digit', 
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+    return `${fechaFormato} ${horaFormato}`;
+  } catch (error) {
+    return "N/A";
+  }
+};
   useEffect(() => {
    
     try {
@@ -43,7 +61,7 @@ const id = useParams();
             </View>
            <View style={styles.ocTercero}>
             <Text style={{textAlign:"right",fontWeight:"bold"}}>ORDEN DE TRABAJO N°: {newSolicitud?.numOrdenTrabajo?.NumOrden ?? "N/A"}</Text>
-            <View><Text style={{textAlign:"left",fontWeight:"bold"}}>FECHA Y HORA DE RECEPCION: {newSolicitud?.fechaRemision.split("T")[0]}  {newSolicitud?.fechaRemision.split("T")[1].split(".")[0]}</Text> <Text style={{textAlign:"right",fontWeight:"bold"}}>SOLICITUD N°: {newSolicitud?.numOrden}</Text></View>
+            <View><Text style={{textAlign:"left",fontWeight:"bold"}}>FECHA Y HORA DE RECEPCION: {formatearFechaEcuador(newSolicitud?.fechaRemision)}</Text> <Text style={{textAlign:"right",fontWeight:"bold"}}>SOLICITUD N°: {newSolicitud?.numOrden}</Text></View>
            </View>
             <View style={{ margin:"10px",   width:"97%"}}>
              <Table >

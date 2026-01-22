@@ -238,7 +238,7 @@ export const GestionCompra = () => {
               <table className="table w-full min-w-full">
                 <thead className="bg-gradient-to-r from-orange-50 to-orange-100 sticky top-0 z-20">
                   <tr className="text-sm text-left text-gray-700 font-semibold">
-                    <th className="px-4 py-3">Nº Orden</th>
+                    <th className="px-4 py-3">Nº Solicitud</th>
                     <th className="px-4 py-3">Fecha remisión</th>
                     <th className="px-4 py-3">Solicitante</th>
                     <th className="px-4 py-3">Descripción</th>
@@ -247,7 +247,7 @@ export const GestionCompra = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {ordenesCompra.map((u,idx) => (
+                  {ordenesCompra ? ordenesCompra.map((u,idx) => (
                     <tr key={u.id} className="border-t border-gray-100 hover:bg-orange-50 transition-colors">
                       <td className="px-4 py-3 align-top font-semibold text-gray-800">{u.numOrden}</td>
                       <td className="px-4 py-3 align-top text-gray-700">{u.fechaRemision ? u.fechaRemision.split("T")[0] : ""}</td>
@@ -262,7 +262,7 @@ export const GestionCompra = () => {
                         </div>
                       </td>
                     </tr>
-                  ))}
+                  )):<div>Loading</div>}
                   {ordenesCompra.length === 0 && (
                     <tr>
                       <td colSpan={6} className="text-center text-sm text-gray-500 py-8">No hay solicitudes</td>
@@ -289,12 +289,12 @@ export const GestionCompra = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6 bg-white p-6 rounded-xl border border-gray-200">
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Nº Orden</label>
-                <input type="text" disabled className="input input-sm input-bordered rounded-lg bg-gray-100" value={detalleSol?.numOrden} />
+                <input type="text" disabled className="input input-sm input-bordered rounded-lg bg-gray-100 text-gray-700" value={detalleSol?.numOrden} />
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Fecha de Remisión</label>
-                <input type="text" disabled className="input input-sm input-bordered rounded-lg bg-gray-100" value={detalleSol.fechaRemision ? detalleSol.fechaRemision.split("T")[0] : ""} />
+                <input type="text" disabled className="input input-sm input-bordered rounded-lg bg-gray-100 text-gray-700" value={detalleSol.fechaRemision ? detalleSol.fechaRemision.split("T")[0] : ""} />
               </div>
 
               <div className="flex flex-col gap-2">
@@ -339,7 +339,7 @@ export const GestionCompra = () => {
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Descripción</label>
-                <input type="text" disabled className="input input-sm input-bordered rounded-lg bg-gray-100" value={detalleSol?.numOrdenTrabajo?.DescripcionTrabajo ?? "N/A"} />
+                <input type="text" disabled className="input input-sm input-bordered rounded-lg bg-gray-100 text-gray-700" value={detalleSol?.numOrdenTrabajo?.DescripcionTrabajo ?? "N/A"} />
               </div>
 
               <div className="flex flex-col gap-2">
@@ -364,7 +364,7 @@ export const GestionCompra = () => {
 
               <div className="flex flex-col gap-2 lg:col-span-3">
                 <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Solicitante</label>
-                <input type="text" disabled className="input input-sm input-bordered rounded-lg bg-gray-100" value={detalleSol.numOrdenTrabajo?.userSolicitante?.name ?? "N/A"} />
+                <input type="text" disabled className="input input-sm input-bordered rounded-lg bg-gray-100 text-gray-700" value={detalleSol.numOrdenTrabajo?.userSolicitante?.name ?? "N/A"} />
               </div>
             </div>
 

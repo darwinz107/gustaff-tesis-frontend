@@ -374,32 +374,29 @@ setinfoDestino(infoDestinoInicial);
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div>
             <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Solicitante</label>
-            <input className="input input-sm input-bordered w-full mt-2 focus:input-primary rounded-lg bg-gray-50" disabled value={infoDestino?.userSolicitante?.name ?? "N/A"} />
+            <input className="input input-sm input-bordered w-full mt-2 focus:input-primary rounded-lg bg-gray-100 text-gray-700" disabled value={infoDestino?.userSolicitante?.name ?? "N/A"} />
           </div>
 
           <div>
             <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Área</label>
-            <input className="input input-sm input-bordered w-full mt-2 focus:input-primary rounded-lg bg-gray-50" disabled value={infoDestino.Area} />
+            <input className="input input-sm input-bordered w-full mt-2 focus:input-primary rounded-lg bg-gray-100 text-gray-700" disabled value={infoDestino.Area} />
           </div>
 
-          <div>
-            <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Descripción</label>
-            <input className="input input-sm input-bordered w-full mt-2 focus:input-primary rounded-lg bg-gray-50" disabled value={infoDestino.DescripcionTrabajo} />
-          </div>
+         
 
           <div>
             <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Máquina</label>
-            <input className="input input-sm input-bordered w-full mt-2 focus:input-primary rounded-lg bg-gray-50" disabled value={infoDestino.Maquina} />
+            <input className="input input-sm input-bordered w-full mt-2 focus:input-primary rounded-lg bg-gray-100 text-gray-700" disabled value={infoDestino.Maquina} />
           </div>
 
           <div>
             <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Código</label>
-            <input className="input input-sm input-bordered w-full mt-2 focus:input-primary rounded-lg bg-gray-50" disabled value={infoDestino.Codigo} />
+            <input className="input input-sm input-bordered w-full mt-2 focus:input-primary rounded-lg bg-gray-100 text-gray-700" disabled value={infoDestino.Codigo} />
           </div>
 
           <div>
             <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Nº Orden</label>
-            <input className="input input-sm input-bordered w-full mt-2 focus:input-primary rounded-lg bg-gray-50" disabled value={infoDestino.NumOrden} />
+            <input className="input input-sm input-bordered w-full mt-2 focus:input-primary rounded-lg bg-gray-100 text-gray-700" disabled value={infoDestino.NumOrden} />
           </div>
 
           
@@ -425,6 +422,10 @@ setinfoDestino(infoDestinoInicial);
               />
               {erroresDestino.autoriza && <p className="text-red-500 text-xs mt-1">{erroresDestino.autoriza}</p>}
             </div>
+          </div>
+           <div className="lg:col-span-2">
+            <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Descripción</label>
+            <textarea className="textarea textarea-bordered w-full mt-2 focus:textarea-primary rounded-lg bg-gray-100 text-gray-700 resize-none" disabled rows={3} value={infoDestino.DescripcionTrabajo} />
           </div>
         </div>
       </div>
@@ -468,20 +469,22 @@ setinfoDestino(infoDestinoInicial);
 
           <div>
             <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Característica</label>
-            <input 
-              className="input input-sm input-bordered w-full mt-2 focus:input-primary rounded-lg" 
+            <textarea 
+              className="textarea textarea-bordered w-full mt-2 focus:textarea-primary rounded-lg resize-none" 
               placeholder="Ej: Color, tamaño..." 
-              value={caracteristica} 
+              value={caracteristica}
+              rows={2}
               onChange={(e) => setcaracteristica(e.target.value)} 
             />
           </div>
 
           <div>
             <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Observación</label>
-            <input 
-              className="input input-sm input-bordered w-full mt-2 focus:input-primary rounded-lg" 
+            <textarea 
+              className="textarea textarea-bordered w-full mt-2 focus:textarea-primary rounded-lg resize-none" 
               placeholder="Notas adicionales..." 
-              value={observacion} 
+              value={observacion}
+              rows={2}
               onChange={(e) => setobservacion(e.target.value)} 
             />
           </div>
