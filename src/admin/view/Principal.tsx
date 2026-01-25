@@ -113,10 +113,10 @@ export const Principal = () => {
       const dataToUpdate = {
         name: usuarioEnEdicion.name,
         email: usuarioEnEdicion.email,
-        celular: usuarioEnEdicion.celular,
-        identificacion: usuarioEnEdicion.identificacion,
-        fecha_nacimiento: usuarioEnEdicion.fecha_nacimiento,
-        cargo: usuarioEnEdicion.cargoId?.id || usuarioEnEdicion.cargo
+        cellphone: usuarioEnEdicion.cellphone,
+        identification: usuarioEnEdicion.identification,
+        fechaNac: usuarioEnEdicion.fechaNac,
+        cargo: usuarioEnEdicion.cargoId?.id
       };
       
       const res = await actualizarUsuario(usuarioEnEdicion.id, dataToUpdate);
@@ -395,8 +395,8 @@ export const Principal = () => {
                   <input 
                     type="text" 
                     className="input input-bordered focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
-                    value={usuarioEnEdicion?.identificacion || ""}
-                    onChange={(e) => setUsuarioEnEdicion({...usuarioEnEdicion, identificacion: e.target.value} as Users)}
+                    value={usuarioEnEdicion?.identification || ""}
+                    onChange={(e) => setUsuarioEnEdicion({...usuarioEnEdicion, identification: e.target.value} as Users)}
                   />
                 </div>
 
@@ -407,8 +407,8 @@ export const Principal = () => {
                   <input 
                     type="text" 
                     className="input input-bordered focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
-                    value={usuarioEnEdicion?.celular || ""}
-                    onChange={(e) => setUsuarioEnEdicion({...usuarioEnEdicion, celular: e.target.value} as Users)}
+                    value={usuarioEnEdicion?.cellphone || ""}
+                    onChange={(e) => setUsuarioEnEdicion({...usuarioEnEdicion, cellphone: e.target.value} as Users)}
                   />
                 </div>
               </div>
@@ -421,8 +421,8 @@ export const Principal = () => {
                   <input 
                     type="date" 
                     className="input input-bordered focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
-                    value={usuarioEnEdicion?.fecha_nacimiento?.split('T')[0] || ""}
-                    onChange={(e) => setUsuarioEnEdicion({...usuarioEnEdicion, fecha_nacimiento: e.target.value} as Users)}
+                    value={usuarioEnEdicion?.fechaNac?.split('T')[0] || ""}
+                    onChange={(e) => setUsuarioEnEdicion({...usuarioEnEdicion, fechaNac: e.target.value} as Users)}
                   />
                 </div>
 
@@ -432,13 +432,11 @@ export const Principal = () => {
                   </label>
                   <select 
                     className="select select-bordered focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
-                    value={usuarioEnEdicion?.cargoId?.id || usuarioEnEdicion?.cargo || ""}
+                    value={usuarioEnEdicion?.cargoId?.id || usuarioEnEdicion?.cargoId?.name || ""}
                     onChange={(e) => setUsuarioEnEdicion({...usuarioEnEdicion, cargo: e.target.value} as Users)}
                   >
                     <option value="">Selecciona cargo</option>
-                    {cargos.map((cargo) => (
-                      <option key={cargo.id} value={cargo.id}>{cargo.name}</option>
-                    ))}
+                    {cargos.map((cargo) => <option key={cargo.id} value={cargo.id}>{cargo.name}</option>)}
                   </select>
                 </div>
               </div>
@@ -449,8 +447,8 @@ export const Principal = () => {
                   <span className="label-text font-semibold text-blue-700">Estado</span>
                 </label>
                 <div className="flex items-center gap-2">
-                  <span className={`badge badge-lg ${usuarioEnEdicion?.estado === 'ACTIVO' ? 'badge-success' : 'badge-error'}`}>
-                    {usuarioEnEdicion?.estado || "INACTIVO"}
+                  <span className={`badge badge-lg ${usuarioEnEdicion?.estado ? 'badge-success' : 'badge-error'}`}>
+                    {usuarioEnEdicion?.estado ? "ACTIVO" : "INACTIVO"}
                   </span>
                 </div>
               </div>
@@ -469,7 +467,7 @@ export const Principal = () => {
                 <div className="space-y-3 border-t pt-4">
                   <div className="form-control">
                     <label className="label">
-                      <span className="label-text font-semibold text-blue-700">Nueva Contraseña</span>
+                      <span className="label-text font-semibold text-blue-700 mr-2">Nueva Contraseña</span>
                     </label>
                     <input 
                       type="password" 

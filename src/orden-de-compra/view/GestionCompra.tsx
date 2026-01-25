@@ -183,6 +183,24 @@ export const GestionCompra = () => {
     await ordenesTrabajoApi();
   };
 
+  const getEstadoColor = (estado: string) => {
+    const estadoUpper = estado?.toUpperCase() || "";
+    if (estadoUpper.includes("FINALIZADO") || estadoUpper.includes("ENTREGADO")) {
+      return { /*bg: "bg-green-100", text: "text-green-800",*/ badge: "badge-success" };
+    } else if (estadoUpper.includes("PROCESO") || estadoUpper.includes("EN PROCESO"))
+    {
+      return { /*bg: "bg-yellow-100", text: "text-yellow-800",*/ badge: "badge-warning" };
+    } 
+      else if (estadoUpper.includes("LISTA PARA ENTREGA")) {
+      return { /*bg: "bg-orange-100", text: "text-orange-800",*/ badge: "badge-warning" };
+    }
+    else if (estadoUpper.includes("VENCIDO")) {
+      return { /*bg: "bg-red-100", text: "text-red-800",*/ badge: "badge-error" };
+    } else {
+      return { /*bg: "bg-blue-100", text: "text-blue-800",*/ badge: "badge-info" };
+    }
+  };
+
   return (
     <>
       <div className="w-full h-full rounded-2xl border border-gray-200 bg-white shadow-lg overflow-auto">
@@ -247,22 +265,24 @@ export const GestionCompra = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {ordenesCompra ? ordenesCompra.map((u,idx) => (
+                  {ordenesCompra ? ordenesCompra.map((u,idx) => {
+                    const getColorConfig = getEstadoColor(u.estadoCompra?.estado || "");
+                    return(
                     <tr key={u.id} className="border-t border-gray-100 hover:bg-orange-50 transition-colors">
                       <td className="px-4 py-3 align-top font-semibold text-gray-800">{u.numOrden}</td>
                       <td className="px-4 py-3 align-top text-gray-700">{u.fechaRemision ? u.fechaRemision.split("T")[0] : ""}</td>
                       <td className="px-4 py-3 align-top text-gray-700">{u.numOrdenTrabajo?.userSolicitante?.name ?? "N/A"}</td>
                       <td className="px-4 py-3 align-top text-gray-700 text-sm">{u.numOrdenTrabajo?.DescripcionTrabajo}</td>
-                      <td className="px-4 py-3 align-top "><span className="badge badge-warning gap-2  whitespace-nowrap px-4">{u.estadoCompra?.estado}</span></td>
+                      <td className="px-4 py-3 align-top whitespace-nowrap"><span className={`badge ${getColorConfig.badge}`}>{u.estadoCompra?.estado}</span></td>
                       <td className="px-4 py-3 align-top text-center">
                         <div className="flex items-center justify-center gap-2 flex-wrap">
                           <button className={`btn btn-sm btn-info btn-outline gap-1 tooltip ${idx === 0 ? "tooltip-bottom" : ""}`} data-tip="Ver detalles" onClick={() => { setventanaEmergente(true); cargarSolicitud(u.id); }}>👁️</button>
-                          <button className="btn btn-sm btn-error btn-outline gap-1 tooltip" data-tip="Eliminar" onClick={() => abrirDialogoEliminar(u.id)}>🗑️</button>
-                          <button className="btn btn-sm btn-success btn-outline gap-1 tooltip" data-tip="Descargar PDF" onClick={() => cargarPdf( u.id)}>📄</button>
+                          <button className={`btn btn-sm btn-error btn-outline gap-1 tooltip ${idx === 0 ? "tooltip-bottom" : ""}`} data-tip="Eliminar" onClick={() => abrirDialogoEliminar(u.id)}>🗑️</button>
+                          <button className={`btn btn-sm btn-success btn-outline gap-1 tooltip ${idx === 0 ? "tooltip-bottom" : ""}`} data-tip="Descargar PDF" onClick={() => cargarPdf( u.id)}>📄</button>
                         </div>
                       </td>
                     </tr>
-                  )):<div>Loading</div>}
+                  )}):<div>Loading</div>}
                   {ordenesCompra.length === 0 && (
                     <tr>
                       <td colSpan={6} className="text-center text-sm text-gray-500 py-8">No hay solicitudes</td>

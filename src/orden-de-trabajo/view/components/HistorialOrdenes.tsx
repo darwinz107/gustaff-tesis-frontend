@@ -284,6 +284,25 @@ const ordenesTrabajoApi  = async() =>{
 
      }
 
+      const getEstadoColor = (estado: string) => {
+        console.log("estado para color: ",estado);
+    const estadoUpper = estado?.toUpperCase() || "";
+    if (estadoUpper.includes("FINALIZADO") || estadoUpper.includes("ENTREGADO")) {
+      return { /*bg: "bg-green-100", text: "text-green-800",*/ badge: "badge-success" };
+    } else if (estadoUpper.includes("PROCESO") || estadoUpper.includes("EN PROCESO"))
+    {
+      return { /*bg: "bg-yellow-100", text: "text-yellow-800",*/ badge: "badge-warning" };
+    } 
+      else if (estadoUpper.includes("LISTA PARA ENTREGA")) {
+      return { /*bg: "bg-orange-100", text: "text-orange-800",*/ badge: "badge-warning" };
+    }
+    else if (estadoUpper.includes("VENCIDO")) {
+      return { /*bg: "bg-red-100", text: "text-red-800",*/ badge: "badge-error" };
+    } else {
+      return { /*bg: "bg-blue-100", text: "text-blue-800",*/ badge: "badge-info" };
+    }
+  };
+
      const metodoEliminarOrdenTrabajo = async(id:number)=>{
       const res = await eliminarOrdenTrabajo(id);
       if (res.validate) {
@@ -510,19 +529,21 @@ const ordenesTrabajoApi  = async() =>{
                 </tr>
               </thead>
               <tbody>
-                {ordenesConProgreso?.map((u) => (
+                {ordenesConProgreso?.map((u) =>{
+                  const getColorConfig = getEstadoColor(u.estadoTrabajo?.estado || "");
+                  return(
                   <tr key={u.id} className="border-t border-gray-100 hover:bg-green-50 transition-colors">
                     <td className="px-4 py-3 font-semibold text-gray-800 align-top">{u.NumOrden}</td>
                     <td className="px-4 py-3 text-gray-700 align-top">{u.fechaFinal}</td>
                     <td className="px-4 py-3 text-gray-700 align-top">{u.userSolicitante?.name ?? "N/A"}</td>
                     <td className="px-4 py-3 text-gray-700 text-sm align-top">{u.DescripcionTrabajo}</td>
-                    <td className="px-4 py-3 align-top whitespace-nowrap"><span className="badge badge-success badge-sm">{u.estadoTrabajo.estado}</span></td>
+                    <td className="px-4 py-3 align-top whitespace-nowrap"><span className={`badge ${getColorConfig.badge} gap-1`}>{u.estadoTrabajo.estado}</span></td>
                     <td className="px-4 py-3 align-top"><div className="radial-progress text-primary cursor-pointer" onClick={() =>{ if(u.progreso !== 100){handleAbrirModalFase(u.id);}}} style={{ "--value": u.progreso ?? 0 } as React.CSSProperties} 
   aria-valuenow={u.progreso ?? 0} role="progressbar">{u.progreso ?? 0}%</div></td>
                     <td className="px-4 py-3 align-top text-center">
                       <div className="flex items-center justify-center flex-wrap gap-2">
                         <button
-                          className="btn btn-sm btn-info btn-outline gap-1 tooltip"
+                          className={`btn btn-sm btn-info btn-outline gap-1 tooltip ${ordenesConProgreso.indexOf(u) === 0 ? "tooltip-bottom" : ""}`}
                           data-tip="Ver detalles"
                           onClick={() => {
                             asignarSolicitantexOrden(u.id);
@@ -535,14 +556,14 @@ const ordenesTrabajoApi  = async() =>{
                         >
                           👁️
                         </button>
-                        <button className="btn btn-sm btn-error btn-outline gap-1 tooltip" data-tip="Eliminar" onClick={() => abrirDialogoEliminar(u.id)}>
+                        <button className={`btn btn-sm btn-error btn-outline gap-1 tooltip ${ordenesConProgreso.indexOf(u) === 0 ? "tooltip-bottom" : ""}`} data-tip="Eliminar" onClick={() => abrirDialogoEliminar(u.id)}>
                           🗑️
                         </button>
-                        <button className="btn btn-sm btn-success btn-outline gap-1 tooltip" data-tip="Descargar PDF" onClick={() => cargarPdf(u.id)}>
+                        <button className={`btn btn-sm btn-success btn-outline gap-1 tooltip ${ordenesConProgreso.indexOf(u) === 0 ? "tooltip-bottom" : ""}`} data-tip="Descargar PDF" onClick={() => cargarPdf(u.id)}>
                           📄
                         </button>
                         <button
-                          className="btn btn-sm btn-warning btn-outline gap-1 tooltip"
+                          className={`btn btn-sm btn-warning btn-outline gap-1 tooltip ${ordenesConProgreso.indexOf(u) === 0 ? "tooltip-bottom" : ""}`}
                           data-tip="Solicitar Material"
                           disabled={u?.estadoUso?.uso}
                           onClick={() => redirigirSolMaterial(u.id)}
@@ -552,7 +573,7 @@ const ordenesTrabajoApi  = async() =>{
                       </div>
                     </td>
                   </tr>
-                ))}
+                )})}
               </tbody>
             </table>
           </div>

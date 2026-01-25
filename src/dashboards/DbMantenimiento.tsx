@@ -80,18 +80,23 @@ const getColorsByLength = (length: number) => {
   return colors;
 };
 
-const getEstadoColor = (estado: string) => {
-  const estadoUpper = estado?.toUpperCase() || "";
-  if (estadoUpper.includes("FINALIZADO") || estadoUpper.includes("ENTREGADO")) {
-    return { bg: "bg-green-100", text: "text-green-800", badge: "badge-success" };
-  } else if (estadoUpper.includes("PROCESO") || estadoUpper.includes("EN PROCESO")) {
-    return { bg: "bg-yellow-100", text: "text-yellow-800", badge: "badge-warning" };
-  } else if (estadoUpper.includes("VENCIDO")) {
-    return { bg: "bg-red-100", text: "text-red-800", badge: "badge-error" };
-  } else {
-    return { bg: "bg-blue-100", text: "text-blue-800", badge: "badge-info" };
-  }
-};
+  const getEstadoColor = (estado: string) => {
+    const estadoUpper = estado?.toUpperCase() || "";
+    if (estadoUpper.includes("FINALIZADO") || estadoUpper.includes("ENTREGADO")) {
+      return { /*bg: "bg-green-100", text: "text-green-800",*/ badge: "badge-success" };
+    } else if (estadoUpper.includes("PROCESO") || estadoUpper.includes("EN PROCESO"))
+    {
+      return { /*bg: "bg-yellow-100", text: "text-yellow-800",*/ badge: "badge-warning" };
+    } 
+      else if (estadoUpper.includes("LISTA PARA ENTREGA")) {
+      return { /*bg: "bg-orange-100", text: "text-orange-800",*/ badge: "badge-warning" };
+    }
+    else if (estadoUpper.includes("VENCIDO")) {
+      return { /*bg: "bg-red-100", text: "text-red-800",*/ badge: "badge-error" };
+    } else {
+      return { /*bg: "bg-blue-100", text: "text-blue-800",*/ badge: "badge-info" };
+    }
+  };
 
 const cargoColors = getColorsByLength(ordenesEstado.length);
  
@@ -174,7 +179,7 @@ const cargoColors = getColorsByLength(ordenesEstado.length);
                       <td className="px-3 py-2 text-xs">{s.fechaRemision ? new Date(s.fechaRemision).toLocaleDateString('es-ES') : 'N/A'}</td>
                       <td className="px-3 py-2 text-center font-semibold">{s.total_items}</td>
                       <td className="px-3 py-2 text-sm">{s.userAutoriza}</td>
-                      <td className="px-3 py-2">
+                      <td className="px-3 py-2 whitespace-nowrap" >
                         <span className={`badge ${colorConfig.badge} gap-1`}>{s.estado}</span>
                       </td>
                     </tr>

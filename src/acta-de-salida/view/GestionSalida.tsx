@@ -269,9 +269,9 @@ export const GestionSalida = () => {
                       <td className="px-4 py-3 text-gray-700 text-sm">{u.numSolicitudCompra?.numOrdenTrabajo?.DescripcionTrabajo ?? u.descripcion ?? "N/A" }</td>
                       <td className="px-4 py-3 text-center">
                         <div className="flex gap-2 justify-center flex-wrap">
-                          <button className="btn btn-sm btn-info btn-outline gap-1 tooltip" data-tip="Ver detalles" onClick={()=>llenarActaById(u.id)}>👁️</button>
-                          <button className="btn btn-sm btn-error btn-outline gap-1 tooltip" data-tip="Eliminar" onClick={() => {setacta(u); dialog.current?.showModal();}}>🗑️</button>
-                          <button className="btn btn-sm btn-success btn-outline gap-1 tooltip" data-tip="Descargar PDF" onClick={()=>cargarPdf(u.id)}>📄</button>
+                          <button className={`btn btn-sm btn-info btn-outline gap-1 tooltip ${i === 0 ? "tooltip-bottom" : ""}`} data-tip="Ver detalles" onClick={()=>llenarActaById(u.id)}>👁️</button>
+                          <button className={`btn btn-sm btn-error btn-outline gap-1 tooltip ${i === 0 ? "tooltip-bottom" : ""}`} data-tip="Eliminar" onClick={() => {setacta(u); dialog.current?.showModal();}}>🗑️</button>
+                          <button className={`btn btn-sm btn-success btn-outline gap-1 tooltip ${i === 0 ? "tooltip-bottom" : ""}`} data-tip="Descargar PDF" onClick={()=>cargarPdf(u.id)}>📄</button>
                         </div>
                       </td>
                     </tr>

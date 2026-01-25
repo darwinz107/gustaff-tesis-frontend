@@ -219,8 +219,10 @@ export const AdministrarCargos = () => {
           </div>
 
           <div className="p-6">
-            <div className="max-w-md space-y-4">
-              <div className="form-control">
+            <div className="max-w space-y-4">
+              
+              <div className='flex'>
+              <div className="form-control  w-full">
                 <label className="label">
                   <span className="label-text font-semibold text-indigo-700">Nombre del cargo</span>
                 </label>
@@ -236,7 +238,7 @@ export const AdministrarCargos = () => {
                 />
                 {errores.cargo && <label className="label-text-alt text-error">{errores.cargo}</label>}
               </div>
-              <div className="form-control">
+              <div className="form-control w-full flex flex-col">
                 <label className="label">
                   <span className="label-text font-semibold text-indigo-700">Rol</span>
                 </label>
@@ -252,6 +254,7 @@ export const AdministrarCargos = () => {
                   {roles.map((r) => <option key={r.id} value={r.id}>{r.role}</option>)}
                 </select>
                 {errores.rol && <label className="label-text-alt text-error">{errores.rol}</label>}
+              </div>
               </div>
               <button 
                 className="btn bg-gradient-to-r from-indigo-500 to-indigo-600 text-white border-0 hover:from-indigo-600 hover:to-indigo-700 w-full mt-4 font-semibold" 

@@ -28,18 +28,18 @@ export const DbLogistica = () => {
   const getEstadoColor = (estado: string) => {
     const estadoUpper = estado?.toUpperCase() || "";
     if (estadoUpper.includes("FINALIZADO") || estadoUpper.includes("ENTREGADO")) {
-      return { bg: "bg-green-100", text: "text-green-800", badge: "badge-success" };
+      return { /*bg: "bg-green-100", text: "text-green-800",*/ badge: "badge-success" };
     } else if (estadoUpper.includes("PROCESO") || estadoUpper.includes("EN PROCESO"))
     {
-      return { bg: "bg-yellow-100", text: "text-yellow-800", badge: "badge-warning" };
+      return { /*bg: "bg-yellow-100", text: "text-yellow-800",*/ badge: "badge-warning" };
     } 
       else if (estadoUpper.includes("LISTA PARA ENTREGA")) {
-      return { bg: "bg-orange-100", text: "text-orange-800", badge: "badge-warning" };
+      return { /*bg: "bg-orange-100", text: "text-orange-800",*/ badge: "badge-warning" };
     }
     else if (estadoUpper.includes("VENCIDO")) {
-      return { bg: "bg-red-100", text: "text-red-800", badge: "badge-error" };
+      return { /*bg: "bg-red-100", text: "text-red-800",*/ badge: "badge-error" };
     } else {
-      return { bg: "bg-blue-100", text: "text-blue-800", badge: "badge-info" };
+      return { /*bg: "bg-blue-100", text: "text-blue-800",*/ badge: "badge-info" };
     }
   };
 
@@ -130,7 +130,7 @@ export const DbLogistica = () => {
                       <td className="px-3 py-2">{o.solicitante}</td>
                       <td className="px-3 py-2 text-xs">{o.fechaInicio ? new Date(o.fechaInicio).toLocaleDateString('es-ES') : 'N/A'}</td>
                       <td className="px-3 py-2 text-xs">{o.fechaFinal ? new Date(o.fechaFinal).toLocaleDateString('es-ES') : 'N/A'}</td>
-                      <td className="px-3 py-2">
+                      <td className="px-3 py-2 ">
                         <span className={`badge ${colorConfig.badge} gap-1`}>{o.estado}</span>
                       </td>
                       <td className="px-3 py-2 text-xs max-w-xs truncate">{o.descripcion}</td>
@@ -170,8 +170,8 @@ export const DbLogistica = () => {
                       <td className="px-3 py-2 text-xs">{s.fechaRemision ? new Date(s.fechaRemision).toLocaleDateString('es-ES') : 'N/A'}</td>
                       <td className="px-3 py-2 text-center font-semibold">{s.total_items}</td>
                       <td className="px-3 py-2 text-sm">{s.userAutoriza}</td>
-                      <td className="px-3 py-2">
-                        <span className={`badge ${colorConfig.badge} gap-1`}>{s.estado}</span>
+                      <td className="px-3 py-2 ">
+                        <span className={`badge ${colorConfig.badge} gap-1 whitespace-nowrap`}>{s.estado}</span>
                       </td>
                     </tr>
                   );

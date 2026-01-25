@@ -194,7 +194,7 @@ export const AdministrarTiposTrabajo = () => {
 
           <div className="p-6">
             <div className="max-w-md">
-              <div className="form-control">
+              <div className="form-control flex flex-col">
                 <label className="label">
                   <span className="label-text font-semibold text-amber-700">Nombre del tipo</span>
                 </label>

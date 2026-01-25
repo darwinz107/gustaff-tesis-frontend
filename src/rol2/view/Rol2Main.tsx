@@ -257,22 +257,22 @@ export const Rol2Main = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="form-control">
                   <label className="label"><span className="label-text font-semibold text-indigo-700">Cédula</span></label>
-                  <input type="text" className="input input-bordered focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all" value={usuarioEnEdicion?.identificacion || ""} onChange={(e) => setUsuarioEnEdicion({...usuarioEnEdicion, identificacion: e.target.value} as Users)} />
+                  <input type="text" className="input input-bordered focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all" value={usuarioEnEdicion?.identification || ""} onChange={(e) => setUsuarioEnEdicion({...usuarioEnEdicion, identification: e.target.value} as Users)} />
                 </div>
                 <div className="form-control">
                   <label className="label"><span className="label-text font-semibold text-indigo-700">Celular</span></label>
-                  <input type="text" className="input input-bordered focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all" value={usuarioEnEdicion?.celular || ""} onChange={(e) => setUsuarioEnEdicion({...usuarioEnEdicion, celular: e.target.value} as Users)} />
+                  <input type="text" className="input input-bordered focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all" value={usuarioEnEdicion?.cellphone || ""} onChange={(e) => setUsuarioEnEdicion({...usuarioEnEdicion, cellphone: e.target.value} as Users)} />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="form-control">
                   <label className="label"><span className="label-text font-semibold text-indigo-700">Fecha de Nacimiento</span></label>
-                  <input type="date" className="input input-bordered focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all" value={usuarioEnEdicion?.fecha_nacimiento?.split('T')[0] || ""} onChange={(e) => setUsuarioEnEdicion({...usuarioEnEdicion, fecha_nacimiento: e.target.value} as Users)} />
+                  <input type="date" className="input input-bordered focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all" value={usuarioEnEdicion?.fechaNac?.split('T')[0] || ""} onChange={(e) => setUsuarioEnEdicion({...usuarioEnEdicion, fechaNac: e.target.value} as Users)} />
                 </div>
                 <div className="form-control">
                   <label className="label"><span className="label-text font-semibold text-indigo-700">Cargo</span></label>
-                  <select className="select select-bordered focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all" value={usuarioEnEdicion?.cargoId?.id || usuarioEnEdicion?.cargo || ""} onChange={(e) => setUsuarioEnEdicion({...usuarioEnEdicion, cargo: e.target.value} as Users)}>
+                  <select className="select select-bordered focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all" value={usuarioEnEdicion?.cargoId?.id || usuarioEnEdicion?.cargoId?.name || ""} onChange={(e) => setUsuarioEnEdicion({...usuarioEnEdicion, cargo: e.target.value} as Users)}>
                     <option value="">Selecciona cargo</option>
                     {cargos.map((cargo) => <option key={cargo.id} value={cargo.id}>{cargo.name}</option>)}
                   </select>
@@ -282,7 +282,7 @@ export const Rol2Main = () => {
               <div className="form-control">
                 <label className="label"><span className="label-text font-semibold text-indigo-700">Estado</span></label>
                 <div className="flex items-center gap-2">
-                  <span className={`badge badge-lg ${usuarioEnEdicion?.estado === 'ACTIVO' ? 'badge-success' : 'badge-error'}`}>{usuarioEnEdicion?.estado || "INACTIVO"}</span>
+                  <span className={`badge badge-lg ${usuarioEnEdicion?.estado ? 'badge-success' : 'badge-error'}`}>{usuarioEnEdicion?.estado ? "ACTIVO" : "INACTIVO"}</span>
                 </div>
               </div>
 
