@@ -182,7 +182,10 @@ export const DbLogistica = () => {
         </div>
 
         <div className="card p-4 bg-base-100 border max-h-64 overflow-y-auto">
+         <div className='flex justify-between'>
           <h3 className="font-medium mb-3 text-lg">📤 Últimas Actas de Salida</h3>
+           <button className="btn btn-sm hover:btn-primary gap-2" onClick={()=> window.open('http://localhost:3000/reporte/acta-salida','_blank')}>Reporte 📄</button>
+          </div> 
           <div className="overflow-x-auto">
             <table className="table w-full text-sm">
               <thead>
