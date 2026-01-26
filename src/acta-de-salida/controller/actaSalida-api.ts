@@ -1,16 +1,16 @@
 import type { FiltrarActaSalidaDto } from "../models/filtrarActaSalida";
 import type { InfoPdfSalida } from "../models/InfoPdfSalida";
 
-const route = "http://localhost:3000/";
+const route = import.meta.env.VITE_API_URL || "http://localhost:3000/";
 
-  export const createActaSalidaApi = async(id:number,entregaId:number,observacion:string):Promise<{msj:string, validate:boolean}> => {
+  export const createActaSalidaApi = async(id:number,entregaId:number,observacion:string,recibe:number):Promise<{msj:string, validate:boolean}> => {
     try {
           const response:Response = await fetch(`${route}inventario/acta-salida/${id}`,{
            method:"POST",
             headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({entregaId,observacion})
+    body: JSON.stringify({entregaId,observacion,recibe})
             });
             const data = await response.json();
             return data;
@@ -84,8 +84,9 @@ const route = "http://localhost:3000/";
   }
 };
 
-export const updateActaSalida = async (id: number, updateData: { entregaId?: number; observacion?: string; recibeSinSMId?: number; solicitanteId?: number; destino?: string }): Promise<{ msj: string; validate: boolean }> => {
+export const updateActaSalida = async (id: number, updateData: { entregaId?: number; observacion?: string; recibeSinSMId?: number; /*solicitanteId?: number;*/ descripcion?: string }): Promise<{ msj: string; validate: boolean }> => {
   try {
+    console.log("updateData:", updateData); 
     const response: Response = await fetch(`${route}inventario/acta-salida/${id}`, {
       method: "PATCH",
       headers: {

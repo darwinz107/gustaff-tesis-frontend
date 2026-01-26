@@ -1,8 +1,15 @@
 
-export interface ActualizarOrdenMaterial {
+export interface UpdateItemSolicitadoDto {
+  id: number;
+  cantidad?: number;
+  caracteristica?: string;
+  Observacion?: string;
+  item?: string;
+}
 
-      Autoriza:string;
-    ordenTrabajoId:number;
-    Destino:string;
-    estadoCompra:string;
+export interface ActualizarOrdenMaterial {
+  Autoriza: string;
+  ordenTrabajoId: string;
+  estadoCompra: string;
+  itemsSolicitados?: UpdateItemSolicitadoDto[];
 }

@@ -311,53 +311,66 @@ const { tipo, data } = itemEnEdicion;
       </div>
     </dialog>
 
-      <div className="w-full h-full p-6 space-y-6">
+      <div className="w-full h-full p-6 space-y-6 flex flex-col">
+        {/* HEADER */}
+        <div className="bg-gradient-to-r from-teal-500 to-cyan-600 rounded-2xl p-6 shadow-lg border-t-4 border-teal-400">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-3xl">⚙️</span>
+              <div>
+                <h1 className="text-2xl font-bold text-white">Áreas y Máquinas</h1>
+                <p className="text-teal-100 text-sm">Gestiona las áreas de trabajo y máquinas disponibles</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* SECCIÓN CREAR ÁREA Y MÁQUINA */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Crear Área */}
-          <div className="bg-gray-100 rounded-xl shadow-md p-4">
-            <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Nueva Área</h2>
-            <div className="flex flex-col gap-3">
+          <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl shadow-sm p-6 border border-teal-100">
+            <h2 className="text-lg font-bold text-teal-900 mb-4 pb-3 border-b-2 border-teal-300 flex items-center gap-2"><span>📍</span> Nueva Área</h2>
+            <div className="flex flex-col gap-4">
               <div>
-                <label className="block text-sm">Nombre del área</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Nombre del área</label>
                 <input
                   type="text"
-                  className={`input w-full ${erroresArea ? 'input-error' : ''}`}
+                  className={`input input-sm input-bordered w-full rounded-lg focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-400 ${erroresArea ? 'input-error' : ''}`}
                   onChange={(e) => {
                     setnewArea(e.target.value);
                     seterroresArea(validarNombre(e.target.value));
                   }}
                   value={newArea}
                 />
-                <div className="h-5">{erroresArea && <p className="text-red-500 text-sm">{erroresArea}</p>}</div>
+                <div className="h-5">{erroresArea && <p className="text-red-500 text-xs mt-1">{erroresArea}</p>}</div>
               </div>
               <div className="flex justify-end">
-                <button className="btn btn-primary" onClick={crearArea}>Crear Área</button>
+                <button className="btn btn-sm bg-gradient-to-r from-teal-500 to-cyan-600 text-white border-0 hover:from-teal-600 hover:to-cyan-700 gap-2" onClick={crearArea}>➕ Crear Área</button>
               </div>
             </div>
           </div>
 
           {/* Crear Máquina */}
-          <div className="bg-gray-100 rounded-xl shadow-md p-4">
-            <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Nueva Máquina</h2>
-            <div className="flex flex-col gap-3">
+          <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl shadow-sm p-6 border border-teal-100">
+            <h2 className="text-lg font-bold text-teal-900 mb-4 pb-3 border-b-2 border-teal-300 flex items-center gap-2"><span>⚙️</span> Nueva Máquina</h2>
+            <div className="flex flex-col gap-4">
               <div>
-                <label className="block text-sm">Nombre de la máquina</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Nombre de la máquina</label>
                 <input
                   type="text"
-                  className={`input w-full ${erroresMaquina.maquina ? 'input-error' : ''}`}
+                  className={`input input-sm input-bordered w-full rounded-lg focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-400 ${erroresMaquina.maquina ? 'input-error' : ''}`}
                   onChange={(e) => {
                     setmaquina(e.target.value);
                     seterroresMaquina({ ...erroresMaquina, maquina: validarNombreGeneral(e.target.value) });
                   }}
                   value={maquina}
                 />
-                <div className="h-5">{erroresMaquina.maquina && <p className="text-red-500 text-sm">{erroresMaquina.maquina}</p>}</div>
+                <div className="h-5">{erroresMaquina.maquina && <p className="text-red-500 text-xs mt-1">{erroresMaquina.maquina}</p>}</div>
               </div>
               <div>
-                <label className="block text-sm">Área</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Área</label>
                 <select
-                  className={`select w-full ${erroresMaquina.area ? 'select-error' : ''}`}
+                  className={`select select-sm select-bordered w-full rounded-lg focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-400 ${erroresMaquina.area ? 'select-error' : ''}`}
                   value={selectArea}
                   onChange={(e) => {
                     setselectArea(e.target.value);
@@ -369,13 +382,13 @@ const { tipo, data } = itemEnEdicion;
                     <option key={a.id} value={a.nombre}>{a.nombre}</option>
                   ))}
                 </select>
-                <div className="h-5">{erroresMaquina.area && <p className="text-red-500 text-sm">{erroresMaquina.area}</p>}</div>
+                <div className="h-5">{erroresMaquina.area && <p className="text-red-500 text-xs mt-1">{erroresMaquina.area}</p>}</div>
               </div>
               <div>
-                <label className="block text-sm">Imagen</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Imagen</label>
             <input 
               type="file" 
-              className="file-input file-input-bordered w-full" 
+              className="file-input file-input-sm file-input-bordered w-full rounded-lg focus:outline-none" 
               accept="image/*"
               ref={fileInputRef}
               onChange={(e) => {
@@ -383,18 +396,18 @@ const { tipo, data } = itemEnEdicion;
                 setimagen(file);
               }}
             />
-             {imagen && <p className="text-xs text-green-600 mt-1">Imagen seleccionado</p>}
+             {imagen && <p className="text-xs text-green-600 mt-1">✓ Imagen seleccionada</p>}
               </div>
               <div className="flex justify-end">
-                <button className="btn btn-primary" onClick={crearMaquina}>Crear Máquina</button>
+                <button className="btn btn-sm bg-gradient-to-r from-teal-500 to-cyan-600 text-white border-0 hover:from-teal-600 hover:to-cyan-700 gap-2" onClick={crearMaquina}>➕ Crear Máquina</button>
               </div>
             </div>
           </div>
         </div>
 
         {/* SECCIÓN TABLA DE ÁREAS CON CÓDIGOS Y MÁQUINAS */}
-        <div className="bg-white rounded-xl shadow-md p-4">
-          <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Áreas con Códigos y Máquinas</h2>
+        <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+          <h2 className="text-lg font-bold text-teal-900 mb-4 pb-3 border-b-2 border-teal-300 flex items-center gap-2"><span>📊</span> Áreas con Códigos y Máquinas</h2>
 
           {areas.length === 0 ? (
             <p className="text-gray-500 text-center py-4">No hay áreas registradas</p>
@@ -420,16 +433,18 @@ const { tipo, data } = itemEnEdicion;
                                       <p className="text-sm text-gray-700">⚙️ {maq.nombre}</p>
                                       <div className="flex gap-2">
                                         <button
-                                          className="btn btn-xs btn-ghost"
+                                          className="btn btn-xs btn-ghost tooltip"
+                                          data-tip="Detalles"
                                           onClick={() => abrirEdicion("maquina", maq)}
                                         >
-                                          Detalles
+                                          ℹ️
                                         </button>
                                         <button
-                                          className="btn btn-xs btn-error"
+                                          className="btn btn-xs btn-error tooltip"
+                                          data-tip="Eliminar"
                                           onClick={() => {setitemEnEdicion({tipo:"maquina",data:maq});if(dialog.current) dialog.current.showModal(); }}
                                         >
-                                          Eliminar
+                                          🗑️
                                         </button>
                                       </div>
                                      
@@ -457,16 +472,18 @@ const { tipo, data } = itemEnEdicion;
 
                     <div className="flex gap-2 ml-4">
                       <button
-                        className="btn btn-xs btn-ghost"
+                        className="btn btn-xs btn-ghost tooltip"
+                        data-tip="Detalles"
                         onClick={() => abrirEdicion("area", area)}
                       >
-                        Detalles
+                        ℹ️
                       </button>
                       <button
-                        className="btn btn-xs btn-error"
+                        className="btn btn-xs btn-error tooltip"
+                        data-tip="Eliminar"
                        onClick={() => {setitemEnEdicion({tipo:"area",data: area}); if(dialog.current) dialog.current.showModal(); }}
                       >
-                        Eliminar
+                        🗑️
                       </button>
                     </div>
                   </div>
@@ -479,109 +496,134 @@ const { tipo, data } = itemEnEdicion;
 
       {/* MODAL DE EDICIÓN */}
       {modalEdicion && (
-        <div className="fixed inset-0 bg-transparent bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-96 overflow-y-auto">
-            <h3 className="text-lg font-bold mb-4">
-              {itemEnEdicion.tipo === "area" ? "Editar Área" : "Editar Máquina"}
-            </h3>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 transition-opacity duration-300">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 w-96 border border-gray-200 max-h-[90vh] overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
+              <div>
+                <h3 className="text-lg font-bold text-gray-800">
+                  {itemEnEdicion.tipo === "area" ? "✏️ Editar Área" : "✏️ Editar Máquina"}
+                </h3>
+                <p className="text-sm text-gray-500 mt-1">
+                  {itemEnEdicion.tipo === "area" ? "Modifica los datos del área" : "Modifica los datos de la máquina"}
+                </p>
+              </div>
+              <button 
+                onClick={cerrarEdicion} 
+                className="btn btn-circle btn-sm btn-ghost hover:bg-gray-200 transition"
+              >
+                ✕
+              </button>
+            </div>
 
+            {/* Content */}
             {itemEnEdicion.tipo === "area" ? (
-              <>
-                <div className="mb-4">
+              <div className="space-y-4 mb-6">
+                <div className="form-control">
                   <label className="label">
-                    <span className="label-text">Nombre del área</span>
+                    <span className="label-text font-semibold text-gray-700">📍 Nombre del Área</span>
                   </label>
-                   <input
+                  <input
                     type="text"
-                    className="input input-bordered w-full"
+                    placeholder="Ingresa el nombre del área"
+                    className="input input-bordered w-full focus:border-teal-500 transition"
                     value={areName}
                     onChange={(e) =>{setareName(e.target.value); if(e.target.value.trim() !== ""){sethabilitarEdicion(false)} else{sethabilitarEdicion(true)} }}
                   />
                 </div>
-              </>
+              </div>
             ) : (
-              <>
-                <div className="mb-4 space-y-4">
+              <div className="space-y-4 mb-6">
+                <div className="form-control">
                   <label className="label">
-                    <span className="label-text">Nombre de la máquina</span>
+                    <span className="label-text font-semibold text-gray-700">⚙️ Nombre de la Máquina</span>
                   </label>
                   <input
                     type="text"
-                    className="input input-bordered w-full"
+                    placeholder="Ingresa el nombre de la máquina"
+                    className="input input-bordered w-full focus:border-teal-500 transition"
                     value={maquinaEditTemp}
                     onChange={(e) =>{setmaquinaEditTemp(e.target.value); if(e.target.value.trim() !== ""){sethabilitarEdicion(false)} else{sethabilitarEdicion(true)} }}
                   />
-                    <label className="label">
-                    <span className="label-text">Nombre del área</span>
+                </div>
+
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text font-semibold text-gray-700">📍 Área Asignada</span>
                   </label>
                   <select
-                    className="select select-bordered w-full"
+                    className="select select-bordered w-full focus:border-teal-500 transition"
                     value={areaEditTemp}
                     onChange={(e)=>{setareaEditTemp(e.target.value); if(e.target.value.trim() !== ""){sethabilitarEdicion(false)} else{sethabilitarEdicion(true)};}}
                   >
-                    <option value="">Selecciona un área</option>
+                    <option value="">Selecciona un área...</option>
                     {areas.map((a) => (
-                      <option key={a.id} value={a.nombre} >{a.nombre}</option>
+                      <option key={a.id} value={a.nombre}>{a.nombre}</option>
                     ))}
                   </select>
-                  <label className="label">
-                    <span className="label-text">Imagen</span>
-                  </label>
-                  <div className="w-full">
-                    {imagenEditada ? (
-                      <div className="relative w-full h-64 bg-gray-100 rounded-lg overflow-hidden group">
-                        {typeof imagenEditada === 'string' ? (
-                          <img src={imagenEditada} alt="Imagen de máquina" className="w-full h-full object-contain" />
-                        ) : (
-                          <img src={URL.createObjectURL(imagenEditada)} alt="Imagen de máquina" className="w-full h-full object-contain" />
-                        )}
-                        <button
-                          type="button"
-                          className="cursor-pointer absolute inset-0 flex items-center justify-center bg-white bg-opacity-0 group-hover:bg-opacity-40 transition opacity-0 group-hover:opacity-40"
-                          onClick={() => {
-                            setimagenEditada(null);
-                            if (fileInputRefModal.current) {
-                              fileInputRefModal.current.value = "";
-                            }
-                            sethabilitarEdicion(true);
-                          }}
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="w-full">
-                        <input
-                          type="file"
-                          className="file-input file-input-bordered w-full"
-                          accept="image/*"
-                          ref={fileInputRefModal}
-                          onChange={(e) => {
-                            const file = e.target.files?.[0] || null;
-                            if (file) {
-                              setimagenEditada(file);
-                              sethabilitarEdicion(false);
-                            }
-                          }}
-                        />
-                        {imagenEditada && typeof imagenEditada === 'string' && (
-                          <p className="text-xs text-green-600 mt-1">Imagen cargada</p>
-                        )}
-                      </div>
-                    )}
-                  </div>
                 </div>
-              </>
+
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text font-semibold text-gray-700">🖼️ Imagen</span>
+                  </label>
+                  {imagenEditada ? (
+                    <div className="relative w-full h-48 bg-gray-100 rounded-lg overflow-hidden group border-2 border-dashed border-gray-300">
+                      {typeof imagenEditada === 'string' ? (
+                        <img src={imagenEditada} alt="Imagen de máquina" className="w-full h-full object-contain" />
+                      ) : (
+                        <img src={URL.createObjectURL(imagenEditada)} alt="Imagen de máquina" className="w-full h-full object-contain" />
+                      )}
+                      <button
+                        type="button"
+                        className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/40 transition opacity-0 group-hover:opacity-100 cursor-pointer"
+                        onClick={() => {
+                          setimagenEditada(null);
+                          if (fileInputRefModal.current) {
+                            fileInputRefModal.current.value = "";
+                          }
+                          sethabilitarEdicion(true);
+                        }}
+                        title="Haz clic para eliminar la imagen"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  ) : (
+                    <input
+                      type="file"
+                      className="file-input file-input-bordered w-full focus:file-input-success transition"
+                      accept="image/*"
+                      ref={fileInputRefModal}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0] || null;
+                        if (file) {
+                          setimagenEditada(file);
+                          sethabilitarEdicion(false);
+                        }
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
             )}
 
-            <div className="flex gap-2 justify-end">
-              <button className="btn btn-ghost" onClick={cerrarEdicion}>
-                Cancelar
+            {/* Footer */}
+            <div className="flex gap-3 justify-end pt-6 border-t border-gray-200">
+              <button 
+                className="btn btn-ghost gap-2 hover:bg-gray-200 transition" 
+                onClick={cerrarEdicion}
+              >
+                ✕ Cancelar
               </button>
-              <button className="btn btn-primary" disabled={habilitarEdicion} onClick={guardarEdicion}>
-                Guardar
+              <button 
+                className="btn bg-gradient-to-r from-teal-500 to-teal-600 text-white border-0 hover:from-teal-600 hover:to-teal-700 gap-2 transition shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed" 
+                disabled={habilitarEdicion} 
+                onClick={guardarEdicion}
+              >
+                ✓ Guardar
               </button>
             </div>
           </div>

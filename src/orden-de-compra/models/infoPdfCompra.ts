@@ -14,7 +14,7 @@ export interface InfoPdfCompra {
     };
     fechaRemision: string;
     Autoriza: string;
-    Destino: string;
+   
     itemSolicitados: {
         id: number;
         item: string;

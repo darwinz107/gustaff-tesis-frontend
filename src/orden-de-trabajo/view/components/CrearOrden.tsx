@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import Select from 'react-select';
 import { CalendarDate, CalendarMonth } from "cally";
 import "cally";
 import { areas, getAllCategorias, getAllCodByArea, getAllMaquinasByCod, getAllTipoTrabajo, getAllTipoTrabajoByCategoria, getLastSolicitud, registerSolicitudOrden } from "../../controller/api/orden-api";
@@ -7,10 +8,11 @@ import type { Codigo } from "../../models/codigos";
 import type { Maquina } from "../../models/maquinas";
 import type { SolicitudOrden } from "../../models/solicitudOrden";
 import { useNavigate } from "react-router-dom";
-import { getUsers } from "../../../user/controller/api/user-api";
+import { getUsers, getUsersSupervisores } from "../../../user/controller/api/user-api";
 
 export const CrearOrden = ({setcargarAuto,setsendId}) => {
 
+  const [usersSol, setusersSol] = useState<{name:string}[]>([])
   const [area, setarea] = useState<Area[]>([]);
   const [codigos, setcodigos] = useState<Codigo[]>([]);
   const [maquinas, setmaquinas] = useState<Maquina[]>([]);
@@ -36,6 +38,7 @@ export const CrearOrden = ({setcargarAuto,setsendId}) => {
   const [receptor, setreceptor] = useState("");
   const [tecnico, settecnico] = useState(null);
   const [showSuccess, setshowSuccess] = useState(false);
+  const [isPending, setisPending] = useState(false);
   
   // Estados para validaciones y alertas
   const [erroresCrearOrden, seterroresCrearOrden] = useState({});
@@ -53,6 +56,7 @@ export const CrearOrden = ({setcargarAuto,setsendId}) => {
   const validarTipoTrabajo = (valor) => !valor || valor === "..." ? "El tipo de trabajo es requerido" : "";
   const validarSolicitante = (valor) => !valor || valor === "..." ? "El solicitante es requerido" : "";
   const validarReceptor = (valor) => !valor || valor === "..." ? "El técnico 1 (receptor) es requerido" : "";
+  const validarDescripcion = (valor) => !valor || valor.trim() === "" ? "La descripción del trabajo es requerida" : "";
 
   // Validaciones de fechas y horas
   const validarFechaInicio = (valor) => !valor ? "La fecha de inicio es requerida" : "";
@@ -97,6 +101,9 @@ export const CrearOrden = ({setcargarAuto,setsendId}) => {
     const getAllUsers = async () => {
       const res = await getUsers();
       setusers(res);
+
+      const resSol = await getUsersSupervisores();
+      setusersSol(resSol);
     }  
     
     getAreas();
@@ -133,6 +140,12 @@ const getCodigos = async () => {
       const data = await getAllMaquinasByCod(selectCodigo);
        
         setmaquinas(data);
+        // Si hay solo una máquina, asignarla automáticamente
+        if (data && data.length === 1) {
+          setselectMaquina(data[0]?.nombre || "");
+        } else {
+          setselectMaquina("");
+        }
       }
       getMaquinas();
   }, [selectCodigo])
@@ -162,6 +175,7 @@ const getCodigos = async () => {
       maquina: validarMaquina(selectMaquina),
       categoria: validarCategoria(especificacion[0]),
       tipoTrabajo: validarTipoTrabajo(especificacion[1]),
+      descripcion: validarDescripcion(especificacion[2]),
       solicitante: validarSolicitante(solicitante),
       receptor: validarReceptor(receptor),
       fechaInicio: validarFechaInicio(tiempos[0]),
@@ -183,6 +197,7 @@ const getCodigos = async () => {
       return;
     }
 
+    setisPending(true);
     try {
        const infoSolicitud:SolicitudOrden ={
       fechaInicio:tiempos[0],
@@ -203,6 +218,7 @@ const getCodigos = async () => {
     console.log(infoSolicitud);
     const res = await registerSolicitudOrden(infoSolicitud);
     
+
     if(res.validate){
      
       
@@ -234,6 +250,8 @@ const getCodigos = async () => {
       setTimeout(() => {
         setshowErrorCrearOrden(false);
       }, 3000);
+    }finally{
+      setisPending(false);
     }
 
   }
@@ -303,231 +321,287 @@ const getCodigos = async () => {
       </div>
     </dialog>
 
-    <div className="max-w-4xl mx-auto p-6">
-      <form className="space-y-6" onSubmit={(e) => { addSolicitudOrden(e); }}>
+    <div className="w-full h-full rounded-2xl border border-gray-200 bg-white shadow-lg">
+      <div className="bg-gradient-to-r from-green-500 to-green-600 w-full py-4 rounded-t-2xl border-b border-green-200 px-6">
+        <h2 className="font-bold text-white text-lg">📋 Crear Orden de Trabajo</h2>
+      </div>
+
+      <form className="p-6 space-y-6" onSubmit={(e) => { addSolicitudOrden(e); }}>
         
-        <div className="card bg-base-100 shadow-lg rounded-2xl p-4">
-          <div className="card-body p-0">
-            <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
-              Tiempos de trabajo
-            </h2>
-
-            <div className="space-y-6">
-              <div>
-                <label className="text-sm font-medium mb-3 block">Fecha y hora planificada</label>
-                <div className="grid grid-cols-3 gap-3">
-                  <div>
-                    <input 
-                      type="date" 
-                      className={`input input-sm w-full ${erroresCrearOrden.fechaInicio ? 'input-error' : ''}`}
-                      value={tiempos[0] || ''} 
-                      onChange={(e)=>{const arr = tiempos; arr[0] = e.target.value; settiempos(arr); seterroresCrearOrden({...erroresCrearOrden, fechaInicio: validarFechaInicio(e.target.value), coherenciaFechas: validarCoherenciaFechas(e.target.value, tiempos[1], tiempos[2], tiempos[3])});}} 
-                    />
-                    <div className="h-5">{erroresCrearOrden.fechaInicio && <p className="text-red-500 text-xs">{erroresCrearOrden.fechaInicio}</p>}</div>
-                  </div>
-
-                  <div>
-                    <input
-                      onChange={(e) => { const arr = tiempos; arr[1] = e.target.value; settiempos(arr); seterroresCrearOrden({...erroresCrearOrden, horaInicio: validarHoraInicio(e.target.value), coherenciaFechas: validarCoherenciaFechas(tiempos[0], e.target.value, tiempos[2], tiempos[3])}); }}
-                      type="time"
-                      className={`input input-sm w-full ${erroresCrearOrden.horaInicio ? 'input-error' : ''}`}
-                      value={tiempos[1] || ''}
-                    />
-                    <div className="h-5">{erroresCrearOrden.horaInicio && <p className="text-red-500 text-xs">{erroresCrearOrden.horaInicio}</p>}</div>
-                  </div>
-
-                  <div>
-                    <div className="flex items-center gap-1 mb-1">
-                      <input
-                        onChange={(e) => { const arr = tiempos; arr[2] = e.target.value; settiempos(arr); seterroresCrearOrden({...erroresCrearOrden, horaFin: validarHoraFin(e.target.value), coherenciaFechas: validarCoherenciaFechas(tiempos[0], tiempos[1], e.target.value, tiempos[3])}); }}
-                        type="time"
-                        className={`input input-sm w-full ${erroresCrearOrden.horaFin ? 'input-error' : ''}`}
-                        value={tiempos[2] || ''}
-                      />
-                      <span className="text-xs opacity-70 whitespace-nowrap">Est.</span>
-                    </div>
-                    <div className="h-5">{erroresCrearOrden.horaFin && <p className="text-red-500 text-xs">{erroresCrearOrden.horaFin}</p>}</div>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium mb-3 block">Fecha estimada de finalización</label>
-                <div className="flex gap-3">
-                  <div className="flex-1">
-                    <input 
-                      type="date" 
-                      className={`input input-sm w-full ${erroresCrearOrden.fechaFin ? 'input-error' : ''}`}
-                      value={tiempos[3] || ''} 
-                      onChange={(e)=>{const arr = tiempos; arr[3] = e.target.value; settiempos(arr); seterroresCrearOrden({...erroresCrearOrden, fechaFin: validarFechaFin(e.target.value), coherenciaFechas: validarCoherenciaFechas(tiempos[0], tiempos[1], tiempos[2], e.target.value)});}} 
-                    />
-                    <div className="h-5">{erroresCrearOrden.fechaFin && <p className="text-red-500 text-xs">{erroresCrearOrden.fechaFin}</p>}</div>
-                  </div>
-                </div>
-                <div className="h-5 mt-2">{erroresCrearOrden.coherenciaFechas && <p className="text-red-500 text-xs">{erroresCrearOrden.coherenciaFechas}</p>}</div>
-              </div>
+        {/* Tiempos de Trabajo */}
+        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-700 mb-4 pb-3 border-b border-green-200">⏱️ Tiempos de Trabajo</h3>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+            <div>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Fecha Inicio</label>
+              <input 
+                type="date" 
+                className={`input input-sm input-bordered w-full mt-2 focus:input-success rounded-lg ${erroresCrearOrden.fechaInicio ? 'input-error' : ''}`}
+                value={tiempos[0] || ''} 
+                onChange={(e)=>{const arr = tiempos; arr[0] = e.target.value; settiempos(arr); seterroresCrearOrden({...erroresCrearOrden, fechaInicio: validarFechaInicio(e.target.value), coherenciaFechas: validarCoherenciaFechas(e.target.value, tiempos[1], tiempos[2], tiempos[3])});}} 
+              />
+              {erroresCrearOrden.fechaInicio && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.fechaInicio}</p>}
             </div>
+
+            <div>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Hora Inicio</label>
+              <input
+                onChange={(e) => { const arr = tiempos; arr[1] = e.target.value; settiempos(arr); seterroresCrearOrden({...erroresCrearOrden, horaInicio: validarHoraInicio(e.target.value), coherenciaFechas: validarCoherenciaFechas(tiempos[0], e.target.value, tiempos[2], tiempos[3])}); }}
+                type="time"
+                className={`input input-sm input-bordered w-full mt-2 focus:input-success rounded-lg ${erroresCrearOrden.horaInicio ? 'input-error' : ''}`}
+                value={tiempos[1] || ''}
+              />
+              {erroresCrearOrden.horaInicio && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.horaInicio}</p>}
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Fecha Finalización</label>
+              <input 
+                type="date" 
+                className={`input input-sm input-bordered w-full mt-2 focus:input-success rounded-lg ${erroresCrearOrden.fechaFin ? 'input-error' : ''}`}
+                value={tiempos[3] || ''} 
+                onChange={(e)=>{const arr = tiempos; arr[3] = e.target.value; settiempos(arr); seterroresCrearOrden({...erroresCrearOrden, fechaFin: validarFechaFin(e.target.value), coherenciaFechas: validarCoherenciaFechas(tiempos[0], tiempos[1], tiempos[2], e.target.value)});}} 
+              />
+              {erroresCrearOrden.fechaFin && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.fechaFin}</p>}
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Hora Fin Estimada</label>
+              <input
+                onChange={(e) => { const arr = tiempos; arr[2] = e.target.value; settiempos(arr); seterroresCrearOrden({...erroresCrearOrden, horaFin: validarHoraFin(e.target.value), coherenciaFechas: validarCoherenciaFechas(tiempos[0], tiempos[1], e.target.value, tiempos[3])}); }}
+                type="time"
+                className={`input input-sm input-bordered w-full mt-2 focus:input-success rounded-lg ${erroresCrearOrden.horaFin ? 'input-error' : ''}`}
+                value={tiempos[2] || ''}
+              />
+              {erroresCrearOrden.horaFin && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.horaFin}</p>}
+            </div>
+          </div>
+          {erroresCrearOrden.coherenciaFechas && <p className="text-red-500 text-xs mt-2">{erroresCrearOrden.coherenciaFechas}</p>}
+        </div>
+
+        {/* Ubicación */}
+        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-700 mb-4 pb-3 border-b border-green-200">📍 Ubicación</h3>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Área</label>
+              <Select
+                options={Array.isArray(area) ? area.map(a => ({ value: a?.nombre, label: a?.nombre })) : []}
+                value={selectArea ? { value: selectArea, label: selectArea } : null}
+                onChange={(opt) => {
+                  setselectArea(opt?.value || "");
+                  // Limpiar código y máquina cuando se limpia el área
+                  if (!opt?.value) {
+                    setselectCodigo("");
+                    setselectMaquina("");
+                  } else {
+                    setselectMaquina(""); // Limpiar máquina cuando se selecciona nueva área
+                  }
+                  seterroresCrearOrden({...erroresCrearOrden, area: validarArea(opt?.value || "")});
+                }}
+                placeholder="Seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
+              {erroresCrearOrden.area && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.area}</p>}
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Código</label>
+              <Select
+                isDisabled={!selectArea}
+                options={Array.isArray(codigos) ? codigos.map(c => ({ value: c?.cod, label: c?.cod })) : []}
+                value={selectCodigo ? { value: selectCodigo, label: selectCodigo } : null}
+                onChange={(opt) => {
+                  setselectCodigo(opt?.value || "");
+                  // Limpiar máquina cuando se cambia el código
+                  setselectMaquina("");
+                  seterroresCrearOrden({...erroresCrearOrden, codigo: validarCodigo(opt?.value || "")});
+                }}
+                placeholder="Seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
+              {erroresCrearOrden.codigo && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.codigo}</p>}
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Máquina</label>
+              <input
+                type="text"
+                disabled
+                value={selectMaquina}
+                className="input input-sm input-bordered w-full mt-2 focus:input-success rounded-lg bg-gray-50"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Equipos / Piezas</label>
+            <textarea
+              className="textarea textarea-sm textarea-bordered w-full mt-2 focus:textarea-success rounded-lg"
+              placeholder="Describa los equipos o piezas a trabajar..."
+              rows={3}
+              onChange={(e) => setespecPiezas(e.target.value)}
+            />
           </div>
         </div>
 
-        
-        <div className="card bg-base-100 shadow-lg rounded-2xl p-4">
-          <div className="card-body p-0">
-            <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
-              Ubicación
-            </h2>
-
-            <div className="grid gap-4 md:grid-cols-3 items-end">
-              <div className="form-control">
-                <label className="label p-0 pb-1"><span className="label-text">Area</span></label>
-                <select
-                  defaultValue={'...'}
-                  className={`select select-bordered ${erroresCrearOrden.area ? 'select-error' : ''}`}
-                  onChange={(e) => {setselectArea(e.target.value); seterroresCrearOrden({...erroresCrearOrden, area: validarArea(e.target.value)});}}
-                >
-                  <option disabled={true}>...</option>
-                  {area?.map((a) => <option key={a?.nombre} value={a?.nombre}>{a?.nombre}</option>)}
-                </select>
-                <div className="h-5">{erroresCrearOrden.area && <p className="text-red-500 text-sm">{erroresCrearOrden.area}</p>}</div>
-              </div>
-
-              <div className="form-control">
-                <label className="label p-0 pb-1"><span className="label-text">Codigo</span></label>
-                <select
-                  ref={select1}
-                  defaultValue={'...'}
-                  className={`select select-bordered ${erroresCrearOrden.codigo ? 'select-error' : ''}`}
-                  onChange={(e) => {setselectCodigo(e.target.value); seterroresCrearOrden({...erroresCrearOrden, codigo: validarCodigo(e.target.value)});}}
-                >
-                  <option disabled={true}>...</option>
-                  {codigos?.map((c) => <option key={c?.cod} value={c?.cod}>{c?.cod}</option>)}
-                </select>
-                <div className="h-5">{erroresCrearOrden.codigo && <p className="text-red-500 text-sm">{erroresCrearOrden.codigo}</p>}</div>
-              </div>
-
-              <div className="form-control">
-                <label className="label p-0 pb-1"><span className="label-text">Maquina</span></label>
-                <select
-                  defaultValue={'...'}
-                  className={`select select-bordered ${erroresCrearOrden.maquina ? 'select-error' : ''}`}
-                  onChange={(e) => {setselectMaquina(e.target.value); seterroresCrearOrden({...erroresCrearOrden, maquina: validarMaquina(e.target.value)});}}
-                >
-                  <option disabled={true}>...</option>
-                  {maquinas?.map((m) => <option key={m?.nombre} value={m?.nombre}>{m?.nombre}</option>)}
-                </select>
-                <div className="h-5">{erroresCrearOrden.maquina && <p className="text-red-500 text-sm">{erroresCrearOrden.maquina}</p>}</div>
-              </div>
+        {/* Especificación del Trabajo */}
+        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-700 mb-4 pb-3 border-b border-green-200">🔧 Especificación del Trabajo</h3>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Categoría</label>
+              <Select
+                options={Array.isArray(categorias) ? categorias.map(c => ({ value: c?.nombre, label: c?.nombre })) : []}
+                value={especificacion[0] ? { value: especificacion[0], label: especificacion[0] } : null}
+                onChange={(opt) => {
+                  const nueva = [...especificacion];
+                  nueva[0] = opt?.value || "";
+                  setespecificacion(nueva);
+                  seterroresCrearOrden({...erroresCrearOrden, categoria: validarCategoria(opt?.value || "")});
+                }}
+                placeholder="Seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
+              {erroresCrearOrden.categoria && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.categoria}</p>}
             </div>
 
-            <div className="mt-4">
-              <label className="label p-0 pb-1"><span className="label-text">Equipos/Piezas</span></label>
-              <textarea
-                className="textarea textarea-bordered w-full"
-                onChange={(e) => setespecPiezas(e.target.value)}
+            <div>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Tipo de Trabajo</label>
+              <Select
+                options={Array.isArray(tipoTrabajos) ? tipoTrabajos.map(t => ({ value: t?.tipo, label: t?.tipo })) : []}
+                value={especificacion[1] ? { value: especificacion[1], label: especificacion[1] } : null}
+                onChange={(opt) => {
+                  const nueva = [...especificacion];
+                  nueva[1] = opt?.value || "";
+                  setespecificacion(nueva);
+                  seterroresCrearOrden({...erroresCrearOrden, tipoTrabajo: validarTipoTrabajo(opt?.value || "")});
+                }}
+                placeholder="Seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
+              {erroresCrearOrden.tipoTrabajo && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.tipoTrabajo}</p>}
+            </div>
+
+            <div className="lg:col-span-1"></div>
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Descripción del Trabajo</label>
+            <textarea
+              className="textarea textarea-sm textarea-bordered w-full mt-2 focus:textarea-success rounded-lg"
+              placeholder="Describa el trabajo a realizar..."
+              rows={3}
+              onChange={(e) => {
+                const nueva = [...especificacion];
+                nueva[2] = e.target.value;
+                setespecificacion(nueva);
+              }}
+              value={especificacion[2]}
+            />
+            {erroresCrearOrden.descripcion && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.descripcion}</p>}
+          </div>
+        </div>
+
+        {/* Personal */}
+        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-700 mb-4 pb-3 border-b border-green-200">👥 Personal</h3>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Solicitante</label>
+              <Select
+                options={Array.isArray(usersSol) ? usersSol.map(u => ({ value: u.name, label: u.name })) : []}
+                value={solicitante ? { value: solicitante, label: solicitante } : null}
+                onChange={(opt) => {setsolicitante(opt?.value || ""); seterroresCrearOrden({...erroresCrearOrden, solicitante: validarSolicitante(opt?.value || "")})}}
+                placeholder="Seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
+              {erroresCrearOrden.solicitante && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.solicitante}</p>}
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Técnico 1</label>
+              <Select
+                options={Array.isArray(users) ? users.map(u => ({ value: u.name, label: u.name })) : []}
+                value={receptor ? { value: receptor, label: receptor } : null}
+                onChange={(opt) => {setreceptor(opt?.value || ""); seterroresCrearOrden({...erroresCrearOrden, receptor: validarReceptor(opt?.value || "")})}}
+                placeholder="Seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
+              />
+              {erroresCrearOrden.receptor && <p className="text-red-500 text-xs mt-1">{erroresCrearOrden.receptor}</p>}
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Técnico 2</label>
+              <Select
+                options={Array.isArray(users) ? users.map(u => ({ value: u.name, label: u.name })) : []}
+                value={tecnico ? { value: tecnico, label: tecnico } : null}
+                onChange={(opt) => settecnico(opt?.value || "")}
+                placeholder="Seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                }}
               />
             </div>
           </div>
         </div>
 
-        
-        <div className="card bg-base-100 shadow-lg rounded-2xl p-4">
-          <div className="card-body p-0">
-            <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
-              Especificación del trabajo
-            </h2>
-
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="form-control">
-                <label className="label p-0 pb-1"><span className="label-text">Categoria</span></label>
-                <select
-                  defaultValue={'...'}
-                  className={`select select-bordered ${erroresCrearOrden.categoria ? 'select-error' : ''}`}
-                  onChange={(e) => {
-                    const nueva = [...especificacion];
-                    nueva[0] = e.target.value;
-                    setespecificacion(nueva);
-                    seterroresCrearOrden({...erroresCrearOrden, categoria: validarCategoria(e.target.value)});
-                  }}
-                >
-                  <option disabled={true}>...</option>
-                  {categorias.map((c) => <option key={c.nombre} value={c.nombre}>{c.nombre}</option>)}
-                </select>
-                <div className="h-5">{erroresCrearOrden.categoria && <p className="text-red-500 text-sm">{erroresCrearOrden.categoria}</p>}</div>
-              </div>
-
-              <div className="form-control">
-                <label className="label p-0 pb-1"><span className="label-text">Tipo de trabajo</span></label>
-                <select
-                  defaultValue={'...'}
-                  className={`select select-bordered ${erroresCrearOrden.tipoTrabajo ? 'select-error' : ''}`}
-                  onChange={(e) => {
-                    const nueva = [...especificacion];
-                    nueva[1] = e.target.value;
-                    setespecificacion(nueva);
-                    seterroresCrearOrden({...erroresCrearOrden, tipoTrabajo: validarTipoTrabajo(e.target.value)});
-                  }}
-                >
-                  <option disabled={true}>...</option>
-                  {tipoTrabajos.map((t) => <option key={t.tipo} value={t.tipo}>{t.tipo}</option>)}
-                </select>
-                <div className="h-5">{erroresCrearOrden.tipoTrabajo && <p className="text-red-500 text-sm">{erroresCrearOrden.tipoTrabajo}</p>}</div>
-              </div>
-
-              <div className="form-control">
-                <label className="label p-0 pb-1"><span className="label-text">Descripcion del trabajo</span></label>
-                <textarea
-                  className="textarea textarea-bordered h-24"
-                  onChange={(e) => {
-                    const nueva = [...especificacion];
-                    nueva[2] = e.target.value;
-                    setespecificacion(nueva);
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        
-        <div className="card bg-base-100 shadow-lg rounded-2xl p-4">
-          <div className="card-body p-0">
-            <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">
-              Personal
-            </h2>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <label className="label p-0 pb-1"><span className="label-text">Solicitante</span></label>
-                <select className={`select select-bordered w-full ${erroresCrearOrden.solicitante ? 'select-error' : ''}`} defaultValue={"..."} onChange={(e) => {setsolicitante(e.target.value); seterroresCrearOrden({...erroresCrearOrden, solicitante: validarSolicitante(e.target.value)})}}>
-                  <option defaultChecked={true}>...</option>
-                  {users.map((u) => <option key={u.name} value={u.name}>{u.name}</option>)}
-                </select>
-                <div className="h-5">{erroresCrearOrden.solicitante && <p className="text-red-500 text-sm">{erroresCrearOrden.solicitante}</p>}</div>
-              </div>
-
-              <div>
-                <label className="label p-0 pb-1"><span className="label-text">Tecnico 1</span></label>
-                <select className={`select select-bordered w-full ${erroresCrearOrden.receptor ? 'select-error' : ''}`} defaultValue={"..."} onChange={(e) => {setreceptor(e.target.value); seterroresCrearOrden({...erroresCrearOrden, receptor: validarReceptor(e.target.value)})}}>
-                  <option defaultChecked={true} disabled={true}>...</option>
-                  {users.map((u) => <option key={u.name} value={u.name}>{u.name}</option>)}
-                </select>
-                <div className="h-5">{erroresCrearOrden.receptor && <p className="text-red-500 text-sm">{erroresCrearOrden.receptor}</p>}</div>
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="label p-0 pb-1"><span className="label-text">Tecnico 2</span></label>
-                <select className="select select-bordered w-full" defaultValue={"..."} onChange={(e) => settecnico(e.target.value)}>
-                  <option defaultChecked={true} disabled={true}>...</option>
-                  {users.map((u) => <option key={u.name} value={u.name}>{u.name}</option>)}
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        
-        <div className="flex justify-center">
-          <button className="btn btn-primary btn-lg px-10" type="submit">Crear</button>
+        {/* Botón de envío */}
+        <div className="flex justify-end gap-3">
+       
+          <button
+            type="submit"
+            className="btn btn-md bg-green-500 hover:bg-green-600 text-white border-0 gap-2"
+          >
+           {isPending ? (
+    // Spinner de DaisyUI
+    <span className="loading loading-spinner loading-sm"></span>
+  ) : (
+    // Icono original
+    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+      <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+    </svg>
+  )}
+  {isPending ? "Procesando..." : "Crear Orden"}
+           
+          </button>
         </div>
       </form>
     </div>

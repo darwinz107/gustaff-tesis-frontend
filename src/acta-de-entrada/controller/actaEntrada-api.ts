@@ -4,7 +4,7 @@ import type { CreateProovedor } from "../models/create-proovedor";
 import type { FiltrarActaEntradaDto } from "../models/filtrarActaEntrada";
 import type { InfoPdfEntrada } from "../models/infoPdfEntrada";
 
-const route = "http://localhost:3000/";
+const route = import.meta.env.VITE_API_URL || "http://localhost:3000/";
 
 
         export const createActaEntrada = async (id:number,createActaEntradaDto:CreateActaEntradaDto): Promise<{msj:string, validate:boolean}> => {
@@ -119,7 +119,7 @@ const route = "http://localhost:3000/";
   }
 };
 
-        export const updateActaEntrada = async (id: number, updateData: { factura?: string; provedorId?: number; solicitudCompraId?: number }): Promise<{ msj: string; validate: boolean }> => {
+        export const updateActaEntrada = async (id: number, updateData: { factura?: string; provedorId?: number; solicitudCompraId?: number; recibe?: number }): Promise<{ msj: string; validate: boolean }> => {
   try {
     const response: Response = await fetch(`${route}inventario/acta-entrada/${id}`, {
       method: "PATCH",

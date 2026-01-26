@@ -74,7 +74,7 @@ export const SignIn = () => {
           <input type="email" className="input" placeholder="Email" onChange={(e)=>setuser(e.target.value)}/>
           <label className="label">Password</label>
           <input type="password" className="input" placeholder="Password" onChange={(e)=>setpassword(e.target.value)}/>
-          <div><a className="link link-hover">Forgot password?</a></div>
+          
           <button className="btn btn-neutral mt-4" onClick={(e)=>validateLogin(e)}>Login</button>
         </fieldset>
       </div>

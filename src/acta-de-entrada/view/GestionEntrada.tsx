@@ -1,7 +1,10 @@
 import React, { act, useEffect, useState, useRef } from 'react'
+import Select from 'react-select';
 import type { InfoPdfEntrada } from '../models/infoPdfEntrada';
 import { findAllRegistroEntrada, filtrarActasEntrada, findRegistroEntradaById, findProovedorByNombre, findProovedores, updateActaEntrada, deleteActaEntrada } from '../controller/actaEntrada-api';
 import { solMaterialShort } from '../../orden-de-compra/controller/ordenCompraApi';
+import type { Users } from '../../admin/models/users';
+import { getUsers } from '../../user/controller/api/user-api';
 
 export const GestionEntrada = () => {
   const [actas, setactas] = useState<InfoPdfEntrada[]>([]);
@@ -21,6 +24,8 @@ export const GestionEntrada = () => {
    const [showSuccess, setshowSuccess] = useState(false);
    const [showError, setshowError] = useState(false);
    const [mensajeError, setmensajeError] = useState("");
+   const [users, setusers] = useState<Users[]>([]);
+   const [recibe, setrecibe] = useState(0);
 
 const dialog = useRef<HTMLDialogElement>(null);
 
@@ -29,6 +34,12 @@ const llenarActas = async() => {
       console.log(res);
       setactas(res || []);
     }
+
+       const getAllUsers = async () => {
+                   const res = await getUsers();
+                   console.log(res);
+                   setusers(res);
+                 } ;
 
  const solicitudesMaterial = async()=>{
      const res = await solMaterialShort();
@@ -47,6 +58,7 @@ const llenarActas = async() => {
     llenarActas();
     solicitudesMaterial();
     metodoExecProovedores();
+    getAllUsers();
   }, []);
 
   const aplicarFiltros = async () => {
@@ -81,6 +93,7 @@ const llenarActas = async() => {
     console.log(res);
     if(res){
       setacta(res);
+       setrecibe(res.recibe?res.recibe.id :0);
       setfacturaEditada(res.factura);
       setprovedorIdEditada(res.proovedor?.id);
       setsolicitudCompraIdEditada(res.numSolicitudCompra?.id);
@@ -96,7 +109,7 @@ const llenarActas = async() => {
   const guardarCambios = async() => {
     if(!acta) return;
     try {
-      const updateData: { factura?: string; provedorId?: number; solicitudCompraId?: number } = {};
+      const updateData: { factura?: string; provedorId?: number; solicitudCompraId?: number; recibe:number } = {};
       
       if(facturaEditada !== acta.factura) {
         updateData.factura = facturaEditada;
@@ -108,6 +121,10 @@ const llenarActas = async() => {
         updateData.solicitudCompraId = solicitudCompraIdEditada;
       }
 
+      if(recibe !== acta.recibe.id && recibe !== 0) {
+        updateData.recibe = recibe;
+      }
+
       const res = await updateActaEntrada(acta.id, updateData);
       if(res.validate) {
         setshowSuccess(true);
@@ -117,6 +134,7 @@ const llenarActas = async() => {
           llenarActas();
           setventanaEmergente(false);
           setacta(null);
+          setrecibe(0);
         }, 1000);
       } else {
         setmensajeError("Error: " + res.msj);
@@ -193,66 +211,72 @@ const llenarActas = async() => {
         </div>
       </dialog>
 
-      <div className="min-w-[70%] min-h-[60%] rounded-xl border border-gray-200 m-4 bg-white shadow-sm">
-        <div className="bg-gray-100 w-full h-12 flex items-center justify-between rounded-t-lg border-b px-4">
-          <p className="font-semibold text-gray-700">Listado de actas de entrada</p>
-          <div className="flex items-center gap-2">
-            <button className="btn btn-sm btn-ghost" onClick={() => llenarActas()}>Refrescar</button>
-            <button className="btn btn-sm btn-ghost" onClick={limpiarFiltros}>Limpiar</button>
-            <button className="btn btn-sm  btn-primary" onClick={aplicarFiltros}>Aplicar filtros</button>
+      <div className="w-full h-full rounded-2xl border border-gray-200 bg-white shadow-lg">
+        <div className="bg-gradient-to-r from-cyan-500 to-cyan-600 w-full py-4 rounded-t-2xl border-b border-cyan-200 px-6">
+          <h2 className="font-bold text-white text-lg">📥 Actas de Entrada</h2>
+        </div>
+
+        <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-4 bg-gray-50 border-b border-gray-200">
+          <div className="col-span-2 grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-semibold text-gray-600">Nº Acta</label>
+              <input className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroNumActa} onChange={(e)=>setFiltroNumActa(e.target.value)} />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-semibold text-gray-600">Factura</label>
+              <input className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroFactura} onChange={(e)=>setFiltroFactura(e.target.value)} />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-semibold text-gray-600">Recibe</label>
+              <input className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroRecibe} onChange={(e)=>setFiltroRecibe(e.target.value)} />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-semibold text-gray-600">Proveedor</label>
+              <input className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroProveedor} onChange={(e)=>setFiltroProveedor(e.target.value)} />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-semibold text-gray-600">Fecha</label>
+              <input type="date" className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroFecha} onChange={(e)=>setFiltroFecha(e.target.value)} />
+            </div>
           </div>
         </div>
 
-        <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-3">
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">N.Acta</label>
-            <input className="input input-sm" value={filtroNumActa} onChange={(e)=>setFiltroNumActa(e.target.value)} />
-          </div>
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Factura</label>
-            <input className="input input-sm" value={filtroFactura} onChange={(e)=>setFiltroFactura(e.target.value)} />
-          </div>
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Recibe</label>
-            <input className="input input-sm" value={filtroRecibe} onChange={(e)=>setFiltroRecibe(e.target.value)} />
-          </div>
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Proveedor</label>
-            <input className="input input-sm" value={filtroProveedor} onChange={(e)=>setFiltroProveedor(e.target.value)} />
-          </div>
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Fecha</label>
-            <input type="date" className="input input-sm" value={filtroFecha} onChange={(e)=>setFiltroFecha(e.target.value)} />
-          </div>
+        <div className="px-6 py-3 flex items-center justify-end gap-2 bg-gray-50 border-b border-gray-200">
+          <button className="btn btn-sm btn-ghost hover:btn-primary gap-2" onClick={() => llenarActas()}>🔄 Refrescar</button>
+          <button className="btn btn-sm btn-ghost hover:btn-warning gap-2" onClick={limpiarFiltros}>✕ Limpiar</button>
+          <button className="btn btn-sm btn-primary gap-2" onClick={aplicarFiltros}>✓ Aplicar</button>
         </div>
 
-        <div className="overflow-x-auto p-5">
-          <div className="overflow-hidden border rounded-lg">
+        <div className="px-6 pb-6 pt-4">
+          <div className="overflow-hidden border border-gray-200 rounded-xl shadow-sm">
             <div className="max-h-[520px] overflow-auto">
               <table className="table w-full">
-                <thead className="bg-white sticky top-0">
-                  <tr className="text-sm text-left text-gray-600">
-                    <th className="px-4 py-3">N.Acta de entrada</th>
-                    <th className="px-4 py-3">Fecha de remisión</th>
+                <thead className="bg-gradient-to-r from-cyan-50 to-cyan-100 sticky top-0 z-20">
+                  <tr className="text-sm text-left text-gray-700 font-semibold">
+                    <th className="px-4 py-3">Nº Acta</th>
+                    <th className="px-4 py-3">Fecha remisión</th>
                     <th className="px-4 py-3">Factura</th>
-                    <th className="px-4 py-3">Recibe</th>
-                    <th className="px-4 py-3">Destino</th>
+                    <th className="px-4 py-3">Proveedor</th>
+                    <th className="px-4 py-3">Descripción</th>
                     <th className="px-4 py-3 text-center">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   {actas.map((u, i) => (
-                    <tr key={i} className="hover:bg-gray-50">
-                      <td className="px-4 py-3">{u.numActa}</td>
-                      <td className="px-4 py-3">{u.fechaRemision ? u.fechaRemision.split("T")[0] : ""}</td>
-                      <td className="px-4 py-3">{u.factura}</td>
-                      <td className="px-4 py-3">{u.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.name}</td>
-                      <td className="px-4 py-3">{u.numSolicitudCompra?.Destino}</td>
+                    <tr key={i} className="border-t border-gray-100 hover:bg-cyan-50 transition-colors">
+                      <td className="px-4 py-3 font-semibold text-gray-800">{u.numActa}</td>
+                      <td className="px-4 py-3 text-gray-700">{u.fechaRemision ? u.fechaRemision.split("T")[0] : ""}</td>
+                      <td className="px-4 py-3 text-gray-700">{u.factura}</td>
+                      <td className="px-4 py-3 text-gray-700">{u.proovedor?.nombreComercial ?? "N/A"}</td>
+                      <td className="px-4 py-3 text-gray-700 text-sm">{u.numSolicitudCompra?.numOrdenTrabajo?.DescripcionTrabajo ?? "N/A"}</td>
                       <td className="px-4 py-3 text-center">
-                        <div className="flex gap-2 justify-center">
-                          <button className="btn btn-ghost btn-xs" onClick={()=>llenarActaById(u.id)}>Ver detalles</button>
-                          <button className="btn btn-ghost btn-xs" onClick={() => {setacta(u); dialog.current?.showModal();}}>Eliminar</button>
-                          <button className="btn btn-ghost btn-xs" onClick={()=>cargarPdf(u.id)}>Ver PDF</button>
+                        <div className="flex gap-2 justify-center flex-wrap">
+                          <button className={`btn btn-sm btn-info btn-outline gap-1 tooltip ${i === 0 ? "tooltip-bottom" : ""}`} data-tip="Ver detalles" onClick={()=>llenarActaById(u.id)}>👁️</button>
+                          <button className={`btn btn-sm btn-error btn-outline gap-1 tooltip ${i === 0 ? "tooltip-bottom" : ""}`} data-tip="Eliminar" onClick={() => {setacta(u); dialog.current?.showModal();}}>🗑️</button>
+                          <button className={`btn btn-sm btn-success btn-outline gap-1 tooltip ${i === 0 ? "tooltip-bottom" : ""}`} data-tip="Descargar PDF" onClick={()=>cargarPdf(u.id)}>📄</button>
                         </div>
                       </td>
                     </tr>
@@ -273,91 +297,133 @@ const llenarActas = async() => {
       </div>
       {acta && (
        <div className={`z-50 fixed inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaEmergente ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="relative border border-gray-300 w-11/12 max-w-6xl h-[85vh] rounded-md bg-white shadow-lg overflow-auto">
-          <div className="w-full h-[12%] flex justify-between p-5 border-b">
-            <div className="font-medium text-gray-700">Detalle de orden de materiales</div>
-            <div onClick={() => { setventanaEmergente(!ventanaEmergente); }} className="cursor-pointer">❌</div>
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+        <div className="relative border border-gray-300 w-11/12 max-w-6xl h-[85vh] rounded-2xl bg-white shadow-2xl overflow-hidden flex flex-col">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-cyan-500 to-cyan-600 w-full py-4 px-6 flex justify-between items-center border-b border-cyan-200">
+            <h2 className="font-bold text-white text-lg">📥 Detalles de Acta de Entrada</h2>
+            <button onClick={() => { setventanaEmergente(!ventanaEmergente); }} className="btn btn-circle btn-ghost btn-sm text-white hover:bg-cyan-700">✕</button>
           </div>
 
-          <div className="w-full h-[76%] px-6 py-4 flex flex-col">
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <p className="text-xs text-gray-500">N.Acta</p>
-                <input type="text" disabled className="input w-full mt-1" value={acta?.numActa} />
+          {/* Content */}
+          <div className="w-full flex-1 overflow-auto px-6 py-6 bg-gray-50">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6 bg-white p-6 rounded-xl border border-gray-200">
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Nº Acta</label>
+                <input type="text" disabled className="input input-sm input-bordered rounded-lg bg-gray-100 text-gray-700" value={acta?.numActa} />
               </div>
 
-              <div>
-                <p className="text-xs text-gray-500">Fecha de remision</p>
-                <input type="date" disabled value={acta?.fechaRemision ? acta.fechaRemision.split("T")[0] : ""}/>
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Fecha de Remisión</label>
+                <input type="date" disabled className="input input-sm input-bordered rounded-lg bg-gray-100 text-gray-700" value={acta?.fechaRemision ? acta.fechaRemision.split("T")[0] : ""}/>
               </div>
 
-               <div>
-                <p className="text-xs text-gray-500">Factura</p>
-                <input type="text" disabled={!habilitarEdicion}  className="input w-full mt-1" value={facturaEditada} onChange={(e)=>setfacturaEditada(e.target.value)} />
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Factura</label>
+                <input type="text" disabled={!habilitarEdicion} className="input input-sm input-bordered focus:input-primary rounded-lg disabled:bg-gray-100 disabled:text-gray-700" value={facturaEditada} onChange={(e)=>setfacturaEditada(e.target.value)} />
               </div>
 
-              <div>
-                <p className="text-xs text-gray-500">Proovedor</p>
-                <select disabled={!habilitarEdicion} value={provedorIdEditada ?? 0} onChange={(e)=>setprovedorIdEditada(Number(e.target.value))} className="select w-full mt-1"
-                  >
-                  <option disabled>...</option>
-                  {(proovedores ?? []).map((s) => <option key={s.id} value={s.id}>{s.nombreComercial}</option>)}
-                </select>
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Proveedor</label>
+                <Select
+                  isDisabled={!habilitarEdicion}
+                  options={Array.isArray(proovedores) ? proovedores.map(s => ({ value: s.id, label: s.nombreComercial })) : []}
+                  value={provedorIdEditada ? { value: provedorIdEditada, label: proovedores?.find(p => p.id === provedorIdEditada)?.nombreComercial || "" } : null}
+                  onChange={(opt) => setprovedorIdEditada(opt?.value || undefined)}
+                  placeholder="Seleccionar..."
+                  isClearable
+                  isSearchable
+                  className="text-sm"
+                  styles={{
+                    control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                  }}
+                />
               </div>
 
-              <div>
-                <p className="text-xs text-gray-500">N.Solicitud de material</p>
-                <select disabled={!habilitarEdicion} className="select w-full mt-1" value={solicitudCompraIdEditada ?? 0} onChange={(e)=>setsolicitudCompraIdEditada(Number(e.target.value))}>
-                  <option disabled>...</option>
-                  {(solMateriales ?? []).map((o) => <option key={o.id} value={o.id}>{o.numOrden}</option>)}
-                </select>
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Recibe</label>
+                <Select
+                  isDisabled={!habilitarEdicion}
+                  options={Array.isArray(users) ? users.map(s => ({ value: s.id, label: s.name })) : []}
+                  value={recibe ? { value: recibe, label: users?.find(u => u.id === recibe)?.name || "" } : null}
+                  onChange={(opt) => setrecibe(opt?.value || 0)}
+                  placeholder="Seleccionar..."
+                  isClearable
+                  isSearchable
+                  className="text-sm"
+                  styles={{
+                    control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                  }}
+                />
               </div>
 
-           
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Nº Solicitud Material</label>
+                <Select
+                  isDisabled={!habilitarEdicion}
+                  options={Array.isArray(solMateriales) ? solMateriales.map(o => ({ value: o.id, label: o.numOrden })) : []}
+                  value={solicitudCompraIdEditada ? { value: solicitudCompraIdEditada, label: solMateriales?.find(s => s.id === solicitudCompraIdEditada)?.numOrden || "" } : null}
+                  onChange={(opt) => setsolicitudCompraIdEditada(opt?.value || undefined)}
+                  placeholder="Seleccionar..."
+                  isClearable
+                  isSearchable
+                  className="text-sm"
+                  styles={{
+                    control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                  }}
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Descripción</label>
+                <input type="text" disabled className="input input-sm input-bordered rounded-lg bg-gray-100 text-gray-700" value={acta?.numSolicitudCompra?.numOrdenTrabajo?.DescripcionTrabajo ?? "N/A"} />
+              </div>
             </div>
 
-            <div className="overflow-auto mt-5">
-              <table className="table w-full">
-                <thead>
-                  <tr>
-                    <th>Item</th>
-                    <th>Cantidad</th>
-                    <th>Costo</th>
-                    <th>Descuento</th>
-                    <th>IVA</th>
-                     <th>Subtotal</th>
-                      <th>Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(acta?.itemEntrada ?? []).map((is, idx) => (
-                    <tr key={idx}>
-                      <td>{is.item?.nombre ??""}</td>
-                      <td>{is.cantidad}</td>
-                      <td>{is.costo}</td>
-                      <td>{is.descuento}</td>
-                      <td>{is.iva ? "15%" : "0%"}</td>
-                       <td>{is.subtotal}</td>
-                        <td>{is.total}</td>
+            <div className="bg-white p-6 rounded-xl border border-gray-200">
+              <h3 className="text-sm font-bold text-gray-700 mb-4">📋 Detalles de Items</h3>
+              <div className="overflow-x-auto">
+                <table className="table w-full text-sm">
+                  <thead className="bg-gradient-to-r from-cyan-50 to-cyan-100">
+                    <tr className="text-xs font-semibold text-gray-700">
+                      <th className="px-3 py-3">Item</th>
+                      <th className="px-3 py-3 text-right">Cantidad</th>
+                      <th className="px-3 py-3 text-right">Costo</th>
+                      <th className="px-3 py-3 text-right">Descuento</th>
+                      <th className="px-3 py-3 text-center">IVA</th>
+                      <th className="px-3 py-3 text-right">Subtotal</th>
+                      <th className="px-3 py-3 text-right">Total</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {(acta?.itemEntrada ?? []).map((is, idx) => (
+                      <tr key={idx} className="border-t border-gray-100 hover:bg-cyan-50 transition-colors">
+                        <td className="px-3 py-3 font-medium text-gray-800">{is.item?.nombre ?? "N/A"}</td>
+                        <td className="px-3 py-3 text-right text-gray-700">{is.cantidad}</td>
+                        <td className="px-3 py-3 text-right text-gray-700">{is.costo?.toLocaleString()}</td>
+                        <td className="px-3 py-3 text-right text-gray-700">{is.descuento?.toLocaleString()}</td>
+                        <td className="px-3 py-3 text-center"><span className="badge badge-sm badge-primary">{is.iva ? "15%" : "0%"}</span></td>
+                        <td className="px-3 py-3 text-right text-gray-700">{is.subtotal?.toLocaleString()}</td>
+                        <td className="px-3 py-3 text-right font-semibold text-cyan-600">{is.total?.toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-
           </div>
 
-          <div className="w-full h-[12%] flex justify-between items-center px-6 border-t">
+          {/* Footer */}
+          <div className="w-full px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-between items-center">
             {habilitarEdicion ? (
               <>
-                <button className="btn btn-primary" onClick={guardarCambios}>Hecho</button>
-                <button className="btn" onClick={() => { sethabilitarEdicion(!habilitarEdicion); setfacturaEditada(acta?.factura ?? ""); setprovedorIdEditada(acta?.proovedor?.id); setsolicitudCompraIdEditada(acta?.numSolicitudCompra?.id); }}>Cancelar</button>
+                <button className="btn btn-primary gap-2" onClick={guardarCambios}>💾 Guardar Cambios</button>
+                <button className="btn btn-ghost gap-2" onClick={() => { sethabilitarEdicion(!habilitarEdicion); setfacturaEditada(acta?.factura ?? ""); setprovedorIdEditada(acta?.proovedor?.id); setsolicitudCompraIdEditada(acta?.numSolicitudCompra?.id); setrecibe(acta.recibe.id); }}>↶ Cancelar</button>
               </>
             ) : (
               <>
-                <button className="btn" onClick={() => { sethabilitarEdicion(!habilitarEdicion); }}>Editar</button>
-                <button className="btn btn-ghost" onClick={() => { setventanaEmergente(!ventanaEmergente); setacta(null); }}>Cerrar</button>
+                <button className="btn btn-warning gap-2" onClick={() => { sethabilitarEdicion(!habilitarEdicion); }}>✏️ Editar</button>
+                <button className="btn btn-ghost gap-2" onClick={() => { setventanaEmergente(!ventanaEmergente); setacta(null); }}>Cerrar</button>
               </>
             )}
           </div>

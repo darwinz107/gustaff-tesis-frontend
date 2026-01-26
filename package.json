@@ -5,11 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.9",
     "@react-pdf/renderer": "^4.3.1",
     "@tailwindcss/vite": "^4.1.15",
     "@tremor/react": "^3.18.7",
@@ -20,6 +21,7 @@
     "react-chartjs-2": "^5.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.9.4",
+    "react-select": "^5.10.2",
     "tailwindcss": "^4.1.15"
   },
   "devDependencies": {

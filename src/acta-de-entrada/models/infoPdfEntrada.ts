@@ -2,20 +2,23 @@ export interface InfoPdfEntrada {
   id:number;
   numActa: string;
   factura:string;
+  recibe:recibe;
   proovedor:{
     id:number;
     nombre:string;
+    nombreComercial:string;
   };
   numSolicitudCompra: {
     id: number;
     numOrdenTrabajo: {
       id: number;
+      DescripcionTrabajo:string| null;
       userSolicitante: {
         id: number;
         name: string;
       };
     };
-    Destino: string;
+   
   };
   itemEntrada: {
     item :{
@@ -30,4 +33,9 @@ export interface InfoPdfEntrada {
   }[];
   fechaRemision: string;
   total:number;
+}
+
+interface recibe{
+  id:number;
+  name:string;
 }

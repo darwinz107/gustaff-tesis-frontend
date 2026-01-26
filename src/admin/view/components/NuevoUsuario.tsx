@@ -182,7 +182,7 @@ export const NuevoUsuario = ({showCrearUsuario,setshowCrearUsuario,setconfirmarC
   return (
     <>
       {showSuccess && (
-        <div className="fixed top-5 right-5 z-50">
+        <div className="fixed top-20 right-5 z-50">
           <div role="alert" className="alert alert-success shadow-lg">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -202,119 +202,149 @@ export const NuevoUsuario = ({showCrearUsuario,setshowCrearUsuario,setconfirmarC
           </div>
         </div>
       )}
-      
-      <div className="w-full h-[12%] flex items-center justify-between px-6 border-b">
-        <h2 className="text-lg font-semibold">Crear usuario</h2>
+
+      {/* Modal Header */}
+      <div className="w-full z-60 bg-gradient-to-r from-blue-500 to-blue-600 py-5 px-6 flex justify-between items-center border-b border-blue-200 rounded-t-2xl shadow-sm">
+        <div className="flex items-center gap-3">
+          <span className="text-2xl">👤</span>
+          <div>
+            <h2 className="text-lg font-bold text-white">Crear Nuevo Usuario</h2>
+            <p className="text-blue-100 text-sm">Completa los datos para registrar un nuevo usuario</p>
+          </div>
+        </div>
         <button
           onClick={() => {limpiarFormulario(); setshowCrearUsuario(!showCrearUsuario);}}
-          className="btn text-lg hover:text-red-500 transition"
+          className="btn btn-circle btn-sm btn-ghost text-white hover:bg-blue-700 transition"
         >
-          ❌
+          ✕
         </button>
       </div>
 
-      
-      <div className="w-full h-[76%] px-6 py-4 grid grid-cols-3 gap-6 overflow-y-auto">
-
-        
-        <div className="space-y-4">
-          <div>
-            <label className="label">Nombre</label>
+      {/* Modal Content */}
+      <div className="w-full flex-1 px-8 py-8 overflow-y-auto bg-gradient-to-b from-gray-50 to-white">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Nombre */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-semibold text-gray-700">👤 Nombre</span>
+            </label>
             <input 
-              className={`input w-full ${errores.nombre ? 'input-error' : ''}`} 
+              type="text"
+              placeholder="Ingrese el nombre completo"
+              className={`input input-bordered w-full transition ${errores.nombre ? 'input-error border-red-500' : 'focus:border-blue-500'}`} 
               onChange={handleNombreChange}
               value={nombre}
             />
-            <div className="h-5">{errores.nombre && <p className="text-red-500 text-sm">{errores.nombre}</p>}</div>
+            {errores.nombre && <label className="label"><span className="label-text-alt text-error text-sm mt-1">{errores.nombre}</span></label>}
           </div>
 
-          <div>
-            <label className="label">Cédula</label>
+          {/* Cédula */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-semibold text-gray-700">📌 Cédula</span>
+            </label>
             <input 
-              className={`input w-full ${errores.cedula ? 'input-error' : ''}`} 
+              type="text"
+              placeholder="Ingrese la cédula"
+              className={`input input-bordered w-full transition ${errores.cedula ? 'input-error border-red-500' : 'focus:border-blue-500'}`} 
               onChange={handleCedulaChange}
               value={cedula}
-              type="text"
             />
-            <div className="h-5">{errores.cedula && <p className="text-red-500 text-sm">{errores.cedula}</p>}</div>
+            {errores.cedula && <label className="label"><span className="label-text-alt text-error text-sm mt-1">{errores.cedula}</span></label>}
           </div>
 
-          <div>
-            <label className="label">Celular</label>
+          {/* Celular */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-semibold text-gray-700">📱 Celular</span>
+            </label>
             <input 
-              className={`input w-full ${errores.celular ? 'input-error' : ''}`} 
+              type="text"
+              placeholder="Ingrese el celular"
+              className={`input input-bordered w-full transition ${errores.celular ? 'input-error border-red-500' : 'focus:border-blue-500'}`} 
               onChange={handleCelularChange}
               value={celular}
-              type="text"
             />
-            <div className="h-5">{errores.celular && <p className="text-red-500 text-sm">{errores.celular}</p>}</div>
-          </div>
-        </div>
-
-        
-        <div className="space-y-4">
-          <div>
-            <label className="label">Fecha de nacimiento</label>
-            
-              <input 
-                type="date" 
-                className={`input input-sm ${errores.fecha ? 'input-error' : ''}`} 
-                value={selectFechaNac} 
-                onChange={handleFechaChange}
-              />
-              <div className="h-5">{errores.fecha && <p className="text-red-500 text-sm">{errores.fecha}</p>}</div>
-           
+            {errores.celular && <label className="label"><span className="label-text-alt text-error text-sm mt-1">{errores.celular}</span></label>}
           </div>
 
-          <div>
-            <label className="label">Email</label>
+          {/* Fecha de Nacimiento */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-semibold text-gray-700">🗓️ Fecha de Nacimiento</span>
+            </label>
             <input 
-              className={`input w-full ${errores.email ? 'input-error' : ''}`} 
+              type="date"
+              className={`input input-bordered w-full transition ${errores.fecha ? 'input-error border-red-500' : 'focus:border-blue-500'}`} 
+              value={selectFechaNac} 
+              onChange={handleFechaChange}
+            />
+            {errores.fecha && <label className="label"><span className="label-text-alt text-error text-sm mt-1">{errores.fecha}</span></label>}
+          </div>
+
+          {/* Email */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-semibold text-gray-700">✉️ Email</span>
+            </label>
+            <input 
+              type="email"
+              placeholder="Ingrese el email"
+              className={`input input-bordered w-full transition ${errores.email ? 'input-error border-red-500' : 'focus:border-blue-500'}`} 
               onChange={handleEmailChange}
               value={email}
-              type="email"
             />
-            <div className="h-5">{errores.email && <p className="text-red-500 text-sm">{errores.email}</p>}</div>
+            {errores.email && <label className="label"><span className="label-text-alt text-error text-sm mt-1">{errores.email}</span></label>}
           </div>
 
-          <div>
-            <label className="label">Contraseña</label>
+          {/* Contraseña */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-semibold text-gray-700">🔐 Contraseña</span>
+            </label>
             <input 
-              className={`input w-full ${errores.contrasenia ? 'input-error' : ''}`} 
-              type="password" 
+              type="password"
+              placeholder="Ingrese la contraseña"
+              className={`input input-bordered w-full transition ${errores.contrasenia ? 'input-error border-red-500' : 'focus:border-blue-500'}`} 
               onChange={handleContraseniaChange}
               value={contrasenia}
             />
-            <div className="h-5">{errores.contrasenia && <p className="text-red-500 text-sm">{errores.contrasenia}</p>}</div>
+            {errores.contrasenia && <label className="label"><span className="label-text-alt text-error text-sm mt-1">{errores.contrasenia}</span></label>}
           </div>
-        </div>
 
-        
-        <div className="space-y-4">
-          <div>
-            <label className="label">Cargo</label>
+          {/* Cargo */}
+          <div className="form-control md:col-span-2 lg:col-span-1">
+            <label className="label">
+              <span className="label-text font-semibold text-gray-700">🏷️ Cargo</span>
+            </label>
             <select 
-              className={`select w-full ${errores.cargo ? 'select-error' : ''}`} 
-              defaultValue={"..."} 
+              className={`select select-bordered w-full transition ${errores.cargo ? 'select-error border-red-500' : 'focus:border-blue-500'}`} 
+              value={selectCargo || 0}
               onChange={handleCargoChange}
             >
-              <option disabled>...</option>
+              <option value={0} disabled>Selecciona un cargo...</option>
               {cargos.map((a) => (
                 <option key={a.id} value={a.id}>{a.name}</option>
               ))}
             </select>
-            <div className="h-5">{errores.cargo && <p className="text-red-500 text-sm">{errores.cargo}</p>}</div>
+            {errores.cargo && <label className="label"><span className="label-text-alt text-error text-sm mt-1">{errores.cargo}</span></label>}
           </div>
         </div>
       </div>
 
-      
-      <div className="w-full h-[12%] px-6 flex justify-end gap-3 border-t">
-        <button className="btn btn-outline" onClick={() => {limpiarFormulario(); setshowCrearUsuario(!showCrearUsuario);}}>
-          Cancelar
+      {/* Modal Footer */}
+      <div className="w-full px-8 py-5 flex justify-end gap-3 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+        <button 
+          className="btn btn-ghost gap-2 hover:bg-gray-200 transition" 
+          onClick={() => {limpiarFormulario(); setshowCrearUsuario(!showCrearUsuario);}}
+        >
+          ✕ Cancelar
         </button>
-        <button className="btn btn-primary" onClick={crearNuevoUsuario}>
-          Crear usuario
+        <button 
+          className="btn bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 hover:from-blue-600 hover:to-blue-700 gap-2 transition shadow-md hover:shadow-lg" 
+          onClick={crearNuevoUsuario}
+        >
+          ✓ Crear Usuario
         </button>
       </div>
     </>

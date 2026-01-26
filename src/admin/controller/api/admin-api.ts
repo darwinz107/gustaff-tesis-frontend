@@ -11,7 +11,7 @@ import type { CreateSeccion } from "../../models/create-seccion";
 import type { CreateTipoTrabajo } from "../../models/create-tipo-trabajo";
 import type { CrearUser } from "../../models/create-user";
 
-const route: string = "http://localhost:3000/"
+const route: string = import.meta.env.VITE_API_URL || "http://localhost:3000/";
 
 export const crearUsuario = async (crearUser: CrearUser): Promise<{ msj: string ,validate:boolean}> => {
   console.log("crearUsuario in front", crearUser);  
@@ -98,13 +98,20 @@ export const getAllRoles = async (): Promise<Rol[]> => {
 
 export const logoutSession = async (): Promise<{ msj: string }> => {
 
-  const response: Response = await fetch(`${route}logout/token`, {
+  try {
+     const response: Response = await fetch(`${route}auth/logout/token`, {
     method: "GET",
     credentials: 'include'
   });
 
   const data = await response.json();
   return data;
+  } catch (error) {
+    console.error("Error during logout:", error);
+    return { msj: "Error during logout" };
+  }
+
+ 
 }
 
 export const newTipoTrabajo = async (createTipoTrabajo:CreateTipoTrabajo): Promise<{ msj: string }> => {
@@ -484,4 +491,11 @@ export const eliminarCargo = async (id:number): Promise<{ msj:string,validate:bo
   return data;
 }
 
-
+export const decodeCookie = async (): Promise<{ id: number; rol: number; rolName: string; success: boolean }> => {
+  const response: Response = await fetch(`${route}auth/decode/cookie`, {
+    method: "GET",
+    credentials: 'include'
+  });
+  const data = await response.json();
+  return data;
+}

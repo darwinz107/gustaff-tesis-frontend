@@ -1,7 +1,7 @@
 import type { Users } from "../../../admin/models/users";
 import type { FiltrarUserDto } from "../../models/filtrarUser";
 
-const route = "http://localhost:3000/";
+const route = import.meta.env.VITE_API_URL || "http://localhost:3000/";
 
 export const getUsers = async():Promise<Users[]>=>{
       const response:Response = await fetch(`${route}users/users/all`,{
@@ -30,6 +30,43 @@ export const getOneUser = async(id:number):Promise<Users>=>{
     return data;
   } catch (error) {
     console.error("filtrarUsers error:", error);
+    return [];
+  }
+};
+
+export const getUsersSupervisores = async (): Promise<Users[]> => {
+  try {
+    const response: Response = await fetch(`${route}users/supervisores`, {
+      method: "GET"
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al obtener supervisores");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("getUsersSupervisores error:", error);
+    return [];
+  }
+};
+
+
+export const getUsersGerenciaYCoordinacion = async (): Promise<Users[]> => {
+  try {
+    const response: Response = await fetch(`${route}users/gerencia-coordinacion`, {
+      method: "GET"
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al obtener usuarios de gerencia y coordinación");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("getUsersGerenciaYCoordinacion error:", error);
     return [];
   }
 };

@@ -1,28 +1,32 @@
 import React, { useEffect, useRef, useState } from "react";
+import Select from 'react-select';
 import { BuscarOrdenCompra } from "../../acta-de-salida/view/BuscarOrdenCompra";
 import type { InfoPdfCompra } from "../../orden-de-compra/models/infoPdfCompra";
 import { getAllSolicitudesParciales, ordenCompraById } from "../../orden-de-compra/controller/ordenCompraApi";
 import type { BuscarSolMaterial } from "../../orden-de-compra/models/buscarSolMaterial";
 import { asignarInfoActaEntrada, existeItem, filtrarInventario } from "../../inventario/controller/inventario-api";
 import type { AsignarInfoEntrada } from "../../inventario/models/AsignarInfoEntrada";
-import { createActaEntrada, findProovedorByNombre, getPerchasBySeccion, getSeccionesByBodega } from "../controller/actaEntrada-api";
+import { createActaEntrada, findProovedorByNombre, getPerchasBySeccion, getSeccionesByBodega, findProovedores } from "../controller/actaEntrada-api";
 import { CrearProovedor } from "./CrearProovedor";
 import { getAllBodegas } from "../../admin/controller/api/admin-api";
 import { ConvertToBase64 } from "../controller/ConvertToBase64";
 import { Base64ToBlob } from "../controller/Base64ToBlob";
+import type { Users } from "../../admin/models/users";
+import { getUsers } from "../../user/controller/api/user-api";
 
 
 
 export const CrearActaEntrada = () => {
 
+    const [isPending, setisPending] = useState(false);
     const [ventanaBuscarSolicitudMaterial, setventanaBuscarSolicitudMaterial] = useState(false);
     const [solicitudMaterial, setsolicitudMaterial] = useState<AsignarInfoEntrada>({itemsSolicitados:[]});
     const [solCompraId, setsolCompraId] = useState<number>(0);
     const [total, settotal] = useState<number>(0.00);
     const [proovedores, setproovedores] = useState<{id:number,nombreComercial:string}[]>([]);
-    const [proovedor, setproovedor] = useState("");
+    const [proovedor, setproovedor] = useState<{id:number,nombreComercial:string}|null>(null);
     const [factura, setfactura] = useState("");
-    const [item, setitem] = useState(null);
+    const [item, setitem] = useState("");
     const [cantidad, setcantidad] = useState(null);
     const [stockMin, setstockMin] = useState(null);
     const [precioUni, setprecioUni] = useState(0);
@@ -40,12 +44,14 @@ export const CrearActaEntrada = () => {
     const [ordenes, setordenes] = useState<BuscarSolMaterial[]>([]);
     const [habilitarStockMin, sethabilitarStockMin] = useState(false);
     const [erroresProovedor, seterroresProovedor] = useState("");
-    const [erroresItems, seterroresItems] = useState({factura: "", item: "", cantidad: "", precioUni: "", descuento: "", stockMin: "", bodega: "", seccion: "", percha: ""});
+    const [erroresItems, seterroresItems] = useState({factura: "", item: "", cantidad: "", precioUni: "", descuento: "", stockMin: "", bodega: "", seccion: "", percha: "",recibe:""});
     const [showSuccess, setshowSuccess] = useState(false);
     const [showError, setshowError] = useState(false);
     const [mensajeError, setmensajeError] = useState("");
     const [imagen, setimagen] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [recibe, setrecibe] = useState(0);
+    const [users, setusers] = useState<Users[]>([]);
 
 
 const cargarInfoSolMaterial = async() =>{
@@ -89,7 +95,7 @@ const cargarInfoSolMaterial = async() =>{
   setdescuento(itemData.descuento);
   setstockMin(itemData.stockMin);
   setiva(itemData.iva);
-  setobservacion(itemData.Observacion || "");
+  //setobservacion(itemData.Observacion || "");
 
   const imgBlob = itemData.imagen ? Base64ToBlob(itemData.imagen) : null; 
   console.log("imgBlob", imgBlob);  
@@ -110,7 +116,17 @@ const cargarInfoSolMaterial = async() =>{
   });
 };
 
+     const getAllUsers = async () => {
+               const res = await getUsers();
+               console.log(res);
+               setusers(res);
+             } ;
+          
 
+    useEffect(() => {
+       getAllUsers(); 
+    }, []);
+    
 
     useEffect(() => {
 
@@ -125,6 +141,7 @@ const cargarInfoSolMaterial = async() =>{
       }
 
       asignarTotal();
+      
     }, [solicitudMaterial])
     
 
@@ -283,19 +300,20 @@ newItem = {
   seterroresItems({factura: "", item: "", cantidad: "", precioUni: "", descuento: "", stockMin: "", bodega: "", seccion: "", percha: ""});
 };
 
-const validarProovedor = (valor: string): string => {
-  if (!valor || valor.trim() === "") {
-    return "El campo no puede estar vacío";
-  }
-  if (!/^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(valor)) {
-    return "El proveedor solo puede contener letras";
-  }
-  const existe = proovedores.some(p => p.nombreComercial.toLowerCase() === valor.toLowerCase());
-  if (!existe) {
-    return "Debe digitar un proveedor existente";
+const validarProovedor = (valor: {id:number,nombreComercial:string}|null): string => {
+  if (!valor) {
+    return "Debe seleccionar un proveedor";
   }
   return "";
 };
+
+const validarRecibe = (valor:number):string =>{
+  if(valor === 0){
+    return "Debe seleccionar una persona que reciba";
+  }
+
+  return "";
+ }
 
 const validarFactura = (valor: string): string => {
   if (!valor || valor.trim() === "") {
@@ -400,11 +418,12 @@ const validarPercha = (valor: string): string => {
  const enviarygenerarActaDeEntrada = async() =>{
  const errorProovedor = validarProovedor(proovedor);
  const errorFactura = validarFactura(factura);
+ const errorRecibe = validarRecibe(recibe);
  
  seterroresProovedor(errorProovedor);
- seterroresItems({...erroresItems, factura: errorFactura});
+ seterroresItems({...erroresItems, factura: errorFactura, recibe: errorRecibe});
 
- if (errorProovedor || errorFactura) {
+ if (errorProovedor || errorFactura || errorRecibe) {
    setmensajeError("Debe llenar correctamente los campos obligatorios");
    setshowError(true);
    setTimeout(() => setshowError(false), 3000);
@@ -426,23 +445,27 @@ const validarPercha = (valor: string): string => {
  }
 
    const registroEntradaFinal = {
-    proovedor:proovedor,
+    proovedor: proovedor?.nombreComercial || "",
     factura: factura,
     total:total,
+    recibe:recibe,
     itemsSolicitados:solicitudMaterial.itemsSolicitados,
     
    }
-  console.log("registroEntradaFinal");
-  console.log(registroEntradaFinal);
-   const res = await createActaEntrada(solCompraId,registroEntradaFinal);
+    setisPending(true);
+  try {
+       const res = await createActaEntrada(solCompraId,registroEntradaFinal);
 
+      
    if(res.validate){
    setshowSuccess(true);
    setTimeout(() => {
      setshowSuccess(false);
-     setsolicitudMaterial({numOrden:"",numOrdenTrabajo:"",itemsSolicitados:[],id:0});
+     setsolicitudMaterial({numOrden:"",numOrdenTrabajo:{NumOrden:""},itemsSolicitados:[],id:0});
      setproovedor("");
      setfactura("");
+     setsolCompraId(0);
+     setrecibe(0);
      window.open(`/pdf-entrada/${undefined}`,"_blank");
    }, 1000);
    }else{
@@ -450,23 +473,18 @@ const validarPercha = (valor: string): string => {
     setshowError(true);
     setTimeout(() => setshowError(false), 3000);
    }
+  } catch (error) {
+    setmensajeError("Error en la conexión con el servidor");
+    setshowError(true);
+    setTimeout(() => setshowError(false), 3000);
+  }finally{
+setisPending(false);
+  }
+
+
   
 
  }
-
-useEffect(() => {
-  if(proovedor != ""){
-      const metodoExecProovedores = async()=>{
-    const res = await findProovedorByNombre(proovedor);
-    setproovedores(res);
-    console.log(res);
-  }
-metodoExecProovedores();
-  }else{
-    setproovedores([]);
-  }
-
-}, [proovedor]);
 
 useEffect(() => {
   if(item != ""){
@@ -503,6 +521,12 @@ useEffect(() => {
    setbodegas(res);
  }
  asignarBodegas();
+
+ const metodoExecProovedores = async()=>{
+   const res = await findProovedores();
+   setproovedores(res);
+ }
+ metodoExecProovedores();
   } catch (error) {
     console.error(error);
   }
@@ -554,6 +578,7 @@ useEffect(() => {
 }, [seccion]);
 
 const limpiarCampos = () => {
+  
   setitem("");
   setcantidad(null);
   setstockMin(null);
@@ -565,6 +590,11 @@ const limpiarCampos = () => {
   setseccion("...");
   setpercha("...");
   setimagen(null);
+  setsolCompraId(0);
+  setrecibe(0);
+  setproovedor(null);
+  setfactura("");
+    setsolicitudMaterial({numOrden:"",numOrdenTrabajo:{NumOrden:""},itemsSolicitados:[],id:0});
   if (fileInputRef.current) {
     fileInputRef.current.value = "";
   }
@@ -604,43 +634,51 @@ const eliminarItem = (index: number) => {
     )}
 
     <div className="w-full h-full p-6 space-y-6">
-
-      
-      <div className="w-full flex items-center justify-center">
-        <button
-          type="button"
-          className="btn btn-primary btn-sm"
-          onClick={() => { setventanaBuscarSolicitudMaterial(!ventanaBuscarSolicitudMaterial); }}
-        >
-          Asignar solicitud de material
-        </button>
+      {/* Header */}
+      <div className="bg-gradient-to-r from-blue-500 to-cyan-600 rounded-t-2xl p-6 shadow-lg border-t-4 border-blue-400">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-3xl">📦</span>
+            <div>
+              <h1 className="text-2xl font-bold text-white">Crear Acta de Entrada</h1>
+              <p className="text-blue-100 text-sm">Registro de ingreso de materiales al inventario</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="btn btn-sm bg-blue-600 hover:bg-blue-700 text-white border-0 gap-2"
+            onClick={() => { setventanaBuscarSolicitudMaterial(!ventanaBuscarSolicitudMaterial); }}
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/></svg>
+            Asignar Solicitud
+          </button>
+        </div>
       </div>
 
       
-      <div className="w-full bg-base-100 rounded-2xl shadow-md p-5">
-        <h2 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-3">Destino / Documento</h2>
+      <div className="w-full bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-700 mb-4 pb-3 border-b border-blue-200">📄 Destino / Documento</h2>
 
-        <div className="flex gap-4 flex-wrap">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           <div className="flex gap-2 items-start max-w-[220px]">
             <div className="w-full">
               <label className="block text-sm text-gray-600 mb-1">Proveedor</label>
-              <div className="relative">
-                <input
-                  className={`input input-bordered w-full ${erroresProovedor ? 'input-error' : ''}`}
-                  list="browsers"
-                  value={proovedor}
-                  onChange={(e) => {
-                    setproovedor(e.target.value);
-                    seterroresProovedor(validarProovedor(e.target.value));
-                  }}
-                  placeholder="Buscar proveedor..."
-                />
-                <datalist id="browsers">
-                  {proovedores?.map((p) =>
-                    <option key={p.id} value={p.nombreComercial} />
-                  )}
-                </datalist>
-              </div>
+              <Select
+                options={Array.isArray(proovedores) ? proovedores.map(p => ({ value: p.id, label: p.nombreComercial })) : []}
+                value={proovedor ? { value: proovedor.id, label: proovedor.nombreComercial } : null}
+                onChange={(opt) => {
+                  const selectedProovedor = opt ? proovedores.find(p => p.id === opt.value) || null : null;
+                  setproovedor(selectedProovedor);
+                  seterroresProovedor(validarProovedor(selectedProovedor));
+                }}
+                placeholder="Seleccionar..."
+                isClearable
+                isSearchable
+                className="text-sm"
+                styles={{
+                  control: (base) => ({...base, minHeight: '40px', fontSize: '14px', borderColor: erroresProovedor ? '#ef4444' : base.borderColor })
+                }}
+              />
               <div className="h-5">{erroresProovedor && <p className="text-red-500 text-xs">{erroresProovedor}</p>}</div>
             </div>
 
@@ -662,13 +700,30 @@ const eliminarItem = (index: number) => {
 
           <div className="min-w-[180px] flex-1">
             <label className="block text-sm text-gray-600 mb-1">N. Orden</label>
-            <input className="input input-bordered w-full bg-gray-50" value={solicitudMaterial?.numOrdenTrabajo?.NumOrden} disabled />
+            <input className="input input-bordered w-full bg-gray-100 text-gray-700" value={solicitudMaterial?.numOrdenTrabajo?.NumOrden} disabled />
           </div>
 
           <div className="min-w-[220px] flex-1">
             <label className="block text-sm text-gray-600 mb-1">N. Solicitud</label>
-            <input className="input input-bordered w-full bg-gray-50" value={solicitudMaterial?.numOrden} disabled />
+            <input className="input input-bordered w-full bg-gray-100 text-gray-700" value={solicitudMaterial?.numOrden} disabled />
           </div>
+           <div className="min-w-[220px] ">
+            <label className="block text-sm text-gray-600 mb-1">Recibe</label>
+            <Select
+              options={Array.isArray(users) ? users.map(m => ({ value: m.id, label: m.name })) : []}
+              value={recibe ? { value: recibe, label: users.find(u => u.id === recibe)?.name || "" } : null}
+              onChange={(opt) => {setrecibe(opt?.value || 0); seterroresItems({...erroresItems, recibe: validarRecibe(opt?.value || 0)});}}
+              placeholder="Seleccionar..."
+              isClearable
+              isSearchable
+              className="text-sm"
+              styles={{
+                control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+              }}
+            />
+            <div>{erroresItems.recibe && <p className="text-red-500 text-xs">{erroresItems.recibe}</p>}</div>
+          </div>
+          
         </div>
       </div>
 
@@ -702,7 +757,7 @@ const eliminarItem = (index: number) => {
 
           <div className="md:col-span-2">
             <label className="block text-sm text-gray-600 mb-1">Stock Min.</label>
-            <input className={`input input-bordered w-full ${erroresItems.stockMin && habilitarStockMin ? 'input-error' : ''}`} disabled={habilitarStockMin} value={stockMin ?? ""} onChange={(e) => {setstockMin(e.target.value); seterroresItems({...erroresItems, stockMin: validarStockMin(e.target.value, habilitarStockMin)});}} />
+            <input className={`input input-bordered w-full disabled:bg-gray-100 disabled:text-gray-700 ${erroresItems.stockMin && habilitarStockMin ? 'input-error' : ''}`} disabled={habilitarStockMin} value={stockMin ?? ""} onChange={(e) => {setstockMin(e.target.value); seterroresItems({...erroresItems, stockMin: validarStockMin(e.target.value, habilitarStockMin)});}} />
             <div className="h-5">{erroresItems.stockMin && !habilitarStockMin && <p className="text-red-500 text-xs">{erroresItems.stockMin}</p>}</div>
           </div>
 
@@ -745,6 +800,7 @@ const eliminarItem = (index: number) => {
                 const file = e.target.files?.[0] || null;
                 setimagen(file);
               }}
+              disabled={habilitarStockMin}
             />
             {imagen && <p className="text-xs text-green-600 mt-1">Imagen seleccionado</p>}
           </div>
@@ -758,28 +814,55 @@ const eliminarItem = (index: number) => {
         <div className="flex gap-4 flex-wrap">
           <div className="w-full md:w-1/4">
             <label className="block text-sm text-gray-600 mb-1">Bodega</label>
-            <select disabled={habilitarStockMin} className={`select select-bordered w-full ${erroresItems.bodega ? 'select-error' : ''}`} value={bodega} onChange={(e) => {setbodega(e.target.value); setseccion("..."); setpercha("...");  seterroresItems({...erroresItems, bodega: validarBodega(e.target.value)});}}>
-              <option value={"..."} disabled>Seleccione una bodega</option>
-              {bodegas?.map(b => <option key={b.id} value={b.id}>{b.bodega}</option>)}
-            </select>
+            <Select
+              isDisabled={habilitarStockMin}
+              options={Array.isArray(bodegas) ? bodegas.map(b => ({ value: b.id, label: b.bodega })) : []}
+              value={bodega !== "..." ? { value: bodega, label: bodegas?.find(b => b.id === bodega)?.bodega || "" } : null}
+              onChange={(opt) => {setbodega(opt?.value || "..."); setseccion("..."); setpercha("...");  seterroresItems({...erroresItems, bodega: validarBodega(opt?.value || "...")});}}
+              placeholder="Seleccionar bodega..."
+              isClearable
+              isSearchable
+              className="text-sm"
+              styles={{
+                control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+              }}
+            />
             <div className="h-5">{erroresItems.bodega && <p className="text-red-500 text-xs">{erroresItems.bodega}</p>}</div>
           </div>
 
           <div className="w-full md:w-1/4">
             <label className="block text-sm text-gray-600 mb-1">Sección</label>
-            <select disabled={habilitarStockMin} className={`select select-bordered w-full ${erroresItems.seccion ? 'select-error' : ''}`} ref={selSecc} value={seccion} onChange={(e) => {setseccion(e.target.value); setpercha("..."); seterroresItems({...erroresItems, seccion: validarSeccion(e.target.value)});}}>
-              <option value="..." disabled>Seleccione una sección</option>
-              {secciones?.map(s => <option key={s.id} value={s.id}>{s.seccion}</option>)}
-            </select>
+            <Select
+              isDisabled={habilitarStockMin}
+              options={Array.isArray(secciones) ? secciones.map(s => ({ value: s.id, label: s.seccion })) : []}
+              value={seccion !== "..." ? { value: seccion, label: secciones?.find(s => s.id === seccion)?.seccion || "" } : null}
+              onChange={(opt) => {setseccion(opt?.value || "..."); setpercha("..."); seterroresItems({...erroresItems, seccion: validarSeccion(opt?.value || "...")});}}
+              placeholder="Seleccionar sección..."
+              isClearable
+              isSearchable
+              className="text-sm"
+              styles={{
+                control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+              }}
+            />
             <div className="h-5">{erroresItems.seccion && <p className="text-red-500 text-xs">{erroresItems.seccion}</p>}</div>
           </div>
 
           <div className="w-full md:w-1/4">
             <label className="block text-sm text-gray-600 mb-1">Percha</label>
-            <select disabled={habilitarStockMin} className={`select select-bordered w-full ${erroresItems.percha ? 'select-error' : ''}`} value={percha} onChange={(e) => {setpercha(e.target.value); seterroresItems({...erroresItems, percha: validarPercha(e.target.value)});}}>
-              <option value="..." disabled>Seleccione una percha</option>
-              {perchas?.map(p => <option key={p.id} value={p.id}>{p.percha}</option>)}
-            </select>
+            <Select
+              isDisabled={habilitarStockMin}
+              options={Array.isArray(perchas) ? perchas.map(p => ({ value: p.id, label: p.percha })) : []}
+              value={percha !== "..." ? { value: percha, label: perchas?.find(p => p.id === percha)?.percha || "" } : null}
+              onChange={(opt) => {setpercha(opt?.value || "..."); seterroresItems({...erroresItems, percha: validarPercha(opt?.value || "...")});}}
+              placeholder="Seleccionar percha..."
+              isClearable
+              isSearchable
+              className="text-sm"
+              styles={{
+                control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+              }}
+            />
             <div className="h-5">{erroresItems.percha && <p className="text-red-500 text-xs">{erroresItems.percha}</p>}</div>
           </div>
 
@@ -791,7 +874,10 @@ const eliminarItem = (index: number) => {
 
  <div className="mt-4 flex justify-center gap-3">
           <button type="button" className="btn btn-success" onClick={agregarItemsActualizado}>Agregar</button>
-          <button type="button" className="btn btn-outline" onClick={limpiarCampos}>Limpiar</button>
+          <button type="button" className="btn btn-ghost" onClick={limpiarCampos}>
+             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd"/></svg>
+          Limpiar
+          </button>
         </div>
       
       <div className="w-full bg-base-100 rounded-2xl shadow-md p-5">
@@ -863,15 +949,43 @@ const eliminarItem = (index: number) => {
         </div>
       </div>
 
-      <div className="mt-4 flex justify-center">
-        <button type="button" className="btn btn-primary" onClick={enviarygenerarActaDeEntrada}>Generar</button>
+      <div className="mt-6 flex justify-center gap-3">
+       
+        <button type="button" className="btn btn-md bg-blue-500 hover:bg-blue-600 text-white border-0 gap-2" onClick={enviarygenerarActaDeEntrada}>
+              {isPending ? (
+    
+    <span className="loading loading-spinner loading-sm"></span>
+  ) : (
+    // Icono original
+    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+      <path d="M5 13a3 3 0 105.119-1.023A5.822 5.822 0 1015.956 15H10a1 1 0 11-2 0v-3.379a1 1 0 00-1.823-.5A2.988 2.988 0 005 13z"/>
+      </svg>
+  )}
+  {isPending ? "Procesando..." : "Generar Acta"}
+        </button>
       </div>
     </div>
 
    
     <div className={`z-10 fixed inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaBuscarSolicitudMaterial ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-      <div className="border border-gray-200 w-11/12 md:w-4/5 h-4/5 rounded-lg fixed bg-white shadow-lg overflow-hidden">
-        <BuscarOrdenCompra ordenes={ordenes} setidSolMaterial={setsolCompraId} setventanaBuscarOrdenTrabajo={setventanaBuscarSolicitudMaterial} ventanaBuscarOrdenTrabajo={ventanaBuscarSolicitudMaterial} />
+      <div className="bg-white w-11/12 md:w-4/5 h-4/5 rounded-2xl shadow-2xl overflow-hidden border border-gray-200 flex flex-col">
+        <div className="bg-gradient-to-r from-blue-500 to-cyan-600 px-6 py-4 border-b border-blue-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">📋</span>
+              <div>
+                <h2 className="text-lg font-bold text-white">Seleccionar Solicitud</h2>
+                <p className="text-blue-100 text-xs">Elige una solicitud de material para asociar</p>
+              </div>
+            </div>
+            <button onClick={() => setventanaBuscarSolicitudMaterial(false)} className="btn btn-circle btn-sm btn-ghost text-white hover:bg-blue-700">
+              ✕
+            </button>
+          </div>
+        </div>
+        <div className="flex-1 overflow-y-auto">
+          <BuscarOrdenCompra ordenes={ordenes} setidSolMaterial={setsolCompraId} setventanaBuscarOrdenTrabajo={setventanaBuscarSolicitudMaterial} ventanaBuscarOrdenTrabajo={ventanaBuscarSolicitudMaterial} />
+        </div>
       </div>
     </div>
 

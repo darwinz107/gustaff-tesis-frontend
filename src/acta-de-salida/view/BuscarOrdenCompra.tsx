@@ -2,69 +2,111 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import { getAllSolicitudes, getAllSolicitudesParciales } from '../../orden-de-compra/controller/ordenCompraApi';
 import type { BuscarSolMaterial } from '../../orden-de-compra/models/buscarSolMaterial';
+import type { DetallesPrevioCompra } from '../../orden-de-compra/models/DetallesPrevioCompra';
 
 export const BuscarOrdenCompra = ({ordenes,setventanaBuscarOrdenTrabajo,ventanaBuscarOrdenTrabajo,setidSolMaterial}) => {
     const callyPpopover = useRef(null);
+    const [filtroNumSolicitud, setFiltroNumSolicitud] = useState("");
+    const [filtroSolicitante, setFiltroSolicitante] = useState("");
+    const [filtroAutoriza, setFiltroAutoriza] = useState("");
+    const [ordenesFiltradasLocal, setOrdenesFiltradasLocal] = useState<DetallesPrevioCompra[]>([]);
+
+    useEffect(() => {
+      setOrdenesFiltradasLocal(ordenes || []);
+    }, [ordenes]);
+
+    const aplicarFiltros = () => {
+      const resultados = (ordenes || []).filter((orden) => {
+        const cumpleNumOrden = !filtroNumSolicitud || 
+          orden.numOrden?.toLowerCase().includes(filtroNumSolicitud.toLowerCase());
+        
+        const cumpleSolicitante = !filtroSolicitante || 
+          orden.numOrdenTrabajo?.userSolicitante?.name?.toLowerCase().includes(filtroSolicitante.toLowerCase());
+        
+        const cumpleAutoriza = !filtroAutoriza || 
+          orden.Autoriza?.toLowerCase().includes(filtroAutoriza.toLowerCase());
+        
+        return cumpleNumOrden && cumpleSolicitante && cumpleAutoriza;
+      });
+      setOrdenesFiltradasLocal(resultados);
+    };
+
+    const limpiarFiltros = () => {
+      setFiltroNumSolicitud("");
+      setFiltroSolicitante("");
+      setFiltroAutoriza("");
+      setOrdenesFiltradasLocal(ordenes || []);
+    };
 
   
 
   return (
     <>
-     <div className='w-full h-[10%] flex justify-between p-5 '>
-          <div>Filtros</div>
-          <div onClick={() => { setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo)}} className='cursor-pointer'>❌</div>
+     <div className='w-full bg-gradient-to-r from-amber-50 to-orange-50 border-b border-amber-200 px-6 py-4 flex justify-between items-center'>
+          <div className='flex items-center gap-2'>
+            <span className='text-lg font-semibold text-amber-900'>🔍 Filtros</span>
+            <span className='text-xs text-amber-600'>Busca y filtra solicitudes</span>
+          </div>
         </div>
-        <div className='w-full h-[20%] border-y border-gray-300 px-4 flex flex-row'>
-         <div className='h-full w-[33.33%]'><p>Solicitante</p><input type="text" className='input' /*onChange={(e)=>{setselectUserSolicitante(e.target.value);}}*//></div>
-         <div className='h-full w-[33.33%]'><p>Fecha</p><button type="button" onClick={() => { callyPpopover.current?.showPopover() }} className="input input-border" id="cally" style={{ anchorName: "--cally" }}>
-                  Pick a date
-                </button>
-                <div popover="auto" ref={callyPpopover} className="dropdown bg-base-100 rounded-box shadow-lg" style={{ positionAnchor: "--cally" }}>
-                  <calendar-date className="cally" onchange={(e) =>{document.getElementById("cally").innerText = e.target.value; /*setselectFechaNac(e.target.value);*/}}>
-                    <svg aria-label="Previous" className="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
-                    <svg aria-label="Next" className="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
-                    <calendar-month></calendar-month>
-                  </calendar-date>
-                </div></div>
-         <div className='h-full w-[33.34%]'></div>
+        <div className='w-full bg-gradient-to-r from-amber-50 to-orange-50 border-b border-amber-200 px-6 py-6 flex flex-row gap-4'>
+         <div className='flex-1 flex flex-col gap-1'>
+           <label className='text-sm font-semibold text-gray-700'>N° Solicitud</label>
+           <input type="text" className='input input-sm input-bordered rounded-lg focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-400' placeholder="Buscar..." value={filtroNumSolicitud} onChange={(e) => setFiltroNumSolicitud(e.target.value)} /></div>
+         <div className='flex-1 flex flex-col gap-1'>
+           <label className='text-sm font-semibold text-gray-700'>Solicitante</label>
+           <input type="text" className='input input-sm input-bordered rounded-lg focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-400' placeholder="Buscar..." value={filtroSolicitante} onChange={(e) => setFiltroSolicitante(e.target.value)} /></div>
+         <div className='flex-1 flex flex-col gap-1'>
+           <label className='text-sm font-semibold text-gray-700'>Autoriza</label>
+           <input type="text" className='input input-sm input-bordered rounded-lg focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-400' placeholder="Buscar..." value={filtroAutoriza} onChange={(e) => setFiltroAutoriza(e.target.value)} /></div>
+         <div className='flex items-end gap-2'>
+           <button className='btn btn-sm btn-primary gap-2' onClick={aplicarFiltros}>✓ Aplicar</button>
+           <button className='btn btn-sm btn-ghost gap-2' onClick={limpiarFiltros}>✕ Limpiar</button>
+         </div>
         </div>
         
-        <div className='w-full h-[70%] flex justify-between p-5'>
+        <div className='w-full flex-1 overflow-hidden flex flex-col'>
  
-        <div className="overflow-x-auto w-full h-[100%] m-2">
-          <table className="table">
+        <div className="w-full flex-1 overflow-y-auto overflow-x-auto p-4">
+          <table className="table table-sm">
 
-            <thead >
+            <thead className='bg-gradient-to-r from-amber-100 to-orange-100 border-b-2 border-amber-300'>
               <tr>
 
-                <th>N.Orden</th>
-                <th>Fecha de remision</th>
-                <th>Autoriza</th>
-                <th>Destino</th>
-                <th>Acciones</th>
+                <th className='text-amber-900'>N.Solicitud</th>
+                <th className='text-amber-900'>Fecha de remision</th>
+                <th className='text-amber-900'>Solicitante</th>
+                <th className='text-amber-900'>Autoriza</th>
+                <th className='text-amber-900'>Descripcion</th>
+                <th className='text-amber-900'>Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {ordenes.map((u,i) =>
-                <>
-                  <tr>
-
-                    <td>
+              {ordenesFiltradasLocal && ordenesFiltradasLocal.length > 0 ? (
+                ordenesFiltradasLocal.map((u, i) =>
+                  <tr key={u.id} className='hover:bg-amber-50 border-b border-gray-200'>
+                    <td className='font-semibold text-amber-900'>
                       {u.numOrden}
                     </td>
-                    <td>
-                      {u.fechaRemision.split("T")[0]}
-
+                    <td className='text-gray-700'>
+                      {u.fechaRemision ? u.fechaRemision.split("T")[0] : "N/A"}
                     </td>
-                    <td>{u.Autoriza}</td>
-                    <td>{u.Destino}</td>
+                    <td className='text-gray-700'>
+                      {u.numOrdenTrabajo?.userSolicitante?.name ?? "N/A"}
+                    </td>
+                    <td className='text-gray-700'>{u.Autoriza ?? "N/A"}</td>
+                    <td className='text-gray-700'>{u.numOrdenTrabajo ? u.numOrdenTrabajo?.DescripcionTrabajo : "N/A"}</td>
                     <td>
-                      
-                      <button className="btn btn-ghost btn-xs" onClick={()=>{setidSolMaterial(u.id); console.log(u.id);setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo);}}>Seleccionar</button>
+                      <button className="btn btn-sm bg-gradient-to-r from-amber-500 to-orange-600 text-white border-none hover:from-amber-600 hover:to-orange-700 rounded-lg" onClick={() => {setidSolMaterial(u.id); console.log(u.id); setventanaBuscarOrdenTrabajo(!ventanaBuscarOrdenTrabajo);}}>✓ Seleccionar</button>
                     </td>
                   </tr>
-                </>)}
-
+                )
+              ) : (
+                <tr>
+                  <td colSpan={6} className='text-center text-gray-500 py-8'>
+                    No se encontraron solicitudes
+                  </td>
+                </tr>
+              )}
             </tbody>
 
           </table>

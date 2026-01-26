@@ -1,6 +1,6 @@
 export interface CreateActaEntradaDto {
   proovedor: string;
-
+  recibe:number;
   factura: string;
   total:number;
   itemsSolicitados: {

@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, act } from 'react'
+import Select from 'react-select';
 import type { InfoPdfSalida } from '../models/InfoPdfSalida';
 import { findAllRegistroSalida, filtrarActasSalida, findRegistroSalidaById, updateActaSalida, deleteActaSalida } from '../controller/actaSalida-api';
 import { getUsers } from '../../user/controller/api/user-api';
@@ -22,6 +23,7 @@ export const GestionSalida = () => {
   const [recibeSinSMIdEditada, setrecibeSinSMIdEditada] = useState<number|undefined>();
   const [solicitanteIdEditada, setsolicitanteIdEditada] = useState<number|undefined>();
   const [destinoEditada, setdestinoEditada] = useState("");
+  const [entrega, setentrega] = useState(0);
 
   const dialog = useRef<HTMLDialogElement>(null);
 
@@ -78,7 +80,7 @@ export const GestionSalida = () => {
         setentregaIdEditada(res.entrega?.id);
         setrecibeSinSMIdEditada(res.recibeSinSM?.id);
         setsolicitanteIdEditada(res.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.id);
-        setdestinoEditada(res.destino ?? res.numSolicitudCompra?.Destino ?? "");
+        setdestinoEditada(res.numSolicitudCompra?.numOrdenTrabajo.DescripcionTrabajo ?? res.descripcion ?? "");
         setventanaEmergente(true);
       }else{
         setmensajeError("Fallo al cargar la acta de salida");
@@ -96,7 +98,7 @@ export const GestionSalida = () => {
   const guardarCambios = async() => {
     if(!acta) return;
     try {
-      const updateData: { entregaId?: number; observacion?: string; recibeSinSMId?: number; solicitanteId?: number; destino?: string } = {};
+      const updateData: { entregaId?: number; observacion?: string; recibeSinSMId?: number; /*solicitanteId?: number;*/ descripcion?: string } = {};
       
       if(observacionEditada !== acta.observacion) {
         updateData.observacion = observacionEditada;
@@ -104,20 +106,21 @@ export const GestionSalida = () => {
       if(entregaIdEditada !== acta.entrega?.id && entregaIdEditada !== undefined) {
         updateData.entregaId = entregaIdEditada;
       }
-      if(destinoEditada !== (acta.destino ?? acta.numSolicitudCompra?.Destino)) {
-        updateData.destino = destinoEditada;
+      console.log(acta.numSolicitudCompra);
+      if(acta.numSolicitudCompra === undefined || acta.numSolicitudCompra === null && destinoEditada !== "") {
+        updateData.descripcion = destinoEditada;
       }
 
-      if(acta.numSolicitudCompra) {
-        if(solicitanteIdEditada !== acta.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.id && solicitanteIdEditada !== undefined) {
-          updateData.solicitanteId = solicitanteIdEditada;
-        }
-      } else {
-        if(recibeSinSMIdEditada !== acta.recibeSinSM?.id && recibeSinSMIdEditada !== undefined) {
-          updateData.recibeSinSMId = recibeSinSMIdEditada;
-        }
+      if(recibeSinSMIdEditada !== acta.recibeSinSM?.id && recibeSinSMIdEditada !== undefined) {
+        updateData.recibeSinSMId = recibeSinSMIdEditada;
       }
 
+    /*  if(solicitanteIdEditada !== acta.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.id && solicitanteIdEditada !== undefined) {
+        updateData.solicitanteId = solicitanteIdEditada;
+      }*/
+
+
+      console.log("Datos a actualizar:", updateData);
       const res = await updateActaSalida(acta.id, updateData);
       if(res.validate) {
         setshowSuccess(true);
@@ -169,7 +172,7 @@ export const GestionSalida = () => {
   return (
     <>
       {showSuccess && (
-        <div className="fixed top-5 right-5 z-50">
+        <div className="fixed top-5 right-5 z-150">
           <div role="alert" className="alert alert-success shadow-lg">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -180,7 +183,7 @@ export const GestionSalida = () => {
       )}
 
       {showError && (
-        <div className="fixed top-5 right-5 z-50">
+        <div className="fixed top-5 right-5 z-150">
           <div role="alert" className="alert alert-error shadow-lg">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -203,66 +206,72 @@ export const GestionSalida = () => {
         </div>
       </dialog>
 
-      <div className="min-w-[70%] min-h-[60%] rounded-xl border border-gray-200 m-4 bg-white shadow-sm">
-        <div className="bg-gray-100 w-full h-12 flex items-center justify-between rounded-t-lg border-b px-4">
-          <p className="font-semibold text-gray-700">Listado de actas de salida</p>
-          <div className="flex items-center gap-2">
-            <button className="btn btn-sm btn-ghost" onClick={() => llenarActas()}>Refrescar</button>
-            <button className="btn btn-sm btn-ghost" onClick={limpiarFiltros}>Limpiar</button>
-            <button className="btn btn-sm btn-primary" onClick={aplicarFiltros}>Aplicar filtros</button>
+      <div className="w-full h-full rounded-2xl border border-gray-200 bg-white shadow-lg">
+        <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 w-full py-4 rounded-t-2xl border-b border-indigo-200 px-6">
+          <h2 className="font-bold text-white text-lg">📤 Actas de Salida</h2>
+        </div>
+
+        <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-4 bg-gray-50 border-b border-gray-200">
+          <div className="col-span-2 grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-semibold text-gray-600">Nº Acta</label>
+              <input className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroNumActa} onChange={(e)=>setFiltroNumActa(e.target.value)} />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-semibold text-gray-600">Recibe</label>
+              <input className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroRecibe} onChange={(e)=>setFiltroRecibe(e.target.value)} />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-semibold text-gray-600">Entrega</label>
+              <input className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroEntrega} onChange={(e)=>setFiltroEntrega(e.target.value)} />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-semibold text-gray-600">Descripción</label>
+              <input className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroDestino} onChange={(e)=>setFiltroDestino(e.target.value)} />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-semibold text-gray-600">Fecha</label>
+              <input type="date" className="input input-sm input-bordered focus:input-primary rounded-lg" value={filtroFecha} onChange={(e)=>setFiltroFecha(e.target.value)} />
+            </div>
           </div>
         </div>
 
-        <div className="p-4 grid grid-cols-1 lg:grid-cols-5 gap-3">
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">N.Acta</label>
-            <input className="input input-sm" value={filtroNumActa} onChange={(e)=>setFiltroNumActa(e.target.value)} />
-          </div>
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Recibe</label>
-            <input className="input input-sm" value={filtroRecibe} onChange={(e)=>setFiltroRecibe(e.target.value)} />
-          </div>
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Entrega</label>
-            <input className="input input-sm" value={filtroEntrega} onChange={(e)=>setFiltroEntrega(e.target.value)} />
-          </div>
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Destino</label>
-            <input className="input input-sm" value={filtroDestino} onChange={(e)=>setFiltroDestino(e.target.value)} />
-          </div>
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Fecha</label>
-            <input type="date" className="input input-sm" value={filtroFecha} onChange={(e)=>setFiltroFecha(e.target.value)} />
-          </div>
+        <div className="px-6 py-3 flex items-center justify-end gap-2 bg-gray-50 border-b border-gray-200">
+          <button className="btn btn-sm btn-ghost hover:btn-primary gap-2" onClick={() => llenarActas()}>🔄 Refrescar</button>
+          <button className="btn btn-sm btn-ghost hover:btn-warning gap-2" onClick={limpiarFiltros}>✕ Limpiar</button>
+          <button className="btn btn-sm btn-primary gap-2" onClick={aplicarFiltros}>✓ Aplicar</button>
         </div>
 
-        <div className="overflow-x-auto p-5">
-          <div className="overflow-hidden border rounded-lg">
+        <div className="px-6 pb-6 pt-4">
+          <div className="overflow-hidden border border-gray-200 rounded-xl shadow-sm">
             <div className="max-h-[520px] overflow-auto">
               <table className="table w-full">
-                <thead className="bg-white sticky top-0">
-                  <tr className="text-sm text-left text-gray-600">
-                    <th className="px-4 py-3">N.Acta de salida</th>
-                    <th className="px-4 py-3">Fecha de remisión</th>
+                <thead className="bg-gradient-to-r from-indigo-50 to-indigo-100 sticky top-0 z-20">
+                  <tr className="text-sm text-left text-gray-700 font-semibold">
+                    <th className="px-4 py-3">Nº Acta</th>
+                    <th className="px-4 py-3">Fecha remisión</th>
                     <th className="px-4 py-3">Recibe</th>
                     <th className="px-4 py-3">Entrega</th>
-                    <th className="px-4 py-3">Destino</th>
+                    <th className="px-4 py-3">Descripción</th>
                     <th className="px-4 py-3 text-center">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   {actas.map((u, i) => (
-                    <tr key={i} className="hover:bg-gray-50">
-                      <td className="px-4 py-3">{u.numActa}</td>
-                      <td className="px-4 py-3">{u.fechaRemision ? u.fechaRemision.split("T")[0] : ""}</td>
-                      <td className="px-4 py-3">{u.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.name ?? u.recibeSinSM?.name}</td>
-                      <td className="px-4 py-3">{u.entrega?.name ?? ""}</td>
-                      <td className="px-4 py-3">{u.destino ?? "" }</td>
+                    <tr key={i} className="border-t border-gray-100 hover:bg-indigo-50 transition-colors">
+                      <td className="px-4 py-3 font-semibold text-gray-800">{u.numActa}</td>
+                      <td className="px-4 py-3 text-gray-700">{u.fechaRemision ? u.fechaRemision.split("T")[0] : ""}</td>
+                      <td className="px-4 py-3 text-gray-700">{u.recibeSinSM?.name ?? "N/A"}</td>
+                      <td className="px-4 py-3 text-gray-700">{u.entrega?.name ?? "N/A"}</td>
+                      <td className="px-4 py-3 text-gray-700 text-sm">{u.numSolicitudCompra?.numOrdenTrabajo?.DescripcionTrabajo ?? u.descripcion ?? "N/A" }</td>
                       <td className="px-4 py-3 text-center">
-                        <div className="flex gap-2 justify-center">
-                          <button className="btn btn-ghost btn-xs" onClick={()=>llenarActaById(u.id)}>Ver detalles</button>
-                          <button className="btn btn-ghost btn-xs" onClick={() => {setacta(u); dialog.current?.showModal();}}>Eliminar</button>
-                          <button className="btn btn-ghost btn-xs" onClick={()=>cargarPdf(u.id)}>Ver PDF</button>
+                        <div className="flex gap-2 justify-center flex-wrap">
+                          <button className={`btn btn-sm btn-info btn-outline gap-1 tooltip ${i === 0 ? "tooltip-bottom" : ""}`} data-tip="Ver detalles" onClick={()=>llenarActaById(u.id)}>👁️</button>
+                          <button className={`btn btn-sm btn-error btn-outline gap-1 tooltip ${i === 0 ? "tooltip-bottom" : ""}`} data-tip="Eliminar" onClick={() => {setacta(u); dialog.current?.showModal();}}>🗑️</button>
+                          <button className={`btn btn-sm btn-success btn-outline gap-1 tooltip ${i === 0 ? "tooltip-bottom" : ""}`} data-tip="Descargar PDF" onClick={()=>cargarPdf(u.id)}>📄</button>
                         </div>
                       </td>
                     </tr>
@@ -281,115 +290,130 @@ export const GestionSalida = () => {
 
       {acta && (
        <div className={`z-50 fixed inset-0 flex items-center justify-center transition-opacity duration-300 ${ventanaEmergente ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="relative border border-gray-300 w-11/12 max-w-6xl h-[85vh] rounded-md bg-white shadow-lg overflow-auto">
-          <div className="w-full h-[12%] flex justify-between p-5 border-b">
-            <div className="font-medium text-gray-700">Detalle de acta de salida</div>
-            <div onClick={() => { setventanaEmergente(!ventanaEmergente); setacta(null); }} className="cursor-pointer">❌</div>
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+        <div className="relative border border-gray-300 w-11/12 max-w-6xl h-[85vh] rounded-2xl bg-white shadow-2xl overflow-hidden flex flex-col">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 w-full py-4 px-6 flex justify-between items-center border-b border-indigo-200">
+            <h2 className="font-bold text-white text-lg">📤 Detalles de Acta de Salida</h2>
+            <button onClick={() => { setventanaEmergente(!ventanaEmergente); setacta(null); }} className="btn btn-circle btn-ghost btn-sm text-white hover:bg-indigo-700">✕</button>
           </div>
 
-          <div className="w-full h-[76%] px-6 py-4 flex flex-col">
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <p className="text-xs text-gray-500">N.Acta</p>
-                <input type="text" disabled className="input w-full mt-1" value={acta?.numActa} />
+          {/* Content */}
+          <div className="w-full flex-1 overflow-auto px-6 py-6 bg-gray-50">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6 bg-white p-6 rounded-xl border border-gray-200">
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Nº Acta</label>
+                <input type="text" disabled className="input input-sm input-bordered rounded-lg bg-gray-100" value={acta?.numActa} />
               </div>
 
-              <div>
-                <p className="text-xs text-gray-500">Fecha de remisión</p>
-                <input type="date" disabled value={acta?.fechaRemision ? acta.fechaRemision.split("T")[0] : ""}/>
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Fecha de Remisión</label>
+                <input type="date" disabled className="input input-sm input-bordered rounded-lg bg-gray-100" value={acta?.fechaRemision ? acta.fechaRemision.split("T")[0] : ""}/>
               </div>
 
-              <div>
-                <p className="text-xs text-gray-500">Observación</p>
-                <input type="text" disabled={!habilitarEdicion} className="input w-full mt-1" value={observacionEditada} onChange={(e)=>setobservacionEditada(e.target.value)} />
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Observación</label>
+                <input type="text" disabled={!habilitarEdicion} className="input input-sm input-bordered focus:input-primary rounded-lg" value={observacionEditada} onChange={(e)=>setobservacionEditada(e.target.value)} />
               </div>
 
-              {acta?.numSolicitudCompra ? (
-                <>
-                  <div>
-                    <p className="text-xs text-gray-500">Solicitante</p>
-                    <select disabled={!habilitarEdicion} value={solicitanteIdEditada ?? 0} onChange={(e)=>setsolicitanteIdEditada(Number(e.target.value))} className="select w-full mt-1">
-                      <option disabled>...</option>
-                      {(users ?? []).map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
-                    </select>
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Descripción</label>
+                <input type="text" disabled={acta.numSolicitudCompra ? true : !habilitarEdicion} className="input input-sm input-bordered focus:input-primary rounded-lg" value={acta.numSolicitudCompra?.numOrdenTrabajo.DescripcionTrabajo ?? destinoEditada?? ""} onChange={(e)=>setdestinoEditada(e.target.value)} />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Recibe</label>
+                <Select
+                  isDisabled={!habilitarEdicion}
+                  options={Array.isArray(users) ? users.map(u => ({ value: u.id, label: u.name })) : []}
+                  value={recibeSinSMIdEditada ? { value: recibeSinSMIdEditada, label: users?.find(u => u.id === recibeSinSMIdEditada)?.name || "" } : null}
+                  onChange={(opt) => setrecibeSinSMIdEditada(opt?.value || undefined)}
+                  placeholder="Seleccionar..."
+                  isClearable
+                  isSearchable
+                  className="text-sm"
+                  styles={{
+                    control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                  }}
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Entrega</label>
+                <Select
+                  isDisabled={!habilitarEdicion}
+                  options={Array.isArray(users) ? users.map(u => ({ value: u.id, label: u.name })) : []}
+                  value={entregaIdEditada ? { value: entregaIdEditada, label: users?.find(u => u.id === entregaIdEditada)?.name || "" } : null}
+                  onChange={(opt) => setentregaIdEditada(opt?.value || undefined)}
+                  placeholder="Seleccionar..."
+                  isClearable
+                  isSearchable
+                  className="text-sm"
+                  styles={{
+                    control: (base) => ({...base, minHeight: '36px', fontSize: '14px' })
+                  }}
+                />
+              </div>
+
+              {acta?.numSolicitudCompra && 
+                (<>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Solicitante</label>
+                    <input type="text" disabled className="input input-sm input-bordered rounded-lg bg-gray-100" value={acta?.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.name ?? "N/A"} />
                   </div>
 
-                  <div>
-                    <p className="text-xs text-gray-500">N.Solicitud de material</p>
-                    <input type="text" disabled className="input w-full mt-1" value={acta?.numSolicitudCompra?.numOrden ?? ""} />
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Nº Solicitud Material</label>
+                    <input type="text" disabled className="input input-sm input-bordered rounded-lg bg-gray-100" value={acta?.numSolicitudCompra?.numOrden} />
                   </div>
-                  <div>
-                <p className="text-xs text-gray-500">Destino</p>
-                <input type="text" disabled={!habilitarEdicion} className="input w-full mt-1" value={destinoEditada} onChange={(e)=>setdestinoEditada(e.target.value)} />
-              </div>
                 </>
-              ) : (
-                <>
-                  <div>
-                    <p className="text-xs text-gray-500">Recibe</p>
-                    <select disabled={!habilitarEdicion} value={recibeSinSMIdEditada ?? 0} onChange={(e)=>setrecibeSinSMIdEditada(Number(e.target.value))} className="select w-full mt-1">
-                      <option disabled>...</option>
-                      {(users ?? []).map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                <p className="text-xs text-gray-500">Destino</p>
-                <input type="text" disabled={!habilitarEdicion} className="input w-full mt-1" value={destinoEditada} onChange={(e)=>setdestinoEditada(e.target.value)} />
-              </div>
-                </>
-              )}
+                )
+              }
 
-              <div>
-                <p className="text-xs text-gray-500">Entrega</p>
-                <input type="text" disabled className="input w-full mt-1" value={acta?.entrega?.name ?? ""} />
-              </div>
-
-              
-
-              <div>
-                <p className="text-xs text-gray-500">Total</p>
-                <input type="text" disabled className="input w-full mt-1" value={acta?.total ?? ""} />
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Total</label>
+                <input type="text" disabled className="input input-sm input-bordered rounded-lg bg-gray-100" value={acta?.total ?? ""} />
               </div>
             </div>
 
-            <div className="overflow-auto mt-5">
-              <table className="table w-full">
-                <thead>
-                  <tr>
-                    <th>Item</th>
-                    <th>Cantidad</th>
-                    
-                    <th>Característica</th>
-                    <th>Observación</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(acta?.itemSalida ?? []).map((is, idx) => (
-                    <tr key={idx}>
-                      <td>{is.inventario?.nombre ?? is.item}</td>
-                      <td>{is.cantidad}</td>
-                      
-                      <td>{is.caracteristica ?? ""}</td>
-                      <td>{is.Observacion ?? ""}</td>
+            <div className="bg-white p-6 rounded-xl border border-gray-200">
+              <h3 className="text-sm font-bold text-gray-700 mb-4">📋 Detalles de Items</h3>
+              <div className="overflow-x-auto">
+                <table className="table w-full text-sm">
+                  <thead className="bg-gradient-to-r from-indigo-50 to-indigo-100">
+                    <tr className="text-xs font-semibold text-gray-700">
+                      <th className="px-3 py-3">Item</th>
+                      <th className="px-3 py-3 text-right">Cantidad</th>
+                      <th className="px-3 py-3">Característica</th>
+                      <th className="px-3 py-3">Observación</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {(acta?.itemSalida ?? []).map((is, idx) => (
+                      <tr key={idx} className="border-t border-gray-100 hover:bg-indigo-50 transition-colors">
+                        <td className="px-3 py-3 font-medium text-gray-800">{is.inventario?.nombre ?? is.item}</td>
+                        <td className="px-3 py-3 text-right text-gray-700">{is.cantidad}</td>
+                        <td className="px-3 py-3 text-gray-700">{is.caracteristica ?? "N/A"}</td>
+                        <td className="px-3 py-3 text-gray-700 text-xs">{is.Observacion ?? "N/A"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-
           </div>
 
-          <div className="w-full h-[12%] flex justify-between items-center px-6 border-t">
+          {/* Footer */}
+          <div className="w-full px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-between items-center">
             {habilitarEdicion ? (
               <>
-                <button className="btn btn-primary" onClick={guardarCambios}>Hecho</button>
-                <button className="btn" onClick={() => { sethabilitarEdicion(!habilitarEdicion); setobservacionEditada(acta?.observacion ?? ""); setentregaIdEditada(acta?.entrega?.id); setrecibeSinSMIdEditada(acta?.recibeSinSM?.id); setsolicitanteIdEditada(acta?.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.id); setdestinoEditada(acta?.destino ?? acta?.numSolicitudCompra?.Destino ?? ""); }}>Cancelar</button>
+                <button className="btn btn-primary gap-2" onClick={guardarCambios}>💾 Guardar Cambios</button>
+                <button className="btn btn-ghost gap-2" onClick={() => { sethabilitarEdicion(!habilitarEdicion); setobservacionEditada(acta?.observacion ?? ""); setentregaIdEditada(acta?.entrega?.id); setrecibeSinSMIdEditada(acta?.recibeSinSM?.id); setsolicitanteIdEditada(acta?.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.id); setdestinoEditada(acta?.destino ?? acta?.numSolicitudCompra?.Destino ?? ""); }}>↶ Cancelar</button>
               </>
             ) : (
               <>
-                <button className="btn" onClick={() => { sethabilitarEdicion(!habilitarEdicion); }}>Editar</button>
-                <button className="btn btn-ghost" onClick={() => { setventanaEmergente(!ventanaEmergente); setacta(null); }}>Cerrar</button>
+                <button className="btn btn-warning gap-2" onClick={() => { sethabilitarEdicion(!habilitarEdicion); }}>✏️ Editar</button>
+                <button className="btn btn-ghost gap-2" onClick={() => { setventanaEmergente(!ventanaEmergente); setacta(null); }}>Cerrar</button>
               </>
             )}
           </div>

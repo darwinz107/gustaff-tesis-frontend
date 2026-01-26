@@ -5,7 +5,7 @@ import type { Inventarios } from "../models/inventarios";
 import type { ItemsXagregar } from "../models/ItemsXagregar";
 import type { Stock } from "../models/Stock";
 
-const route = "http://localhost:3000/";
+const route = import.meta.env.VITE_API_URL || "http://localhost:3000/";
 
   export const filtrarInventario = async(item:string):Promise<Inventarios[]>=>{
         const response:Response = await fetch(`${route}inventario/filtrar`,{
@@ -104,5 +104,19 @@ export const updateInventario = async (id: number, updateData: any): Promise<{ms
   } catch (error) {
     console.error(error);
     return { msj: "Error al actualizar el inventario", validate: false };
+  }
+};
+
+export const deleteInventario = async (id: number): Promise<{msj: string, validate: boolean}> => {
+  try {
+    const response: Response = await fetch(`${route}inventario/${id}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" }
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    return { msj: "Error al eliminar el inventario", validate: false };
   }
 };

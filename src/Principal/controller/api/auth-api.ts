@@ -1,5 +1,5 @@
 
-const route:string = "http://localhost:3000/auth/"
+const route:string = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}auth/` : "http://localhost:3000/auth/";
 
 export const controlByRol= async():Promise<{isRol:boolean}> =>{
 

@@ -172,78 +172,120 @@ export const AdministrarTiposTrabajo = () => {
       </dialog>
 
       <div className="w-full h-full p-6">
-        <div className="grid grid-cols-1  gap-6 justify-items-center">
-          <div className="lg:col-span-1 bg-gray-100 rounded-xl shadow-md p-4 w-1/2">
-            <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Nuevo Tipo de Trabajo</h2>
-            <div className="flex flex-col gap-3">
-              <div>
-                <label className="block text-sm">Nombre del tipo</label>
+        {/* Header */}
+        <div className="bg-gradient-to-r from-amber-500 to-amber-600 rounded-2xl p-6 shadow-lg mb-6">
+          <div className="flex items-center gap-3">
+            <span className="text-4xl">⚙️</span>
+            <div>
+              <h1 className="text-3xl font-bold text-white">Gestionar Tipos de Trabajo</h1>
+              <p className="text-amber-100">Crea y administra los tipos de trabajo disponibles</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Form Card */}
+        <div className="mb-6 bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="bg-gradient-to-r from-amber-500 to-amber-600 px-6 py-4">
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <span>➕</span>
+              Nuevo Tipo de Trabajo
+            </h2>
+          </div>
+
+          <div className="p-6">
+            <div className="max-w-md">
+              <div className="form-control flex flex-col">
+                <label className="label">
+                  <span className="label-text font-semibold text-amber-700">Nombre del tipo</span>
+                </label>
                 <input 
                   type="text" 
-                  className={`input w-full ${errores ? 'input-error' : ''}`} 
+                  placeholder="Ej: Mantenimiento, Reparación, Inspección..."
+                  className="input input-bordered focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition-all" 
                   onChange={(e) => {
                     settipoTrabajo(e.target.value);
                     seterrores(validarNombre(e.target.value));
                   }} 
                   value={tipoTrabajo}
                 />
-                <div className="h-5">{errores && <p className="text-red-500 text-sm">{errores}</p>}</div>
+                {errores && <label className="label-text-alt text-error">{errores}</label>}
               </div>
-              <div className="flex justify-end">
-                <button className="btn btn-primary" onClick={crearTipoTrabajoMetodo}>Crear Tipo</button>
-              </div>
+              <button 
+                className="btn bg-gradient-to-r from-amber-500 to-amber-600 text-white border-0 hover:from-amber-600 hover:to-amber-700 w-full mt-4 font-semibold" 
+                onClick={crearTipoTrabajoMetodo}
+              >
+                ✓ Crear Tipo
+              </button>
             </div>
           </div>
+        </div>
 
-          <div className="lg:col-span-2 bg-white rounded-xl shadow-md p-4 min-w-1/2">
-            <h2 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Listado de Tipos de Trabajo</h2>
-            <div className="overflow-x-auto">
-              <table className="table w-full text-sm">
-                <thead>
-                  <tr>
-                    <th>Nombre</th>
-                    <th className="text-center">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tiposTrabajo.map((tipo) => (
-                    <tr key={tipo.id} className="hover:bg-gray-50">
-                      <td>{tipo.tipo}</td>
-                      <td className="text-center">
-                        <div className="flex justify-center gap-2">
-                          <button className="btn btn-outline btn-xs" onClick={() => abrirEdicion(tipo)}>Editar</button>
-                          <button className="btn btn-outline btn-xs btn-error" onClick={() => abrirDialogoEliminar(tipo)}>Eliminar</button>
-                        </div>
-                      </td>
+        {/* List Card */}
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="bg-gradient-to-r from-amber-500 to-amber-600 px-6 py-4">
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <span>📋</span>
+              Listado de Tipos de Trabajo
+            </h2>
+          </div>
+
+          <div className="p-6">
+            {tiposTrabajo.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-400 text-lg">📭 No hay tipos de trabajo registrados</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="table w-full">
+                  <thead>
+                    <tr className="border-b-2 border-amber-200">
+                      <th className="text-amber-700 font-bold">Nombre</th>
+                      <th className="text-center text-amber-700 font-bold">Acciones</th>
                     </tr>
-                  ))}
-                  {tiposTrabajo.length === 0 && (
-                    <tr>
-                      <td colSpan={2} className="text-center text-gray-500 py-4">No hay tipos de trabajo registrados</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {tiposTrabajo.map((tipo) => (
+                      <tr key={tipo.id} className="hover:bg-amber-50 border-b border-amber-100 transition-colors">
+                        <td className="text-gray-700 font-medium">{tipo.tipo}</td>
+                        <td className="text-center">
+                          <div className="flex justify-center gap-2">
+                            <button className="btn btn-xs btn-ghost tooltip" data-tip="Editar" onClick={() => abrirEdicion(tipo)}>✏️</button>
+                            <button className="btn btn-xs btn-ghost text-red-500 tooltip" data-tip="Eliminar" onClick={() => abrirDialogoEliminar(tipo)}>🗑️</button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       {/* MODAL EDICIÓN */}
       {ventanaEdicion && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-96">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold">Editar Tipo de Trabajo</h2>
-              <button onClick={cerrarEdicion} className="text-gray-500 hover:text-gray-700">❌</button>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-amber-500 to-amber-600 px-6 py-4 flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">✏️</span>
+                <h2 className="text-xl font-bold text-white">Editar Tipo de Trabajo</h2>
+              </div>
+              <button onClick={cerrarEdicion} className="text-white hover:bg-amber-700 p-2 rounded-lg transition">✕</button>
             </div>
             
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm mb-2">Nombre del tipo</label>
+            {/* Content */}
+            <div className="p-6">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-semibold text-amber-700">Nombre del tipo</span>
+                </label>
                 <input 
                   type="text" 
-                  className={`input w-full ${errores ? 'input-error' : ''}`}
+                  placeholder="Ej: Mantenimiento, Reparación, Inspección..."
+                  className="input input-bordered focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition-all"
                   value={tipoEnEdicion?.tipo || ""}
                   onChange={(e) => {
                     const newValue = e.target.value;
@@ -252,13 +294,22 @@ export const AdministrarTiposTrabajo = () => {
                     sethabilitarBotonGuardar(newValue.trim() === "");
                   }}
                 />
-                <div className="h-5">{errores && <p className="text-red-500 text-sm">{errores}</p>}</div>
+                {errores && <label className="label-text-alt text-error">{errores}</label>}
               </div>
+            </div>
 
-              <div className="flex gap-2 justify-end">
-                <button className="btn btn-ghost" onClick={cerrarEdicion}>Cancelar</button>
-                <button className="btn btn-primary" disabled={habilitarBotonGuardar} onClick={guardarEdicion}>Guardar</button>
-              </div>
+            {/* Footer */}
+            <div className="bg-gray-50 px-6 py-4 flex gap-3 justify-end border-t">
+              <button className="btn btn-ghost hover:bg-gray-200" onClick={cerrarEdicion}>
+                Cancelar
+              </button>
+              <button 
+                className="btn bg-gradient-to-r from-amber-500 to-amber-600 text-white border-0 hover:from-amber-600 hover:to-amber-700 disabled:opacity-50 disabled:cursor-not-allowed" 
+                disabled={habilitarBotonGuardar} 
+                onClick={guardarEdicion}
+              >
+                ✓ Guardar
+              </button>
             </div>
           </div>
         </div>
