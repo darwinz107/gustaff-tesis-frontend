@@ -144,7 +144,8 @@ const obtenerUsers = async () =>{
           identification: asignarDetalle.identification,
           cellphone: asignarDetalle.cellphone,
           email: asignarDetalle.email,
-          cargo: selectCargo
+          cargo: selectCargo,
+          estado: asignarDetalle.estado
         }
         const res = await actualizarUsuario(asignarDetalle.id, newInfoUsuario);
         setmensajeErrorEdicion(res.msj);
@@ -165,7 +166,8 @@ const obtenerUsers = async () =>{
           cellphone: asignarDetalle.cellphone,
           email: asignarDetalle.email,
           password: contrasenia,
-          cargoId: selectCargo
+          cargoId: selectCargo,
+          estado: asignarDetalle.estado
         }
         const res = await actualizarUsuario(asignarDetalle.id, newInfoUsuario);
         if(res.validate === false){
@@ -523,13 +525,19 @@ const obtenerUsers = async () =>{
               </div>
 
               {/* Estado */}
-              <div className="form-control">
+              <div className="form-control relative flex flex-col">
                 <label className="label">
                   <span className="label-text font-semibold text-gray-700">⭐ Estado</span>
                 </label>
-                <div className={`input input-bordered w-full bg-gray-100 flex items-center justify-center font-semibold ${asignarDetalle?.estado ? 'text-green-600' : 'text-red-600'}`}>
-                  {asignarDetalle?.estado ? "✓ ACTIVO" : "✗ INACTIVO"}
-                </div>
+                <select 
+                  disabled={!habilitarEdicion} 
+                  className={`select select-bordered w-full transition ${habilitarEdicion ? 'focus:border-blue-500' : 'bg-gray-100'}`} 
+                  value={asignarDetalle.estado ? "true" : "false"} 
+                  onChange={(e)=>{setasignarDetalle(prev=>({...prev, estado: e.target.value === "true"}));}}
+                >
+                  <option value="true">✓ ACTIVO</option>
+                  <option value="false">✗ INACTIVO</option>
+                </select>
               </div>
             </div>
           </div>

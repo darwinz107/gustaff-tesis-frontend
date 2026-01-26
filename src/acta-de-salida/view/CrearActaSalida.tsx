@@ -41,30 +41,41 @@ export const CrearActaSalida = () => {
   const [stockDis, setstockDis] = useState(0);
   const [isPending, setisPending] = useState(false);
   const [erroresCantidad, seterroresCantidad] = useState("");
+  const [erroresItem, seterroresItem] = useState("");
   
   
   const [inventarios, setinventarios] = useState<Inventarios[]>([]);
 
 
   const agregarCompras = async() =>{
-    if(stockDis < Number(cantidad)){
-        setmensajeError( "Cantidar mayor al stock disponible");
+    const errorCantidad = validarCantidad(cantidad);
+    const errorItem = validarItem(item);
+    
+    seterroresCantidad(errorCantidad);
+    seterroresItem(errorItem);
+    
+    if(errorCantidad || errorItem){
+      setmensajeError("Debe llenar correctamente los campos obligatorios");
       setshowError(true);
       setTimeout(() => setshowError(false), 3000);
+      return;
     }
 
-    const errorCantidad = validarCantidad(Number(cantidad));
-    if(errorCantidad || stockDis  < Number(cantidad)){
-      seterroresCantidad(errorCantidad);
+    if(stockDis < Number(cantidad)){
+        setmensajeError("Cantidad mayor al stock disponible");
+        setshowError(true);
+        setTimeout(() => setshowError(false), 3000);
         return;
     }
 
-     setagregarItems(prev => [...prev,{cantidad:cantidad,item:item,Observacion:observacion2,caracteristica:caracteristica}]);
-     setcantidad("");
-     setitem("");
-     setcaracteristica("");
-     setobservacion2("");
-    }
+    setagregarItems(prev => [...prev,{cantidad:cantidad,item:item,Observacion:observacion2,caracteristica:caracteristica}]);
+    setcantidad("");
+    setitem("");
+    setcaracteristica("");
+    setobservacion2("");
+    seterroresCantidad("");
+    seterroresItem("");
+  }
 
  const cargarInfoSolMaterial = async(id:number) =>{
         const res = await ordenCompraById(id);
@@ -87,16 +98,23 @@ const validarRecibe = (valor:number):string=>{
   return "";
 }
 
-const validarCantidad = (valor:number):string=>{
- 
- if(isNaN(valor)){
-    return "La cantidad debe ser un número válido";
- }
-  if (valor <= 0) {
-    return "La cantidad debe ser mayor que cero";
+const validarItem = (valor:string):string=>{
+  if (!valor || valor.trim() === "") {
+    return "Debe elegir un item";
   }
-  if(!valor || valor === null || valor === undefined || valor === 0){
-    return "La cantidad es obligatoria";
+  return "";
+}
+
+const validarCantidad = (valor:string):string=>{
+  if (!valor || valor.trim() === "") {
+    return "La cantidad no puede estar vacía";
+  }
+  const numValue = Number(valor);
+  if(isNaN(numValue)){
+    return "La cantidad debe ser un número válido";
+  }
+  if (numValue <= 0) {
+    return "La cantidad debe ser mayor que cero";
   }
   return "";
 }
@@ -394,7 +412,7 @@ const metodoInventarios = async() =>{
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-end space-y-2">
           <div className="relative">
             <label className="text-sm text-gray-600">Cantidad</label>
-            <input disabled={conOrden} type="text" className="input input-bordered w-full disabled:bg-gray-100 disabled:text-gray-700" value={cantidad} onChange={(e)=>{setcantidad(e.target.value); seterroresCantidad(validarCantidad(Number(e.target.value)))}}/>
+            <input disabled={conOrden} type="text" className="input input-bordered w-full disabled:bg-gray-100 disabled:text-gray-700" value={cantidad} onChange={(e)=>{setcantidad(e.target.value); if(!conOrden) seterroresCantidad(validarCantidad(e.target.value));}}  />
             <div className="absolute max-h-1">{erroresCantidad  && <p className="text-red-500 text-xs">{erroresCantidad}</p>}</div>
           </div>
 
@@ -416,6 +434,7 @@ const metodoInventarios = async() =>{
                 {conOrden ? '' : '🔎'}
               </button>
             </div>
+            <div className="absolute max-h-1">{erroresItem && <p className="text-red-500 text-xs">{erroresItem}</p>}</div>
           </div>
 
          <div className="md:col-span-8">
@@ -444,7 +463,7 @@ const metodoInventarios = async() =>{
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"/></svg>
                   Agregar a Salida
                 </button>
-                <button className="btn btn-sm btn-ghost gap-2" onClick={() => {setconOrden(!conOrden); seterroresCantidad(""); setcantidad(""); setitem(""); setcaracteristica(""); setobservacion2(""); setagregarItems([]);}}>
+                <button className="btn btn-sm btn-ghost gap-2" onClick={() => {setconOrden(!conOrden); seterroresCantidad(""); setcantidad(""); setitem(""); setcaracteristica(""); setobservacion2(""); setagregarItems([]); seterroresItem("");}}>
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/></svg>
                   Volver a Con Orden
                 </button>
