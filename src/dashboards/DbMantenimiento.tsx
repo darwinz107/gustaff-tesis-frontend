@@ -112,10 +112,13 @@ const cargoColors = getColorsByLength(ordenesEstado.length);
           </p>
         </div>
       )}
-
+       
       <div className="grid grid-cols-1  gap-6">
         <div className="card p-4 bg-base-100 border max-h-64 overflow-y-auto">
+         <div className="flex justify-between">
           <h3 className="font-medium mb-3 text-lg">📋 Últimas Órdenes</h3>
+           <button className="btn btn-sm hover:btn-primary gap-2" onClick={()=> window.open('http://localhost:3000/reporte/orden-trabajo','_blank')}>Reporte 📄</button>
+          </div> 
           <div className="overflow-x-auto">
             <table className="table w-full text-sm">
               <thead>
@@ -319,6 +322,7 @@ const cargoColors = getColorsByLength(ordenesEstado.length);
           />
         </div>
       </div>
+      
     </div>
   );
 }

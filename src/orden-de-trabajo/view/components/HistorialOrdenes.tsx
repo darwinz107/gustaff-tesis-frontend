@@ -508,7 +508,7 @@ const ordenesTrabajoApi  = async() =>{
       </div>
 
       <div className="px-6 py-3 flex items-center justify-end gap-2 bg-gray-50 border-b border-gray-200">
-         <button className="btn btn-sm btn-ghost hover:btn-primary gap-2" onClick={()=> window.open('http://localhost:3000/reporte/orden-trabajo','_blank')}>Reporte</button>
+        
         <button className="btn btn-sm btn-ghost hover:btn-primary gap-2" onClick={() => ordenesTrabajoApi()}>🔄 Refrescar</button>
         <button className="btn btn-sm btn-ghost hover:btn-warning gap-2" onClick={clearFilters}>✕ Limpiar</button>
         <button className="btn btn-sm btn-primary gap-2" onClick={applyFilters}>✓ Aplicar</button>
