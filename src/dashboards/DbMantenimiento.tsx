@@ -98,6 +98,38 @@ const getColorsByLength = (length: number) => {
     }
   };
 
+  // Colores específicos para cada estado del gráfico de órdenes
+  const getColorForEstado = (estado: string) => {
+    const estadoUpper = estado?.toUpperCase() || "";
+    
+    if (estadoUpper.includes("PENDIENTE")) {
+      return {
+        backgroundColor: "rgba(59, 130, 246, 0.7)",    // Azul
+        borderColor: "rgba(37, 99, 235, 1)"
+      };
+    } else if (estadoUpper.includes("PROCESO") || estadoUpper.includes("EN PROCESO")) {
+      return {
+        backgroundColor: "rgba(234, 179, 8, 0.7)",     // Amarillo/Naranja
+        borderColor: "rgba(202, 138, 4, 1)"
+      };
+    } else if (estadoUpper.includes("VENCIDO")) {
+      return {
+        backgroundColor: "rgba(239, 68, 68, 0.7)",     // Rojo
+        borderColor: "rgba(220, 38, 38, 1)"
+      };
+    } else if (estadoUpper.includes("FINALIZADO") || estadoUpper.includes("ENTREGADO") || estadoUpper.includes("COMPLETADO")) {
+      return {
+        backgroundColor: "rgba(34, 197, 94, 0.7)",     // Verde
+        borderColor: "rgba(22, 163, 74, 1)"
+      };
+    } else {
+      return {
+        backgroundColor: "rgba(107, 114, 128, 0.7)",   // Gris (para estados desconocidos)
+        borderColor: "rgba(75, 85, 99, 1)"
+      };
+    }
+  };
+
 const cargoColors = getColorsByLength(ordenesEstado.length);
  
 
@@ -242,18 +274,8 @@ const cargoColors = getColorsByLength(ordenesEstado.length);
                 {
                   label: "Cantidad",
                   data: ordenesEstado.map((d) => d.count),
-                  backgroundColor: [
-                        
-                    "rgba(234, 179, 8, 0.7)", 
-                    "rgba(34, 197, 94, 0.7)",      
-                    "rgba(239, 68, 68, 0.7)"       
-                  ],
-                  borderColor: [
-                            
-                    "rgba(202, 138, 4, 1)", 
-                    "rgba(22, 163, 74, 1)",       
-                    "rgba(220, 38, 38, 1)"         
-                  ],
+                  backgroundColor: ordenesEstado.map((d) => getColorForEstado(d.estado).backgroundColor),
+                  borderColor: ordenesEstado.map((d) => getColorForEstado(d.estado).borderColor),
                   borderWidth: 2,
                   borderRadius: 4,
                 },
