@@ -121,6 +121,15 @@ const cargarInfoSolMaterial = async() =>{
                console.log(res);
                setusers(res);
              } ;
+
+     const recargarProveedores = async () => {
+       try {
+         const res = await findProovedores();
+         setproovedores(res);
+       } catch (error) {
+         console.error("Error al recargar proveedores:", error);
+       }
+     };
           
 
     useEffect(() => {
@@ -990,9 +999,9 @@ const eliminarItem = (index: number) => {
     </div>
 
     
-    <div className={`fixed inset-0 z-10 flex items-center justify-center bg-black/40 transition-opacity duration-300 ${ventanaAgregarProovedor ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+    <div className={`fixed inset-0 z-60 flex items-center justify-center bg-black/40 transition-opacity duration-300 ${ventanaAgregarProovedor ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
       <div className="bg-white w-11/12 md:w-4/5 max-w-5xl h-[78vh] rounded-lg shadow-xl overflow-y-auto">
-        <CrearProovedor setventanaAgregarProovedor={setventanaAgregarProovedor} ventanaAgregarProovedor={ventanaAgregarProovedor} />
+        <CrearProovedor setventanaAgregarProovedor={setventanaAgregarProovedor} ventanaAgregarProovedor={ventanaAgregarProovedor} onProveedorCreado={recargarProveedores} />
       </div>
     </div>
   </>

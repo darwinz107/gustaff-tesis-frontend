@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { createProovedor } from '../controller/actaEntrada-api';
 
-export const CrearProovedor = ({setventanaAgregarProovedor,ventanaAgregarProovedor}) => {
+export const CrearProovedor = ({setventanaAgregarProovedor,ventanaAgregarProovedor, onProveedorCreado}) => {
 
   const [nombre, setnombre] = useState("");
   const [nombreComercial, setnombreComercial] = useState("");
@@ -143,6 +143,10 @@ export const CrearProovedor = ({setventanaAgregarProovedor,ventanaAgregarProoved
         setshowSuccess(false);
         limpiarFormulario();
         setventanaAgregarProovedor(!ventanaAgregarProovedor);
+        // Llamar al callback para recargar los proveedores
+        if (onProveedorCreado) {
+          onProveedorCreado();
+        }
       }, 2000);
     } catch (error) {
       setmensajeError("Error al registrar el proveedor");
