@@ -82,6 +82,33 @@ export const CrearOrden = ({setcargarAuto,setsendId}) => {
     setmensajeErrorCrearOrden("");
   };
 
+  const limpiarCamposFormulario = () => {
+    // Limpiar estados de selección
+    setselectArea("");
+    setselectCodigo("");
+    setselectMaquina("");
+    setespecPiezas("");
+    setsolicitante("");
+    setreceptor("");
+    settecnico(null);
+    
+    // Limpiar tiempos (fechas y horas)
+    settiempos(["","09:30","16:30",""]);
+    
+    // Limpiar especificación (categoría, tipo de trabajo, descripción)
+    setespecificacion(Array(3));
+    
+   setespecificacion(["","",""]);
+    
+    // Limpiar arrays de datos cargados
+    setcodigos([]);
+    setmaquinas([]);
+    settipoTrabajos([]);
+    
+    // Limpiar errores
+    seterroresCrearOrden({});
+  };
+
   useEffect(() => {
     
     const getAreas = async () => {
@@ -225,6 +252,7 @@ const getCodigos = async () => {
       setmensajeErrorCrearOrden("¡Orden de trabajo creada correctamente!");
       setshowSuccessCrearOrden(true);
       limpiarErroresCrearOrden();
+      limpiarCamposFormulario();
 
       setTimeout(() => {
         window.open(`/pdf/undefined`,"_blank");
@@ -452,6 +480,7 @@ const getCodigos = async () => {
               className="textarea textarea-sm textarea-bordered w-full mt-2 focus:textarea-success rounded-lg"
               placeholder="Describa los equipos o piezas a trabajar..."
               rows={3}
+              value={especPiezas}
               onChange={(e) => setespecPiezas(e.target.value)}
             />
           </div>

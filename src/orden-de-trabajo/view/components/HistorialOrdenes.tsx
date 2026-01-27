@@ -747,7 +747,7 @@ const ordenesTrabajoApi  = async() =>{
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Estado</label>
               <Select
                 isDisabled={!habilitarEdicion}
-                options={estados.filter(ee => ee.estado !== "EN PROCESO" && ee.estado !== "VENCIDO").map(ee => ({ value: ee.estado, label: ee.estado }))}
+                options={estados.filter(ee => ee.estado !== "FINALIZADO" && ee.estado !== "VENCIDO").map(ee => ({ value: ee.estado, label: ee.estado }))}
                 value={ordenTrabajoxUser.estadoTrabajo?.estado ? { value: ordenTrabajoxUser.estadoTrabajo.estado, label: ordenTrabajoxUser.estadoTrabajo.estado } : null}
                 onChange={(opt) => {setordenTrabajoxUser((prev)=>({...prev,estadoTrabajo:{estado: opt?.value || ""}})); setconfirmarCambio(true);}}
                 placeholder="Buscar o seleccionar..."
