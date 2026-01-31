@@ -8,11 +8,16 @@ export const AdministrarCargos = () => {
   const [cargo, setcargo] = useState("");
   const [selectRol, setselectRol] = useState<number | "">("");
   const [cargos, setcargos] = useState<Cargo[]>([]);
+  const [cargosOriginales, setcargosOriginales] = useState<Cargo[]>([]);
   const [roles, setroles] = useState<Rol[]>([]);
   const [cargoEnEdicion, setcargoEnEdicion] = useState<Cargo | null>(null);
   const [ventanaEdicion, setventanaEdicion] = useState(false);
   const [cargoAEliminar, setcargoAEliminar] = useState<Cargo | null>(null);
   const [habilitarBotonGuardar, sethabilitarBotonGuardar] = useState(true);
+
+  // Estados para filtros
+  const [filtroNombre, setfiltroNombre] = useState("");
+  const [filtroRol, setfiltroRol] = useState<number | "">("");
 
   const [showSuccess, setshowSuccess] = useState(false);
   const [showError, setshowError] = useState(false);
@@ -41,6 +46,7 @@ export const AdministrarCargos = () => {
     try {
       const res = await getAllCargos();
       setcargos(res);
+      setcargosOriginales(res);
     } catch (error) {
       console.error("Error al cargar cargos:", error);
     }
@@ -53,6 +59,31 @@ export const AdministrarCargos = () => {
     } catch (error) {
       console.error("Error al cargar roles:", error);
     }
+  };
+
+  // Funciones de filtrado local
+  const aplicarFiltros = () => {
+    let cargosFiltrados = [...cargosOriginales];
+
+    if (filtroNombre.trim()) {
+      cargosFiltrados = cargosFiltrados.filter(car =>
+        car.name.toLowerCase().includes(filtroNombre.toLowerCase())
+      );
+    }
+
+    if (filtroRol !== "") {
+      cargosFiltrados = cargosFiltrados.filter(car =>
+        car.rolId.id === filtroRol
+      );
+    }
+
+    setcargos(cargosFiltrados);
+  };
+
+  const limpiarFiltros = () => {
+    setfiltroNombre("");
+    setfiltroRol("");
+    setcargos(cargosOriginales);
   };
 
   const crearCargoMetodo = async () => {
@@ -262,6 +293,48 @@ export const AdministrarCargos = () => {
               >
                 ✓ Crear Cargo
               </button>
+            </div>
+          </div>
+        </div>
+
+
+        {/* Filter Card */}
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden mb-6">
+          <div className="bg-gradient-to-r from-indigo-600 to-indigo-700 px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🔍</span>
+              <h3 className="text-white font-bold text-lg">Buscar Cargos</h3>
+            </div>
+            <div className="flex items-center gap-2">
+              <button className="btn btn-sm bg-white text-indigo-600 hover:bg-indigo-50 border-0 font-semibold" onClick={limpiarFiltros}>
+                ✕ Limpiar
+              </button>
+              <button className="btn btn-sm bg-gradient-to-r from-indigo-500 to-indigo-600 text-white border-0 hover:from-indigo-600 hover:to-indigo-700 font-semibold" onClick={aplicarFiltros}>
+                ✓ Aplicar
+              </button>
+            </div>
+          </div>
+          <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">👔 Nombre del Cargo</label>
+              <input
+                type="text"
+                placeholder="Buscar por nombre..."
+                className="input input-bordered w-full focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all"
+                value={filtroNombre}
+                onChange={(e) => setfiltroNombre(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">🎭 Rol</label>
+              <select
+                className="select select-bordered w-full focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all"
+                value={filtroRol}
+                onChange={(e) => setfiltroRol(e.target.value ? Number(e.target.value) : "")}
+              >
+                <option value="">Todos los roles</option>
+                {roles.map((r) => <option key={r.id} value={r.id}>{r.role}</option>)}
+              </select>
             </div>
           </div>
         </div>

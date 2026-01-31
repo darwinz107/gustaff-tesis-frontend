@@ -27,10 +27,16 @@ export const AdministrarAreasMaquinas = () => {
   // Estados para crear área
   const [newArea, setnewArea] = useState("");
   const [areas, setareas] = useState<Area[]>([]);
+  const [areasOriginales, setareasOriginales] = useState<Area[]>([]);
 
   // Estados para crear máquina
   const [maquina, setmaquina] = useState("");
   const [selectArea, setselectArea] = useState("");
+
+  // Estados para filtros
+  const [filtroArea, setfiltroArea] = useState("");
+  const [filtroMaquina, setfiltroMaquina] = useState("");
+  const [filtroCodigo, setfiltroCodigo] = useState("");
 
   // Estados para edición
   const [modalEdicion, setmodalEdicion] = useState(false);
@@ -82,9 +88,45 @@ export const AdministrarAreasMaquinas = () => {
     try {
       const res = await getAllInfoAreas();
       setareas(res as Area[]);
+      setareasOriginales(res as Area[]);
     } catch (error) {
       console.error("Error al cargar áreas:", error);
     }
+  };
+
+  // Funciones de filtrado local
+  const aplicarFiltros = () => {
+    let areasFiltradas = [...areasOriginales];
+
+    // Filtrar por nombre de área
+    if (filtroArea.trim()) {
+      areasFiltradas = areasFiltradas.filter(area =>
+        area.nombre.toLowerCase().includes(filtroArea.toLowerCase())
+      );
+    }
+
+    // Filtrar por nombre de máquina o código
+    if (filtroMaquina.trim() || filtroCodigo.trim()) {
+      areasFiltradas = areasFiltradas.map(area => ({
+        ...area,
+        codigo: area.codigo.map(codigo => ({
+          ...codigo,
+          maquina: codigo.maquina.filter(maq =>
+            (filtroMaquina.trim() ? maq.nombre.toLowerCase().includes(filtroMaquina.toLowerCase()) : true) &&
+            (filtroCodigo.trim() ? codigo.cod.toLowerCase().includes(filtroCodigo.toLowerCase()) : true)
+          )
+        })).filter(c => c.maquina.length > 0)
+      })).filter(a => a.codigo.length > 0);
+    }
+
+    setareas(areasFiltradas);
+  };
+
+  const limpiarFiltros = () => {
+    setfiltroArea("");
+    setfiltroMaquina("");
+    setfiltroCodigo("");
+    setareas(areasOriginales);
   };
 
   // CRUD ÁREAS
@@ -325,6 +367,8 @@ const { tipo, data } = itemEnEdicion;
           </div>
         </div>
 
+     
+
         {/* SECCIÓN CREAR ÁREA Y MÁQUINA */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Crear Área */}
@@ -404,7 +448,63 @@ const { tipo, data } = itemEnEdicion;
             </div>
           </div>
         </div>
+   {/* SECCIÓN DE FILTROS */}
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+          {/* Filters Header */}
+          <div className="bg-gradient-to-r from-teal-600 to-teal-700 px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🔍</span>
+              <h3 className="text-white font-bold text-lg">Buscar Áreas y Máquinas</h3>
+            </div>
+            <div className="flex items-center gap-2">
+              <button className="btn btn-sm bg-white text-teal-600 hover:bg-teal-50 border-0 font-semibold" onClick={limpiarFiltros}>
+                ✕ Limpiar
+              </button>
+              <button className="btn btn-sm bg-gradient-to-r from-teal-500 to-teal-600 text-white border-0 hover:from-teal-600 hover:to-teal-700 font-semibold" onClick={aplicarFiltros}>
+                ✓ Aplicar
+              </button>
+            </div>
+          </div>
 
+          {/* Filters Grid */}
+          <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-semibold text-teal-700">📍 Área</span>
+              </label>
+              <input 
+                className="input input-bordered focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all" 
+                placeholder="Buscar área..." 
+                value={filtroArea} 
+                onChange={(e) => setfiltroArea(e.target.value)}
+              />
+            </div>
+
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-semibold text-teal-700">⚙️ Máquina</span>
+              </label>
+              <input 
+                className="input input-bordered focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all" 
+                placeholder="Buscar máquina..." 
+                value={filtroMaquina} 
+                onChange={(e) => setfiltroMaquina(e.target.value)}
+              />
+            </div>
+
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-semibold text-teal-700">📦 Código</span>
+              </label>
+              <input 
+                className="input input-bordered focus:border-teal-500 focus:ring-2 focus:ring-teal-200 transition-all" 
+                placeholder="Buscar código..." 
+                value={filtroCodigo} 
+                onChange={(e) => setfiltroCodigo(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
         {/* SECCIÓN TABLA DE ÁREAS CON CÓDIGOS Y MÁQUINAS */}
         <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
           <h2 className="text-lg font-bold text-teal-900 mb-4 pb-3 border-b-2 border-teal-300 flex items-center gap-2"><span>📊</span> Áreas con Códigos y Máquinas</h2>

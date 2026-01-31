@@ -165,7 +165,7 @@ export const Rol1Main = () => {
                 className="cursor-pointer h-10 w-auto"
                 alt="Gustaff S.A"
               />
-              <h1 className="text-xl font-bold text-gray-800">Gustaff - Órdenes</h1>
+              <h1 className="text-xl font-bold text-gray-800">Gustaff - Mantenimiento</h1>
             </div>
              
              <div className="flex items-center gap-4">
