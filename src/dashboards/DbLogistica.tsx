@@ -155,7 +155,7 @@ export const DbLogistica = () => {
                       <td className="px-3 py-2">{o.solicitante}</td>
                       <td className="px-3 py-2 text-xs">{o.fechaInicio ? new Date(o.fechaInicio).toLocaleDateString('es-ES') : 'N/A'}</td>
                       <td className="px-3 py-2 text-xs">{o.o_fechaFinal ? new Date(o.o_fechaFinal).toLocaleDateString('es-ES') : 'N/A'}</td>
-                      <td className="px-3 py-2">{o.dias_transcurridos ?? "N/A"}</td>
+                      <td className="px-3 py-2 font-semibold">{o.dias_transcurridos ?? "N/A"}</td>
                       <td className="px-3 py-2 ">
                         <span className={`badge ${colorConfig.badge} gap-1`}>{o.estado}</span>
                       </td>
@@ -178,8 +178,8 @@ export const DbLogistica = () => {
                   <th className="px-3 py-2">NumSolicitud</th>
                   <th className="px-3 py-2">OT Asoc.</th>
                   <th className="px-3 py-2">Solicitante</th>
-                  <th className="px-3 py-2">Fecha</th>
-                  <th className="px-3 py-2">Items</th>
+                  <th className="px-3 py-2">Fecha de remision</th>
+                  <th className="px-3 py-2">Dias transcurridos</th>
                   <th className="px-3 py-2">Autoriza</th>
                   <th className="px-3 py-2">Estado</th>
                 </tr>
@@ -193,8 +193,8 @@ export const DbLogistica = () => {
                       <td className="px-3 py-2 font-semibold text-purple-600">{s.numOrden}</td>
                       <td className="px-3 py-2 text-sm">{s.numOrdenTrabajo}</td>
                       <td className="px-3 py-2">{s.solicitante}</td>
-                      <td className="px-3 py-2 text-xs">{s.fechaRemision ? new Date(s.fechaRemision).toLocaleDateString('es-ES') : 'N/A'}</td>
-                      <td className="px-3 py-2 text-center font-semibold">{s.total_items}</td>
+                      <td className="px-3 py-2 text-xs">{s.s_fechaRemision ? new Date(s.s_fechaRemision).toLocaleDateString('es-ES') : 'N/A'}</td>
+                      <td className="px-3 py-2 text-center font-semibold">{s.dias_transcurridos ?? 0}</td>
                       <td className="px-3 py-2 text-sm">{s.userAutoriza}</td>
                       <td className="px-3 py-2 ">
                         <span className={`badge ${colorConfig.badge} gap-1 whitespace-nowrap`}>{s.estado}</span>
