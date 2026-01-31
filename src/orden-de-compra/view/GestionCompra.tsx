@@ -194,7 +194,7 @@ export const GestionCompra = () => {
       else if (estadoUpper.includes("LISTA PARA ENTREGA")) {
       return { /*bg: "bg-orange-100", text: "text-orange-800",*/ badge: "badge-warning" };
     }
-    else if (estadoUpper.includes("VENCIDO")) {
+    else if (estadoUpper.includes("VENCIDO") || estadoUpper.includes("CANCELADO")) {
       return { /*bg: "bg-red-100", text: "text-red-800",*/ badge: "badge-error" };
     } else {
       return { /*bg: "bg-blue-100", text: "text-blue-800",*/ badge: "badge-info" };

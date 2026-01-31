@@ -206,7 +206,7 @@ export const Principal = () => {
 
             <div className="flex items-center gap-4">
               <div ><div className="font-bold text-lg">{usuario?.name ?? ""}</div>
-              <div className="text-sm">{usuario?.cargoId.name ??""}</div>
+              <div className="text-xs">{usuario?.cargoId.name ??""}</div>
               </div>
               <div className="dropdown dropdown-end">
                 <button tabIndex={0} className="btn btn-ghost btn-circle avatar">

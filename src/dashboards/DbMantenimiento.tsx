@@ -91,7 +91,7 @@ const getColorsByLength = (length: number) => {
       else if (estadoUpper.includes("LISTA PARA ENTREGA")) {
       return { /*bg: "bg-orange-100", text: "text-orange-800",*/ badge: "badge-warning" };
     }
-    else if (estadoUpper.includes("VENCIDO")) {
+    else if (estadoUpper.includes("VENCIDO") || estadoUpper.includes("CANCELADO")) {
       return { /*bg: "bg-red-100", text: "text-red-800",*/ badge: "badge-error" };
     } else {
       return { /*bg: "bg-blue-100", text: "text-blue-800",*/ badge: "badge-info" };
@@ -112,7 +112,7 @@ const getColorsByLength = (length: number) => {
         backgroundColor: "rgba(234, 179, 8, 0.7)",     // Amarillo/Naranja
         borderColor: "rgba(202, 138, 4, 1)"
       };
-    } else if (estadoUpper.includes("VENCIDO")) {
+    } else if (estadoUpper.includes("VENCIDO") || estadoUpper.includes("CANCELADO")) {
       return {
         backgroundColor: "rgba(239, 68, 68, 0.7)",     // Rojo
         borderColor: "rgba(220, 38, 38, 1)"

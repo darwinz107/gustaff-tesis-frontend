@@ -36,7 +36,7 @@ export const DbLogistica = () => {
       else if (estadoUpper.includes("LISTA PARA ENTREGA")) {
       return { /*bg: "bg-orange-100", text: "text-orange-800",*/ badge: "badge-warning" };
     }
-    else if (estadoUpper.includes("VENCIDO")) {
+    else if (estadoUpper.includes("VENCIDO") || estadoUpper.includes("CANCELADO")) {
       return { /*bg: "bg-red-100", text: "text-red-800",*/ badge: "badge-error" };
     } else {
       return { /*bg: "bg-blue-100", text: "text-blue-800",*/ badge: "badge-info" };
@@ -52,8 +52,8 @@ export const DbLogistica = () => {
           axios.get(`${API}/entradas-por-dia?days=30`).then((r)=>r.data),
           axios.get(`${API}/logistica`).then((r)=>r.data),
           axios.get(`${API}/salidas-por-dia?days=30`).then((r)=>r.data),
-          axios.get(`${API}/ultimas-ordenes?limit=5`).then((r)=>r.data),
-          axios.get(`${API}/ultimas-solicitudes?limit=5`).then((r)=>r.data),
+          axios.get(`${API}/ultimas-ordenes?limit=7`).then((r)=>r.data),
+          axios.get(`${API}/ultimas-solicitudes?limit=7`).then((r)=>r.data),
           axios.get(`${API}/actas-salida-mes`).then((r)=>r.data).catch(() => []),
           axios.get(`${API}/actas-entrada-mes`).then((r)=>r.data).catch(() => []),
           axios.get(`${API}/solicitudes`).then((r)=>r.data),
@@ -130,7 +130,7 @@ export const DbLogistica = () => {
       {/* Tablas principales */}
       <div className="grid grid-cols-1 gap-6">
         <div className="card p-4 bg-base-100 border max-h-64 overflow-y-auto">
-          <h3 className="font-medium mb-3 text-lg">📋 Últimas Órdenes</h3>
+          <h3 className="font-medium mb-3 text-lg">📋{`Órdenes (últimas 7)`}</h3>
           <div className="overflow-x-auto">
             <table className="table w-full text-sm">
               <thead>
@@ -140,6 +140,7 @@ export const DbLogistica = () => {
                   <th className="px-3 py-2">Solicitante</th>
                   <th className="px-3 py-2">Fecha Inicio</th>
                   <th className="px-3 py-2">Fecha Fin</th>
+                  <th className="px-3 py-2">Dias transcurridos</th>
                   <th className="px-3 py-2">Estado</th>
                   <th className="px-3 py-2">Descripción</th>
                 </tr>
@@ -153,7 +154,8 @@ export const DbLogistica = () => {
                       <td className="px-3 py-2 font-semibold text-blue-600">{o.numOrden}</td>
                       <td className="px-3 py-2">{o.solicitante}</td>
                       <td className="px-3 py-2 text-xs">{o.fechaInicio ? new Date(o.fechaInicio).toLocaleDateString('es-ES') : 'N/A'}</td>
-                      <td className="px-3 py-2 text-xs">{o.fechaFinal ? new Date(o.fechaFinal).toLocaleDateString('es-ES') : 'N/A'}</td>
+                      <td className="px-3 py-2 text-xs">{o.o_fechaFinal ? new Date(o.o_fechaFinal).toLocaleDateString('es-ES') : 'N/A'}</td>
+                      <td className="px-3 py-2">{o.dias_transcurridos ?? "N/A"}</td>
                       <td className="px-3 py-2 ">
                         <span className={`badge ${colorConfig.badge} gap-1`}>{o.estado}</span>
                       </td>
@@ -167,7 +169,7 @@ export const DbLogistica = () => {
         </div>
 
         <div className="card p-4 bg-base-100 border max-h-64 overflow-y-auto">
-          <h3 className="font-medium mb-3 text-lg">📦 Últimas Solicitudes</h3>
+          <h3 className="font-medium mb-3 text-lg">📦{`Solicitudes (últimas 7)`}</h3>
           <div className="overflow-x-auto">
             <table className="table w-full text-sm">
               <thead>
@@ -207,7 +209,7 @@ export const DbLogistica = () => {
 
         <div className="card p-4 bg-base-100 border max-h-64 overflow-y-auto">
          <div className='flex justify-between'>
-          <h3 className="font-medium mb-3 text-lg">📤 Últimas Actas de Salida</h3>
+          <h3 className="font-medium mb-3 text-lg">📤{`Actas de Salida (últimas 7)`}</h3>
            <button className="btn btn-sm hover:btn-primary gap-2" onClick={()=> window.open('http://localhost:3000/reporte/acta-salida','_blank')}>Reporte 📄</button>
           </div> 
           <div className="overflow-x-auto">
@@ -243,7 +245,7 @@ export const DbLogistica = () => {
         </div>
 
         <div className="card p-4 bg-base-100 border max-h-64 overflow-y-auto">
-          <h3 className="font-medium mb-3 text-lg">📥 Últimas Actas de Entrada</h3>
+          <h3 className="font-medium mb-3 text-lg">📥{`Actas de Entrada (últimas 7)`}</h3>
           <div className="overflow-x-auto">
             <table className="table w-full text-sm">
               <thead>
