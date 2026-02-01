@@ -103,6 +103,30 @@ export const DbLogistica = () => {
         </div>
       )}
 
+            {/* KPI Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+        <div className='card p-4 bg-blue-100 border border-blue-300 bg-opacity-50'>
+          <div className='text-sm text-blue-500 font-semibold'>Total Items</div>
+          <div className='text-2xl font-semibold text-blue-800'>{logistica?.totalStock ?? 0}</div>   
+        </div>
+        <div className='card p-4 bg-blue-100 border border-blue-300 bg-opacity-50'>
+          <div className='text-sm text-blue-500 font-semibold'>Total registros salida</div>
+          <div className='text-2xl font-semibold text-blue-800'>{logistica?.totalRegSalida ?? 0}</div>
+        </div>
+        <div className='card p-4 bg-yellow-100 border border-yellow-300 bg-opacity-50'>
+          <div className='text-sm text-yellow-700 font-semibold'>Solicitudes en Proceso</div>
+          <div className='text-2xl font-semibold text-yellow-800'>{solicitudes?.enProceso ?? 0}</div>
+        </div>
+        <div className='card p-4 bg-orange-100 border border-orange-300 bg-opacity-50'>
+          <div className='text-sm text-orange-700 font-semibold'>Lista para Entrega</div>
+          <div className='text-2xl font-semibold text-orange-800'>{solicitudes?.listoParaEntrega ?? 0}</div>
+        </div>
+        <div className='card p-4 bg-green-100 border border-green-300 bg-opacity-50'>
+          <div className='text-sm text-green-700 font-semibold'>Solicitudes Entregadas</div>
+          <div className='text-2xl font-semibold text-green-800'>{solicitudes?.entregado ?? 0}</div>
+        </div>
+      </div>
+
       {/* Tablas principales */}
       <div className="grid grid-cols-1 gap-6">
         <div className="card p-4 bg-base-100 border max-h-64 overflow-y-auto">
@@ -252,32 +276,6 @@ export const DbLogistica = () => {
           </div>
         </div>
       </div>
-
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-        <div className='card p-4 bg-blue-100 border border-blue-300 bg-opacity-50'>
-          <div className='text-sm text-blue-500 font-semibold'>Total Items</div>
-          <div className='text-2xl font-semibold text-blue-800'>{logistica?.totalStock ?? 0}</div>   
-        </div>
-        <div className='card p-4 bg-blue-100 border border-blue-300 bg-opacity-50'>
-          <div className='text-sm text-blue-500 font-semibold'>Total registros salida</div>
-          <div className='text-2xl font-semibold text-blue-800'>{logistica?.totalRegSalida ?? 0}</div>
-        </div>
-        <div className='card p-4 bg-yellow-100 border border-yellow-300 bg-opacity-50'>
-          <div className='text-sm text-yellow-700 font-semibold'>Solicitudes en Proceso</div>
-          <div className='text-2xl font-semibold text-yellow-800'>{solicitudes?.enProceso ?? 0}</div>
-        </div>
-        <div className='card p-4 bg-orange-100 border border-orange-300 bg-opacity-50'>
-          <div className='text-sm text-orange-700 font-semibold'>Lista para Entrega</div>
-          <div className='text-2xl font-semibold text-orange-800'>{solicitudes?.listoParaEntrega ?? 0}</div>
-        </div>
-        <div className='card p-4 bg-green-100 border border-green-300 bg-opacity-50'>
-          <div className='text-sm text-green-700 font-semibold'>Solicitudes Entregadas</div>
-          <div className='text-2xl font-semibold text-green-800'>{solicitudes?.entregado ?? 0}</div>
-        </div>
-      </div>
-
-      {/* Charts */}
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

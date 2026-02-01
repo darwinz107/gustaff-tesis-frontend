@@ -26,8 +26,8 @@ export const DbMantenimiento = () => {
           axios.get(`${API}/solicitudes`).then((r) => r.data),
           axios.get(`${API}/ordenes-por-estado`).then((r) => r.data),
           axios.get(`${API}/solicitudes-por-dia?days=30`).then((r) => r.data),
-          axios.get(`${API}/ultimas-ordenes?limit=5`).then((r) => r.data),
-          axios.get(`${API}/ultimas-solicitudes?limit=5`).then((r) => r.data),
+          axios.get(`${API}/ultimas-ordenes?limit=7`).then((r) => r.data),
+          axios.get(`${API}/ultimas-solicitudes?limit=7`).then((r) => r.data),
           
         ]);
         if (!mounted) return;
@@ -144,11 +144,48 @@ const cargoColors = getColorsByLength(ordenesEstado.length);
           </p>
         </div>
       )}
+
+       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="card p-4 bg-blue-100 border border-blue-300 bg-opacity-50">
+          <div className="text-sm text-blue-500 font-semibold">Total órdenes</div>
+          <div className="text-2xl font-semibold text-blue-800">{kpis?.totalOrdenes ?? 0}</div>
+        </div>
+        <div className="card p-4 bg-yellow-100 border border-yellow-300 bg-opacity-50">
+          <div className="text-sm text-yellow-700 font-semibold">Ordenes en proceso</div>
+          <div className="text-2xl font-semibold text-yellow-800">{kpis?.enProceso ?? 0}</div>
+        </div>
+        <div className='card p-4 bg-red-200 border border-red-300 '>
+          <div className='text-sm text-red-700 font-semibold'>Ordenes vencidas</div>
+          <div className="text-2xl font-semibold text-red-800">{kpis?.vencidas ?? 0}</div>
+        </div>
+        <div className="card p-4 bg-green-100 border border-green-300 bg-opacity-50">
+          <div className="text-sm text-green-700 font-semibold">Ordenes completadas</div>
+          <div className="text-2xl font-semibold text-green-800">{kpis?.finalizadas ?? 0}</div>
+        </div>
+ 
+        <div className="card p-4 bg-blue-100 border border-blue-300 bg-opacity-50">
+          <div className="text-sm text-blue-500 font-semibold">Total solicitudes</div>
+          <div className="text-2xl font-semibold text-blue-800">{solicitudes?.totalSol ?? 0}</div>
+        </div>
+       
+        <div className='card p-4 bg-yellow-100 border border-yellow-300 bg-opacity-50'>
+          <div className='text-sm text-yellow-700 font-semibold'>Solicitudes en Proceso</div>
+          <div className='text-2xl font-semibold text-yellow-800'>{solicitudes?.enProceso ?? 0}</div>
+        </div>
+        <div className='card p-4 bg-orange-100 border border-orange-300 bg-opacity-50'>
+          <div className='text-sm text-orange-700 font-semibold'>Lista para Entrega</div>
+          <div className='text-2xl font-semibold text-orange-800'>{solicitudes?.listoParaEntrega ?? 0}</div>
+        </div>
+        <div className="card p-4 bg-green-100 border border-green-300 bg-opacity-50">
+          <div className="text-sm text-green-700 font-semibold">Solicitudes completadas</div>
+          <div className="text-2xl font-semibold text-green-800">{solicitudes?.entregado ?? 0}</div>
+        </div>
+      </div>
        
       <div className="grid grid-cols-1  gap-6">
         <div className="card p-4 bg-base-100 border max-h-64 overflow-y-auto">
          <div className="flex justify-between">
-          <h3 className="font-medium mb-3 text-lg">📋 Últimas Órdenes</h3>
+          <h3 className="font-medium mb-3 text-lg">📋{`Órdenes (últimas 7)`}</h3>
            <button className="btn btn-sm hover:btn-primary gap-2" onClick={()=> window.open('http://localhost:3000/reporte/orden-trabajo','_blank')}>Reporte 📄</button>
           </div> 
           <div className="overflow-x-auto">
@@ -187,7 +224,7 @@ const cargoColors = getColorsByLength(ordenesEstado.length);
         </div>
 
         <div className="card p-4 bg-base-100 border max-h-64 overflow-y-auto">
-          <h3 className="font-medium mb-3 text-lg">📦 Últimas Solicitudes</h3>
+          <h3 className="font-medium mb-3 text-lg">📦Solicitudes {"(últimas 7)"}</h3>
           <div className="overflow-x-auto">
             <table className="table w-full text-sm">
               <thead>
@@ -226,42 +263,7 @@ const cargoColors = getColorsByLength(ordenesEstado.length);
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="card p-4 bg-blue-100 border border-blue-300 bg-opacity-50">
-          <div className="text-sm text-blue-500 font-semibold">Total órdenes</div>
-          <div className="text-2xl font-semibold text-blue-800">{kpis?.totalOrdenes ?? 0}</div>
-        </div>
-        <div className="card p-4 bg-yellow-100 border border-yellow-300 bg-opacity-50">
-          <div className="text-sm text-yellow-700 font-semibold">Ordenes en proceso</div>
-          <div className="text-2xl font-semibold text-yellow-800">{kpis?.enProceso ?? 0}</div>
-        </div>
-        <div className='card p-4 bg-red-100 border border-red-300 bg-opacity-50'>
-          <div className='text-sm text-red-700 font-semibold'>Ordenes vencidas</div>
-          <div className="text-2xl font-semibold text-red-800">{kpis?.vencidas ?? 0}</div>
-        </div>
-        <div className="card p-4 bg-green-100 border border-green-300 bg-opacity-50">
-          <div className="text-sm text-green-700 font-semibold">Ordenes completadas</div>
-          <div className="text-2xl font-semibold text-green-800">{kpis?.finalizadas ?? 0}</div>
-        </div>
- 
-        <div className="card p-4 bg-blue-100 border border-blue-300 bg-opacity-50">
-          <div className="text-sm text-blue-500 font-semibold">Total solicitudes</div>
-          <div className="text-2xl font-semibold text-blue-800">{solicitudes?.totalSol ?? 0}</div>
-        </div>
-       
-        <div className='card p-4 bg-yellow-100 border border-yellow-300 bg-opacity-50'>
-          <div className='text-sm text-yellow-700 font-semibold'>Solicitudes en Proceso</div>
-          <div className='text-2xl font-semibold text-yellow-800'>{solicitudes?.enProceso ?? 0}</div>
-        </div>
-        <div className='card p-4 bg-orange-100 border border-orange-300 bg-opacity-50'>
-          <div className='text-sm text-orange-700 font-semibold'>Lista para Entrega</div>
-          <div className='text-2xl font-semibold text-orange-800'>{solicitudes?.listoParaEntrega ?? 0}</div>
-        </div>
-        <div className="card p-4 bg-green-100 border border-green-300 bg-opacity-50">
-          <div className="text-sm text-green-700 font-semibold">Solicitudes completadas</div>
-          <div className="text-2xl font-semibold text-green-800">{solicitudes?.entregado ?? 0}</div>
-        </div>
-      </div>
+     
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
        

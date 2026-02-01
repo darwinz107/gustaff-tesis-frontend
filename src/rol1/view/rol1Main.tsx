@@ -169,7 +169,9 @@ export const Rol1Main = () => {
             </div>
              
              <div className="flex items-center gap-4">
-              <div>{usuario?.name ?? ""}</div>
+              <div><div className='font-bold text-lg'>{usuario?.name ?? ""}</div>
+                    <div className='text-sm'>{usuario?.cargoId.name ?? ""}</div>  
+                      </div>
                <div className="dropdown dropdown-end">
             <button tabIndex={0} className="avatar placeholder cursor-pointer">
               <div className="bg-gradient-to-br from-green-400 to-green-600 text-white rounded-full w-10 flex items-center justify-center text-sm font-bold">

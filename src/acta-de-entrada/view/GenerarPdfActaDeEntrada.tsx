@@ -63,7 +63,9 @@ const formatearFechaEcuador = (fechaString: string | undefined) => {
             </View>
            <View style={styles.ocTercero}>
             <View><Text style={{textAlign:"left",fontWeight:"bold"}}>FACTURA N.: {newSolicitud?.factura} </Text> <Text style={{textAlign:"right",fontWeight:"bold"}}>ACTA N°: {newSolicitud?.numActa}</Text></View>
+            
             <View><Text style={{textAlign:"left",fontWeight:"bold"}}>FECHA Y HORA DE RECEPCION: {formatearFechaEcuador(newSolicitud?.fechaRemision)}</Text> <Text style={{textAlign:"right",fontWeight:"bold"}}>SOLICITA: {newSolicitud?.numSolicitudCompra?.numOrdenTrabajo?.userSolicitante?.name ?? "N/A"}</Text></View>
+            <View><Text style={{textAlign:"left",fontWeight:"bold"}}>Orden N°: {newSolicitud?.numSolicitudCompra !== null ? newSolicitud?.numSolicitudCompra.numOrdenTrabajo.NumOrden : "N/A"} </Text> <Text style={{textAlign:"right",fontWeight:"bold"}}>Solicitud N°: {newSolicitud?.numSolicitudCompra !== null ? newSolicitud?.numSolicitudCompra.numOrden : "N/A"}</Text></View>
            </View>
             <View style={{ margin:"10px",   width:"60%",height:"4%", display:"flex",flexDirection:"row",borderWidth:1,borderColor:"#000"}}>
             

@@ -143,7 +143,10 @@ export const Rol2Main = () => {
               <h1 className="text-xl font-bold text-gray-800">Gustaff - Logística</h1>
             </div>
             <div className="flex items-center gap-4">
-              <div>{usuario?.name ?? ""}</div>
+              <div>
+                <div className='font-bold text-lg'>{usuario?.name ?? ""}</div>
+                <div className='text-sm'>{usuario?.cargoId.name ?? ""}</div>   
+              </div>
             <div className="dropdown dropdown-end">
             <button tabIndex={0} className="avatar placeholder cursor-pointer">
               <div className="bg-gradient-to-br from-indigo-400 to-indigo-600 text-white rounded-full w-10 flex items-center justify-center text-sm font-bold">
