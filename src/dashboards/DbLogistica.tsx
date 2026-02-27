@@ -129,7 +129,7 @@ export const DbLogistica = () => {
 
       {/* Tablas principales */}
       <div className="grid grid-cols-1 gap-6">
-        <div className="card p-4 bg-base-100 border max-h-64 overflow-y-auto">
+        <div className="card p-4 bg-base-100 border max-h-64 overflow-auto">
           <h3 className="font-medium mb-3 text-lg">📋{`Órdenes (últimas 7)`}</h3>
           <div className="overflow-x-auto">
             <table className="table w-full text-sm">
@@ -157,7 +157,7 @@ export const DbLogistica = () => {
                       <td className="px-3 py-2 text-xs">{o.o_fechaFinal ? new Date(o.o_fechaFinal).toLocaleDateString('es-ES') : 'N/A'}</td>
                       <td className="px-3 py-2 font-semibold">{o.dias_transcurridos ?? "N/A"}</td>
                       <td className="px-3 py-2 ">
-                        <span className={`badge ${colorConfig.badge} gap-1`}>{o.estado}</span>
+                        <span className={`badge ${colorConfig.badge} gap-1 whitespace-nowrap`}>{o.estado}</span>
                       </td>
                       <td className="px-3 py-2 text-xs max-w-xs truncate">{o.descripcion}</td>
                     </tr>
@@ -168,7 +168,7 @@ export const DbLogistica = () => {
           </div>
         </div>
 
-        <div className="card p-4 bg-base-100 border max-h-64 overflow-y-auto">
+        <div className="card p-4 bg-base-100 border max-h-64 overflow-auto">
           <h3 className="font-medium mb-3 text-lg">📦{`Solicitudes (últimas 7)`}</h3>
           <div className="overflow-x-auto">
             <table className="table w-full text-sm">
@@ -207,7 +207,7 @@ export const DbLogistica = () => {
           </div>
         </div>
 
-        <div className="card p-4 bg-base-100 border max-h-64 overflow-y-auto">
+        <div className="card p-4 bg-base-100 border max-h-64 overflow-auto">
          <div className='flex justify-between'>
           <h3 className="font-medium mb-3 text-lg">📤{`Actas de Salida (últimas 7)`}</h3>
            <button className="btn btn-sm hover:btn-primary gap-2" onClick={()=> window.open('http://localhost:3000/reporte/acta-salida','_blank')}>Reporte 📄</button>
@@ -244,7 +244,7 @@ export const DbLogistica = () => {
           </div>
         </div>
 
-        <div className="card p-4 bg-base-100 border max-h-64 overflow-y-auto">
+        <div className="card p-4 bg-base-100 border max-h-64 overflow-auto">
           <h3 className="font-medium mb-3 text-lg">📥{`Actas de Entrada (últimas 7)`}</h3>
           <div className="overflow-x-auto">
             <table className="table w-full text-sm">

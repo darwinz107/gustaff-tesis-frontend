@@ -188,7 +188,7 @@ const cargoColors = getColorsByLength(ordenesEstado.length);
           <h3 className="font-medium mb-3 text-lg">📋{`Órdenes (últimas 7)`}</h3>
            <button className="btn btn-sm hover:btn-primary gap-2" onClick={()=> window.open('http://localhost:3000/reporte/orden-trabajo','_blank')}>Reporte 📄</button>
           </div> 
-          <div className="overflow-x-auto">
+          <div className="overflow-auto">
             <table className="table w-full text-sm">
               <thead>
                 <tr className="bg-gray-100">
@@ -211,7 +211,7 @@ const cargoColors = getColorsByLength(ordenesEstado.length);
                       <td className="px-3 py-2">{o.solicitante}</td>
                       <td className="px-3 py-2 text-xs">{o.fechaInicio ? new Date(o.fechaInicio).toLocaleDateString('es-ES') : 'N/A'}</td>
                       <td className="px-3 py-2 text-xs">{o.o_fechaFinal ? new Date(o.o_fechaFinal).toLocaleDateString('es-ES') : 'N/A'}</td>
-                      <td className="px-3 py-2">
+                      <td className="px-3 py-2 whitespace-nowrap">
                         <span className={`badge ${colorConfig.badge} gap-1`}>{o.estado}</span>
                       </td>
                       <td className="px-3 py-2 text-xs max-w-xs truncate">{o.descripcion}</td>
@@ -225,7 +225,7 @@ const cargoColors = getColorsByLength(ordenesEstado.length);
 
         <div className="card p-4 bg-base-100 border max-h-64 overflow-y-auto">
           <h3 className="font-medium mb-3 text-lg">📦Solicitudes {"(últimas 7)"}</h3>
-          <div className="overflow-x-auto">
+          <div className="overflow-auto">
             <table className="table w-full text-sm">
               <thead>
                 <tr className="bg-gray-100">
