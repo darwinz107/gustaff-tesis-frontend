@@ -11,6 +11,7 @@ export interface InfoPdfSalida {
    numOrden: string;
     numOrdenTrabajo: {
       id: number;
+      NumOrden: string;
       DescripcionTrabajo: string;
       userSolicitante: {
         id: number;

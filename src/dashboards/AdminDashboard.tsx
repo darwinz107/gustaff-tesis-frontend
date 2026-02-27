@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Bar, Pie } from 'react-chartjs-2';
+import "../lib/chartSetup";
 
 // Material Design Color Palette - Colores profesionales y armónicos (vibrantes)
 const MATERIAL_COLORS = [
@@ -29,6 +30,8 @@ const getColorsByLength = (length: number) => {
 export const AdminDashboard: React.FC = () => {
   const API = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}dashboard` : 'http://localhost:3000/dashboard';
   const [kpis, setKpis] = useState<any>(null);
+  const [mes, setMes] = useState<number | null>(null);
+  const [año, setAño] = useState<number | null>(null);
   const [usersByCargo, setUsersByCargo] = useState<{cargo:string, count:number}[]>([]);
   const [maquinasPorArea, setMaquinasPorArea] = useState<{area:string, count:number}[]>([]);
   const [ultimosUsuarios, setUltimosUsuarios] = useState<any[]>([]);
@@ -42,11 +45,13 @@ export const AdminDashboard: React.FC = () => {
           axios.get(`${API}/kpis/admin`).then(r => r.data),
           axios.get(`${API}/users-by-cargo`).then(r => r.data),
           axios.get(`${API}/maquinas-por-area`).then(r => r.data),
-          axios.get(`${API}/ultimos-usuarios?limit=5`).then(r => r.data),
+          axios.get(`${API}/ultimos-usuarios?limit=7`).then(r => r.data),
         ]);
 
         if (!mounted) return;
         setKpis(k);
+        setMes(k.mes);
+        setAño(k.año);
         setUsersByCargo(uCargo);
         setMaquinasPorArea(mArea);
         setUltimosUsuarios(uUltimos);
@@ -94,55 +99,70 @@ export const AdminDashboard: React.FC = () => {
 
   return (
     <div className="p-6 space-y-6 w-full">
+      {mes && año && (
+        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg p-4 text-white shadow-lg">
+          <p className="text-sm font-semibold opacity-90">Datos correspondientes a:</p>
+          <p className="text-2xl font-bold">
+            {new Date(año, mes - 1).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }).charAt(0).toUpperCase() + 
+             new Date(año, mes - 1).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }).slice(1)}
+          </p>
+        </div>
+      )}
+
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-        <div className="card p-4 bg-base-100 border">
-          <div className="text-sm text-gray-500">Usuarios</div>
-          <div className="text-2xl font-semibold">{kpis.totalUsers ?? 0}</div>
+        <div className='card p-4 bg-blue-100 border border-blue-300 bg-opacity-50'>
+          <div className='text-sm text-blue-500 font-semibold'>👥 Usuarios</div>
+          <div className='text-2xl font-semibold text-blue-800'>{kpis?.totalUsers ?? 0}</div>
         </div>
-        <div className="card p-4 bg-base-100 border">
-          <div className="text-sm text-gray-500">Áreas</div>
-          <div className="text-2xl font-semibold">{kpis.totalAreas ?? 0}</div>
+        <div className='card p-4 bg-cyan-100 border border-cyan-300 bg-opacity-50'>
+          <div className='text-sm text-cyan-600 font-semibold'>🏢 Áreas</div>
+          <div className='text-2xl font-semibold text-cyan-800'>{kpis?.totalAreas ?? 0}</div>
         </div>
-        <div className="card p-4 bg-base-100 border">
-          <div className="text-sm text-gray-500">Categorías</div>
-          <div className="text-2xl font-semibold">{kpis.totalCategorias ?? 0}</div>
+        <div className='card p-4 bg-purple-100 border border-purple-300 bg-opacity-50'>
+          <div className='text-sm text-purple-600 font-semibold'>📂 Categorías</div>
+          <div className='text-2xl font-semibold text-purple-800'>{kpis?.totalCategorias ?? 0}</div>
         </div>
-        <div className="card p-4 bg-base-100 border">
-          <div className="text-sm text-gray-500">Máquinas</div>
-          <div className="text-2xl font-semibold">{kpis.totalMaquinas ?? 0}</div>
+        <div className='card p-4 bg-orange-100 border border-orange-300 bg-opacity-50'>
+          <div className='text-sm text-orange-700 font-semibold'>⚙️ Máquinas</div>
+          <div className='text-2xl font-semibold text-orange-800'>{kpis?.totalMaquinas ?? 0}</div>
         </div>
-        <div className="card p-4 bg-base-100 border">
-          <div className="text-sm text-gray-500">Tipo trabajos</div>
-          <div className="text-2xl font-semibold">{kpis.totalTipoTrabajos ?? 0}</div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1  gap-6">
-        <div className="card p-4 h-130 bg-base-100 border flex items-center justify-center">
-          <h3 className="font-medium mb-3">Usuarios por cargo</h3>
-          <Pie data={pieData} options={{ ...commonOptions }} className='p-6' />
-        </div>
-
-        <div className="card p-4 bg-base-100 border">
-          <h3 className="font-medium mb-3">Máquinas por área</h3>
-          <Bar data={barData} options={{ ...commonOptions, scales: { x: { ticks: { maxRotation: 30, minRotation: 30 } } } }} />
+        <div className='card p-4 bg-green-100 border border-green-300 bg-opacity-50'>
+          <div className='text-sm text-green-700 font-semibold'>🔧 Tipo Trabajos</div>
+          <div className='text-2xl font-semibold text-green-800'>{kpis?.totalTipoTrabajos ?? 0}</div>
         </div>
       </div>
 
-      <div className="card p-4 bg-base-100 border">
-        <h3 className="font-medium mb-3">Últimos usuarios</h3>
-        <div className="overflow-auto">
-          <table className="table w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
+        <div className="card p-6 h-130 bg-base-100 border flex items-center justify-center">
+          <h3 className="font-medium mb-3 text-lg">👔 Usuarios por Cargo</h3>
+          <Pie data={pieData} options={{ ...commonOptions }} />
+        </div>
+
+        <div className="card p-4 bg-base-100 border">
+          <h3 className="font-medium mb-3 text-lg">⚙️ Máquinas por Área</h3>
+          <Bar data={barData} options={{ ...commonOptions, scales: { x: { ticks: { maxRotation: 30, minRotation: 30 } }, y: { ticks: { precision: 0 }, beginAtZero: true } } }} />
+        </div>
+      </div>
+
+      <div className="card p-4 bg-base-100 border max-h-64 overflow-y-auto">
+        <h3 className="font-medium mb-3 text-lg">👥 Últimos Usuarios Registrados</h3>
+        <div className="overflow-x-auto">
+          <table className="table w-full text-sm">
             <thead>
-              <tr><th>#</th><th>Nombre</th><th>Email</th><th>Teléfono</th></tr>
+              <tr className="bg-gray-100">
+                <th className="px-3 py-2">#</th>
+                <th className="px-3 py-2">Nombre</th>
+                <th className="px-3 py-2">Email</th>
+                <th className="px-3 py-2">Teléfono</th>
+              </tr>
             </thead>
             <tbody>
               {ultimosUsuarios.map(u => (
-                <tr key={u.id}>
-                  <td>{u.id}</td>
-                  <td>{u.name}</td>
-                  <td>{u.email}</td>
-                  <td>{u.cellphone}</td>
+                <tr key={u.id} className="border-b hover:bg-gray-50">
+                  <td className="px-3 py-2 font-semibold">{u.id}</td>
+                  <td className="px-3 py-2">{u.name}</td>
+                  <td className="px-3 py-2 text-sm">{u.email}</td>
+                  <td className="px-3 py-2">{u.cellphone}</td>
                 </tr>
               ))}
             </tbody>

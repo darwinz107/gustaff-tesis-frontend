@@ -205,7 +205,9 @@ export const Principal = () => {
             </div>
 
             <div className="flex items-center gap-4">
-              <div>{usuario?.name ?? ""}</div>
+              <div ><div className="font-bold text-lg">{usuario?.name ?? ""}</div>
+              <div className="text-xs">{usuario?.cargoId.name ??""}</div>
+              </div>
               <div className="dropdown dropdown-end">
                 <button tabIndex={0} className="btn btn-ghost btn-circle avatar">
                   <div className="w-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold">

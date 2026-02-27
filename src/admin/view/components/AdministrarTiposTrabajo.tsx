@@ -9,10 +9,14 @@ interface TipoTrabajo {
 export const AdministrarTiposTrabajo = () => {
   const [tipoTrabajo, settipoTrabajo] = useState("");
   const [tiposTrabajo, settiposTrabajo] = useState<TipoTrabajo[]>([]);
+  const [tiposTrabajoOriginales, settiposTrabajoOriginales] = useState<TipoTrabajo[]>([]);
   const [tipoEnEdicion, settipoEnEdicion] = useState<TipoTrabajo | null>(null);
   const [ventanaEdicion, setventanaEdicion] = useState(false);
   const [tipoAEliminar, settipoAEliminar] = useState<TipoTrabajo | null>(null);
   const [habilitarBotonGuardar, sethabilitarBotonGuardar] = useState(true);
+
+  // Estados para filtros
+  const [filtroTipo, setfiltroTipo] = useState("");
 
   const [showSuccess, setshowSuccess] = useState(false);
   const [showError, setshowError] = useState(false);
@@ -35,9 +39,28 @@ export const AdministrarTiposTrabajo = () => {
     try {
       const res = await getAllTiposTrabajo();
       settiposTrabajo(res);
+      settiposTrabajoOriginales(res);
     } catch (error) {
       console.error("Error al cargar tipos de trabajo:", error);
     }
+  };
+
+  // Funciones de filtrado local
+  const aplicarFiltros = () => {
+    let tiposFiltrados = [...tiposTrabajoOriginales];
+
+    if (filtroTipo.trim()) {
+      tiposFiltrados = tiposFiltrados.filter(tipo =>
+        tipo.tipo.toLowerCase().includes(filtroTipo.toLowerCase())
+      );
+    }
+
+    settiposTrabajo(tiposFiltrados);
+  };
+
+  const limpiarFiltros = () => {
+    setfiltroTipo("");
+    settiposTrabajo(tiposTrabajoOriginales);
   };
 
   const crearTipoTrabajoMetodo = async () => {
@@ -216,6 +239,37 @@ export const AdministrarTiposTrabajo = () => {
               >
                 ✓ Crear Tipo
               </button>
+            </div>
+          </div>
+        </div>
+
+        
+        {/* Filter Card */}
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden mb-6">
+          <div className="bg-gradient-to-r from-amber-600 to-amber-700 px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🔍</span>
+              <h3 className="text-white font-bold text-lg">Buscar Tipos de Trabajo</h3>
+            </div>
+            <div className="flex items-center gap-2">
+              <button className="btn btn-sm bg-white text-amber-600 hover:bg-amber-50 border-0 font-semibold" onClick={limpiarFiltros}>
+                ✕ Limpiar
+              </button>
+              <button className="btn btn-sm bg-gradient-to-r from-amber-500 to-amber-600 text-white border-0 hover:from-amber-600 hover:to-amber-700 font-semibold" onClick={aplicarFiltros}>
+                ✓ Aplicar
+              </button>
+            </div>
+          </div>
+          <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">⚙️ Tipo de Trabajo</label>
+              <input
+                type="text"
+                placeholder="Buscar por tipo..."
+                className="input input-bordered w-full focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition-all"
+                value={filtroTipo}
+                onChange={(e) => setfiltroTipo(e.target.value)}
+              />
             </div>
           </div>
         </div>

@@ -9,10 +9,14 @@ interface Categoria {
 export const AdministrarCategorias = () => {
   const [categoria, setcategoria] = useState("");
   const [categorias, setcategorias] = useState<Categoria[]>([]);
+  const [categoriasOriginales, setcategoriasOriginales] = useState<Categoria[]>([]);
   const [categoriaEnEdicion, setcategoriaEnEdicion] = useState<Categoria | null>(null);
   const [ventanaEdicion, setventanaEdicion] = useState(false);
   const [categoriaAEliminar, setcategoriaAEliminar] = useState<Categoria | null>(null);
   const [habilitarBotonGuardar, sethabilitarBotonGuardar] = useState(true);
+
+  // Estados para filtros
+  const [filtroNombre, setfiltroNombre] = useState("");
 
   const [showSuccess, setshowSuccess] = useState(false);
   const [showError, setshowError] = useState(false);
@@ -36,9 +40,28 @@ export const AdministrarCategorias = () => {
       const res = await getAllCategorias();
       console.log(res);
       setcategorias(res);
+      setcategoriasOriginales(res);
     } catch (error) {
       console.error("Error al cargar categorías:", error);
     }
+  };
+
+  // Funciones de filtrado local
+  const aplicarFiltros = () => {
+    let categoriasFiltradas = [...categoriasOriginales];
+
+    if (filtroNombre.trim()) {
+      categoriasFiltradas = categoriasFiltradas.filter(cat =>
+        cat.nombre.toLowerCase().includes(filtroNombre.toLowerCase())
+      );
+    }
+
+    setcategorias(categoriasFiltradas);
+  };
+
+  const limpiarFiltros = () => {
+    setfiltroNombre("");
+    setcategorias(categoriasOriginales);
   };
 
   const crearCategoriaMetodo = async () => {
@@ -217,6 +240,36 @@ export const AdministrarCategorias = () => {
               >
                 ✓ Crear Categoría
               </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Filter Card */}
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden mb-6">
+          <div className="bg-gradient-to-r from-pink-600 to-pink-700 px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🔍</span>
+              <h3 className="text-white font-bold text-lg">Buscar Categorías</h3>
+            </div>
+            <div className="flex items-center gap-2">
+              <button className="btn btn-sm bg-white text-pink-600 hover:bg-pink-50 border-0 font-semibold" onClick={limpiarFiltros}>
+                ✕ Limpiar
+              </button>
+              <button className="btn btn-sm bg-gradient-to-r from-pink-500 to-pink-600 text-white border-0 hover:from-pink-600 hover:to-pink-700 font-semibold" onClick={aplicarFiltros}>
+                ✓ Aplicar
+              </button>
+            </div>
+          </div>
+          <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">📌 Nombre</label>
+              <input
+                type="text"
+                placeholder="Buscar por nombre..."
+                className="input input-bordered w-full focus:border-pink-500 focus:ring-2 focus:ring-pink-200 transition-all"
+                value={filtroNombre}
+                onChange={(e) => setfiltroNombre(e.target.value)}
+              />
             </div>
           </div>
         </div>

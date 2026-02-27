@@ -165,11 +165,13 @@ export const Rol1Main = () => {
                 className="cursor-pointer h-10 w-auto"
                 alt="Gustaff S.A"
               />
-              <h1 className="text-xl font-bold text-gray-800">Gustaff - Órdenes</h1>
+              <h1 className="text-xl font-bold text-gray-800">Gustaff - Mantenimiento</h1>
             </div>
              
              <div className="flex items-center gap-4">
-              <div>{usuario?.name ?? ""}</div>
+              <div><div className='font-bold text-lg'>{usuario?.name ?? ""}</div>
+                    <div className='text-xs'>{usuario?.cargoId.name ?? ""}</div>  
+                      </div>
                <div className="dropdown dropdown-end">
             <button tabIndex={0} className="avatar placeholder cursor-pointer">
               <div className="bg-gradient-to-br from-green-400 to-green-600 text-white rounded-full w-10 flex items-center justify-center text-sm font-bold">

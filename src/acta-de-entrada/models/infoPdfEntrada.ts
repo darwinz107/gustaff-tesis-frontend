@@ -10,8 +10,10 @@ export interface InfoPdfEntrada {
   };
   numSolicitudCompra: {
     id: number;
+    numOrden: string;
     numOrdenTrabajo: {
       id: number;
+      NumOrden:string;
       DescripcionTrabajo:string| null;
       userSolicitante: {
         id: number;
