@@ -396,7 +396,7 @@ setinfoDestino(infoDestinoInicial);
 
           <div>
             <label className="text-xs font-semibold uppercase tracking-wider text-gray-700">Nº Orden</label>
-            <input className="input input-sm input-bordered w-full mt-2 focus:input-primary rounded-lg bg-gray-100 text-gray-700" disabled value={infoDestino.NumOrden} />
+            <input className="input input-sm input-bordered w-full mt-2 focus:input-primary rounded-lg bg-gray-100 text-gray-700" disabled value={infoDestino.NumOrden ?? infoDestino.NumOrden} />
           </div>
 
           
