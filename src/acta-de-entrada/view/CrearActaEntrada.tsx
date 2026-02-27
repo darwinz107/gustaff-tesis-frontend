@@ -57,7 +57,7 @@ export const CrearActaEntrada = () => {
 const cargarInfoSolMaterial = async() =>{
         const res = await asignarInfoActaEntrada(solCompraId);
        
-        console.log("res de cargarInfoSolMaterial", res);
+        
         setsolicitudMaterial(res);
         
        setsolicitudMaterial(prev => ({
@@ -709,7 +709,7 @@ const eliminarItem = (index: number) => {
 
           <div className="min-w-[180px] flex-1">
             <label className="block text-sm text-gray-600 mb-1">N. Orden</label>
-            <input className="input input-bordered w-full bg-gray-100 text-gray-700" value={solicitudMaterial?.numOrdenTrabajo?.NumOrden ?? "N/A"} disabled />
+            <input className="input input-bordered w-full bg-gray-100 text-gray-700" value={solicitudMaterial?.numOrdenTrabajo?.NumOrden} disabled />
           </div>
 
           <div className="min-w-[220px] flex-1">
