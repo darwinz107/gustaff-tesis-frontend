@@ -118,13 +118,15 @@ const formatearFechaEcuador = (fechaString: string | undefined) => {
 <View style={{ marginHorizontal: 10, marginTop: 18, width: "97%", flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" }}>
   <View style={{ width: "48%" }}>
     <Text style={{ fontSize: 10, fontWeight: "bold" }}>SOLICITA: <Text style={{ fontWeight: "normal" }}>{newSolicitud?.numOrdenTrabajo?.userSolicitante?.name ?? "N/A" }</Text></Text>
-    <View style={{ height: 24 }} />
+    <Text style={{ fontSize: 9, fontWeight: "normal", marginTop: 2 }}>{newSolicitud?.numOrdenTrabajo?.userSolicitante?.cargoId?.name ?? ""}</Text>
+    <View style={{ height: 20 }} />
     <Text style={{ borderTopWidth: 0.7, borderTopColor: "#000", width: "80%", paddingTop: 6 }}>FIRMA</Text>
   </View>
 
   <View style={{ width: "48%", alignItems: "flex-end" }}>
     <Text style={{ fontSize: 10, fontWeight: "bold" }}>AUTORIZA: <Text style={{ fontWeight: "normal" }}>{newSolicitud?.Autoriza ?? "N/A"}</Text></Text>
-    <View style={{ height: 24 }} />
+    <Text style={{ fontSize: 9, fontWeight: "normal", marginTop: 2 }}>{newSolicitud?.usuarioAutoriza?.cargoId?.name ?? ""}</Text>
+    <View style={{ height: 20 }} />
     <Text style={{ borderTopWidth: 0.7, borderTopColor: "#000", width: "80%", paddingTop: 6, textAlign: "right" }}>FIRMA</Text>
   </View>
 </View>

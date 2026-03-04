@@ -10,10 +10,19 @@ export interface InfoPdfCompra {
         DescripcionTrabajo: string | null;
         userSolicitante: {
             name: string;
+            cargoId?: {
+                name: string;
+            };
         };
     };
     fechaRemision: string;
     Autoriza: string;
+    usuarioAutoriza?: {
+        id: number;
+        cargoId?: {
+            name: string;
+        };
+    };
    
     itemSolicitados: {
         id: number;

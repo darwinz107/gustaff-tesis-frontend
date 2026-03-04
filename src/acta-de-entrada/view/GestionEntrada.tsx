@@ -26,6 +26,9 @@ export const GestionEntrada = () => {
    const [mensajeError, setmensajeError] = useState("");
    const [users, setusers] = useState<Users[]>([]);
    const [recibe, setrecibe] = useState(0);
+   const [motivoEliminacion, setmotivoEliminacion] = useState("");
+   const dialogEliminarRef = useRef<HTMLDialogElement>(null);
+   const [idAEliminar, setidAEliminar] = useState<number | null>(null);
 
 const dialog = useRef<HTMLDialogElement>(null);
 
@@ -149,10 +152,9 @@ const llenarActas = async() => {
     }
   }
 
-  const eliminarActa = async() => {
-    if(!acta) return;
+  const eliminarActa = async(id:number, motivo:string) => {
     try {
-      const res = await deleteActaEntrada(acta.id);
+      const res = await deleteActaEntrada(id, motivo);
       if(res.validate) {
         setshowSuccess(true);
         setTimeout(() => {
@@ -173,6 +175,18 @@ const llenarActas = async() => {
       setTimeout(() => setshowError(false), 3000);
     }
   }
+
+  const abrirDialogoEliminar = (id: number) => {
+    setidAEliminar(id);
+    setmotivoEliminacion("");
+    dialogEliminarRef.current?.showModal();
+  };
+
+  const cerrarDialogoEliminar = () => {
+    dialogEliminarRef.current?.close();
+    setidAEliminar(null);
+    setmotivoEliminacion("");
+  };
 
   return (
     <>
@@ -198,17 +212,34 @@ const llenarActas = async() => {
         </div>
       )}
 
-      <dialog ref={dialog} id="my_modal_1" className="modal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">¡Advertencia!</h3>
-          <p className="py-4">¿Está seguro que desea eliminar esta acta de entrada? Esta acción no se puede deshacer.</p>
+      {/* Modal de confirmación de eliminación */}
+      <dialog ref={dialogEliminarRef} className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box bg-white rounded-xl">
+          <h3 className="text-lg font-bold text-gray-800 mb-2">⚠️ Confirmar eliminación</h3>
+          <p className="text-gray-600 text-sm mb-4">¿Estás seguro de que deseas eliminar esta acta de entrada? Esta acción no se puede deshacer.</p>
+          <div className="flex flex-col gap-3 mb-6">
+            <label className="text-sm font-semibold text-gray-700">Motivo de eliminación</label>
+            <textarea 
+              className="textarea textarea-bordered w-full text-sm" 
+              placeholder="Ingresa el motivo por el cual eliminarás este registro..."
+              value={motivoEliminacion}
+              onChange={(e) => setmotivoEliminacion(e.target.value)}
+              rows={3}
+            />
+          </div>
           <div className="modal-action">
-            <form method="dialog" className="flex gap-2">
-              <button className="btn btn-error" onClick={eliminarActa}>Eliminar</button>
-              <button className="btn">Cancelar</button>
-            </form>
+            <button className="btn btn-sm btn-ghost" onClick={cerrarDialogoEliminar}>Cancelar</button>
+            <button className="btn btn-sm btn-error gap-2" onClick={() => { 
+              if (idAEliminar !== null && motivoEliminacion.trim()) {
+                eliminarActa(idAEliminar, motivoEliminacion);
+                cerrarDialogoEliminar();
+              }
+            }} disabled={!motivoEliminacion.trim()}>🗑️ Eliminar</button>
           </div>
         </div>
+        <form method="dialog" className="modal-backdrop">
+          <button onClick={cerrarDialogoEliminar}>close</button>
+        </form>
       </dialog>
 
       <div className="w-full h-full rounded-2xl border border-gray-200 bg-white shadow-lg">
@@ -275,7 +306,7 @@ const llenarActas = async() => {
                       <td className="px-4 py-3 text-center">
                         <div className="flex gap-2 justify-center flex-wrap">
                           <button className={`btn btn-sm btn-info btn-outline gap-1 tooltip ${i === 0 ? "tooltip-bottom" : ""}`} data-tip="Ver detalles" onClick={()=>llenarActaById(u.id)}>👁️</button>
-                          <button className={`btn btn-sm btn-error btn-outline gap-1 tooltip ${i === 0 ? "tooltip-bottom" : ""}`} data-tip="Eliminar" onClick={() => {setacta(u); dialog.current?.showModal();}}>🗑️</button>
+                          <button className={`btn btn-sm btn-error btn-outline gap-1 tooltip ${i === 0 ? "tooltip-bottom" : ""}`} data-tip="Eliminar" onClick={() => abrirDialogoEliminar(u.id)}>🗑️</button>
                           <button className={`btn btn-sm btn-success btn-outline gap-1 tooltip ${i === 0 ? "tooltip-bottom" : ""}`} data-tip="Descargar PDF" onClick={()=>cargarPdf(u.id)}>📄</button>
                         </div>
                       </td>

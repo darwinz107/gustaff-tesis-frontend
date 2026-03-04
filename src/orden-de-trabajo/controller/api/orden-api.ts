@@ -155,10 +155,14 @@ export const getAllMaquinasByCod = async (cod:string):Promise<{nombre:string}[]>
     }
     }
 
-    export const eliminarOrdenTrabajo = async(id:number):Promise<{msj:string}>=>{
+    export const eliminarOrdenTrabajo = async(id:number, motivo:string):Promise<{msj:string}>=>{
    try {
         const response:Response = await fetch(`${route}orden-de-trabajo/${id}`,{
-         method:"DELETE"
+         method:"DELETE",
+         headers: {
+           "Content-Type": "application/json"
+         },
+         body: JSON.stringify({ motivo })
         });
 
         const data = await response.json();

@@ -119,6 +119,7 @@ const id = useParams();
              <View style={styles.containerFirmas}>
               <View style={styles.childFirma}>  
                 <Text style={styles.childContenido}>{newSolicitud?.userSolicitante?.name ?? "N/A"}</Text>
+                <Text style={{ fontSize: 8 }}>{newSolicitud?.userSolicitante?.cargoId?.name ?? ""}</Text>
                 <Text >SOLICITA</Text>              
                 </View> 
                 <View style={styles.childFirma}>  
@@ -128,6 +129,7 @@ const id = useParams();
                 </View>
                 <View style={styles.childFirma}>  
                 <Text style={styles.childContenido}>{newSolicitud?.userReceptor?.name ?? "N/A"}</Text>
+                <Text style={{ fontSize: 8 }}>{newSolicitud?.userReceptor?.cargoId?.name ?? ""}</Text>
                 <Text >RECIBE</Text>              
                 </View>              
             </View>

@@ -68,6 +68,7 @@ const [promedios, setpromedios] = useState<{otId:number,promedio:number}[]>([]);
    const [tipoAlerta, settipoAlerta] = useState<"success" | "error" | null>(null);
    const [showSuccessCrearOrden, setshowSuccessCrearOrden] = useState(false);
     const [showErrorCrearOrden, setshowErrorCrearOrden] = useState(false);
+    const [motivoEliminacion, setmotivoEliminacion] = useState("");
 
 
 const applyFilters = async () => {
@@ -303,8 +304,8 @@ const ordenesTrabajoApi  = async() =>{
     }
   };
 
-     const metodoEliminarOrdenTrabajo = async(id:number)=>{
-      const res = await eliminarOrdenTrabajo(id);
+     const metodoEliminarOrdenTrabajo = async(id:number, motivo:string)=>{
+      const res = await eliminarOrdenTrabajo(id, motivo);
       if (res.validate) {
         setmensajeAlerta(res.msj);
         settipoAlerta("success");
@@ -321,12 +322,14 @@ const ordenesTrabajoApi  = async() =>{
 
      const abrirDialogoEliminar = (id: number) => {
        setidAEliminar(id);
+       setmotivoEliminacion("");
        dialogEliminarRef.current?.showModal();
      };
 
      const cerrarDialogoEliminar = () => {
        dialogEliminarRef.current?.close();
        setidAEliminar(null);
+       setmotivoEliminacion("");
      };
      
 
@@ -960,15 +963,25 @@ const ordenesTrabajoApi  = async() =>{
     <dialog ref={dialogEliminarRef} className="modal modal-bottom sm:modal-middle">
       <div className="modal-box bg-white rounded-xl">
         <h3 className="text-lg font-bold text-gray-800 mb-2">⚠️ Confirmar eliminación</h3>
-        <p className="text-gray-600 text-sm mb-6">¿Estás seguro de que deseas eliminar esta orden de trabajo? Esta acción no se puede deshacer.</p>
+        <p className="text-gray-600 text-sm mb-4">¿Estás seguro de que deseas eliminar esta orden de trabajo? Esta acción no se puede deshacer.</p>
+        <div className="flex flex-col gap-3 mb-6">
+          <label className="text-sm font-semibold text-gray-700">Motivo de eliminación</label>
+          <textarea 
+            className="textarea textarea-bordered w-full text-sm" 
+            placeholder="Ingresa el motivo por el cual eliminarás este registro..."
+            value={motivoEliminacion}
+            onChange={(e) => setmotivoEliminacion(e.target.value)}
+            rows={3}
+          />
+        </div>
         <div className="modal-action">
           <button className="btn btn-sm btn-ghost" onClick={cerrarDialogoEliminar}>Cancelar</button>
           <button className="btn btn-sm btn-error gap-2" onClick={() => { 
-            if (idAEliminar !== null) {
-              metodoEliminarOrdenTrabajo(idAEliminar);
+            if (idAEliminar !== null && motivoEliminacion.trim()) {
+              metodoEliminarOrdenTrabajo(idAEliminar, motivoEliminacion);
+              cerrarDialogoEliminar();
             }
-            cerrarDialogoEliminar();
-          }}>🗑️ Eliminar</button>
+          }} disabled={!motivoEliminacion.trim()}>🗑️ Eliminar</button>
         </div>
       </div>
       <form method="dialog" className="modal-backdrop">

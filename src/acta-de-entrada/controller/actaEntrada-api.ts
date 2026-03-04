@@ -136,13 +136,14 @@ const route = import.meta.env.VITE_API_URL || "http://localhost:3000/";
   }
 };
 
-export const deleteActaEntrada = async (id: number): Promise<{ msj: string; validate: boolean }> => {
+export const deleteActaEntrada = async (id: number, motivo: string): Promise<{ msj: string; validate: boolean }> => {
   try {
     const response: Response = await fetch(`${route}inventario/acta-entrada/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"
-      }
+      },
+      body: JSON.stringify({ motivo })
     });
     const data = await response.json();
     return data;

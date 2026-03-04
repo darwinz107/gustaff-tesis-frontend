@@ -102,13 +102,14 @@ export const updateActaSalida = async (id: number, updateData: { entregaId?: num
   }
 };
 
-export const deleteActaSalida = async (id: number): Promise<{ msj: string; validate: boolean }> => {
+export const deleteActaSalida = async (id: number, motivo: string): Promise<{ msj: string; validate: boolean }> => {
   try {
     const response: Response = await fetch(`${route}inventario/acta-salida/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"
-      }
+      },
+      body: JSON.stringify({ motivo })
     });
     const data = await response.json();
     return data;

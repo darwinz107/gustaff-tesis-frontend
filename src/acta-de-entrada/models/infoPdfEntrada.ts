@@ -18,6 +18,9 @@ export interface InfoPdfEntrada {
       userSolicitante: {
         id: number;
         name: string;
+        cargoId?: {
+          name: string;
+        };
       };
     };
    
@@ -40,4 +43,7 @@ export interface InfoPdfEntrada {
 interface recibe{
   id:number;
   name:string;
+  cargoId?: {
+    name: string;
+  };
 }

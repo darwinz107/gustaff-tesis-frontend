@@ -36,12 +36,21 @@ export interface SolicitudOrden{
 
 interface UserSolicitante {
   name: string;
+  cargoId?: {
+    name: string;
+  };
 }
 
 interface UserReceptor {
   name: string;
+  cargoId?: {
+    name: string;
+  };
 }
 
 interface UserTecnico {
   name: string;
+  cargoId?: {
+    name: string;
+  };
 }

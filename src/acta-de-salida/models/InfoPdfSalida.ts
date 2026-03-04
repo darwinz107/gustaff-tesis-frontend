@@ -16,6 +16,9 @@ export interface InfoPdfSalida {
       userSolicitante: {
         id: number;
         name: string;
+        cargoId?: {
+          name: string;
+        };
       };
     };
   };
@@ -24,11 +27,17 @@ export interface InfoPdfSalida {
   recibeSinSM?: {
     id: number;
     name: string;
+    cargoId?: {
+      name: string;
+    };
   };
 
   entrega: {
      id: number;
     name: string;
+    cargoId?: {
+      name: string;
+    };
   };
 
   itemSalida: {

@@ -138,10 +138,14 @@ export const ordenCompraByOrdenTrabajoId = async (id:number): Promise<InfoPdfCom
     }
     }
 
-  export const eliminarSolMaterial = async(id:number):Promise<{msj:string}>=>{
+  export const eliminarSolMaterial = async(id:number, motivo:string):Promise<{msj:string}>=>{
     try {
          const response:Response = await fetch(`${route}solicitud-de-compra/${id}`,{
-          method:"DELETE"
+          method:"DELETE",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ motivo })
          });
  
          const data = await response.json();

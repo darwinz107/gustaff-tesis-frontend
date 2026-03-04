@@ -32,6 +32,7 @@ export const GestionCompra = () => {
   const [idAEliminar, setidAEliminar] = useState<number | null>(null);
   const [mensajeAlerta, setmensajeAlerta] = useState("");
   const [tipoAlerta, settipoAlerta] = useState<"success" | "error" | null>(null);
+  const [motivoEliminacion, setmotivoEliminacion] = useState("");
 
   const ordenesTrabajoApi = async () => {
     const res = await findAllSolicitudesCompra();
@@ -133,8 +134,8 @@ export const GestionCompra = () => {
     }
   };
 
-  const metodoEliminarSolMateriales = async (id: number) => {
-    const res = await eliminarSolMaterial(id);
+  const metodoEliminarSolMateriales = async (id: number, motivo: string) => {
+    const res = await eliminarSolMaterial(id, motivo);
     if (res.validate) {
       setmensajeAlerta(res.msj);
       settipoAlerta("success");
@@ -150,12 +151,14 @@ export const GestionCompra = () => {
 
   const abrirDialogoEliminar = (id: number) => {
     setidAEliminar(id);
+    setmotivoEliminacion("");
     dialogEliminarRef.current?.showModal();
   };
 
   const cerrarDialogoEliminar = () => {
     dialogEliminarRef.current?.close();
     setidAEliminar(null);
+    setmotivoEliminacion("");
   };
 
   const cargarPdf = (id: number) => {
